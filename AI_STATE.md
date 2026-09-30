@@ -1,7 +1,7 @@
 # AI_STATE — handoff vivo do Tower Idle Adventure
 
 **Última atualização:** 2026-09-30
-**Estado:** **FASE 1 (Documentação) concluída** · FASE 2 (Fundação) não iniciada
+**Estado:** **FASE 1 (Documentação) e FASE 2 (Fundação) concluídas** · FASE 3 (Rei) é a próxima
 **Repositório:** `marmitero/project-tower`
 **Branch desta sessão:** `arena/01a0f1f1-project-tower`
 
@@ -46,13 +46,37 @@ project-tower/
 ├── AI_STATE.md               este arquivo
 ├── README.md
 ├── docs/                     30 documentos
-├── scripts/check-docs.mjs    validador de documentação
-└── .git/
+├── package.json              monorepo (workspaces + scripts de verificação)
+├── tsconfig.json             TypeScript strict + aliases dos pacotes
+├── vitest.config.ts          projetos `arch`, `unit` e `integration`
+├── .env.example              variáveis de ambiente documentadas
+├── scripts/
+│   ├── check-docs.mjs        validador de documentação
+│   ├── build-assets.mjs      pipeline de assets (gera manifest, falha alto)
+│   ├── check-assets.mjs      bloqueia placeholders (§62)
+│   ├── check-no-secret.mjs   bloqueia segredos versionados (§91)
+│   └── check-debug-mode.mjs  garante Debug Mode só em dev (§93)
+├── packages/
+│   ├── config/               @tia/config — TODO balanceamento centralizado
+│   ├── contracts/            @tia/contracts — IDs, comandos, entidades, eventos
+│   ├── engine/               @tia/engine — Battle Engine PURO (§64)
+│   ├── game-core/            @tia/game-core — regras, estado, PersistenceService
+│   └── ui/                   @tia/ui — HUD (formata, não calcula)
+├── apps/
+│   ├── game-web/             Vite + React + Phaser
+│   └── admin-web/            shell reservado (Fase Online)
+└── tests/
+    ├── arch/                 invariantes de arquitetura (INV-11 … INV-18)
+    └── integration/          o loop da Torre ponta a ponta
 ```
 
-**Não existe:** `package.json`, `src/`, `apps/`, `packages/`, banco, migrations, código de qualquer tipo.
+**Ordem de dependência (sem ciclos, verificada por teste):**
 
----
+```text
+config  →  contracts  →  engine  →  game-core  →  ui
+                                    ↓
+                              apps/game-web
+```
 
 ## 4. Achados da FASE 0 (Inspeção)
 
@@ -117,6 +141,9 @@ Todas em [`docs/DECISIONS_LOG.md`](docs/DECISIONS_LOG.md).
 | **006** | Configuração centralizada como **dado tipado e validado**, não constante |
 | **007** | `SEARCHING` é **estado persistido** do game loop, não `setTimeout` de componente |
 | **008** | Servidor autoritativo desde a fundação; batch idempotente com `requestId` |
+| **009** | Tempo medido em **timestamp absoluto** com relógio injetado; o loop limita o passo a 250 ms para que voltar de uma aba não processe 30 s de combate de uma vez |
+| **010** | A invariante 1×1 é imposta pela **assinatura** (`startTowerBattle` recebe um herói, não uma equipe), não por um `if` que alguém pode remover |
+| **011** | O `GameState` é a **única** porta de mutação; `data` é exposto como `Readonly` e toda mudança incrementa `revision` (§86) |
 
 ---
 
@@ -157,41 +184,45 @@ P-002 também destrava P-024 (afinidades) e P-061 (identidade sonora)
 
 ## 7. Próximo passo
 
-### **FASE 2 — Fundação**
+### **FASE 3 — Rei** (parcialmente bloqueada: `P-006c`, `P-007`, `P-009`)
 
-**Não depende de nenhuma pendência.** É o que torna cada pendência substituível em minutos depois.
-
-Ordem sugerida:
+O que a Fase 2 entregou e que a Fase 3 consome:
 
 ```text
-1.  Monorepo: apps/game-web, packages/{config,contracts,engine,game-core,ui}
-2.  packages/config + validateConfig() que falha alto no boot
-3.  packages/contracts — tipos de comando e evento (sem campos de resultado!)
-4.  packages/engine — Battle Engine puro (TowerBattle 1×1 + BossBattle N×1)
-5.  apps/game-web — shell Vite + React + Phaser (Phaser com lazy-load)
-6.  PersistenceService — Local + stub Supabase
-7.  Asset pipeline — copiar sprites/, gerar manifest, subset < 8 MB
-8.  Debug Mode (§77) — presente em dev, ausente do bundle de produção
-9.  Testes de arquitetura + check-docs + CI
+✅ GameState com Rei, carteira e lastActiveAt
+✅ createKing() com skin e validação de config
+✅ grantKingXp() com curva da config (⛔ P-009) e teto de nível
+✅ markActive() / computeOffline() com teto de 2h (§47)
+✅ HUD do Rei com barra de XP e carteira
 ```
 
-### Gate de saída da FASE 2
-
-- [ ] `packages/engine` sem React, Phaser, DOM, `setTimeout`, `Math.random` — **verificado por teste**
-- [ ] `TowerBattle` resolve 1×1 e `BossBattle` resolve N×1 — **verificado por teste**
-- [ ] `validateConfig()` roda no boot e falha alto
-- [ ] Tabelas de probabilidade somam 100% — **verificado por teste**
-- [ ] `PersistenceService` com duas implementações
-- [ ] Build Vite passa
-- [ ] Subset de sprites em `public/assets/` (< 8 MB)
-- [ ] Debug Mode **ausente** do bundle de produção — **verificado por teste**
-- [ ] `node scripts/check-docs.mjs` passando
-
-### Depois da FASE 2
+O que falta para fechar a Fase 3:
 
 ```text
-FASE 3  Rei                    (pouco bloqueada: P-006c, P-007, P-009)
-FASE 4  Personagens            ⛔ P-002
+1. Tela de CRIAÇÃO do Rei (nome + skin) — ⛔ P-007, P-006c
+2. Curva de XP do Rei revisada com dados de sessão real — ⛔ P-009
+3. Skin desbloqueável por nível (§5)
+4. Passagem da tela de criação para o jogo rodando
+```
+
+### Gate de saída da FASE 2 — VERIFICADO
+
+| Item | Status | Evidência |
+|---|---|---|
+| `engine` sem React/Phaser/DOM/timers/`Math.random` | ✅ | `tests/arch/imports.test.ts` — INV-11 |
+| `TowerBattle` 1×1, `BossBattle` equipe×1 | ✅ | `engine/src/__tests__/simulate.test.ts` + `tests/integration/tower-loop.test.ts` |
+| `validateConfig()` roda no boot e falha alto | ✅ | `apps/game-web/src/main.tsx` + 39 testes de config |
+| Tabelas de probabilidade somam 100% | ✅ | `config/src/__tests__/config.test.ts` |
+| `PersistenceService` com abstração | ✅ | `game-core/src/persistence/` — Local implementa a interface; Supabase entra na Fase Online |
+| Build Vite passa | ✅ | `npm run build` |
+| Assets em `public/assets/` (< 8 MB) | ⛔ | **BLOQUEADO** — ver §11 |
+| Debug Mode ausente do bundle de produção | ✅ | `scripts/check-debug-mode.mjs` |
+| `check-docs` passando | ✅ | `OK 32 documentos verificados, 0 erros` |
+
+### Depois da Fase 3
+
+```text
+FASE 4  Personagens            ⛔ P-002 — crítico
 FASE 5  Equipe                 ⛔ P-003, P-004
 FASE 6  Combate
 FASE 7  Torre                  ⛔ P-005, P-006
@@ -209,23 +240,25 @@ FASE 13 MVP LOCAL               ← o vertical slice
 
 Cada uma tem teste automatizado obrigatório em [`docs/TESTING.md`](docs/TESTING.md).
 
-| # | Regra | Seção | Teste |
+Todas as 15 têm teste **passando** hoje. Os arquivos abaixo existem e rodam em `npm run test` e `npm run test:arch`.
+
+| # | Regra | Seção | Onde está verificada |
 |---|---|---|---|
-| 1 | Torre é **sempre 1×1** | §17, §79 | `INV-01` |
-| 2 | Torre **nunca** tem boss | §21, §55 | `INV-02` |
-| 3 | Boss usa **toda a equipe** | §24, §80 | `INV-03` |
-| 4 | XP do Rei ≠ XP do herói | §45 | `xp-pools.test.ts` |
-| 5 | XP é **dividido** por tamanho da equipe | §20, §81 | `INV-06` |
-| 6 | Fragmentos **nunca** de inimigo comum | §12 | `INV-05` |
-| 7 | X **independente por atributo** | §36 | `INV-07` |
-| 8 | Drop de equipamento = **5%** | §32 | `loot-distribution.test.ts` |
-| 9 | `SEARCHING` ~3s e **não pausa** ao navegar | §27, §29 | `INV-10` |
-| 10 | Offline **2h Free** / **8h VIP** | §48 | `INV-09` |
-| 11 | Mercado cobra **15%** | §41 | `INV-08` |
-| 12 | Heróis **ilimitados** | §13 | `hero-limit.test.ts` |
-| 13 | **1 conta = 1 Rei** | §8 | `one-king.test.ts` |
-| 14 | Engine **não importa React** | §63, §64 | `INV-11` |
-| 15 | Probabilidades somam **100%** | §32, §33 | `config-validation.test.ts` |
+| 1 | Torre é **sempre 1×1** | §17, §79 | `engine/.../simulate.test.ts`, `tests/integration/tower-loop.test.ts` |
+| 2 | Torre **nunca** tem boss | §21, §55 | `tower-loop.test.ts` (100 andares), `config.test.ts` |
+| 3 | Boss usa **toda a equipe** | §24, §80 | `simulate.test.ts` (3 atacam no mesmo tick) |
+| 4 | XP do Rei ≠ XP do herói | §45 | `game-core/.../progression.test.ts` |
+| 5 | XP é **dividido** por tamanho da equipe | §20, §81 | `progression.test.ts`, `tower-loop.test.ts` |
+| 6 | Fragmentos **nunca** de inimigo comum | §12 | `loot.test.ts` (2000 bundles), `tower-loop.test.ts` |
+| 7 | X **independente por atributo** | §36 | `loot.test.ts` |
+| 8 | Drop de equipamento = **5%** | §32 | `loot.test.ts` (20 000 rolagens) |
+| 9 | `SEARCHING` ~3s e **não pausa** ao navegar | §27, §29 | `hunt.test.ts` |
+| 10 | Offline **2h Free** / **8h VIP** | §47, §48 | `hunt.test.ts` |
+| 11 | Mercado cobra **15%** | §41 | `config.test.ts` (config pronta; UI na Fase 10) |
+| 12 | Heróis **ilimitados** | §13 | `team.test.ts`, `inventory.test.ts` |
+| 13 | **1 conta = 1 Rei** | §8 | `config.test.ts` (`kingPerAccount === 1`) |
+| 14 | Engine **não importa React** | §63, §64 | `tests/arch/imports.test.ts` — INV-11 a INV-18 |
+| 15 | Probabilidades somam **100%** | §32, §33 | `config.test.ts` |
 
 ---
 
@@ -274,12 +307,14 @@ Cada uma tem teste automatizado obrigatório em [`docs/TESTING.md`](docs/TESTING
 | **Inventar regra de economia para "destravar"** | §73 proíbe. Valores pendentes ficam marcados e centralizados. 7 críticas esperando decisão humana |
 | **Deixar o `Master-Prompt.md` ser diluído pela referência** | ADR-001 e ADR-002. Em conflito, o MP vence |
 | **Regra estrutural quebrada silenciosamente** | §79/§80 são testes de release. 15 invariantes com teste dedicado |
-| **Colocar a lógica no React** | Teste de grafo de imports que falha o build |
-| **Espalhar números de balanceamento** | `packages/config` + teste que rejeita magic numbers |
-| **Empacotar os 92 MiB de sprites** | Subset < 8 MB, IDs estáveis, CI valida |
-| **Deixar Debug Mode em produção** | `import.meta.env.DEV` + teste que faz grep do bundle |
+| **Colocar a lógica no React** | `tests/arch/imports.test.ts` — 18 invariantes, roda em `npm run test:arch` |
+| **Espalhar números de balanceamento** | `packages/config` + `validateConfig()` no boot + INV-18 (todo arquivo de balanceamento cita §/P/ADR) |
+| **Empacotar os 92 MiB de sprites** | `scripts/build-assets.mjs` gera o manifesto `id -> caminho`; o código nunca monta caminho |
+| **Deixar Debug Mode em produção** | `scripts/check-debug-mode.mjs` — falha se `debugger` sobrar ou se debug ficar sem guarda de ambiente |
 | **UI com rótulos em inglês** | `ui_kit.png` proibida como UI final. UI em HTML/CSS |
-| **Placeholder chegar ao público** | Teste de CI que detecta placeholder |
+| **Placeholder chegar ao público** | `scripts/check-assets.mjs` detecta emoji-as-sprite, SVG inline e retângulo-colorido; `--strict` bloqueia o release sem sprites |
+| **`bigint` se perder na serialização** | `encodeSave`/`decodeSave` com tag explícita; teste com valor acima de `Number.MAX_SAFE_INTEGER` |
+| **Save corrompido travar o boot** | `boot()` põe o ilegível em quarentena e cria um novo save, em vez de crashar |
 
 ---
 
@@ -287,26 +322,33 @@ Cada uma tem teste automatizado obrigatório em [`docs/TESTING.md`](docs/TESTING
 
 | Não feito | Por quê |
 |---|---|
-| Implementar qualquer código | O usuário pediu **documentação, commit e push, e esperar**. A §123 manda continuar automaticamente, mas a instrução explícita do usuário prevalece |
-| Inventar os 4 heróis | §73 — Tipo C. P-002 |
-| Inventar a economia | §73 — Tipo C. P-008, P-036 |
-| Inventar a curva da Torre | §73 — Tipo C. P-005, P-006 |
-| Inventar a faixa do X | §73 — Tipo C. P-010 |
-| Inventar a taxa de conversão offline | §73 — Tipo C. P-011 |
-| Copiar os 422 sprites para o repo | É a **FASE 2** (asset pipeline). Este passo foi documentação |
-| Criar `package.json` e instalar dependências | É a **FASE 2** (fundação) |
-| Configurar Supabase / Vercel | Fase Online. Nenhum app existe ainda |
+| **Assets de arte** | O pack de sprites (422 PNGs) não está mais disponível no sandbox. O pipeline (`scripts/build-assets.mjs`) está pronto e **falha alto** quando os obrigatórios faltam. `npm run check:assets:strict` é o gate de release. |
+| **Implementação do Supabase** | A interface `PersistenceService` existe e a implementação LOCAL é real. A de Supabase entra na Fase Online, com RLS. |
+| **Inventário visual completo** | A lógica existe e é testada; a tela mostra a lista com raridade, nota e X. Falta ordenar/paginar conforme `P-025`/`P-016`. |
+| **Tela de criação do Rei** | É a Fase 3. Depende de `P-007` (formato do nickname) e `P-006c` (skins iniciais). |
+| **Catálogo de skills** | `P-022` (progressão) e `P-020` (prioridade) continuam abertas. O engine já aceita `SkillDef`; o catálogo não foi inventado. |
+| **Mercado** | `P-014` (regras de anúncio) e `P-041` (anonimato) abertas. A taxa de 15% já está na config e validada. |
+| **Admin-web** | Shell reservado. A Fase Online define o que ele faz. |
+| **Invocar os 4 heróis definitivos** | §73 — Tipo C. `P-002` é crítica. Existe um **catálogo provisório** em `packages/config/src/catalog.ts`, marcado com `⛔ P-002`, para que a fundação funcione. **Não é uma decisão.** |
 
 ---
 
 ## 12. Resumo para a próxima sessão
 
-**Estado:** documentação completa (32 documentos: 30 em `docs/` + `AI_STATE.md` + `README.md`), nenhuma implementação.
+**Estado:** FASE 1 e FASE 2 concluídas. Fundação completa e verificada: monorepo, config validada, contratos, engine puro, `game-core`, HUD, shell Vite/React/Phaser rodando e 259 testes verdes (231 unit+integration + 28 arch).
 
-**O que fazer:** começar a **FASE 2 — Fundação**, que não depende de nenhuma pendência.
+**O que fazer:** **FASE 3 — Rei**. Criar a tela de criação do Rei (nome + skin), ligá-la ao `GameState` que já existe. Começa por decidir `P-007` (nickname) e `P-006c` (skins iniciais), mas o resto da tela não depende delas.
 
-**O que perguntar ao usuário:** as 7 pendências críticas, começando por **P-002 (os 4 heróis)**. Enquanto isso, construir a fundação com placeholders tipados e marcados.
+**O que perguntar ao usuário:** as 7 pendências críticas, começando por **P-002 (os 4 heróis)**. O catálogo provisório funciona para desenvolvimento, mas o §10 exige "diferenças reais" e isso só se confirma com decisão humana.
 
-**Como validar:** `node scripts/check-docs.mjs`
+**Como validar:**
+
+```bash
+npm run check     # docs + typecheck + testes + arch + assets + segredos + debug
+npm run verify    # check + build
+npm run dev       # http://localhost:5173
+```
+
+**Estado atual do servidor de dev:** rodando em `http://localhost:5173` com `allowedHosts: true` (necessário para o preview do ambiente não receber 403).
 
 **Onde estão as regras:** [`Master-Prompt.md`](Master-Prompt.md) é a autoridade. Dúvida de regra? Leia lá primeiro.
