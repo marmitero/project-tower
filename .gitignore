@@ -1,0 +1,44 @@
+# Dependências
+node_modules/
+.pnp
+.pnp.js
+
+# Build
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# Cache de ferramentas
+.cache/
+.vite/
+.turbo/
+.parcel-cache/
+.eslintcache
+coverage/
+*.lcov
+
+# Ambiente — NUNCA commitar segredos (§91 do Master-Prompt.md)
+.env
+.env.local
+.env.*.local
+.env.production
+!.env.example
+
+# Sistema operacional / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build de assets derivados (gerados a partir de sprites/)
+apps/*/public/assets/
+# ...exceto o manifesto versionado que mapeia ID -> caminho
+!apps/*/public/assets/manifest.json
