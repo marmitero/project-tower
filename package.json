@@ -1,0 +1,38 @@
+{
+  "name": "tower-idle-adventure",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "RPG 2D idle / auto-battle / loot para navegador. O jogador e o Rei.",
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @tia/game-web",
+    "build": "npm run build --workspace @tia/game-web",
+    "preview": "npm run preview --workspace @tia/game-web",
+    "test": "vitest run --project unit --project integration",
+    "test:arch": "vitest run --project arch",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "check:docs": "node scripts/check-docs.mjs",
+    "check:config": "vitest run --project unit packages/config",
+    "check:assets": "node scripts/check-assets.mjs",
+    "check:no-secret": "node scripts/check-no-secret.mjs",
+    "check:debug-mode": "node scripts/check-debug-mode.mjs",
+    "check": "npm run check:docs && npm run typecheck && npm run test && npm run test:arch && npm run check:assets && npm run check:no-secret && npm run check:debug-mode",
+    "typecheck": "tsc --noEmit",
+    "check:assets:strict": "node scripts/check-assets.mjs --strict",
+    "verify": "npm run check && npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "@vitest/coverage-v8": "^3.2.4",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}
