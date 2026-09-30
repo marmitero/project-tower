@@ -1,0 +1,300 @@
+/*
+ * Estilo do HUD.
+ *
+ * §67 — DESKTOP-FIRST + MOBILE-READY. As duas decisões aqui não são
+ * estéticas:
+ *
+ * 1. NENHUM `:hover` esconde informação essencial. O jogo precisa
+ *    funcionar em toque, e hover-only é invisível no celular.
+ *
+ * 2. Alvos de toque têm no mínimo 44px. Abaixo disso o dedo erra e o
+ *    jogador conclui que o botão está quebrado.
+ *
+ * §39 — o jogo é em PT-BR.
+ */
+
+:root {
+  --bg: #0b0a12;
+  --bg-2: #15131f;
+  --panel: #1c1a2a;
+  --border: #2e2b42;
+  --text: #e6e3f0;
+  --muted: #9a94b0;
+  --accent: #7aa2f7;
+  --good: #9ece6a;
+  --warn: #e0af68;
+  --bad: #f7768e;
+  --touch: 44px;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; margin: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Evita zoom por duplo toque em mobile sem bloquear o zoom por pinça,
+     que é um recurso de acessibilidade — §67 mobile-ready. */
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+}
+
+.tia-app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.tia-app--loading {
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+}
+
+/* --------------------------------------------------------------- HUD */
+
+.tia-hud {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.tia-hud__identity { display: flex; flex-direction: column; min-width: 120px; }
+.tia-hud__identity span { color: var(--muted); font-size: 12px; }
+.tia-hud__bars { flex: 1 1 200px; min-width: 160px; }
+.tia-hud__wallet { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ------------------------------------------------------------- Painéis */
+
+.tia-main { flex: 1; padding: 16px 12px; }
+
+.tia-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.tia-panel__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tia-panel__title { margin: 0; font-size: 16px; }
+.tia-panel__body { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+
+.tia-note { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.tia-muted { color: var(--muted); font-size: 13px; }
+
+/* ------------------------------------------------------------- Barras */
+
+.tia-bar {
+  position: relative;
+  height: 22px;
+  background: #0a0912;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  min-width: 140px;
+}
+
+.tia-bar__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  transition: width 180ms linear;
+}
+
+.tia-bar__label,
+.tia-bar__readout {
+  position: absolute;
+  top: 0;
+  line-height: 22px;
+  padding: 0 8px;
+  font-size: 12px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.tia-bar__label { left: 0; }
+.tia-bar__readout { right: 0; color: var(--text); }
+
+/* --------------------------------------------------------------- Pills */
+
+.tia-pill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 4px 10px;
+  background: #0f0e18;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+.tia-pill__label { color: var(--muted); font-size: 11px; text-transform: uppercase; }
+.tia-pill--good { border-color: var(--good); }
+.tia-pill--warn { border-color: var(--warn); }
+.tia-pill--bad { border-color: var(--bad); }
+
+/* ------------------------------------------------------------- Canvas */
+
+.tia-canvas {
+  width: 100%;
+  /* §67 — altura relativa à largura, com piso e teto. Um canvas de altura
+     fixa estoura a viewport em telas baixas; um de altura porcentual
+     depende de o pai ter altura, e o pai não tem. */
+  height: clamp(180px, 42vw, 380px);
+  margin: 12px 12px 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #07060d;
+}
+
+.tia-canvas canvas { display: block; width: 100% !important; height: 100% !important; }
+
+/* ------------------------------------------------------------- Botões */
+
+.tia-btn {
+  min-height: var(--touch);
+  min-width: var(--touch);
+  padding: 8px 16px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: #232136;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  /* Toque: sem delay de 300ms que browsers mobile aplicam em click. */
+  touch-action: manipulation;
+}
+
+.tia-btn:active { transform: translateY(1px); }
+.tia-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.tia-btn--primary { background: var(--accent); border-color: var(--accent); color: #10101a; font-weight: 600; }
+.tia-btn--danger { border-color: var(--bad); }
+
+/* O foco é SEMPRE visível: teclado não é obrigatório, mas quem usa
+   teclado não pode perder o cursor. */
+.tia-btn:focus-visible { outline: 2px solid var(--warn); outline-offset: 2px; }
+
+/* -------------------------------------------------------------- Heróis */
+
+.tia-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: #0f0e18;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.tia-hero__head { display: flex; justify-content: space-between; align-items: baseline; }
+.tia-hero__head span { color: var(--muted); font-size: 12px; }
+.tia-hero__assign { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* --------------------------------------------------------------- Slots */
+
+.tia-slots { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+.tia-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: #0f0e18;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.tia-pool { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+/* ------------------------------------------------------------ Itens */
+
+.tia-items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+
+.tia-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 8px 10px;
+  background: #0f0e18;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.tia-item__slot { text-transform: uppercase; color: var(--muted); font-size: 11px; }
+.tia-item__grade { color: var(--warn); }
+.tia-item__xs { color: var(--muted); font-size: 12px; flex: 1; min-width: 160px; }
+
+.tia-rarity { text-transform: uppercase; font-size: 11px; font-weight: 700; }
+.tia-rarity--common { color: #a9b1d6; }
+.tia-rarity--uncommon { color: #9ece6a; }
+.tia-rarity--rare { color: #7aa2f7; }
+.tia-rarity--epic { color: #bb9af7; }
+.tia-rarity--legendary { color: #e0af68; }
+.tia-rarity--celestial { color: #f7768e; }
+
+/* ------------------------------------------------------------ Diversos */
+
+.tia-searching { display: flex; flex-direction: column; gap: 6px; color: var(--warn); font-size: 13px; }
+
+.tia-warn {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 12px;
+  padding: 12px;
+  background: #2a1a1a;
+  border: 1px solid var(--bad);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.tia-nav {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  background: var(--bg-2);
+  border-top: 1px solid var(--border);
+}
+
+/* ------------------------------------------------------------ Responsivo */
+
+@media (max-width: 640px) {
+  .tia-hud { gap: 8px; padding: 8px; }
+  .tia-hud__identity { min-width: 0; flex: 1; }
+  .tia-main { padding: 12px 8px; }
+  .tia-nav .tia-btn { flex: 1 1 auto; padding: 8px 10px; font-size: 13px; }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .tia-nav { padding: 6px 8px; }
+  .tia-btn { min-height: 38px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
