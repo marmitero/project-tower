@@ -91,22 +91,27 @@ async function main() {
     }
   }
 
-  // O pipeline de assets: quantos arquivos existem de fato em sprites/.
+  // O pipeline de assets: quantos arquivos existem de fato em
+  // assets/sprites/ (ver assets/SOURCES.md — a pasta não é versionada).
+  const count = async (dir) => {
+    const entries = await readdir(dir, { withFileTypes: true });
+    let n = 0;
+    for (const e of entries) {
+      if (e.isDirectory()) n += await count(join(dir, e.name));
+      else if (/\.(png|webp|jpg|jpeg)$/i.test(e.name)) n += 1;
+    }
+    return n;
+  };
+
   let assetCount = 0;
-  try {
-    await stat(join(ROOT, "sprites"));
-    const count = async (dir) => {
-      const entries = await readdir(dir, { withFileTypes: true });
-      let n = 0;
-      for (const e of entries) {
-        if (e.isDirectory()) n += await count(join(dir, e.name));
-        else if (/\.(png|webp|jpg|jpeg)$/i.test(e.name)) n += 1;
-      }
-      return n;
-    };
-    assetCount = await count(join(ROOT, "sprites"));
-  } catch {
-    // diretório ainda não existe
+  for (const dir of [join(ROOT, "assets", "sprites"), join(ROOT, "sprites")]) {
+    try {
+      await stat(dir);
+      assetCount = await count(dir);
+      if (assetCount > 0) break;
+    } catch {
+      // tenta o próximo caminho
+    }
   }
 
   if (problems.length > 0) {
@@ -116,7 +121,7 @@ async function main() {
   }
 
   console.log(`[assets] ${files.length} fontes verificadas, 0 placeholders proibidos`);
-  console.log(`[assets] ${assetCount} imagens em sprites/`);
+  console.log(`[assets] ${assetCount} imagens em assets/sprites/`);
 
   if (assetCount === 0) {
     const msg = "[assets] Nenhuma imagem processada. O jogo NÃO pode ser distribuído assim (§62).";
@@ -125,7 +130,7 @@ async function main() {
       process.exit(1);
     }
     console.warn(msg);
-    console.warn("[assets] Rode `node scripts/build-assets.mjs` após processar o pack de sprites.");
+    console.warn("[assets] Recupere o pack com o comando de `assets/SOURCES.md`, depois rode `node scripts/build-assets.mjs`.");
   }
 }
 

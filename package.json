@@ -22,6 +22,7 @@
     "check:docs": "node scripts/check-docs.mjs",
     "check:config": "vitest run --project unit packages/config",
     "check:assets": "node scripts/check-assets.mjs",
+    "assets:build": "node scripts/build-assets.mjs",
     "check:no-secret": "node scripts/check-no-secret.mjs",
     "check:debug-mode": "node scripts/check-debug-mode.mjs",
     "check": "npm run check:docs && npm run typecheck && npm run test && npm run test:arch && npm run check:assets && npm run check:no-secret && npm run check:debug-mode",

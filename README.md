@@ -163,7 +163,18 @@ O projeto **não precisa criar nenhum asset novo** para a vertical slice.
 | Licença | MIT, **com crédito obrigatório** |
 | Origem | [nikastudio.itch.io](https://nikastudio.itch.io/fantasy-dungeon-top-down-pixel-rpg-asset-pack-unity-6-urp) |
 
-Inventário completo, mapeamento e licenças em [`docs/ASSET_INVENTORY.md`](docs/ASSET_INVENTORY.md).
+Inventário completo e licenças em [`docs/ASSET_INVENTORY.md`](docs/ASSET_INVENTORY.md).
+
+O pack está em `assets/sprites/` e **não é versionado** (92 MiB). Para recuperá-lo:
+
+```bash
+git clone --depth 1 https://github.com/marmitero/tower-idle-adventure /tmp/ref
+mkdir -p assets && cp -r /tmp/ref/sprites assets/
+npm run assets:build
+```
+
+Crédito e licença: [`assets/ATTRIBUTION.md`](assets/ATTRIBUTION.md).
+O que ainda falta para o MVP: [`docs/ASSET_GAP.md`](docs/ASSET_GAP.md).
 
 ---
 

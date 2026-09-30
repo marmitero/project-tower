@@ -38,7 +38,23 @@ npm-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Build de assets derivados (gerados a partir de sprites/)
+# Assets de arte de terceiros (92+ MiB) — NÃO versionar.
+# São binários de um pack de terceiros, com licença própria e revisão
+# própria. Versioná-los aqui poluiria o histórico do projeto com 422
+# blobs imutáveis que nunca mudam dentro deste repositório, e tornaria
+# qualquer clone e qualquer `git gc` mais lentos sem ganho.
+#
+# O que entra no Git: o manifesto de uso, o `ATTRIBUTION.md` e o
+# `SOURCES.md` que dizem de onde veio, sob qual licença e o que fazer
+# quando o diretório não estiver presente.
+#
+# O que NUNCA entra: o pack em si. O pipeline (`scripts/build-assets.mjs`)
+# consome `assets/sprites/` quando existe e falha alto quando os
+# obrigatórios faltam — que é o comportamento correto para arte ausente.
+assets/sprites/
+sprites/
+
+# Build de assets derivados (gerados a partir de assets/sprites/)
 apps/*/public/assets/
 # ...exceto o manifesto versionado que mapeia ID -> caminho
 !apps/*/public/assets/manifest.json

@@ -50,6 +50,10 @@ project-tower/
 ├── tsconfig.json             TypeScript strict + aliases dos pacotes
 ├── vitest.config.ts          projetos `arch`, `unit` e `integration`
 ├── .env.example              variáveis de ambiente documentadas
+├── assets/
+│   ├── sprites/              pack de arte (422 PNG, 92 MiB) — NÃO versionado
+│   ├── ATTRIBUTION.md        crédito exigido pela licença
+│   └── SOURCES.md            origem, recuperação e regras de arte nova
 ├── scripts/
 │   ├── check-docs.mjs        validador de documentação
 │   ├── build-assets.mjs      pipeline de assets (gera manifest, falha alto)
@@ -292,6 +296,7 @@ Todas as 15 têm teste **passando** hoje. Os arquivos abaixo existem e rodam em 
 | [`docs/UI_UX.md`](docs/UI_UX.md) | HUD, telas, responsividade |
 | [`docs/ART_GUIDELINES.md`](docs/ART_GUIDELINES.md) | Direção de arte, pipeline, QA |
 | [`docs/ASSET_INVENTORY.md`](docs/ASSET_INVENTORY.md) | **Inventário concreto dos 422 sprites** |
+| [`docs/ASSET_GAP.md`](docs/ASSET_GAP.md) | **Lacunas de arte para o MVP** (áudio, UI, retratos) |
 | [`docs/AUDIO_GUIDELINES.md`](docs/AUDIO_GUIDELINES.md) | Áudio (esboço — FASE Polish) |
 | [`docs/SECURITY.md`](docs/SECURITY.md) | Threat model, RLS, anti-cheat |
 | [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md) | Orçamento de performance |

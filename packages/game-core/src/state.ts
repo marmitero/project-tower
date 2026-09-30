@@ -385,7 +385,7 @@ export class GameState {
   /**
    * §47 — calcula a recompensa offline e a credita.
    * ⛔ P-011 (taxa de conversão) e P-011a (derrota durante offline) não
-   * estão definidos; o comportamento aqui é保守: credita o que o teto
+   * estão definidos; o comportamento aqui é conservador: credita o que o teto
    * permite, sem simular derrotas.
    */
   claimOffline(): { rawDurationMs: number; creditedDurationMs: number; wasCapped: boolean; capMs: number; plan: "free" | "vip" } {
