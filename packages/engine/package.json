@@ -1,0 +1,16 @@
+{
+  "name": "@tia/engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Battle Engine PURO. Sem React, sem Phaser, sem DOM, sem setTimeout, sem Math.random. Roda em Node, em Web Worker e no servidor.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@tia/config": "*",
+    "@tia/contracts": "*"
+  }
+}
