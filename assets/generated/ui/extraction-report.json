@@ -1,0 +1,212 @@
+{
+  "source": "assets/sprites/ui/ui_kit.png",
+  "method": "regioes_em_fracao",
+  "pieces": [
+    {
+      "id": "frame_9slice_stone",
+      "status": "ok",
+      "width": 236,
+      "height": 276,
+      "brightPixels": 42,
+      "brightRatio": 0.0006,
+      "narrowColumns": 3
+    },
+    {
+      "id": "frame_9slice_brick",
+      "status": "ok",
+      "width": 236,
+      "height": 276,
+      "brightPixels": 2,
+      "brightRatio": 0,
+      "narrowColumns": 0
+    },
+    {
+      "id": "frame_9slice_dark",
+      "status": "ok",
+      "width": 236,
+      "height": 276,
+      "brightPixels": 28,
+      "brightRatio": 0.0004,
+      "narrowColumns": 2
+    },
+    {
+      "id": "frame_9slice_mossy",
+      "status": "ok",
+      "width": 236,
+      "height": 276,
+      "brightPixels": 37,
+      "brightRatio": 0.0006,
+      "narrowColumns": 5
+    },
+    {
+      "id": "panel_ornate",
+      "status": "ok",
+      "width": 758,
+      "height": 205,
+      "brightPixels": 21,
+      "brightRatio": 0.0001,
+      "narrowColumns": 2
+    },
+    {
+      "id": "divider_gold",
+      "status": "ok",
+      "width": 389,
+      "height": 57,
+      "brightPixels": 4,
+      "brightRatio": 0.0002,
+      "narrowColumns": 0
+    },
+    {
+      "id": "divider_stone",
+      "status": "ok",
+      "width": 389,
+      "height": 57,
+      "brightPixels": 16,
+      "brightRatio": 0.0007,
+      "narrowColumns": 0
+    },
+    {
+      "id": "divider_diamond",
+      "status": "ok",
+      "width": 389,
+      "height": 57,
+      "brightPixels": 96,
+      "brightRatio": 0.0043,
+      "narrowColumns": 3
+    },
+    {
+      "id": "divider_gold_thin",
+      "status": "ok",
+      "width": 389,
+      "height": 57,
+      "brightPixels": 60,
+      "brightRatio": 0.0027,
+      "narrowColumns": 10
+    },
+    {
+      "id": "divider_scroll",
+      "status": "ok",
+      "width": 348,
+      "height": 92,
+      "brightPixels": 230,
+      "brightRatio": 0.0072,
+      "narrowColumns": 2
+    },
+    {
+      "id": "divider_scroll_blue",
+      "status": "ok",
+      "width": 348,
+      "height": 92,
+      "brightPixels": 105,
+      "brightRatio": 0.0033,
+      "narrowColumns": 8
+    },
+    {
+      "id": "slot_frame_sword",
+      "status": "rejected_text",
+      "brightPixels": 617,
+      "brightRatio": 0.0353,
+      "narrowColumns": 8
+    },
+    {
+      "id": "slot_frame_shield",
+      "status": "ok",
+      "width": 147,
+      "height": 119,
+      "brightPixels": 297,
+      "brightRatio": 0.017,
+      "narrowColumns": 5
+    },
+    {
+      "id": "slot_frame_potion",
+      "status": "rejected_text",
+      "brightPixels": 480,
+      "brightRatio": 0.0274,
+      "narrowColumns": 7
+    },
+    {
+      "id": "slot_frame_bag",
+      "status": "ok",
+      "width": 147,
+      "height": 119,
+      "brightPixels": 36,
+      "brightRatio": 0.0021,
+      "narrowColumns": 4
+    },
+    {
+      "id": "slot_frame_gear",
+      "status": "ok",
+      "width": 147,
+      "height": 119,
+      "brightPixels": 219,
+      "brightRatio": 0.0125,
+      "narrowColumns": 6
+    },
+    {
+      "id": "arrow_left",
+      "status": "ok",
+      "width": 133,
+      "height": 102,
+      "brightPixels": 99,
+      "brightRatio": 0.0073,
+      "narrowColumns": 16
+    },
+    {
+      "id": "arrow_right",
+      "status": "ok",
+      "width": 133,
+      "height": 102,
+      "brightPixels": 64,
+      "brightRatio": 0.0047,
+      "narrowColumns": 4
+    },
+    {
+      "id": "arrow_up",
+      "status": "ok",
+      "width": 133,
+      "height": 102,
+      "brightPixels": 62,
+      "brightRatio": 0.0046,
+      "narrowColumns": 11
+    },
+    {
+      "id": "arrow_down",
+      "status": "ok",
+      "width": 133,
+      "height": 102,
+      "brightPixels": 0,
+      "brightRatio": 0,
+      "narrowColumns": 0
+    },
+    {
+      "id": "crest_skull",
+      "status": "ok",
+      "width": 154,
+      "height": 154,
+      "brightPixels": 243,
+      "brightRatio": 0.0102,
+      "narrowColumns": 4
+    },
+    {
+      "id": "chest",
+      "status": "rejected_text",
+      "brightPixels": 780,
+      "brightRatio": 0.0135,
+      "narrowColumns": 11
+    },
+    {
+      "id": "bar_hp_frame",
+      "status": "rejected_text",
+      "brightPixels": 1023,
+      "brightRatio": 0.0119,
+      "narrowColumns": 21
+    },
+    {
+      "id": "bar_xp_frame",
+      "status": "rejected_text",
+      "brightPixels": 2082,
+      "brightRatio": 0.0243,
+      "narrowColumns": 21
+    }
+  ]
+}
