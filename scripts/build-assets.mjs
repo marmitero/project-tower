@@ -38,6 +38,9 @@ function parseArgs(argv) {
 
 const IMAGE_EXT = new Set([".png", ".webp", ".jpg", ".jpeg"]);
 const IMAGE_EXT_RE = /\.(png|webp|jpe?g)$/i;
+/** Áudio gerado também entra no manifesto (`scripts/gen-audio.mjs`). */
+const AUDIO_EXT = new Set([".wav", ".ogg", ".mp3", ".opus", ".m4a"]);
+const MEDIA_EXT_RE = /\.(png|webp|jpe?g|wav|ogg|mp3|opus|m4a)$/i;
 
 /** Lista recursivamente arquivos de imagem. */
 async function walkImages(dir) {
@@ -52,6 +55,23 @@ async function walkImages(dir) {
     const full = join(dir, entry.name);
     if (entry.isDirectory()) out.push(...(await walkImages(full)));
     else if (IMAGE_EXT.has(extname(entry.name).toLowerCase())) out.push(full);
+  }
+  return out;
+}
+
+/** Lista recursivamente mídia gerada (imagens + áudio). */
+async function walkMedia(dir) {
+  const out = [];
+  let entries;
+  try {
+    entries = await readdir(dir, { withFileTypes: true });
+  } catch {
+    return out;
+  }
+  for (const entry of entries) {
+    const full = join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...(await walkMedia(full)));
+    else if (IMAGE_EXT.has(extname(entry.name).toLowerCase()) || AUDIO_EXT.has(extname(entry.name).toLowerCase())) out.push(full);
   }
   return out;
 }
@@ -112,6 +132,41 @@ const REQUIRED = [
   // Cenário mínimo para uma tela de combate.
   "tileset/floor_plain",
   "tileset/cave_wall",
+
+  // UI final (§62) — gerada por `scripts/extract-ui.mjs` a partir da
+  // ui_kit, sem texto rasterizado. As barras são decompostas (trilho +
+  // fills + caps) porque a barra inteira da sheet traz "100 / 100".
+  "ui/bar_track",
+  "ui/bar_fill_hp",
+  "ui/bar_fill_mp",
+  "ui/bar_fill_xp",
+  "ui/bar_cap_left_heart",
+  "ui/bar_cap_left_orb",
+  "ui/bar_cap_right",
+  "ui/frame_9slice_stone",
+  "ui/panel_ornate",
+  "ui/slot_frame_sword",
+  "ui/arrow_left",
+  "ui/divider_gold",
+  "ui/chest",
+
+  // Retratos da seleção de herói (§10) — os 4 precisam existir.
+  // hero vem do pack; os outros 3 são gerados no estilo do pack.
+  "portraits/mage",
+  "portraits/archer",
+  "portraits/necromancer",
+
+  // Áudio MVP (§60/§63) — gerado por `scripts/gen-audio.mjs`.
+  "audio/sfx/hit_01",
+  "audio/sfx/critical",
+  "audio/sfx/skill",
+  "audio/sfx/death_enemy",
+  "audio/sfx/victory",
+  "audio/sfx/levelup",
+  "audio/sfx/drop_rare",
+  "audio/sfx/coin",
+  "audio/sfx/click",
+  "audio/sfx/searching",
 ];
 
 async function main() {
@@ -120,6 +175,10 @@ async function main() {
   const outDir = join(ROOT, args.out);
 
   const files = await walkImages(srcDir);
+  // Arte gerada pelo projeto (UI sem texto, áudio procedural, retratos)
+  // entra no MESMO manifesto: o jogo pede IDs, não importa a origem.
+  const generatedDir = join(ROOT, "assets/generated");
+  const generatedFiles = await walkMedia(generatedDir);
   const entries = {};
   const copyPlan = [];
 
@@ -137,6 +196,17 @@ async function main() {
     const relToSrc = relative(srcDir, file).split(sep).join("/");
     entries[id] = relToSrc;
     copyPlan.push([file, join(outDir, relToSrc)]);
+  }
+
+  for (const file of generatedFiles) {
+    const rel = relative(generatedDir, file).split(sep).join("/");
+    const id = rel.replace(MEDIA_EXT_RE, "");
+    // Regra de precedência: arte GERADA sobrescreve entrada do pack com o
+    // mesmo ID. É exatamente o caso de `portraits/*` — o pack traz
+    // `portraits/hero`, e os retratos gerados completam a seleção de
+    // herói sem colidir.
+    entries[id] = rel;
+    copyPlan.push([file, join(outDir, rel)]);
   }
 
   const missing = REQUIRED.filter((id) => entries[id] === undefined);
@@ -181,9 +251,13 @@ async function main() {
   console.log("[assets] manifesto OK");
 }
 
-main().catch((error) => {
-  console.error("[assets] erro:", error);
-  process.exit(1);
-});
+// Executa como script direto; quando importado (check-assets.mjs pede
+// REQUIRED/AUDIO_EXT), não roda o build como efeito colateral.
+if (process.argv[1] && process.argv[1].endsWith("build-assets.mjs")) {
+  main().catch((error) => {
+    console.error("[assets] erro:", error);
+    process.exit(1);
+  });
+}
 
-export { walkImages, idFor, REQUIRED, IMAGE_EXT };
+export { walkImages, walkMedia, idFor, REQUIRED, IMAGE_EXT, AUDIO_EXT };

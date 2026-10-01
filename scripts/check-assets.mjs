@@ -22,6 +22,7 @@ import { readdir, readFile, stat } from "node:fs/promises";
 import { statSync } from "node:fs";
 import { join, relative, extname, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { REQUIRED, IMAGE_EXT, AUDIO_EXT } from "./build-assets.mjs";
 
 const ROOT = join(fileURLToPath(new URL(".", import.meta.url)), "..");
 const STRICT = process.argv.includes("--strict");
@@ -112,6 +113,46 @@ async function main() {
     } catch {
       // tenta o próximo caminho
     }
+  }
+
+  // Catálogo REQUIRED: os IDs que o jogo pede de verdade, contra o
+  // manifesto efetivo (pack + arte gerada). Um guard que só conta arquivos
+  // não protege contra o pack inteiro existir com os nomes errados.
+  const ids = new Set();
+  const collectIds = async (dir, stripExt) => {
+    const entries = await readdir(dir, { withFileTypes: true }).catch(() => []);
+    for (const e of entries) {
+      const full = join(dir, e.name);
+      if (e.isDirectory()) await collectIds(full, stripExt);
+      else if (IMAGE_EXT.has(extname(e.name).toLowerCase()) || AUDIO_EXT.has(extname(e.name).toLowerCase())) {
+        ids.add(stripExt(full));
+      }
+    }
+  };
+  await collectIds(join(ROOT, "assets", "sprites"), (p) => relative(join(ROOT, "assets", "sprites"), p).split(sep).join("/").replace(/\.(png|webp|jpe?g|wav|ogg|mp3|opus|m4a)$/i, "").replace(/\.(png|webp|jpe?g)$/i, ""));
+  await collectIds(join(ROOT, "assets", "generated"), (p) => relative(join(ROOT, "assets", "generated"), p).split(sep).join("/").replace(/\.(png|webp|jpe?g|wav|ogg|mp3|opus|m4a)$/i, ""));
+
+  const missing = REQUIRED.filter((id) => !ids.has(id));
+  if (missing.length > 0) {
+    console.error("[assets] FALHA — IDs obrigatórios ausentes (§62):");
+    for (const id of missing) console.error(`  - ${id}`);
+    process.exit(1);
+  }
+
+  // Relatório de extração de UI: nenhuma peça rejeitada pode ter sido
+  // deixada para trás em assets/generated/ui.
+  try {
+    const report = JSON.parse(await readFile(join(ROOT, "assets", "generated", "ui", "extraction-report.json"), "utf8"));
+    const bad = (report.pieces || []).filter((p) => p.status !== "ok");
+    if (bad.length > 0) {
+      console.error("[assets] FALHA — peças de UI não aprovadas no diretório de saída (§62):");
+      for (const p of bad) console.error(`  - ${p.id}: ${p.status}`);
+      process.exit(1);
+    }
+    console.log(`[assets] UI gerada: ${report.pieces.length} peças aprovadas, ${report.rejected.length} regiões descartadas por texto`);
+  } catch {
+    console.warn("[assets] sem extraction-report.json — rode `node scripts/extract-ui.mjs`.");
+    if (STRICT) process.exit(1);
   }
 
   if (problems.length > 0) {

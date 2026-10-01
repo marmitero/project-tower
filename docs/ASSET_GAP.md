@@ -16,14 +16,14 @@ Este documento é factual: diz o que existe, o que não existe e o que a regra e
 | **NPCs parciais** | 2 (`merchant`, `villager` — só idle/walk) |
 | **Heróis candidatos a P-002** | 4 (`hero`, `mage`, `archer`, `necromancer`) — todos com sheet completa |
 | **Skins do Rei** | 8 |
-| **Retratos** | 8 |
+| **Retratos** | 8 do pack + 3 gerados no estilo do pack = **11** (os 4 heróis cobertos) |
 | **Ícones** | 224 |
 | **VFX** | 7 |
 | **Tiles e props** | 51 + 20 |
-| **UI** | 2 sheets |
-| **Áudio** | **0** |
+| **UI** | 2 sheets → **33 peças extraídas sem texto** (2026-10-01) |
+| **Áudio** | 0 → **22 SFX procedurais gerados** (2026-10-01) |
 
-**Conclusão:** a arte de personagem está coberta. As lacunas reais são **áudio** (zero), **UI em PT-BR** (nada utilizável) e **retratos dos heróis** (faltam 3 dos 4).
+**Conclusão (atualizada 2026-10-01):** a arte de personagem está coberta. As três lacunas vermelhas do inventário original — **áudio**, **UI em PT-BR** e **retratos dos heróis** — foram fechadas por geração/extração própria (ver §3). O que resta é conteúdo de segundo plano (§3.4–3.6): animação de "Procurando...", mapeamento andar→bioma e ícones de sistema.
 
 ---
 
@@ -66,71 +66,70 @@ Os 13 inimigos que o catálogo provisório referencia (`P-006`) existem com anim
 
 ## 3. FALTANDO — lacunas reais
 
-### 🔴 3.1 Áudio — não existe nenhum arquivo
+### ✅ 3.1 Áudio — RESOLVIDO (2026-10-01): 22 SFX gerados
 
-**Gravidade:** alta · **Bloqueia:** §60, §63, a sensação de "jogo" e a identidade sonora
+**Gravidade:** alta · **Status:** fechado para o MVP
 
-O repositório de referência inteiro (`marmitero/tower-idle-adventure`) **não tem um único `.mp3`, `.ogg` ou `.wav`**. A página do autor confirma: *"KNOWN LIMITATIONS: ... no audio."*
+O repositório de referência não tem um único arquivo de áudio. A decisão registrada aqui era "(a) pack, (b) gerar, (c) CC0 — não escolhida". **Escolhida: (b) gerar.** `scripts/gen-audio.mjs` sintetiza SFX procedurais — arte final do projeto, versionada, determinística e sem dependência externa — em `assets/generated/audio/sfx/` (WAV mono 44,1 kHz, < 2 s, pico −1 dBTP, conforme `AUDIO_GUIDELINES.md` §4).
 
-O que o MVP precisa e não existe:
-
-| Som | Quando | Prioridade |
+| Som | Arquivo | Prioridade |
 |---|---|---|
-| Impacto de ataque básico | `damage_dealt` | 🔴 alta |
-| Impacto crítico | `critical_hit` | 🔴 alta |
-| Ataque de skill | `skill_used` | 🔴 alta |
-| Morte de inimigo | `enemy_defeated` | 🔴 alta |
-| Morte de herói | `character_defeated` | 🟡 média |
-| Vitória de batalha | `battle_won` | 🔴 alta |
-| Derrota | `battle_lost` | 🟡 média |
-| Level up | Rei ou herói subindo | 🟡 média |
-| Drop de equipamento | `reward` raro/mítico | 🟡 média |
-| Moeda | ganho de Coin | 🟡 média |
-| Som ambiente da Torre | loop | 🟢 baixa |
-| "Procurando..." | transição §27 | 🟢 baixa |
-| Clique de UI | todos os botões | 🟢 baixa |
-| Som de slot desbloqueado | §15 | 🟢 baixa |
+| Impacto de ataque básico | `hit_01/02/03.wav` | 🔴 |
+| Impacto crítico | `critical.wav` | 🔴 |
+| Ataque de skill | `skill.wav` | 🔴 |
+| Morte de inimigo | `death_enemy.wav` | 🔴 |
+| Vitória de batalha | `victory.wav` | 🔴 |
+| Level up | `levelup.wav` | 🟡 |
+| Morte de herói / Derrota | `death_hero.wav` / `defeat.wav` | 🟡 |
+| Escada de loot (§108) | `drop_common/rare/epic/legendary/celestial.wav` | 🟡 |
+| Moeda / UI | `coin.wav`, `click.wav`, `back.wav`, `error.wav` | 🟡 |
+| "Procurando..." (§28) | `searching.wav` | 🟢 |
+| Cura / erro de ataque | `heal.wav`, `miss.wav` | 🟢 |
 
-**Sem isso, a §60 ("precisa parecer um jogo") fica apenas parcialmente satisfeita.** Feedback visual sem som é a diferença entre um protótipo e um jogo.
+A escada de raridade é progressiva em altura e duração (raro→celestial), como o §108 exige. Os IDs no manifesto (`audio/sfx/*`) são a fronteira: um pack profissional pode substituir os arquivos sem mudar código. **Música e ambiência continuam fora do MVP** (tarefa da FASE de Polish, §15).
 
-**Opções:** (a) comprar um pack de SFX 8-bit/RPG; (b) gerar; (c) usar CC0. **Decisão de produto — não escolhida aqui.** O que NÃO pode é ficar sem som e chamar de pronto.
+### ✅ 3.2 UI — RESOLVIDA (2026-10-01): 33 peças sem texto, PT-BR por renderização
 
-### 🔴 3.2 UI — nenhuma peça utilizável em PT-BR
+**Gravidade:** alta · **Status:** fechado para o MVP
 
-**Gravidade:** alta · **Bloqueia:** §62, §67
+`scripts/extract-ui.mjs` fatia as duas sheets em peças reutilizáveis **sem um único pixel de texto rasterizado** (guardrail por componentes conectados + auditoria numérica; ver `assets/generated/ui/extraction-report.json`):
 
-A pasta tem **2 arquivos**: `ui_kit.png` (4,3 MB) e `ui_dialog.png` (4,5 MB).
+| Peça | IDs | Uso |
+|---|---|---|
+| Molduras 9-slice ×3 | `ui/frame_9slice_stone/brick/dark` | painéis, janelas, toasts |
+| Painel decorativo | `ui/panel_ornate` | diálogos, títulos |
+| Divisores ×5 | `ui/divider_gold/stone/diamond/gold_thin/scroll` | seções do HUD |
+| Slots de item ×5 | `ui/slot_frame_sword/shield/potion/bag/gear` | inventário, equipamento |
+| Setas ×4 | `ui/arrow_left/right/up/down` | navegação, tabs |
+| Emblemas ×4 | `ui/crest_blue/red/steel/gold` | decoração, conquistas |
+| Placas / faixa | `ui/plaque_wide/narrow`, `ui/banner_blue` | superfícies para rótulos HTML |
+| Cofre | `ui/chest` | loot, recompensas |
+| **Barras decompostas** | `ui/bar_track`, `ui/bar_fill_hp/mp/xp`, `ui/bar_cap_left_heart/orb`, `ui/bar_cap_right` | HUD HP/MP/XP |
 
-O `ASSET_MANIFEST.md` do próprio pack registra o problema: *"A sheet `ui/ui_kit.png` contém palavras em inglês desenhadas dentro da imagem (por exemplo, 'INVENTORY', 'ITEMS', 'EQUIP'). O jogo é PT-BR: preferir peças sem texto incorporado e renderizar os rótulos em HTML/CSS."*
+**Decisão-chave — barras:** a barra inteira da sheet traz "100 / 100" rasterizado. Não há recorte que sobreviva ao §62. As barras são entregues em **partes sem texto** (trilho vazio + fills coloridos + caps de ícone); o jogo compõe em runtime e renderiza os números em **PT-BR**. O cap da barra de XP foi descartado — traz as letras "XP" rasterizadas. Geometria de composição no `extraction-report.json` (`composition`).
 
-Ressalva adicional: a página do autor diz *"full UI kit (HP/MP/XP bars, inventory, buttons)"*, mas isso descreve o **pacote Unity**, não estes PNGs. O que existe aqui são duas sheets grandes; se contêm molduras reutilizáveis, isso precisa ser verificado visualmente antes de contar com elas.
+Regiões **descartadas por texto** (catalogadas no relatório, para ninguém repetir o trabalho): barras inteiras da `ui_kit`, os banners vermelho/azul da `ui_dialog` e duas tiras ornamentais ambíguas.
 
-**O que falta de fato:**
+**Botões:** as duas sheets NÃO têm botão utilizável — todos trazem rótulo em inglês. Botões são construídos com as molduras 9-slice + texto HTML em PT-BR (a superfície web é renderização de primeira classe neste produto).
 
 | Peça | Situação |
 |---|---|
-| Moldura de painel, 9-slice | ❓ não verificado visualmente |
-| Botões (normal/hover/press/disabled) | ❓ idem |
-| Barra de HP / XP / Coin | ❌ nenhuma barra dedicada |
-| Ícone de raridade (6 variantes) | ❌ |
-| Ícone de slot de equipamento (10) | ❌ |
-| Ícone de status (poison/stun/burn/regen/shield) | ❌ |
-| Cursor / joystick mobile | ❌ |
-| Toast / notificação | ❌ |
-| Tela de criação do Rei | ❌ |
-| Tela de seleção de herói (4 cards) | ❌ |
+| Moldura de painel, 9-slice | ✅ 3 variantes |
+| Botões (normal/hover/press/disabled) | ✅ composição 9-slice + HTML (as sheets não têm botão sem texto) |
+| Barra de HP / MP / XP | ✅ decompostas, texto em PT-BR no runtime |
+| Ícone de raridade (6 variantes) | ❌ ver §3.6 |
+| Ícone de status (poison/stun/burn/regen/shield) | ❌ ver §3.6 |
+| Cursor / joystick mobile | ❌ ver §3.6 |
+| Toast / notificação | ✅ composição (9-slice + texto) |
+| Tela de criação do Rei / seleção de herói | ✅ composição + retratos (§3.3) |
 
-O HUD atual em HTML/CSS funciona e é responsivo, mas é **funcional, não com identidade visual**. A §62 exige que não pareça protótipo.
+### ✅ 3.3 Retratos dos heróis — RESOLVIDO (2026-10-01): 4 de 4
 
-### 🟡 3.3 Retratos dos heróis — faltam 3 de 4
+**Gravidade:** média · **Status:** fechado
 
-**Gravidade:** média · **Bloqueia:** tela de seleção (§10)
+O pack tem 8 retratos (`hero`, `goblin`, `skeleton`, `slime`, `orc`, `boss`, `merchant`, `villager`) e faltavam `mage`, `archer` e `necromancer`. Os 3 foram **gerados no estilo do retrato `hero.png` do pack** (mesmo enquadramento de busto, mesmo fundo azul-petroleo, mesma paleta suave) em `assets/generated/portraits/`, normalizados para 256×256 — as 4 telas de seleção de herói ficam com identidade visual coerente.
 
-Existem 8 retratos: `hero`, `goblin`, `skeleton`, `slime`, `orc`, `boss`, `merchant`, `villager`.
-
-Faltam `mage`, `archer` e `necromancer` — ou seja, **3 dos 4 heróis candidatos não têm retrato**. A tela de criação do Rei e a de seleção de herói precisam de retrato para cada um.
-
-*Opção sem custo:* usar a sheet `idle` do personagem como retrato, recortando o quadro da direção "down". Funciona, mas perde a leitura de "retrato" e é visibly worse que um retrato dedicado.
+Os retratos entram no manifesto no mesmo namespace `portraits/*` do pack: o jogo pede `portraits/mage` sem saber que é arte gerada. Ficam como arte própria do projeto; substituição por arte de terceiro é plugável pelo manifesto.
 
 ### 🟡 3.4 Animação do "Procurando..."
 
@@ -169,25 +168,26 @@ A §22 fala em *"progressão visual"* e a `P-028` cobre isso. O tileset tem 3 bi
 
 ## 5. O que fazer, em ordem
 
-| # | Ação | Bloqueia | Custo |
-|---|---|---|---|
-| 1 | **Decidir P-002** (4 heróis) | Fase 4 inteira | Decisão humana |
-| 2 | **Resolver áudio** | §60, sensação de jogo | Pack / geração |
-| 3 | **Verificar visualmente `ui_kit.png`** e definir o que serve | §62 | 1 hora |
-| 4 | **Criar/procurar 3 retratos** (mage, archer, necromancer) | §10 | Baixo |
-| 5 | **Criar ou emprestar a animação de "Procurando..."** | §28 | Baixo |
-| 6 | **Mapear andar → bioma** | §22 | Direção de arte |
-| 7 | **Ícones de sistema** (slots, raridade, moeda, fragmento) | Polish | Baixo |
+| # | Ação | Bloqueia | Custo | Status |
+|---|---|---|---|---|
+| 1 | **Decidir P-002** (4 heróis) | Fase 4 inteira | Decisão humana | ⏳ pendente |
+| 2 | **Resolver áudio** | §60, sensação de jogo | Pack / geração | ✅ 22 SFX gerados (2026-10-01) |
+| 3 | **Verificar visualmente `ui_kit.png`** e definir o que serve | §62 | 1 hora | ✅ 33 peças extraídas (2026-10-01) |
+| 4 | **Criar/procurar 3 retratos** (mage, archer, necromancer) | §10 | Baixo | ✅ gerados no estilo do pack (2026-10-01) |
+| 5 | **Criar ou emprestar a animação de "Procurando..."** | §28 | Baixo | ⏳ áudio pronto (`searching.wav`); falta o visual |
+| 6 | **Mapear andar → bioma** | §22 | Direção de arte | ⏳ |
+| 7 | **Ícones de sistema** (slots, raridade, moeda, fragmento) | Polish | Baixo | ⏳ |
 
-Itens 1 e 2 são os que de fato impedem chamar o jogo de pronto. Os demais são Transaction e podem ser fechados em qualquer ordem.
+O item 1 (P-002) é o que de fato impede chamar o jogo de pronto. Os demais são transacionais e podem ser fechados em qualquer ordem.
 
 ---
 
 ## 6. Rastreabilidade
 
-- Inventário: `apps/game-web/public/assets/manifest.json` (gerado, 422 entradas)
+- Inventário: `apps/game-web/public/assets/manifest.json` (gerado, 480 entradas: 422 do pack + 58 geradas)
 - Fonte e recuperação: [`../assets/SOURCES.md`](../assets/SOURCES.md)
 - Licença e crédito: [`../assets/ATTRIBUTION.md`](../assets/ATTRIBUTION.md)
-- Pipeline: `scripts/build-assets.mjs` · guard: `scripts/check-assets.mjs`
+- Pipeline: `scripts/build-assets.mjs` · guard: `scripts/check-assets.mjs` (inclui catálogo REQUIRED + relatório de extração de UI)
+- Geração própria: `scripts/extract-ui.mjs` (UI sem texto) · `scripts/gen-audio.mjs` (SFX) · saídas em `assets/generated/{ui,audio,portraits}/`
 - Estilo e regras: [`ART_GUIDELINES.md`](ART_GUIDELINES.md) · [`AUDIO_GUIDELINES.md`](AUDIO_GUIDELINES.md) · [`UI_UX.md`](UI_UX.md)
 - Pendências: [`PENDING_RULES.md`](PENDING_RULES.md) — `P-002`, `P-028`, `P-036`, `P-061`

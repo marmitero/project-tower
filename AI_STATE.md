@@ -316,7 +316,7 @@ Todas as 15 têm teste **passando** hoje. Os arquivos abaixo existem e rodam em 
 | **Espalhar números de balanceamento** | `packages/config` + `validateConfig()` no boot + INV-18 (todo arquivo de balanceamento cita §/P/ADR) |
 | **Empacotar os 92 MiB de sprites** | `scripts/build-assets.mjs` gera o manifesto `id -> caminho`; o código nunca monta caminho |
 | **Deixar Debug Mode em produção** | `scripts/check-debug-mode.mjs` — falha se `debugger` sobrar ou se debug ficar sem guarda de ambiente |
-| **UI com rótulos em inglês** | `ui_kit.png` proibida como UI final. UI em HTML/CSS |
+| **UI com rótulos em inglês** | `scripts/extract-ui.mjs` só entrega peças sem texto (guardrail por componentes conectados); barras são decompostas e os números saem em PT-BR pelo runtime. Rótulos sempre em HTML/CSS |
 | **Placeholder chegar ao público** | `scripts/check-assets.mjs` detecta emoji-as-sprite, SVG inline e retângulo-colorido; `--strict` bloqueia o release sem sprites |
 | **`bigint` se perder na serialização** | `encodeSave`/`decodeSave` com tag explícita; teste com valor acima de `Number.MAX_SAFE_INTEGER` |
 | **Save corrompido travar o boot** | `boot()` põe o ilegível em quarentena e cria um novo save, em vez de crashar |
@@ -327,7 +327,8 @@ Todas as 15 têm teste **passando** hoje. Os arquivos abaixo existem e rodam em 
 
 | Não feito | Por quê |
 |---|---|
-| **Assets de arte** | O pack de sprites (422 PNGs) não está mais disponível no sandbox. O pipeline (`scripts/build-assets.mjs`) está pronto e **falha alto** quando os obrigatórios faltam. `npm run check:assets:strict` é o gate de release. |
+| **Assets de arte** | ✅ RESOLVIDO. Pack recuperado (422 PNGs em `assets/sprites/`, ver `assets/SOURCES.md`) + 58 artefatos gerados (`assets/generated/`: 33 peças de UI sem texto, 22 SFX, 3 retratos). `scripts/build-assets.mjs` monta o manifesto (480 entradas) e `scripts/check-assets.mjs` valida catálogo REQUIRED + relatório de extração. `npm run check:assets:strict` segue sendo o gate de release. |
+| **Música e ambiência** | FASE de Polish (§15). Os 22 SFX cobrem o MVP (§60/§63); a estrutura alvo está em `docs/AUDIO_GUIDELINES.md` §3. |
 | **Implementação do Supabase** | A interface `PersistenceService` existe e a implementação LOCAL é real. A de Supabase entra na Fase Online, com RLS. |
 | **Inventário visual completo** | A lógica existe e é testada; a tela mostra a lista com raridade, nota e X. Falta ordenar/paginar conforme `P-025`/`P-016`. |
 | **Tela de criação do Rei** | É a Fase 3. Depende de `P-007` (formato do nickname) e `P-006c` (skins iniciais). |
@@ -341,6 +342,8 @@ Todas as 15 têm teste **passando** hoje. Os arquivos abaixo existem e rodam em 
 ## 12. Resumo para a próxima sessão
 
 **Estado:** FASE 1 e FASE 2 concluídas. Fundação completa e verificada: monorepo, config validada, contratos, engine puro, `game-core`, HUD, shell Vite/React/Phaser rodando e 259 testes verdes (231 unit+integration + 28 arch).
+
+**Assets (2026-10-01):** as três lacunas vermelhas do inventário foram fechadas — UI em PT-BR (33 peças sem texto extraídas da `ui_kit`; barras decompostas em trilho+fills+caps para compor em runtime com números em PT-BR), áudio (22 SFX procedurais gerados por `scripts/gen-audio.mjs`, incluindo a escada de raridade do §108) e retratos dos 4 heróis (3 gerados no estilo do pack). Pipeline: 480 entradas no manifesto, `check:assets` e `check:assets:strict` verdes. Detalhes em `docs/ASSET_GAP.md` §3.
 
 **O que fazer:** **FASE 3 — Rei**. Criar a tela de criação do Rei (nome + skin), ligá-la ao `GameState` que já existe. Começa por decidir `P-007` (nickname) e `P-006c` (skins iniciais), mas o resto da tela não depende delas.
 

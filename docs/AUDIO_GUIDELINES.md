@@ -85,6 +85,8 @@ assets/audio/
 
 > ⚠️ A rarity ladder de som (`drop_rare` → `drop_celestial`) é **essencial** e precisa de sons progressivamente mais distintos. É o canal que faz o §108 funcionar sem olhar.
 
+> ✅ **Status 2026-10-01 — MVP coberto por SFX gerados.** `scripts/gen-audio.mjs` produz 22 SFX procedurais (WAV mono 44,1 kHz, < 2 s, pico −1 dBTP) em `assets/generated/audio/sfx/`, com IDs `audio/sfx/*` no manifesto: `hit_01..03`, `critical`, `skill`, `miss`, `death_enemy`, `death_hero`, `victory`, `defeat`, `levelup`, `drop_common..celestial` (escada progressiva), `coin`, `click`, `back`, `error`, `searching`, `heal`. São arte final do projeto — substituíveis por pack profissional **sem mudar IDs** (a fronteira é o manifesto). Música, ambiência e SFX de boss continuam para a FASE de Polish; a estrutura de pastas acima continua sendo o alvo quando existirem.
+
 ---
 
 ## 4. Especificação técnica
