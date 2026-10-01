@@ -57,6 +57,16 @@ O §10 define **quantos** (4) e **como** (escolhe 1), e exige diferenças reais 
 
 **Decisão precisa de:** nome, classe, papel, atributos-base, skills, raridade, curva de progressão.
 
+**Status (2026-10-01 — decisão do usuário):** **inserção genérica aprovada.**
+Os 4 heróis entram com o material do pack (hero/mage/archer/necromancer) via
+`packages/config/src/catalog.ts`, modelado como DADO: papéis e perfis de
+atributo já distintos (§10), físico × mágico coberto (§18), assets por ID do
+manifesto com folhas de animação completas, e validação cruzada
+config × manifesto (`tests/integration/assets-config.test.ts`) que reprova
+qualquer remapeamento errado. **Continua PENDENTE** para a identidade
+definitiva: nomes próprios, skills (⛔ `P-022`), raridades e curvas de
+balanceamento — tudo remodelação de dados, não de código.
+
 ---
 
 ### P-005 — Estrutura e curva da Torre

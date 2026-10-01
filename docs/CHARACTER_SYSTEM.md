@@ -156,7 +156,16 @@ A consequência de design: o inventário de heróis precisa de **paginação, fi
 
 ### 3.3 Os 4 heróis iniciais
 
-> **P-002 — BLOQUEIO CRÍTICO. Esta é a pendência que impede o início da Fase 4 e, portanto, da vertical slice.**
+> **Status (2026-10-01 — decisão do usuário):** **inserção genérica
+> aprovada.** Os 4 heróis existem no jogo com o material do pack
+> (`hero`→Guardião, `mage`→Arcanista, `archer`→Arqueiro,
+> `necromancer`→Invocador Sombrio), modelados como **dado remodelável** em
+> [`packages/config/src/catalog.ts`](../packages/config/src/catalog.ts)
+> (ADR-013): papéis e perfis de atributo distintos (§10), físico × mágico
+> (§18), retrato + 6 folhas de animação por ID do manifesto, validação
+> cruzada com o manifesto no CI. A identidade **definitiva** (nomes, skills,
+> raridades, curvas) continua pendente em **P-002** — quando decidida, é
+> remodelagem de dados.
 
 O `Master-Prompt.md` define com precisão *quantos* e *como* (§10):
 

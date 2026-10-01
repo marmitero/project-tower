@@ -151,6 +151,7 @@ Todas em [`docs/DECISIONS_LOG.md`](docs/DECISIONS_LOG.md).
 | **010** | A invariante 1×1 é imposta pela **assinatura** (`startTowerBattle` recebe um herói, não uma equipe), não por um `if` que alguém pode remover |
 | **011** | O `GameState` é a **única** porta de mutação; `data` é exposto como `Readonly` e toda mudança incrementa `revision` (§86) |
 | **012** | Criação do Rei sem auto-criação (§62); retrato ≠ skin; regras de nickname em dados (`config.account.nickname`) |
+| **013** | Catálogo de heróis como dado remodelável; assets por ID do manifesto estruturados em folhas; validação cruzada config × manifesto no CI |
 
 ---
 
@@ -228,7 +229,10 @@ O que a Fase 3 entregou:
 ### Depois da Fase 3
 
 ```text
-FASE 4  Personagens            ⛔ P-002 — crítico ← PRÓXIMO PASSO
+FASE 4  Personagens            ⛔ P-002 (identidade final) ← EM CURSO
+         └ inserção genérica aprovada 2026-10-01 (ADR-013): catálogo dos 4
+           heróis como dado, assets por ID do manifesto, validação no CI
+         └ falta: XP/níveis de herói funcionais e seleção 1 entre N
 FASE 5  Equipe                 ⛔ P-003, P-004
 FASE 6  Combate
 FASE 7  Torre                  ⛔ P-005, P-006
@@ -343,11 +347,11 @@ Todas as 15 têm teste **passando** hoje. Os arquivos abaixo existem e rodam em 
 
 ## 12. Resumo para a próxima sessão
 
-**Estado:** FASE 1, 2 e 3 concluídas. Fundação completa e verificada: monorepo, config validada, contratos, engine puro, `game-core`, HUD, shell Vite/React/Phaser rodando. **FASE 3 (Rei) concluída e com gate batido:** fluxo de criação (nome + skin) com validação de nickname, retrato do Rei na HUD/perfil, perfil com nível/XP/skin trocável, 1 Rei por conta, `lastActiveAt`, e 290 testes verdes (262 unit+integration + 28 arch).
+**Estado:** FASE 1, 2 e 3 concluídas; FASE 4 em curso com a **inserção genérica** (2026-10-01, decisão do usuário): o catálogo dos 4 heróis e dos inimigos virou dado remodelável (`packages/config/src/catalog.ts`, ADR-013) com papéis/perfis distintos (§10), físico × mágico (§18), assets por ID do manifesto (retrato + 6 folhas de animação) e validação cruzada config × manifesto no CI (nada de clones §10, nada de herói sem arte §62). 304 testes verdes (276 unit+integration + 28 arch).
 
 **Assets (2026-10-01):** as três lacunas vermelhas do inventário foram fechadas — UI em PT-BR (33 peças sem texto extraídas da `ui_kit`; barras decompostas em trilho+fills+caps para compor em runtime com números em PT-BR), áudio (22 SFX procedurais gerados por `scripts/gen-audio.mjs`, incluindo a escada de raridade do §108) e retratos dos 4 heróis (3 gerados no estilo do pack). Pipeline: 480 entradas no manifesto, `check:assets` e `check:assets:strict` verdes. Detalhes em `docs/ASSET_GAP.md` §3.
 
-**O que fazer:** **FASE 4 — Personagens**, que está **bloqueada por `P-002`** (definição dos 4 heróis — decisão de produto). Sem `P-002`, dá para construir: XP de herói com a curva da config (⛔ P-009), níveis de herói, e a telemetria de classes. Enquanto isso, as lacunas que sobram da Fase 3 são de decisão, não de código: `P-007` (política de troca de nome), `P-006c` (skins iniciais definitivas), `P-009` (curvas com dados de playtest).
+**O que fazer:** **FASE 4 — Personagens**, no que não depende da identidade final: XP de herói com a curva da config (⛔ P-009), níveis de herói, seleção de 1 entre N e integração com inventário. A identidade definitiva (nomes, skills ⛔ P-022, raridades, curvas) continua com o usuário em **P-002** — quando decidida, a entrega é um diff de dados em `catalog.ts`, sem tocar game-core/engine/UI.
 
 **O que perguntar ao usuário:** as 7 pendências críticas, começando por **P-002 (os 4 heróis)**. O catálogo provisório funciona para desenvolvimento, mas o §10 exige "diferenças reais" e isso só se confirma com decisão humana.
 

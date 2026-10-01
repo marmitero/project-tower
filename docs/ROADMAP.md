@@ -191,20 +191,33 @@ Criação do Rei, nickname, skin, perfil, nível da conta.
 
 4 heróis iniciais, escolha de 1, atributos, XP de herói, níveis, skills.
 
-> ⛔ **BLOQUEADA por `P-002`.** A definição dos 4 heróis é decisão de produto.
+> ⛔ A identidade **definitiva** dos heróis depende de `P-002` (decisão de
+> produto). **2026-10-01:** o usuário aprovou a **inserção genérica** — o
+> catálogo entrou como dado remodelável (`packages/config/src/catalog.ts`,
+> ADR-013): 4 heróis com papéis e perfis de atributo distintos (§10),
+> físico × mágico coberto (§18), assets por ID do manifesto (retrato + 6
+> folhas de animação) e validação cruzada config × manifesto no CI.
 
-**O que pode ser construído sem `P-002`:**
+**O que já está construído (inserção genérica):**
 
-- O modelo de dados de `Hero`.
+- O modelo de dados de `Hero` e o catálogo tipado — remodelar é editar dados.
+- Os 4 heróis entram no save novo com retrato, folhas e stats por classe.
+- Garantias mecânicas no CI: nada de clones disfarçados (§10) e nada de
+  herói sem arte (§62).
+
+**O que pode ser construído sem a identidade definitiva:**
+
 - O XP de herói e a curva.
 - A seleção de 1 entre N.
 - A integração com inventário e equipamento.
 
-**O que precisa de `P-002`:** os 4 heróis — nome, classe, atributos-base, skills, estilo, raridade.
+**O que precisa de `P-002`:** nomes definitivos, skills (⛔ `P-022`),
+raridades e curvas de balanceamento — tudo remodelação de dados no catálogo.
 
-> O material de apoio existe ([`ASSET_INVENTORY.md` §5.3](ASSET_INVENTORY.md#53-candidatos-para-os-4-heróis-iniciais)): sprites candidatos (`hero`, `mage`, `archer`, `necromancer`) que cobrem físico × mágico e têm traços de arma complementares. Falta a **decisão**.
+> O material de apoio existe ([`ASSET_INVENTORY.md` §5.3](ASSET_INVENTORY.md#53-candidatos-para-os-4-heróis-iniciais)): sprites candidatos (`hero`, `mage`, `archer`, `necromancer`) que cobrem físico × mágico e têm traços de arma complementares.
 
 **Gate:** o jogador escolhe 1 dos 4, e a escolha tem impacto real (§10).
+*Parcial:* escolha e impacto mecânico existem; identidade final pendente.
 
 ---
 

@@ -223,3 +223,36 @@ que na HUD/perfil é um **retrato/busto** (§4), não a skin completa.
 **Consequência.** Unicidade real de nome é server-authoritative no online;
 aqui, 1 conta = 1 Rei (§8) + lista reservada. As 6 skins não escolhidas
 ficam fora do catálogo até `P-006c` ser decidido.
+
+---
+
+## ADR-013 — Catálogo de heróis como dado remodelável, com validação cruzada de assets
+
+**Status:** aceito · **Data:** 2026-10-01 · **Fase 4 (P-002)**
+
+**Contexto.** `P-002` (identidade definitiva dos 4 heróis) é decisão de
+produto e continua aberta. O usuário decidiu avançar com a **inserção
+genérica**: os 4 heróis entram com a arte que o pack oferece hoje, sem
+fechar nomes/skills/curvas. O risco é o óbvio: uma "identidade provisória"
+que vira regra de facto por estar colada no código — e um catálogo que,
+quando a decisão chegar, exija reescrita em vez de remodelagem.
+
+**Decisão.** Três camadas separadas:
+
+1. **Catálogo é dado.** `packages/config/src/catalog.ts` declara os 4 heróis
+   (papéis, perfis de atributo, skills por id) e os inimigos como objetos
+   tipados. Identidade definitiva = editar dados, não código.
+2. **Assets por ID do manifesto, estruturados.** Cada personagem declara
+   `assets: { portrait?, sheets: { idle, walk, run, attack, hurt, death } }`.
+   `charSheets(id)` expande para as 6 folhas — renovar o pack é uma edição
+   de catálogo + teste, nunca caça a strings espalhadas.
+3. **Validação em dois níveis.** `validateCatalog()` (forma dos dados:
+   4 heróis distintos, físico × mágico, folhas não vazias) roda no boot junto
+   de `validateConfig()`; `tests/integration/assets-config.test.ts` cruza
+   TODO assetId do config e da renderização com o manifesto.
+
+**Consequência.** "Quatro personagens visualmente diferentes mas
+mecanicamente iguais" (§10) reprova no CI (growths e papéis precisam ser
+distintos). "Herói sem sprite" (§62) reprova no CI (id fora do manifesto).
+Quando `P-002` for decidida, a entrega é um diff de dados em `catalog.ts` —
+nomes, skills, raridades e números — sem tocar em game-core, engine ou UI.
