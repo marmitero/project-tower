@@ -34,6 +34,14 @@ export {
   EQUIP_SLOTS,
   EQUIP_TEMPLATES,
 } from "./catalog.js";
+export { skills, skillsById, type SkillDef, type SkillTargeting, type SkillDamageType, type SkillTag } from "./skills.js";
+export {
+  growthFromAttributes,
+  ATTRIBUTE_IDS,
+  type CharacterAttributes,
+  type AttributeId,
+  type DerivedGrowth,
+} from "./attributes.js";
 export type {
   ClassGrowth,
   HeroClassDef,

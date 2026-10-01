@@ -8,6 +8,13 @@ import {
   enemies,
   type CharacterAssets,
 } from "./catalog.js";
+import { skills, skillsById } from "./skills.js";
+import {
+  ATTRIBUTE_IDS,
+  growthFromAttributes,
+  type CharacterAttributes,
+  type DerivedGrowth,
+} from "./attributes.js";
 
 export class ConfigValidationError extends Error {
   readonly errors: string[];
@@ -256,6 +263,16 @@ export function validateCatalog(): void {
   if (errors.length > 0) throw new ConfigValidationError(errors);
 }
 
+/** O growth armazenado é exatamente o derivado dos atributos? */
+function sameGrowth(attrs: CharacterAttributes, growth: ClassGrowthLike): boolean {
+  const derived = growthFromAttributes(attrs);
+  return (Object.keys(derived) as (keyof DerivedGrowth)[]).every(
+    (k) => Math.abs(derived[k] - growth[k]) < 1e-9,
+  );
+}
+
+type ClassGrowthLike = DerivedGrowth;
+
 function collectCatalogErrors(): string[] {
   const errors: string[] = [];
   const check = (ok: boolean, message: string) => {
@@ -314,6 +331,52 @@ function collectCatalogErrors(): string[] {
       c.passiveSkillIds.length === 2,
       `classes.${c.id}.passiveSkillIds deve ter 2 passivas (§22)`,
     );
+
+    // Atributos (base OpenRpg) — a identidade que deriva o growth.
+    for (const attr of ATTRIBUTE_IDS) {
+      const value = c.attributes[attr];
+      check(
+        Number.isFinite(value) && value > 0,
+        `classes.${c.id}.attributes.${attr} deve ser > 0 (recebeu ${String(value)})`,
+      );
+    }
+    check(
+      sameGrowth(c.attributes, c.growth),
+      `classes.${c.id}.growth não bate com growthFromAttributes(attributes) — derive, não escreva à mão`,
+    );
+    check(
+      c.growth.critChance <= 0.75,
+      `classes.${c.id}.growth.critChance acima do teto do engine (critCap 0.75)`,
+    );
+
+    // Skills referenciadas existem e pertencem à classe (§22).
+    const active = skillsById[c.activeSkillId];
+    check(!!active, `classes.${c.id}.activeSkillId não existe no catálogo de skills: ${c.activeSkillId}`);
+    check(active?.kind === "active", `classes.${c.id}.activeSkillId deve apontar para skill ativa`);
+    check(active?.classId === c.id, `classes.${c.id}.activeSkillId pertence a outra classe`);
+    for (const pid of c.passiveSkillIds) {
+      const passive = skillsById[pid];
+      check(!!passive, `classes.${c.id}.passiveSkillIds não existe no catálogo: ${pid}`);
+      check(passive?.kind === "passive", `classes.${c.id}: ${pid} deve ser passiva`);
+      check(passive?.classId === c.id, `classes.${c.id}: ${pid} pertence a outra classe`);
+    }
+  }
+
+  // --- Skills (§9, §25 — catálogo baseado no OpenRpg) ----------------------
+  check(new Set(skills.map((s) => s.id)).size === skills.length, "skills[].id duplicado");
+  for (const s of skills) {
+    check(s.name.length > 0, `skills.${s.id}.name não pode ser vazio`);
+    check(s.manaCost >= 0, `skills.${s.id}.manaCost não pode ser negativo`);
+    if (s.kind === "active") {
+      check(
+        (s.coefficient ?? 0) > 0,
+        `skills.${s.id} ativa precisa de coefficient > 0`,
+      );
+      check(s.cooldownMs > 0, `skills.${s.id} ativa precisa de cooldownMs > 0`);
+    }
+    if (s.damageType !== "none") {
+      check((s.coefficient ?? 0) > 0, `skills.${s.id} com dano precisa de coefficient`);
+    }
   }
 
   // --- Inimigos (P-006 provisório) ----------------------------------------

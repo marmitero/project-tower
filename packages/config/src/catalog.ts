@@ -26,6 +26,7 @@
  */
 
 import type { EquipSlotId, Rarity, StatId, WeaponType } from "./types.js";
+import { growthFromAttributes, type CharacterAttributes } from "./attributes.js";
 
 /** As 6 folhas de animação de um personagem (§23). Todas obrigatórias. */
 export interface CharacterSheets {
@@ -106,13 +107,18 @@ export interface HeroClassDef {
   baseRarity: Rarity;
   affinityWeapon: WeaponType | null;
   assets: HeroAssets;
+  /**
+   * Identidade da classe (base OpenRpg, `docs/OPENRPG_REFERENCE.md` §3).
+   * Os stats de combate (`growth`) são PROJEÇÃO derivada destes números.
+   */
+  attributes: CharacterAttributes;
   growth: ClassGrowth;
-  /** ⛔ P-002 provisório — §22: 1 ativa, 2 passivas. */
+  /** ⛔ P-022 provisório — §22: 1 ativa, 2 passivas. */
   activeSkillId: string;
   passiveSkillIds: string[];
 }
 
-export const classes: HeroClassDef[] = [
+const classSeeds: Omit<HeroClassDef, "growth">[] = [
   {
     id: "guardian",
     name: "Guardião",
@@ -121,16 +127,8 @@ export const classes: HeroClassDef[] = [
     baseRarity: "common",
     affinityWeapon: "sword",
     assets: { portrait: "portraits/hero", sheets: charSheets("hero") },
-    growth: {
-      hp: 180, hpPerLevel: 22,
-      attack: 24, attackPerLevel: 3.1,
-      specialAttack: 8, specialAttackPerLevel: 0.6,
-      defense: 22, defensePerLevel: 2.4,
-      specialDefense: 12, specialDefensePerLevel: 1.0,
-      critChance: 0.05,
-      attackSpeed: 0,
-      speed: 10,
-    },
+    // Identidade (base OpenRpg Fighter): tanque físico bruto.
+    attributes: { strength: 26, dexterity: 10, constitution: 28, intelligence: 8, wisdom: 14, charisma: 12 },
     // ⛔ P-022 — a identidade da skill e sua progressão ainda não são regra.
     activeSkillId: "skill_counter",
     passiveSkillIds: ["passive_bulwark", "passive_riposte"],
@@ -143,16 +141,8 @@ export const classes: HeroClassDef[] = [
     baseRarity: "uncommon",
     affinityWeapon: "staff",
     assets: { portrait: "portraits/mage", sheets: charSheets("mage") },
-    growth: {
-      hp: 120, hpPerLevel: 12,
-      attack: 10, attackPerLevel: 1.1,
-      specialAttack: 30, specialAttackPerLevel: 4.2,
-      defense: 10, defensePerLevel: 1.0,
-      specialDefense: 18, specialDefensePerLevel: 1.6,
-      critChance: 0.05,
-      attackSpeed: 0,
-      speed: 9,
-    },
+    // Identidade (base OpenRpg Mage): puro poder mágico, vidro.
+    attributes: { strength: 10, dexterity: 12, constitution: 16, intelligence: 28, wisdom: 20, charisma: 14 },
     // Único com área real — por isso é o herói de Boss.
     activeSkillId: "skill_nova",
     passiveSkillIds: ["passive_arcane_surge", "passive_manaskin"],
@@ -165,17 +155,8 @@ export const classes: HeroClassDef[] = [
     baseRarity: "common",
     affinityWeapon: "crossbow",
     assets: { portrait: "portraits/archer", sheets: charSheets("archer") },
-    growth: {
-      hp: 140, hpPerLevel: 15,
-      attack: 22, attackPerLevel: 2.9,
-      specialAttack: 12, specialAttackPerLevel: 1.4,
-      defense: 12, defensePerLevel: 1.2,
-      specialDefense: 10, specialDefensePerLevel: 0.9,
-      critChance: 0.12,
-      // IAS é a identidade dele, não um brinde.
-      attackSpeed: 0.2,
-      speed: 16,
-    },
+    // Identidade: velocidade e crítico (DEX alta — modificador perfurante).
+    attributes: { strength: 18, dexterity: 24, constitution: 20, intelligence: 10, wisdom: 12, charisma: 14 },
     activeSkillId: "skill_volley",
     passiveSkillIds: ["passive_ricochet", "passive_momentum"],
   },
@@ -187,20 +168,22 @@ export const classes: HeroClassDef[] = [
     baseRarity: "rare",
     affinityWeapon: "claws",
     assets: { portrait: "portraits/necromancer", sheets: charSheets("necromancer") },
-    growth: {
-      hp: 130, hpPerLevel: 14,
-      attack: 12, attackPerLevel: 1.3,
-      specialAttack: 26, specialAttackPerLevel: 3.6,
-      defense: 11, defensePerLevel: 1.1,
-      specialDefense: 16, specialDefensePerLevel: 1.5,
-      critChance: 0.08,
-      attackSpeed: 0.1,
-      speed: 12,
-    },
+    // Identidade: sustain/DoT mágico (INT+SAB equilibrados).
+    attributes: { strength: 12, dexterity: 16, constitution: 18, intelligence: 24, wisdom: 18, charisma: 16 },
     activeSkillId: "skill_hex",
     passiveSkillIds: ["passive_venom", "passive_drain"],
   },
 ];
+
+/**
+ * As classes com `growth` derivado dos atributos (base OpenRpg).
+ * Trocar a fantasia de uma classe = editar `attributes`; o balance se
+ * recompõe pela fórmula documentada (`attributes.ts`).
+ */
+export const classes: HeroClassDef[] = classSeeds.map((seed) => ({
+  ...seed,
+  growth: growthFromAttributes(seed.attributes),
+}));
 
 /** Os 4 heróis iniciais (§10 — o jogador ESCOLHE 1). */
 export const STARTER_HERO_CLASSES: readonly string[] = classes.map((c) => c.id);
