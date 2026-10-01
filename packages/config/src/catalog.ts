@@ -25,7 +25,7 @@
  * `tests/integration/assets-config.test.ts` reprova em alto e bom som.
  */
 
-import type { EquipSlotId, Rarity, StatId, WeaponType } from "./types.js";
+import type { EquipSlotId, StatId, WeaponType } from "./types.js";
 import { growthFromAttributes, type CharacterAttributes } from "./attributes.js";
 
 /** As 6 folhas de animação de um personagem (§23). Todas obrigatórias. */
@@ -104,7 +104,6 @@ export interface HeroClassDef {
   role: string;
   /** Físico, mágico ou híbrido — o eixo de decisão do §18. */
   damageType: "physical" | "magic" | "hybrid";
-  baseRarity: Rarity;
   affinityWeapon: WeaponType | null;
   assets: HeroAssets;
   /**
@@ -124,7 +123,6 @@ const classSeeds: Omit<HeroClassDef, "growth">[] = [
     name: "Guardião",
     role: "Reativo / tank",
     damageType: "physical",
-    baseRarity: "common",
     affinityWeapon: "sword",
     assets: { portrait: "portraits/hero", sheets: charSheets("hero") },
     // Identidade (base OpenRpg Fighter): tanque físico bruto.
@@ -138,7 +136,6 @@ const classSeeds: Omit<HeroClassDef, "growth">[] = [
     name: "Arcanista",
     role: "Mágico / área",
     damageType: "magic",
-    baseRarity: "uncommon",
     affinityWeapon: "staff",
     assets: { portrait: "portraits/mage", sheets: charSheets("mage") },
     // Identidade (base OpenRpg Mage): puro poder mágico, vidro.
@@ -152,7 +149,6 @@ const classSeeds: Omit<HeroClassDef, "growth">[] = [
     name: "Arqueiro",
     role: "Velocidade / físico à distância",
     damageType: "physical",
-    baseRarity: "common",
     affinityWeapon: "crossbow",
     assets: { portrait: "portraits/archer", sheets: charSheets("archer") },
     // Identidade: velocidade e crítico (DEX alta — modificador perfurante).
@@ -165,7 +161,6 @@ const classSeeds: Omit<HeroClassDef, "growth">[] = [
     name: "Invocador Sombrio",
     role: "DoT / multi-hit",
     damageType: "magic",
-    baseRarity: "rare",
     affinityWeapon: "claws",
     assets: { portrait: "portraits/necromancer", sheets: charSheets("necromancer") },
     // Identidade: sustain/DoT mágico (INT+SAB equilibrados).

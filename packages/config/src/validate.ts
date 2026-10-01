@@ -3,12 +3,14 @@ import { RARITY_ORDER } from "./rarity.js";
 import { config } from "./game.js";
 import {
   CHARACTER_SHEET_KEYS,
+  EQUIPABLE_STATS,
   STARTER_HERO_CLASSES,
   classes,
   enemies,
   type CharacterAssets,
 } from "./catalog.js";
 import { skills, skillsById } from "./skills.js";
+import { HEROES } from "./heroes.js";
 import {
   ATTRIBUTE_IDS,
   growthFromAttributes,
@@ -360,6 +362,42 @@ function collectCatalogErrors(): string[] {
       check(passive?.kind === "passive", `classes.${c.id}: ${pid} deve ser passiva`);
       check(passive?.classId === c.id, `classes.${c.id}: ${pid} pertence a outra classe`);
     }
+  }
+
+  // --- Identidades dos heróis (P-002 — decidida 2026-10-01) ----------------
+  check(HEROES.length === 4, `HEROES deve ter 4 identidades (P-002), tem ${HEROES.length}`);
+  check(new Set(HEROES.map((h) => h.id)).size === HEROES.length, "HEROES[].id duplicado");
+  check(
+    new Set(HEROES.map((h) => h.name.toLocaleLowerCase("pt-BR"))).size === HEROES.length,
+    "HEROES[].name duplicado (§6 — nomes distintos)",
+  );
+  check(
+    new Set(HEROES.map((h) => h.classId)).size === HEROES.length,
+    "HEROES[].classId duplicado (MVP: 1 herói por classe)",
+  );
+  for (const h of HEROES) {
+    check(classIds.has(h.classId), `HEROES.${h.id}.classId inexistente: ${h.classId}`);
+    const cls = classes.find((c) => c.id === h.classId);
+    check(
+      cls?.activeSkillId === h.signatureSkillId,
+      `HEROES.${h.id}.signatureSkillId deve casar com a skill ativa da classe (${cls?.activeSkillId ?? "—"})`,
+    );
+    check(h.epithet.length > 0, `HEROES.${h.id}.epithet não pode ser vazio`);
+    check(h.lore.length >= 40, `HEROES.${h.id}.lore muito curto (identidade precisa ter substância)`);
+    check(h.personality.length === 3, `HEROES.${h.id}.personality deve ter 3 traços`);
+    check(h.voiceNotes.length > 0, `HEROES.${h.id}.voiceNotes não pode ser vazio`);
+    check(RARITY_ORDER.includes(h.rarity), `HEROES.${h.id}.rarity inválida: ${h.rarity}`);
+    check(h.combatStyle.length > 0, `HEROES.${h.id}.combatStyle não pode ser vazio`);
+    check(new Set(h.statPriority).size === 3, `HEROES.${h.id}.statPriority deve ter 3 stats distintos`);
+    for (const stat of h.statPriority) {
+      check(EQUIPABLE_STATS.includes(stat), `HEROES.${h.id}.statPriority inválida: ${stat}`);
+    }
+    check(h.acquisition.hint.length > 0, `HEROES.${h.id}.acquisition.hint não pode ser vazio`);
+    // §12 — fragmentos NUNCA de inimigos comuns da Torre.
+    check(
+      !/inimigos? comuns?/i.test(h.acquisition.hint),
+      `HEROES.${h.id}.acquisition.hint menciona fonte proibida (§12)`,
+    );
   }
 
   // --- Skills (§9, §25 — catálogo baseado no OpenRpg) ----------------------

@@ -11,7 +11,7 @@
 
 import type { CombatStats, Hero, HeroOrigin, King, Wallet, Team } from "@tia/contracts";
 import type { AccountId, ClassId, HeroId, KingId } from "@tia/contracts";
-import { classes, config, type ClassGrowth, type KingSkinConfig } from "@tia/config";
+import { classes, config, heroIdentityForClass, type ClassGrowth, type KingSkinConfig } from "@tia/config";
 import { newHeroId, newKingId } from "./ids.js";
 
 /** @param nowInjected-clock em ms; injetado para que o teste seja determinístico. */
@@ -126,7 +126,7 @@ export function createHero(params: CreateHeroParams): Hero {
     name: params.name,
     spriteAssetId: cls.assets.sheets.idle,
     portraitAssetId: cls.assets.portrait,
-    rarity: params.rarity ?? cls.baseRarity,
+    rarity: params.rarity ?? heroIdentityForClass(params.classId).rarity,
     level,
     // §45 — pool do herói, separado do do Rei.
     xp: 0n,

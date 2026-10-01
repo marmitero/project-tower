@@ -20,7 +20,7 @@ import type {
   SaveData,
 } from "@tia/contracts";
 import type { AccountId, HeroId } from "@tia/contracts";
-import { classes, config, type ClassGrowth } from "@tia/config";
+import { HEROES, classes, config, type ClassGrowth } from "@tia/config";
 import { RngHub, hashString, step, type Prng } from "@tia/engine";
 import { createKing, createTeam, createWallet, createHero, activeTeamSize, changeKingSkin } from "./creation.js";
 import { createInventory } from "./inventory.js";
@@ -93,12 +93,14 @@ export class GameState {
     const inventory = createInventory(params.accountId);
 
     // §10 — o MVP começa com 4 heróis e o jogador ESCOLHE 1. Nenhum entra
-    // na equipe aqui: escolher é ato do jogador (§19).
-    const heroes = classes.map((cls, i) =>
+    // na equipe aqui: escolher é ato do jogador (§19). Identidades (nome,
+    // raridade) vêm do roster P-002 (`@tia/config` heroes.ts).
+    const heroes = HEROES.map((identity, i) =>
       createHero({
         accountId: params.accountId,
-        classId: cls.id as Hero["classId"],
-        name: cls.name,
+        classId: identity.classId as Hero["classId"],
+        name: identity.name,
+        rarity: identity.rarity,
         now: params.now,
         index: i,
         origin: "starter",

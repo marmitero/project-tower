@@ -24,6 +24,7 @@ import {
   setActiveHero,
   validateNickname,
 } from "@tia/game-core";
+import { HEROES } from "@tia/config";
 import { asAccountId } from "@tia/contracts";
 import { boot, createGame } from "../../apps/game-web/src/boot.js";
 
@@ -91,6 +92,18 @@ describe("fluxo de criação do Rei (§5, §8)", () => {
   it("nome rejeitado pela regra nunca chega ao createGame (guarda da UI é o game-core)", async () => {
     expect(validateNickname("admin").ok).toBe(false);
     expect(validateNickname("Aldric").ok).toBe(true);
+  });
+
+  it("os 4 heróis nascem com as identidades do roster P-002", async () => {
+    const state = await createGame({ accountId: ACCOUNT, persistence: makePersistence(), nickname: "Roster", skinId: "royal" });
+    const names = state.data.heroes.map((h) => h.name);
+    expect(names).toEqual(HEROES.map((h) => h.name));
+    // Raridade por herói (escala de aquisição) e retrato preenchido.
+    for (const [i, hero] of state.data.heroes.entries()) {
+      expect(hero.rarity).toBe(HEROES[i]!.rarity);
+      expect(hero.portraitAssetId.length).toBeGreaterThan(0);
+      expect(hero.level).toBe(1);
+    }
   });
 });
 

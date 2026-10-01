@@ -36,6 +36,13 @@ export {
 } from "./catalog.js";
 export { skills, skillsById, type SkillDef, type SkillTargeting, type SkillDamageType, type SkillTag } from "./skills.js";
 export {
+  HEROES,
+  heroById,
+  heroIdentityForClass,
+  type HeroIdentityDef,
+  type AcquisitionOrigin,
+} from "./heroes.js";
+export {
   growthFromAttributes,
   ATTRIBUTE_IDS,
   type CharacterAttributes,
