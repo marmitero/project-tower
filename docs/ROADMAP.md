@@ -1,7 +1,7 @@
 # Roadmap
 
 **Tower Idle Adventure**
-**Versão:** 0.1 · **Data:** 2026-09-30 · **Estado:** FASE 1 (Documentação) concluída
+**Versão:** 0.1 · **Data:** 2026-10-01 · **Estado:** FASE 3 (Rei) concluída
 **Fonte:** §96–§104 do `Master-Prompt.md`
 
 ---
@@ -10,10 +10,10 @@
 
 ```text
 FASE 0  ✅ Inspeção
-FASE 1  ✅ Documentação            ← ESTAMOS AQUI
-FASE 2  ⬜ Fundação                 ← PRÓXIMO PASSO
-FASE 3  ⬜ Rei
-FASE 4  ⬜ Personagens      ⛔ P-002
+FASE 1  ✅ Documentação
+FASE 2  ✅ Fundação
+FASE 3  ✅ Rei                      ← CONCLUÍDA (gate batido)
+FASE 4  ⬜ Personagens      ⛔ P-002  ← PRÓXIMO PASSO
 FASE 5  ⬜ Equipe
 FASE 6  ⬜ Combate
 FASE 7  ⬜ Torre            ⛔ P-005, P-006
@@ -26,7 +26,9 @@ FASE 13 ⬜ MVP LOCAL
 Online ⬜ → Social ⬜ → Market ⬜ → PvP ⬜ → Monetização ⬜ → Polish ⬜ → Beta ⬜ → Lançamento
 ```
 
-**Nada de gameplay foi implementado.** O repositório contém a especificação e esta documentação.
+Implementado até aqui: especificação, documentação, fundação tipada (contratos,
+config, engine, game-core, persistência, HUD base) e a FASE 3 (criação do Rei).
+Gameplay de Torre/combat/economia ainda **não** está implementado.
 
 ---
 
@@ -84,7 +86,7 @@ Online ⬜ → Social ⬜ → Market ⬜ → PvP ⬜ → Monetização ⬜ → P
 
 ---
 
-## 3. FASE 2 — Fundação
+## 3. FASE 2 — Fundação ✅
 
 **Objetivo:** a estrutura sobre a qual tudo o mais será construído, sem depender de nenhum número de gameplay ainda indefinido.
 
@@ -146,23 +148,42 @@ Cada valor pendente:
 
 ---
 
-## 4. FASE 3 — Rei
+## 4. FASE 3 — Rei ✅
 
 Criação do Rei, nickname, skin, perfil, nível da conta.
 
 **Depende:** estrutura da FASE 2.
 **Bloqueia:** nada.
 
-| # | Entregável | PEND |
-|---|---|---|
-| 1 | Fluxo de criação (nome + skin) | `P-006` (skins iniciais) |
-| 2 | Normalização e validação de nickname | `P-007` |
-| 3 | Retrato do Rei na HUD e no perfil | — |
-| 4 | XP do Rei e curva de nível | `P-009` |
-| 5 | Regra de 1 conta = 1 Rei (§8) | — |
-| 6 | `lastActiveAt` (§47) | — |
+| # | Entregável | PEND | Estado |
+|---|---|---|---|
+| 1 | Fluxo de criação (nome + skin) | `P-006` (skins iniciais) | ✅ `CreationScreen` + `createGame` |
+| 2 | Normalização e validação de nickname | `P-007` | ✅ `game-core/nickname.ts` |
+| 3 | Retrato do Rei na HUD e no perfil | — | ✅ `portraits/hero` |
+| 4 | XP do Rei e curva de nível | `P-009` | ✅ `xp.king.requiredPerLevel` |
+| 5 | Regra de 1 conta = 1 Rei (§8) | — | ✅ `SaveData.king` único |
+| 6 | `lastActiveAt` (§47) | — | ✅ `markActive()` |
 
-**Gate:** um jogador cria seu Rei, tem nome único e vê nível, skin e retrato.
+**Gate:** um jogador cria seu Rei, tem nome único e vê nível, skin e retrato. ✅
+(coberto por `tests/integration/creation-flow.test.ts`)
+
+**Como ficou:**
+
+- Sem save não existe Rei: `boot()` devolve `state: null` e a UI abre a
+  criação. Sem placeholder de "Rei" — §62.
+- Nome: normalização (trim/NFC) + validação em game-core, com códigos de
+  erro (`empty|too_short|too_long|invalid_chars|reserved`) e mensagens PT-BR.
+  Regra configurável em `config.account.nickname` (⛔ `P-007` provisório).
+  Unicidade de nome é decidida pelo servidor quando houver online.
+- Skin: catálogo em `config.account.king.skins` (⛔ `P-006c` provisório),
+  `changeSkin` cosmético com regra de desbloqueio por nível; `SkinLockedError`
+  para skin desconhecida/bloqueada.
+- Retrato (`portraits/hero`) é o busto do Rei na HUD/perfil; a skin muda o
+  corpo (`hero_skins/<id>`). Asset IDs vêm do manifesto — o jogo não monta
+  caminhos (§62).
+- Correções estruturais: o relógio do estado ficou vivo (`createNew` recebe o
+  clock do app — sem isso o `tickSearch` nunca completava) e `boot` ganhou
+  `createGame` + `saveNow()` (um F5 nunca perde o Rei).
 
 ---
 

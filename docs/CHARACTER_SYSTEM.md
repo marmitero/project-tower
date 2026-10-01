@@ -58,6 +58,12 @@ O Rei **não precisa de sprite completo**. A representação é composta por ret
 
 O inventory de assets tem 8 retratos e 8 `hero_skins` — material suficiente. Ver [`ASSET_INVENTORY.md`](ASSET_INVENTORY.md).
 
+**Como ficou (FASE 3):** retrato e skin são papéis diferentes. O **retrato**
+(`King.portraitAssetId` → `portraits/hero`) é o busto fixo usado na HUD e no
+perfil. A **skin** (`King.skinId` → `hero_skins/<id>`) é a aparência completa
+mostrada no perfil e em identidade maior. Trocar skin é cosmético
+(`changeKingSkin`, com desbloqueio por nível); nunca altera atributos.
+
 ### 2.3 Criação
 
 Primeiro acesso → fluxo de criação com **duas decisões**:
@@ -82,6 +88,11 @@ O nome do Rei **é** o nickname do jogador (§6). Regras:
 | Anti-abuso | Rate limit em tentativas de claim |
 
 > **P-007** — o §6 define que o nome "deve ser único", "não podem existir dois Reis com o mesmo nickname", "deve existir validação de disponibilidade" e "proteção contra nomes inválidos", mas **não define** comprimento, caracteres permitidos, se o nome pode ser trocado depois, nem com que frequência. Troca de nickname tem impacto direto em mercado, chat e rankings (links external), então é Tipo C.
+
+**Implementado (FASE 3):** `packages/game-core/src/nickname.ts`
+(`normalizeNickname` + `validateNickname`, com códigos de erro). Os limites
+concretos vivem em `config.account.nickname` (default provisório `P-007`).
+Unicidade global será decidida pelo servidor no online.
 
 ### 2.5 Progressão do Rei
 

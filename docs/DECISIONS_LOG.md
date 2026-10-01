@@ -144,3 +144,82 @@ Cada linha abaixo é uma divergência real encontrada na inspeção. "Ato" é o 
 **Decisão.** No MVP local, a **simulação roda no cliente** é explicitamente não-autoritativa (é Guest, sem economia real). A arquitetura, porém, já é escrita para o servidor: todo serviço de gameplay é assíncrono, todo comando tem `requestId` idempotente, e todo relógio relevante tem origem no servidor. O Battle Engine é **o mesmo código** nos dois lados — roda no cliente para apresentar e no servidor para decidir.
 
 **Consequência.** Trocar de authority não exige reescrever combate, só trocar quem o executa e quem persiste o resultado. A referência `expected_revision` e o ledger append-only são adoptados desde a primeira migration.
+
+---
+
+## ADR-009 — Tempo em timestamp absoluto, relógio injetado
+
+**Status:** aceito · **Data:** 2026-09-30
+
+**Contexto.** §47 e §28–29 dependem de durações (busca ~3s, offline 2h) que
+precisam continuar certas quando a aba perde foco, quando o relógio do
+sistema ajusta e nos testes.
+
+**Decisão.** Todo tempo de jogo é **timestamp absoluto** comparado contra um
+relógio injetado (`now()`), nunca `Date.now()` espalhado. O loop limita o
+passo a 250 ms para que voltar de uma aba não processe 30 s de combate de
+uma vez.
+
+**Consequência.** Testes usam `FakeClock` e ficam determinísticos; o offline
+reaproveita a mesma contagem. Corolário da Fase 3: o relógio do `GameState`
+precisa ser **vivo** — o congelamento do clock na criação (bug corrigido)
+impedia `tickSearch` de completar em execução real.
+
+---
+
+## ADR-010 — A invariante 1×1 é imposta pela assinatura
+
+**Status:** aceito · **Data:** 2026-09-30
+
+**Contexto.** §17 manda "torre normal é sempre 1 herói contra 1 inimigo" e §55
+proíbe boss automático por andar. Um `if` defensivo é removível por acidente.
+
+**Decisão.** `startTowerBattle` recebe **um herói**, não uma equipe — o tipo
+impede escrever um 1×N. Boss é `BossBattle`, tipo separado, atividade à parte.
+
+**Consequência.** Impossível reintroduzir torre 1×N sem mudar a assinatura —
+mudança visível em review e nos testes de arquitetura.
+
+---
+
+## ADR-011 — `GameState` é a única porta de mutação
+
+**Status:** aceito · **Data:** 2026-09-30
+
+**Contexto.** §86 (integridade) e o futuro server-authoritative exigem que
+toda mutação passe por um ponto único; caso contrário, `revision` e o
+histórico de eventos perdem o significado.
+
+**Decisão.** `GameState.data` é `Readonly`; toda mudança é método do
+`GameState` e incrementa `revision`. Não há "mexer no save à mão" em código
+de jogo (só em helper de teste).
+
+**Consequência.** Persistência (§86) e o futuro batch idempotente (ADR-008)
+conseguem observar e validar cada transição.
+
+---
+
+## ADR-012 — Criação do Rei: sem auto-criação, retrato ≠ skin
+
+**Status:** aceito · **Data:** 2026-10-01 · **Fase 3**
+
+**Contexto.** O placeholder antigo criava um Rei chamado "Rei" ao abrir o
+jogo — invenção fora do Master-Prompt (§62 proíbe regra inventada na cola).
+Além disso, o §5 mistura "nome + skin" com a representação visual do Rei,
+que na HUD/perfil é um **retrato/busto** (§4), não a skin completa.
+
+**Decisão.** Três regras:
+
+1. **Sem save não existe Rei.** `boot()` devolve `state: null`; a UI abre a
+   tela de criação; `createGame` cria e grava (`saveNow`). Um F5 nunca perde
+   o Rei.
+2. **Retrato ≠ skin.** `portraitAssetId` (busto, HUD/perfil) é fixo
+   (`portraits/hero`); `skinId` (`hero_skins/<id>`) é a aparência completa,
+   trocável e cosmética, com desbloqueio por nível (`SkinLockedError`).
+3. **Regra do nome em dados.** Limites, charset e lista reservada vivem em
+   `config.account.nickname` (⛔ P-007 provisório); a validação é
+   `game-core/nickname.ts` com códigos de erro, não strings soltas na UI.
+
+**Consequência.** Unicidade real de nome é server-authoritative no online;
+aqui, 1 conta = 1 Rei (§8) + lista reservada. As 6 skins não escolhidas
+ficam fora do catálogo até `P-006c` ser decidido.

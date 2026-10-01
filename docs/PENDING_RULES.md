@@ -402,6 +402,12 @@ Alterar nickname tem impacto em mercado, chat e rankings (links externos).
 
 **Decisão precisa de:** comprimento, regex, lista reservada, e política de troca.
 
+**Status (FASE 3):** ⛔ default provisório implementado em
+`config.account.nickname` (3–20 chars, `^[\p{L}\p{N}_-]+$`, lista reservada)
+com validação em `game-core/nickname.ts`. Unicidade real é server-authoritative
+no online; política de troca de nickname **ainda não existe** (não há UI de
+rename). Revisar quando o online entrar.
+
 ---
 
 ### P-006c — Skins iniciais do Rei
@@ -412,6 +418,10 @@ O §5 diz "nome + skin", sem dizer quais. Há 8 `hero_skins` disponíveis.
 
 **Decisão precisa de:** quais das 8 são iniciais.
 
+**Status (FASE 3):** ⛔ default provisório implementado: `royal` + `paladin`
+(`config.account.king.skins`, todas `unlock: default`). As outras 6 continuam
+na banca do pack, fora do catálogo.
+
 ---
 
 ### P-009 — Curvas de XP
@@ -421,6 +431,11 @@ O §5 diz "nome + skin", sem dizer quais. Há 8 `hero_skins` disponíveis.
 O §45 separa XP do Rei e do herói, mas **não define nenhuma das duas curvas**. Elas determinam **quando** os slots 2 e 3 ficam disponíveis (níveis 10 e 25) — ou seja, o ritmo de expansão da equipe.
 
 **Decisão precisa de:** XP por nível do Rei, XP por nível do herói, tetos de nível.
+
+**Status (FASE 3):** ⛔ defaults provisórios implementados em
+`config.xp`: Rei `floor(100·n^1,5)`, herói `floor(100·n^1,2)`, sem teto de
+nível. A curva do Rei define o ritmo dos slots 2 (nível 10) e 3 (nível 25);
+revisar com dados de playtest.
 
 ---
 

@@ -56,6 +56,8 @@ project-tower/
 │   └── SOURCES.md            origem, recuperação e regras de arte nova
 ├── scripts/
 │   ├── check-docs.mjs        validador de documentação
+│   ├── extract-ui.mjs        extrai a ui_kit do pack (determinístico)
+│   ├── gen-audio.mjs         gera os 22 SFX procedurais (determinístico)
 │   ├── build-assets.mjs      pipeline de assets (gera manifest, falha alto)
 │   ├── check-assets.mjs      bloqueia placeholders (§62)
 │   ├── check-no-secret.mjs   bloqueia segredos versionados (§91)
@@ -64,7 +66,7 @@ project-tower/
 │   ├── config/               @tia/config — TODO balanceamento centralizado
 │   ├── contracts/            @tia/contracts — IDs, comandos, entidades, eventos
 │   ├── engine/               @tia/engine — Battle Engine PURO (§64)
-│   ├── game-core/            @tia/game-core — regras, estado, PersistenceService
+│   ├── game-core/            @tia/game-core — regras, estado, nickname, PersistenceService
 │   └── ui/                   @tia/ui — HUD (formata, não calcula)
 ├── apps/
 │   ├── game-web/             Vite + React + Phaser
@@ -148,6 +150,7 @@ Todas em [`docs/DECISIONS_LOG.md`](docs/DECISIONS_LOG.md).
 | **009** | Tempo medido em **timestamp absoluto** com relógio injetado; o loop limita o passo a 250 ms para que voltar de uma aba não processe 30 s de combate de uma vez |
 | **010** | A invariante 1×1 é imposta pela **assinatura** (`startTowerBattle` recebe um herói, não uma equipe), não por um `if` que alguém pode remover |
 | **011** | O `GameState` é a **única** porta de mutação; `data` é exposto como `Readonly` e toda mudança incrementa `revision` (§86) |
+| **012** | Criação do Rei sem auto-criação (§62); retrato ≠ skin; regras de nickname em dados (`config.account.nickname`) |
 
 ---
 
@@ -188,26 +191,25 @@ P-002 também destrava P-024 (afinidades) e P-061 (identidade sonora)
 
 ## 7. Próximo passo
 
-### **FASE 3 — Rei** (parcialmente bloqueada: `P-006c`, `P-007`, `P-009`)
+### **FASE 3 — Rei** ✅ CONCLUÍDA (gate batido)
 
-O que a Fase 2 entregou e que a Fase 3 consome:
-
-```text
-✅ GameState com Rei, carteira e lastActiveAt
-✅ createKing() com skin e validação de config
-✅ grantKingXp() com curva da config (⛔ P-009) e teto de nível
-✅ markActive() / computeOffline() com teto de 2h (§47)
-✅ HUD do Rei com barra de XP e carteira
-```
-
-O que falta para fechar a Fase 3:
+O que a Fase 3 entregou:
 
 ```text
-1. Tela de CRIAÇÃO do Rei (nome + skin) — ⛔ P-007, P-006c
-2. Curva de XP do Rei revisada com dados de sessão real — ⛔ P-009
-3. Skin desbloqueável por nível (§5)
-4. Passagem da tela de criação para o jogo rodando
+✅ Fluxo de criação: boot sem save → CreationScreen (nome + skin) → createGame → saveNow
+✅ Nickname: normalizeNickname + validateNickname (códigos de erro, mensagens PT-BR)
+   regras em config.account.nickname (⛔ P-007 provisório)
+✅ Retrato do Rei na HUD e no perfil (portraits/hero) + skin por corpo (hero_skins/<id>)
+✅ Skin: catálogo royal|paladin (⛔ P-006c), changeSkin cosmético + desbloqueio por nível
+✅ XP do Rei com curva da config (⛔ P-009) exibida no perfil (pt-BR)
+✅ 1 Rei por conta (§8): boot reidrata o MESMO Rei; sem auto-criação
+✅ lastActiveAt (§47) nascendo do relógio e do markActive()
+✅ Regressões corrigidas: relógio vivo do estado (tickSearch completava nunca)
+   e save imediato na criação (F5 não perde o Rei)
 ```
+
+**Gate — VERIFICADO por `tests/integration/creation-flow.test.ts`:**
+"um jogador cria seu Rei, tem nome único e vê nível, skin e retrato."
 
 ### Gate de saída da FASE 2 — VERIFICADO
 
@@ -226,7 +228,7 @@ O que falta para fechar a Fase 3:
 ### Depois da Fase 3
 
 ```text
-FASE 4  Personagens            ⛔ P-002 — crítico
+FASE 4  Personagens            ⛔ P-002 — crítico ← PRÓXIMO PASSO
 FASE 5  Equipe                 ⛔ P-003, P-004
 FASE 6  Combate
 FASE 7  Torre                  ⛔ P-005, P-006
@@ -341,11 +343,11 @@ Todas as 15 têm teste **passando** hoje. Os arquivos abaixo existem e rodam em 
 
 ## 12. Resumo para a próxima sessão
 
-**Estado:** FASE 1 e FASE 2 concluídas. Fundação completa e verificada: monorepo, config validada, contratos, engine puro, `game-core`, HUD, shell Vite/React/Phaser rodando e 259 testes verdes (231 unit+integration + 28 arch).
+**Estado:** FASE 1, 2 e 3 concluídas. Fundação completa e verificada: monorepo, config validada, contratos, engine puro, `game-core`, HUD, shell Vite/React/Phaser rodando. **FASE 3 (Rei) concluída e com gate batido:** fluxo de criação (nome + skin) com validação de nickname, retrato do Rei na HUD/perfil, perfil com nível/XP/skin trocável, 1 Rei por conta, `lastActiveAt`, e 290 testes verdes (262 unit+integration + 28 arch).
 
 **Assets (2026-10-01):** as três lacunas vermelhas do inventário foram fechadas — UI em PT-BR (33 peças sem texto extraídas da `ui_kit`; barras decompostas em trilho+fills+caps para compor em runtime com números em PT-BR), áudio (22 SFX procedurais gerados por `scripts/gen-audio.mjs`, incluindo a escada de raridade do §108) e retratos dos 4 heróis (3 gerados no estilo do pack). Pipeline: 480 entradas no manifesto, `check:assets` e `check:assets:strict` verdes. Detalhes em `docs/ASSET_GAP.md` §3.
 
-**O que fazer:** **FASE 3 — Rei**. Criar a tela de criação do Rei (nome + skin), ligá-la ao `GameState` que já existe. Começa por decidir `P-007` (nickname) e `P-006c` (skins iniciais), mas o resto da tela não depende delas.
+**O que fazer:** **FASE 4 — Personagens**, que está **bloqueada por `P-002`** (definição dos 4 heróis — decisão de produto). Sem `P-002`, dá para construir: XP de herói com a curva da config (⛔ P-009), níveis de herói, e a telemetria de classes. Enquanto isso, as lacunas que sobram da Fase 3 são de decisão, não de código: `P-007` (política de troca de nome), `P-006c` (skins iniciais definitivas), `P-009` (curvas com dados de playtest).
 
 **O que perguntar ao usuário:** as 7 pendências críticas, começando por **P-002 (os 4 heróis)**. O catálogo provisório funciona para desenvolvimento, mas o §10 exige "diferenças reais" e isso só se confirma com decisão humana.
 
