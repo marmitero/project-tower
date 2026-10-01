@@ -8,7 +8,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActionButton, MissingAssetsWarning, Panel, ProgressBar, StatPill } from "@tia/ui";
-import { config } from "@tia/config";
+import { classes, config } from "@tia/config";
 import {
   GameState,
   kingProgress,
@@ -275,18 +275,24 @@ function HeroesScreen({
       </p>
       {roster.map((hero) => {
         const assigned = state.data.team.members.indexOf(hero.id);
+        const cls = classes.find((c) => c.id === hero.classId);
+        const portrait = assetUrl(hero.portraitAssetId);
         return (
           <div className="tia-hero" key={hero.id}>
             <div className="tia-hero__head">
+              {portrait && <img className="tia-hero__portrait" src={portrait} alt="" />}
               <strong>{hero.name}</strong>
-              <span>{hero.classId}</span>
+              <span>
+                {cls?.name ?? hero.classId}
+                {cls ? ` · ${cls.role}` : ""}
+              </span>
             </div>
             <ProgressBar
               label={`Nv ${hero.level}`}
               value={heroProgress(hero)}
               max={1}
               color="#9ece6a"
-              readout={`${hero.xp.toString()} XP`}
+              readout={`${hero.xp.toLocaleString("pt-BR")} XP`}
             />
             <StatPill label="Poder" value={Math.round(heroPower(hero, inv))} />
             {assigned >= 0 ? (

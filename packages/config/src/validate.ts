@@ -1,6 +1,13 @@
 import type { GameConfig } from "./types.js";
 import { RARITY_ORDER } from "./rarity.js";
 import { config } from "./game.js";
+import {
+  CHARACTER_SHEET_KEYS,
+  STARTER_HERO_CLASSES,
+  classes,
+  enemies,
+  type CharacterAssets,
+} from "./catalog.js";
 
 export class ConfigValidationError extends Error {
   readonly errors: string[];
@@ -230,7 +237,96 @@ export function validateConfig(cfg: GameConfig = config): GameConfig {
   check(cfg.inventory.equipmentMaxItems > 0, "inventory.equipmentMaxItems deve ser > 0");
   check(cfg.inventory.pageSize > 0, "inventory.pageSize deve ser > 0");
 
+  errors.push(...collectCatalogErrors());
+
   if (errors.length > 0) throw new ConfigValidationError(errors);
   return cfg;
+}
+
+/**
+ * Valida o catálogo (heróis, inimigos, assets).
+ *
+ * As verificações de EXISTÊNCIA dos assets no manifesto ficam em
+ * `tests/integration/assets-config.test.ts` — aqui se valida a forma dos
+ * dados. Juntas, as duas garantem que remodelar o catálogo não produz um
+ * herói sem sprite (§62) nem um clone disfarçado de herói novo (§10).
+ */
+export function validateCatalog(): void {
+  const errors = collectCatalogErrors();
+  if (errors.length > 0) throw new ConfigValidationError(errors);
+}
+
+function collectCatalogErrors(): string[] {
+  const errors: string[] = [];
+  const check = (ok: boolean, message: string) => {
+    if (!ok) errors.push(message);
+  };
+
+  const checkAssets = (label: string, assets: CharacterAssets, requirePortrait: boolean) => {
+    for (const key of CHARACTER_SHEET_KEYS) {
+      check(
+        assets.sheets[key].length > 0,
+        `${label}.assets.sheets.${key} não pode ser vazio`,
+      );
+    }
+    if (requirePortrait) {
+      check(
+        (assets.portrait ?? "").length > 0,
+        `${label}.assets.portrait não pode ser vazio`,
+      );
+    }
+  };
+
+  // --- Heróis (§10 — 4 heróis, diferenças reais) ---------------------------
+  check(
+    classes.length === 4,
+    `classes deve ter exatamente 4 heróis iniciais (§10), tem ${classes.length}`,
+  );
+  const classIds = new Set(classes.map((c) => c.id));
+  check(classIds.size === classes.length, "classes[].id duplicado");
+  check(
+    STARTER_HERO_CLASSES.length === classes.length,
+    "STARTER_HERO_CLASSES deve cobrir exatamente as classes do catálogo",
+  );
+  for (const id of STARTER_HERO_CLASSES) {
+    check(classIds.has(id), `STARTER_HERO_CLASSES referencia classe inexistente: ${id}`);
+  }
+
+  // §18 — a escolha de herói só é decisão se cobrir físico × mágico.
+  const types = new Set(classes.map((c) => c.damageType));
+  check(types.has("physical"), "classes precisa cobrir dano físico (§18)");
+  check(types.has("magic"), "classes precisa cobrir dano mágico (§18)");
+
+  // §10 — papéis distintos; "diferenças reais", não só sprite diferente.
+  const roles = new Set(classes.map((c) => c.role));
+  check(roles.size === classes.length, "classes[].role deve ser único por herói (§10)");
+
+  const growths = new Set(classes.map((c) => JSON.stringify(c.growth)));
+  check(
+    growths.size === classes.length,
+    "classes[].growth idêntico entre heróis (§10 — proibido serem mecanicamente iguais)",
+  );
+
+  for (const c of classes) {
+    checkAssets(`classes.${c.id}`, c.assets, true);
+    check(c.activeSkillId.length > 0, `classes.${c.id}.activeSkillId não pode ser vazio`);
+    check(
+      c.passiveSkillIds.length === 2,
+      `classes.${c.id}.passiveSkillIds deve ter 2 passivas (§22)`,
+    );
+  }
+
+  // --- Inimigos (P-006 provisório) ----------------------------------------
+  const enemyIds = new Set(enemies.map((e) => e.id));
+  check(enemyIds.size === enemies.length, "enemies[].id duplicado");
+  for (const e of enemies) {
+    checkAssets(`enemies.${e.id}`, e.assets, false);
+    check(
+      e.minFloor >= 1 && e.minFloor <= e.maxFloor,
+      `enemies.${e.id}: faixa de andares inválida (${e.minFloor}..${e.maxFloor})`,
+    );
+  }
+
+  return errors;
 }
 

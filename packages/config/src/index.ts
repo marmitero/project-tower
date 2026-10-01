@@ -20,15 +20,27 @@ export {
   economy,
   inventory,
 } from "./game.js";
-export { validateConfig, ConfigValidationError } from "./validate.js";
+export { validateConfig, validateCatalog, ConfigValidationError } from "./validate.js";
 export { RARITY_ORDER, RARITY_MULTIPLIER, rarityMultiplier } from "./rarity.js";
-// ⛔ P-002 / P-006 / P-001 / P-025 — catálogo PROVISÓRIO. Ver o aviso no topo.
+// ⛔ P-002 / P-006 / P-001 / P-025 — catálogo PROVISÓRIO (inserção genérica
+// aprovada 2026-10-01). Ver o aviso no topo do `catalog.ts`.
 export {
   classes,
   STARTER_HERO_CLASSES,
   enemies,
+  charSheets,
+  CHARACTER_SHEET_KEYS,
   EQUIPABLE_STATS,
   EQUIP_SLOTS,
   EQUIP_TEMPLATES,
 } from "./catalog.js";
-export type { ClassGrowth, HeroClassDef, EnemyDef, EnemyRole } from "./catalog.js";
+export type {
+  ClassGrowth,
+  HeroClassDef,
+  EnemyDef,
+  EnemyRole,
+  CharacterSheets,
+  CharacterSheetKey,
+  CharacterAssets,
+  HeroAssets,
+} from "./catalog.js";

@@ -8,21 +8,75 @@
  * personagens "visualmente diferentes mas mecanicamente iguais". Ele NÃO
  * define nome, classe, atributos-base, skills, raridade ou curva de cada um.
  *
- * Essa é `P-002`, marcada como 🔴 CRÍTICA em `docs/PENDING_RULES.md`:
- * "a identidade dos 4 heróis É o conteúdo central do jogo... Quatro heróis
- * errados significa reescrever a coleta, o balanceamento e a Torre inteira."
+ * Essa é `P-002` (🔴 CRÍTICA). Em 2026-10-01 o usuário decidiu a **inserção
+ * genérica**: os 4 heróis entram com o material que o pack oferece
+ * (`ASSET_INVENTORY.md` §5.3) e este catálogo fica modelado como DADO, para
+ * que a identidade definitiva (nomes, skills, raridades) seja remodelação de
+ * dados — não reescrita de código.
  *
- * O que está aqui é um esqueleto FUNCIONAL, derivado dos candidatos de arte
- * do pack (`ASSET_INVENTORY.md` §5.3) e da necessidade de cobrir físico ×
- * mágico. É provisório, não é uma regra. Substituir por decisão aprovada.
+ * Regras estructurais que NÃO são pendentes e estão respeitadas aqui:
+ * os quatro se distinguem por ATRIBUTO, não só por sprite — físico (hero,
+ * archer) e mágico (mage, necromancer) cobertos (§18), um de cada par com
+ * identidade de velocidade e um de cada par com identidade de sustain/DoT.
  *
- * Regra estructural que NÃO é pendente e está respeitada aqui: os quatro
- * precisam ser distinguíveis por ATRIBUTO, não só por sprite. Físico (hero,
- * archer) e mágico (mage, necromancer) cobertos; um de cada par com identidade
- * de velocidade e um de cada par com identidade de sustain/DoT.
+ * Asset IDs são **IDs do manifesto** (`apps/game-web/public/assets/manifest.json`),
+ * nunca caminhos montados em runtime (§62). `charSheets()` expande o id do
+ * personagem para as 6 folhas conhecidas — se o pack mudar, o teste
+ * `tests/integration/assets-config.test.ts` reprova em alto e bom som.
  */
 
 import type { EquipSlotId, Rarity, StatId, WeaponType } from "./types.js";
+
+/** As 6 folhas de animação de um personagem (§23). Todas obrigatórias. */
+export interface CharacterSheets {
+  idle: string;
+  walk: string;
+  run: string;
+  attack: string;
+  hurt: string;
+  death: string;
+}
+
+export type CharacterSheetKey = keyof CharacterSheets;
+
+export const CHARACTER_SHEET_KEYS: readonly CharacterSheetKey[] = [
+  "idle",
+  "walk",
+  "run",
+  "attack",
+  "hurt",
+  "death",
+];
+
+/**
+ * Expande o id de um personagem do pack nas 6 folhas do manifesto.
+ *
+ * Montar os ids AQUI é dado estático de catálogo, não "runtime montando
+ * caminho" (§62) — o teste de manifesto cobre cada id gerado.
+ */
+export function charSheets(name: string): CharacterSheets {
+  return {
+    idle: `characters/${name}/${name}_idle_sheet`,
+    walk: `characters/${name}/${name}_walk_sheet`,
+    run: `characters/${name}/${name}_run_sheet`,
+    attack: `characters/${name}/${name}_attack_sheet`,
+    hurt: `characters/${name}/${name}_hurt_sheet`,
+    death: `characters/${name}/${name}_death_sheet`,
+  };
+}
+
+/** Aparência de um personagem: retrato (busto) + folhas (corpo). */
+export interface CharacterAssets {
+  /** `portraits/*` — nem todo inimigo tem; heróis têm sempre. */
+  portrait?: string;
+  /** `characters/<id>/*` — corpo animado. */
+  sheets: CharacterSheets;
+}
+
+/** Herói SEMPRE tem retrato (§4 — a HUD mostra o busto). */
+export interface HeroAssets extends CharacterAssets {
+  portrait: string;
+}
 
 /** Atributos-base e crescimento por nível. ⛔ P-002 / P-006b provisório. */
 export interface ClassGrowth {
@@ -51,8 +105,7 @@ export interface HeroClassDef {
   damageType: "physical" | "magic" | "hybrid";
   baseRarity: Rarity;
   affinityWeapon: WeaponType | null;
-  spriteAssetId: string;
-  portraitAssetId: string;
+  assets: HeroAssets;
   growth: ClassGrowth;
   /** ⛔ P-002 provisório — §22: 1 ativa, 2 passivas. */
   activeSkillId: string;
@@ -67,8 +120,7 @@ export const classes: HeroClassDef[] = [
     damageType: "physical",
     baseRarity: "common",
     affinityWeapon: "sword",
-    spriteAssetId: "char/hero",
-    portraitAssetId: "portrait/hero",
+    assets: { portrait: "portraits/hero", sheets: charSheets("hero") },
     growth: {
       hp: 180, hpPerLevel: 22,
       attack: 24, attackPerLevel: 3.1,
@@ -90,8 +142,7 @@ export const classes: HeroClassDef[] = [
     damageType: "magic",
     baseRarity: "uncommon",
     affinityWeapon: "staff",
-    spriteAssetId: "char/mage",
-    portraitAssetId: "portrait/mage",
+    assets: { portrait: "portraits/mage", sheets: charSheets("mage") },
     growth: {
       hp: 120, hpPerLevel: 12,
       attack: 10, attackPerLevel: 1.1,
@@ -113,8 +164,7 @@ export const classes: HeroClassDef[] = [
     damageType: "physical",
     baseRarity: "common",
     affinityWeapon: "crossbow",
-    spriteAssetId: "char/archer",
-    portraitAssetId: "portrait/archer",
+    assets: { portrait: "portraits/archer", sheets: charSheets("archer") },
     growth: {
       hp: 140, hpPerLevel: 15,
       attack: 22, attackPerLevel: 2.9,
@@ -136,8 +186,7 @@ export const classes: HeroClassDef[] = [
     damageType: "magic",
     baseRarity: "rare",
     affinityWeapon: "claws",
-    spriteAssetId: "char/necromancer",
-    portraitAssetId: "portrait/necromancer",
+    assets: { portrait: "portraits/necromancer", sheets: charSheets("necromancer") },
     growth: {
       hp: 130, hpPerLevel: 14,
       attack: 12, attackPerLevel: 1.3,
@@ -166,7 +215,7 @@ export interface EnemyDef {
   id: string;
   name: string;
   role: EnemyRole;
-  spriteAssetId: string;
+  assets: CharacterAssets;
   growth: ClassGrowth;
   /** Faixa de andares da Torre onde aparece, 1-indexado. */
   minFloor: number;
@@ -178,7 +227,7 @@ export const enemies: EnemyDef[] = [
     id: "slime",
     name: "Gosma",
     role: "guardian",
-    spriteAssetId: "char/slime",
+    assets: { portrait: "portraits/slime", sheets: charSheets("slime") },
     growth: {
       hp: 120, hpPerLevel: 18,
       attack: 16, attackPerLevel: 2.2,
@@ -193,7 +242,7 @@ export const enemies: EnemyDef[] = [
     id: "goblin",
     name: "Goblin",
     role: "swift",
-    spriteAssetId: "char/goblin",
+    assets: { portrait: "portraits/goblin", sheets: charSheets("goblin") },
     growth: {
       hp: 90, hpPerLevel: 11,
       attack: 18, attackPerLevel: 2.4,
@@ -208,7 +257,7 @@ export const enemies: EnemyDef[] = [
     id: "skeleton",
     name: "Esqueleto",
     role: "guardian",
-    spriteAssetId: "char/skeleton",
+    assets: { portrait: "portraits/skeleton", sheets: charSheets("skeleton") },
     growth: {
       hp: 140, hpPerLevel: 20,
       attack: 17, attackPerLevel: 2.3,
@@ -223,7 +272,8 @@ export const enemies: EnemyDef[] = [
     id: "bat",
     name: "Morcego",
     role: "swift",
-    spriteAssetId: "char/bat",
+    // Morcego não tem retrato no pack (§62 — nada de placeholder).
+    assets: { sheets: charSheets("bat") },
     growth: {
       hp: 80, hpPerLevel: 10,
       attack: 19, attackPerLevel: 2.5,
@@ -238,7 +288,7 @@ export const enemies: EnemyDef[] = [
     id: "orc",
     name: "Orc",
     role: "balanced",
-    spriteAssetId: "char/orc",
+    assets: { portrait: "portraits/orc", sheets: charSheets("orc") },
     growth: {
       hp: 180, hpPerLevel: 25,
       attack: 24, attackPerLevel: 3.2,
@@ -253,7 +303,8 @@ export const enemies: EnemyDef[] = [
     id: "fireorc",
     name: "Orc Flamejante",
     role: "caster",
-    spriteAssetId: "char/fireorc",
+    // Sem retrato no pack (§62).
+    assets: { sheets: charSheets("fireorc") },
     growth: {
       hp: 150, hpPerLevel: 19,
       attack: 12, attackPerLevel: 1.3,
@@ -268,7 +319,8 @@ export const enemies: EnemyDef[] = [
     id: "shadowgoblin",
     name: "Goblin Sombrio",
     role: "elite",
-    spriteAssetId: "char/shadowgoblin",
+    // Sem retrato no pack (§62).
+    assets: { sheets: charSheets("shadowgoblin") },
     growth: {
       hp: 260, hpPerLevel: 34,
       attack: 30, attackPerLevel: 4.1,

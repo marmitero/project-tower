@@ -124,8 +124,8 @@ export function createHero(params: CreateHeroParams): Hero {
     ownerAccountId: params.accountId,
     classId: params.classId,
     name: params.name,
-    spriteAssetId: cls.spriteAssetId,
-    portraitAssetId: cls.portraitAssetId,
+    spriteAssetId: cls.assets.sheets.idle,
+    portraitAssetId: cls.assets.portrait,
     rarity: params.rarity ?? cls.baseRarity,
     level,
     // §45 — pool do herói, separado do do Rei.

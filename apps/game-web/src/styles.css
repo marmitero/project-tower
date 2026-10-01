@@ -205,8 +205,16 @@ body {
   border-radius: 8px;
 }
 
-.tia-hero__head { display: flex; justify-content: space-between; align-items: baseline; }
-.tia-hero__head span { color: var(--muted); font-size: 12px; }
+.tia-hero__head { display: flex; align-items: center; gap: 10px; }
+.tia-hero__head span { color: var(--muted); font-size: 12px; margin-left: auto; text-align: right; }
+.tia-hero__portrait {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
+  image-rendering: pixelated;
+  border: 1px solid var(--border);
+}
 .tia-hero__assign { display: flex; gap: 8px; flex-wrap: wrap; }
 
 /* --------------------------------------------------------------- Slots */
