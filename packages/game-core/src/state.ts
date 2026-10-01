@@ -22,7 +22,7 @@ import type {
 import type { AccountId, HeroId } from "@tia/contracts";
 import { classes, config, type ClassGrowth } from "@tia/config";
 import { RngHub, hashString, step, type Prng } from "@tia/engine";
-import { createKing, createTeam, createWallet, createHero, activeTeamSize } from "./creation.js";
+import { createKing, createTeam, createWallet, createHero, activeTeamSize, changeKingSkin } from "./creation.js";
 import { createInventory } from "./inventory.js";
 import { createOfflineProgress, beginSearching, isSearchingComplete, computeOffline, commitOffline, touchActive, rollSearchingDuration } from "./hunt.js";
 import { requireActiveHero, placeHero, setActiveHero, unlockSlot, firstAssigned, removeHero } from "./team.js";
@@ -69,14 +69,24 @@ export class GameState {
   // Ciclo de vida
   // -------------------------------------------------------------------------
 
-  /** Cria um save novo: 1 Rei, 4 heróis (§10 — o jogador escolhe 1). */
-  static createNew(params: {
-    accountId: AccountId;
-    nickname: string;
-    skinId: string;
-    now: number;
-    masterSeed: number;
-  }): GameState {
+  /**
+   * Cria um save novo: 1 Rei, 4 heróis (§10 — o jogador escolhe 1).
+   *
+   * `clock` é o relógio VIVO do dono do estado. O padrão congela em
+   * `params.now` (o que torna os testes determinísticos); o app passa o
+   * relógio do navegador — sem isso, `tickSearch` compararia o tempo
+   * contra ele mesmo e a busca nunca terminaria.
+   */
+  static createNew(
+    params: {
+      accountId: AccountId;
+      nickname: string;
+      skinId: string;
+      now: number;
+      masterSeed: number;
+    },
+    overrides: { now?: () => number; persistence?: PersistenceService; listeners?: GameEvents } = {},
+  ): GameState {
     const king = createKing({ accountId: params.accountId, nickname: params.nickname, skinId: params.skinId, now: params.now });
     const wallet = createWallet(params.accountId, 0n, 0n);
     const team = createTeam(params.accountId);
@@ -110,11 +120,15 @@ export class GameState {
       lastSavedAt: params.now,
     };
 
-    return new GameState(save, {
-      persistence: new LocalStoragePersistence(),
-      now: () => params.now,
-      masterSeed: params.masterSeed,
-    });
+    return new GameState(
+      save,
+      {
+        persistence: overrides.persistence ?? new LocalStoragePersistence(),
+        now: overrides.now ?? (() => params.now),
+        masterSeed: params.masterSeed,
+      },
+      overrides.listeners ?? {},
+    );
   }
 
   get data(): Readonly<SaveData> {
@@ -154,6 +168,16 @@ export class GameState {
     const now = this.deps.now();
     touchActive(this.state.king, this.state.offline, now);
     this.dirty = true;
+  }
+
+  /**
+   * Troca a skin do Rei (§5 — cosmético). Lança `SkinLockedError` para
+   * skin desconhecida ou bloqueada pelo nível do Rei.
+   */
+  changeSkin(skinId: string): void {
+    changeKingSkin(this.state.king, skinId);
+    this.dirty = true;
+    this.listeners.onStateChanged?.(this);
   }
 
   /** Heróis da equipe, na ordem dos slots. */

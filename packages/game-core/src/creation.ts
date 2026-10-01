@@ -11,7 +11,7 @@
 
 import type { CombatStats, Hero, HeroOrigin, King, Wallet, Team } from "@tia/contracts";
 import type { AccountId, ClassId, HeroId, KingId } from "@tia/contracts";
-import { classes, config, type ClassGrowth } from "@tia/config";
+import { classes, config, type ClassGrowth, type KingSkinConfig } from "@tia/config";
 import { newHeroId, newKingId } from "./ids.js";
 
 /** @param nowInjected-clock em ms; injetado para que o teste seja determinístico. */
@@ -30,7 +30,9 @@ export function createKing(params: CreateKingParams): King {
     nickname: params.nickname,
     displayName: params.nickname,
     skinId: skin.id,
-    portraitAssetId: skin.assetId,
+    // §5 — retrato do Rei: o busto (`portraits/hero`). A skin muda o
+    // corpo; o rosto é o mesmo. Quem mostra o corpo olha `skinId`.
+    portraitAssetId: config.account.king.portraitAssetId,
     level: 1,
     // §45 — pool do Rei, separado do dos heróis. Começa em zero.
     xp: 0n,
@@ -42,6 +44,34 @@ export function createKing(params: CreateKingParams): King {
 
 export function createWallet(accountId: AccountId, coins = 0n, diamonds = 0n): Wallet {
   return { accountId, coins, diamonds };
+}
+
+/**
+ * Skin liberada para o nível atual do Rei (§5 — a skin é cosmética; as
+ * regras de desbloqueio vêm da config, nunca deste arquivo).
+ */
+export function isSkinUnlocked(skin: KingSkinConfig, kingLevel: number): boolean {
+  if (skin.unlock.kind === "default") return true;
+  return kingLevel >= skin.unlock.kingLevel;
+}
+
+export class SkinLockedError extends Error {
+  constructor(skinId: string) {
+    super(`Skin indisponível: ${skinId}`);
+    this.name = "SkinLockedError";
+  }
+}
+
+/**
+ * Troca a skin do Rei. Cosmético — não toca em economia nem progressão.
+ * Skin desconhecida ou bloqueada lança `SkinLockedError`; a UI só oferece
+ * skins liberadas, e o guard aqui existe para o save não receber skin
+ * inválida por caminho nenhum.
+ */
+export function changeKingSkin(king: King, skinId: string): void {
+  const skin = config.account.king.skins.find((s) => s.id === skinId);
+  if (!skin || !isSkinUnlocked(skin, king.level)) throw new SkinLockedError(skinId);
+  king.skinId = skin.id;
 }
 
 /**

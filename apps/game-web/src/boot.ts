@@ -46,8 +46,12 @@ export interface BootOptions {
  * de backup e um novo save nasce. Perder o save é ruim; ficar numa tela
  * de erro eternity é pior, porque o jogador não tem como sair sem
  * limpar o storage na mão.
+ *
+ * Sem save NÃO existe Rei: `state: null` devolve o controle para a UI,
+ * que mostra o fluxo de criação (§5 — nome + skin). Criar o Rei com nome
+ * inventado aqui seria placeholder de regra — e §62 proíbe.
  */
-export async function boot(options: BootOptions = {}): Promise<{ state: GameState; recovered: boolean }> {
+export async function boot(options: BootOptions = {}): Promise<{ state: GameState | null; recovered: boolean }> {
   const clock: Clock = options.clock ?? (() => Date.now());
   const accountId = options.accountId ?? LOCAL_ACCOUNT;
   const persistence = options.persistence ?? new LocalStoragePersistence();
@@ -60,7 +64,7 @@ export async function boot(options: BootOptions = {}): Promise<{ state: GameStat
   } catch (error) {
     await quarantineCorruptSave(persistence, accountId);
     recovered = true;
-    console.warn("[boot] save ilegível; um novo save foi criado. Detalhe:", error);
+    console.warn("[boot] save ilegível; será preciso criar um novo Rei. Detalhe:", error);
   }
 
   const deps = { persistence, now: clock, masterSeed: seed };
@@ -70,11 +74,43 @@ export async function boot(options: BootOptions = {}): Promise<{ state: GameStat
   };
 
   if (save) return { state: GameState.hydrate(save, deps, listeners), recovered };
+  return { state: null, recovered };
+}
 
-  return {
-    state: GameState.createNew({ accountId: asAccountId(accountId), nickname: "Rei", skinId: "royal", now: clock(), masterSeed: seed }),
-    recovered,
-  };
+/**
+ * Cria o Rei e grava o primeiro save (§5 — nome + skin escolhidos pelo
+ * jogador). Vive aqui e não no React pelo mesmo motivo do `boot`: quem
+ * conhece relógio, persistência e semente é este arquivo.
+ */
+export async function createGame(
+  options: BootOptions & { nickname: string; skinId: string },
+): Promise<GameState> {
+  const clock: Clock = options.clock ?? (() => Date.now());
+  const accountId = options.accountId ?? LOCAL_ACCOUNT;
+  const persistence = options.persistence ?? new LocalStoragePersistence();
+  const seed = options.seed ?? deriveSeed(accountId, clock());
+
+  const state = GameState.createNew(
+    {
+      accountId: asAccountId(accountId),
+      nickname: options.nickname,
+      skinId: options.skinId,
+      now: clock(),
+      masterSeed: seed,
+    },
+    {
+      persistence,
+      now: clock,
+      listeners: {
+        onStateChanged: options.onStateChanged,
+        onBattleEvents: options.onBattleEvents,
+      },
+    },
+  );
+  // Estado nasce sujo? Não — mas o primeiro save não pode esperar o
+  // intervalo: um F5 logo depois da criação perderia o Rei.
+  await state.saveNow();
+  return state;
 }
 
 /**

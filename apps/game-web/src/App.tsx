@@ -19,9 +19,10 @@ import {
   teamHeroes,
 } from "@tia/game-core";
 import type { HeroId } from "@tia/contracts";
-import { boot, startLoop, type LoopHandle } from "./boot.js";
-import { loadAssetManifest, type AssetManifest } from "./render/assets.js";
+import { boot, createGame, startLoop, type LoopHandle } from "./boot.js";
+import { loadAssetManifest, assetUrl, type AssetManifest } from "./render/assets.js";
 import { BattleCanvas } from "./render/BattleCanvas.js";
+import { CreationScreen, type CreationResult } from "./CreationScreen.js";
 
 type Screen = "king" | "heroes" | "tower" | "team" | "inventory";
 
@@ -35,6 +36,7 @@ const SCREENS: { id: Screen; label: string }[] = [
 
 export function App() {
   const [state, setState] = useState<GameState | null>(null);
+  const [ready, setReady] = useState(false);
   const [screen, setScreen] = useState<Screen>("king");
   const [now, setNow] = useState(() => Date.now());
   const [manifest, setManifest] = useState<AssetManifest | null>(null);
@@ -51,16 +53,25 @@ export function App() {
       });
       if (cancelled) return;
 
-      setState(gameState);
-      gameState.markActive();
+      // Sem save não existe Rei (§5): `state: null` mostra a criação.
+      if (gameState) {
+        setState(gameState);
+        gameState.markActive();
+        // O loop é o ÚNICO motor de tempo. Nenhum `setInterval` espalhado
+        // pela UI: dois timers brigariam por quem "possui" o estado.
+        loopRef.current = startLoop(gameState, () => Date.now(), () => {
+          setNow(Date.now());
+        });
+      }
+      setReady(true);
       void loadAssetManifest().then((m) => {
         if (!cancelled) setManifest(m);
-      });
-
-      // O loop é o ÚNICO motor de tempo. Nenhum `setInterval` espalhado
-      // pela UI: dois timers brigariam por quem "possui" o estado.
-      loopRef.current = startLoop(gameState, () => Date.now(), () => {
-        setNow(Date.now());
+        // §62 — a identidade visual vem do pack: a moldura 9-slice e o
+        // pergaminho entram como variáveis CSS, sem o CSS montar caminho.
+        const frame = assetUrl("ui/frame_9slice_stone");
+        const ornate = assetUrl("ui/panel_ornate");
+        if (frame) document.documentElement.style.setProperty("--asset-frame-9", `url("${frame}")`);
+        if (ornate) document.documentElement.style.setProperty("--asset-panel-ornate", `url("${ornate}")`);
       });
     })();
 
@@ -69,6 +80,22 @@ export function App() {
       loopRef.current?.stop();
       loopRef.current = null;
     };
+  }, []);
+
+  /** Intenção de criação do Rei (§5). A regra mora em `createGame`. */
+  const create = useCallback((result: CreationResult) => {
+    void (async () => {
+      const gameState = await createGame({
+        nickname: result.nickname,
+        skinId: result.skinId,
+        onStateChanged: (s) => setState(s),
+      });
+      setState(gameState);
+      gameState.markActive();
+      loopRef.current = startLoop(gameState, () => Date.now(), () => {
+        setNow(Date.now());
+      });
+    })();
   }, []);
 
   const assign = useCallback((heroId: HeroId, slot: 0 | 1 | 2) => {
@@ -83,10 +110,32 @@ export function App() {
     });
   }, []);
 
-  if (!state) {
+  /** Intenção de trocar a skin do Rei (§5, cosmético). */
+  const changeSkin = useCallback((skinId: string) => {
+    setState((prev) => {
+      if (!prev) return prev;
+      try {
+        prev.changeSkin(skinId);
+      } catch (error) {
+        console.warn("[ui]", error);
+      }
+      return prev;
+    });
+  }, []);
+
+  if (!ready) {
     return (
       <div className="tia-app tia-app--loading">
         <p>Carregando…</p>
+      </div>
+    );
+  }
+
+  if (!state) {
+    return (
+      <div className="tia-app">
+        {manifest && manifest.missing.length > 0 && <MissingAssetsWarning ids={manifest.missing} />}
+        <CreationScreen onSubmit={create} />
       </div>
     );
   }
@@ -104,7 +153,7 @@ export function App() {
       <BattleCanvas battle={state.activeBattle} />
 
       <main className="tia-main">
-        {screen === "king" && <KingScreen state={state} />}
+        {screen === "king" && <KingScreen state={state} onChangeSkin={changeSkin} />}
         {screen === "heroes" && <HeroesScreen state={state} onAssign={assign} />}
         {screen === "team" && <TeamScreen state={state} onAssign={assign} />}
         {screen === "inventory" && <InventoryScreen state={state} />}
@@ -130,8 +179,17 @@ function Hud({ state }: { state: GameState }) {
   return (
     <header className="tia-hud">
       <div className="tia-hud__identity">
-        <strong>{king.nickname}</strong>
-        <span>Rei · Nv {king.level}</span>
+        {assetUrl(king.portraitAssetId) && (
+          <img
+            className="tia-hud__portrait"
+            src={assetUrl(king.portraitAssetId) ?? undefined}
+            alt={`Retrato de ${king.nickname}`}
+          />
+        )}
+        <div className="tia-hud__identity-text">
+          <strong>{king.nickname}</strong>
+          <span>Rei · Nv {king.level}</span>
+        </div>
       </div>
       <div className="tia-hud__bars">
         <ProgressBar
@@ -150,29 +208,53 @@ function Hud({ state }: { state: GameState }) {
   );
 }
 
-function KingScreen({ state }: { state: GameState }) {
+function KingScreen({ state, onChangeSkin }: { state: GameState; onChangeSkin: (skinId: string) => void }) {
   const king = state.data.king;
   const offline = state.offlinePreview;
+  const skins = config.account.king.skins;
   return (
     <Panel title="O Rei">
-      <p>
-        O Rei é a meta-personagem do jogador. Ele não entra no combate: sua função é a conta, os slots e
-        a progressão do Reino (§8, §46).
-      </p>
-      <ProgressBar
-        label={`Nível ${king.level}`}
-        value={kingProgress(king)}
-        max={1}
-        color="#7aa2f7"
-        readout={`${king.xp.toString()} XP`}
-      />
-      {offline.creditedDurationMs > 0 && (
-        <StatPill
-          label="Offline pendente"
-          value={`${Math.round(offline.creditedDurationMs / 60000)} min`}
-          tone="good"
+      <div className="tia-king">
+        <img
+          className="tia-king__body"
+          src={assetUrl(skins.find((s) => s.id === king.skinId)?.assetId ?? king.portraitAssetId) ?? undefined}
+          alt={`Aparência ${king.displayName}`}
         />
-      )}
+        <div className="tia-king__facts">
+          <p>
+            <strong>{king.displayName}</strong> é a meta-personagem da sua conta. O Rei não entra no
+            combate: sua função é a conta, os slots e a progressão do Reino (§8, §46).
+          </p>
+          <ProgressBar
+            label={`Nível ${king.level}`}
+            value={kingProgress(king)}
+            max={1}
+            color="#7aa2f7"
+            readout={`${king.xp.toLocaleString("pt-BR")} XP`}
+          />
+          {offline.creditedDurationMs > 0 && (
+            <StatPill
+              label="Offline pendente"
+              value={`${Math.round(offline.creditedDurationMs / 60000)} min`}
+              tone="good"
+            />
+          )}
+          <fieldset className="tia-king__skins">
+            <legend>Aparência</legend>
+            <div className="tia-king__skin-row">
+              {skins.map((skin) => (
+                <ActionButton
+                  key={skin.id}
+                  label={skin.name}
+                  variant={skin.id === king.skinId ? "primary" : "secondary"}
+                  hint={`Vestir ${skin.name}`}
+                  onClick={() => onChangeSkin(skin.id)}
+                />
+              ))}
+            </div>
+          </fieldset>
+        </div>
+      </div>
     </Panel>
   );
 }

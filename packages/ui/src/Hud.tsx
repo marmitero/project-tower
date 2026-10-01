@@ -77,16 +77,19 @@ export function ActionButton({
   disabled,
   variant = "primary",
   hint,
+  type = "button",
 }: {
   label: string;
-  onClick: () => void;
+  onClick?: () => void;
   disabled?: boolean;
   variant?: "primary" | "secondary" | "danger";
   hint?: string;
+  /** `submit` para botões dentro de formulário (form.onSubmit faz o resto). */
+  type?: "button" | "submit";
 }) {
   return (
     <button
-      type="button"
+      type={type}
       className={`tia-btn tia-btn--${variant}`}
       onClick={onClick}
       disabled={disabled}

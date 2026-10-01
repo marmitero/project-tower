@@ -298,3 +298,208 @@ body {
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
+
+/* ------------------------------------------------- Identidade do pack */
+/*
+ * §62 — as peças de UI vêm da ui_kit extraída (sem texto rasterizado).
+ * As URLs entram como variáveis pelo App (manifesto é a fonte de verdade;
+ * o CSS nunca monta caminho de asset). Sem elas, o fallback é o painel
+ * plano — visível, não um quadrado fingindo ser sprite.
+ */
+
+.tia-frame-9 {
+  border-style: solid;
+  border-width: 18px;
+  border-image: var(--asset-frame-9, none) 24 fill / 18px / 0 stretch;
+}
+
+/* ------------------------------------------------------ Criação do Rei */
+
+.tia-creation {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.tia-creation__card {
+  width: min(560px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 22px 24px;
+  background: var(--panel);
+  border-radius: 6px;
+}
+
+.tia-creation__banner {
+  height: 72px;
+  background: var(--asset-panel-ornate, none) center / 100% 100% no-repeat;
+  margin: -4px -6px 4px;
+}
+
+.tia-creation__title {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: 0.5px;
+}
+
+.tia-creation__lead {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.tia-creation__label {
+  font-size: 13px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.tia-creation__input {
+  min-height: var(--touch);
+  padding: 8px 12px;
+  font-size: 18px;
+  color: var(--text);
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  outline: none;
+}
+
+.tia-creation__input:focus-visible {
+  border-color: var(--accent);
+}
+
+.tia-creation__hint {
+  margin: 0;
+  min-height: 20px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.tia-creation__hint--bad {
+  color: var(--bad);
+}
+
+.tia-creation__skins {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.tia-creation__skin-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.tia-creation__skin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 120px;
+  min-height: var(--touch);
+  padding: 10px;
+  color: var(--text);
+  background: var(--bg-2);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.tia-creation__skin--selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.tia-creation__skin-art {
+  width: 96px;
+  height: 120px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.tia-creation__skin-name {
+  font-size: 14px;
+}
+
+/* -------------------------------------------------------------- HUD */
+
+.tia-hud__identity {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.tia-hud__portrait {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  object-fit: cover;
+  image-rendering: pixelated;
+  border: 1px solid var(--border);
+}
+
+.tia-hud__identity-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 80px;
+}
+
+/* ----------------------------------------------------- Perfil do Rei */
+
+.tia-king {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.tia-king__body {
+  width: 180px;
+  height: 240px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.tia-king__facts {
+  flex: 1 1 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tia-king__skins {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.tia-king__skins legend {
+  color: var(--muted);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.tia-king__skin-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+@media (max-width: 640px) {
+  .tia-creation__card { padding: 16px; }
+  .tia-creation__title { font-size: 20px; }
+  .tia-creation__skin { min-width: 100px; }
+  .tia-king__body { width: 132px; height: 180px; }
+}

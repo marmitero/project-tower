@@ -68,7 +68,12 @@ export function requiredAssetIds(): string[] {
     // Boss (§24) e Rei (§4, §5).
     "characters/boss/boss_idle_sheet",
     "hero_skins/royal",
+    "hero_skins/paladin",
     "portraits/hero",
+
+    // UI sem texto (§62) — usadas na criação do Rei e nos painéis.
+    "ui/frame_9slice_stone",
+    "ui/panel_ornate",
 
     // VFX de feedback: `damage_dealt`, ataque e `battle_won`.
     "vfx/vfx_hit",

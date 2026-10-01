@@ -30,10 +30,14 @@ export const account: AccountConfig = {
     // ⛔ P-006 — o §5 diz "nome + skin" sem dizer quais. O pack tem 8
     // hero_skins; escolher quais são iniciais é decisão de produto.
     // As duas primeiras são candidatas por leitura visual (royal, paladin).
+    //
+    // `assetId` segue o ID do manifesto (`hero_skins/<id>`), não um
+    // apelido: o jogo nunca monta caminho, ele pede ID (§62).
     skins: [
-      { id: "royal", name: "Real", assetId: "skin/royal", unlock: { kind: "default" } },
-      { id: "paladin", name: "Paladino", assetId: "skin/paladin", unlock: { kind: "default" } },
+      { id: "royal", name: "Real", assetId: "hero_skins/royal", unlock: { kind: "default" } },
+      { id: "paladin", name: "Paladino", assetId: "hero_skins/paladin", unlock: { kind: "default" } },
     ],
+    portraitAssetId: "portraits/hero",
   },
 };
 

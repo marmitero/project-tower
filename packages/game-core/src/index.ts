@@ -31,8 +31,14 @@ export {
   addStats,
   emptyStats,
   activeTeamSize,
+  isSkinUnlocked,
+  changeKingSkin,
+  SkinLockedError,
 } from "./creation.js";
 export type { CreateKingParams, CreateHeroParams } from "./creation.js";
+
+export { normalizeNickname, validateNickname, NICKNAME_MESSAGES } from "./nickname.js";
+export type { NicknameErrorCode, NicknameValidation } from "./nickname.js";
 
 export {
   kingXpToNext,

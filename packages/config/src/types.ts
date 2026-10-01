@@ -82,6 +82,11 @@ export interface AccountConfig {
 
   king: {
     skins: KingSkinConfig[]; // ⛔ P-006 — quais das 8 do pack são iniciais
+    /**
+     * Retrato do Rei (busto). O pack tem um único busto de Rei
+     * (`portraits/hero`); as skins mudam o corpo, não o rosto.
+     */
+    portraitAssetId: string;
   };
 }
 

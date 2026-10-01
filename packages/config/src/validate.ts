@@ -213,6 +213,14 @@ export function validateConfig(cfg: GameConfig = config): GameConfig {
     cfg.account.king.skins.filter((s) => s.unlock.kind === "default").length > 0,
     "deve existir ao menos uma skin disponível por padrão",
   );
+  check(
+    cfg.account.king.portraitAssetId.length > 0,
+    "account.king.portraitAssetId não pode ser vazio",
+  );
+  check(
+    cfg.account.king.skins.every((s) => s.assetId.length > 0),
+    "account.king.skins[].assetId não pode ser vazio",
+  );
 
   // --- Inventário (§13) ----------------------------------------------------
   check(
