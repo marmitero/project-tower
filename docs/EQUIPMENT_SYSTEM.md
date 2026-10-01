@@ -61,7 +61,8 @@ Regras estruturais:
 
 ## 3. Slots
 
-**10 slots**, reaproveitados do repositório de referência (ADR-004):
+**10 slots**, reaproveitados do repositório de referência (ADR-004).
+Mapeamento com os 11 slots do OpenRpg em [`OPENRPG_REFERENCE.md`](OPENRPG_REFERENCE.md) §5.
 
 | Slot | Tipo | Slot | Tipo |
 |---|---|---|---|
@@ -113,6 +114,10 @@ Quatro atributos, quatro rolagens, quatro resultados **independentes**. Um item 
 > **P-010** — a faixa do X **não está definida** no `Master-Prompt.md`. A referência usa **inteiro 1–50** com fator `x/10` (0,1× a 5,0×, em passos de 0,1). O exemplo do §36 mostra decimais no *fator aplicado*, o que é compatível com essa regra — mas o MP não declara a faixa nem se o X armazenado é inteiro. Como X determina o valor de **todo** item do jogo, é Tipo C. Ver [`PENDING_RULES.md`](PENDING_RULES.md#p-010).
 
 ### 4.2 Tabela de raridades
+
+> Escada mapeada com a `QualityType` do OpenRpg (Junk→…→Mythical ≈ nossa
+> Celestial) em [`OPENRPG_REFERENCE.md`](OPENRPG_REFERENCE.md) §5. As chances
+> são regra nossa (§33); o OpenRpg não define probabilidades.
 
 | Raridade | Chance dentro dos drops | Multiplicador | Cor |
 |---|---:|---:|---|

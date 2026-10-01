@@ -63,9 +63,12 @@ Os 4 heróis entram com o material do pack (hero/mage/archer/necromancer) via
 atributo já distintos (§10), físico × mágico coberto (§18), assets por ID do
 manifesto com folhas de animação completas, e validação cruzada
 config × manifesto (`tests/integration/assets-config.test.ts`) que reprova
-qualquer remapeamento errado. **Continua PENDENTE** para a identidade
-definitiva: nomes próprios, skills (⛔ `P-022`), raridades e curvas de
-balanceamento — tudo remodelação de dados, não de código.
+qualquer remapeamento errado. **Base OpenRpg (ADR-014):** atributos
+STR/DEX/CON/INT/WIS/CHA como identidade (Fighter→Guardião, Mage→Arcanista) e
+roster de skills baseado nas 10 abilities do OpenRpg
+(`docs/OPENRPG_REFERENCE.md` §3–§4). **Continua PENDENTE** para a identidade
+definitiva: nomes próprios, raridades e curvas de balanceamento — tudo
+remodelação de dados, não de código.
 
 ---
 
@@ -656,6 +659,11 @@ Default provisório: 300 itens não equipados, herdado da referência.
 **Criticidade:** ⚪ BAIXA · **Bloqueia:** pós-MVP
 
 Upgrade, níveis, árvore de talentos?
+
+**Status (2026-10-01):** o ROSTER de skills virou dado —
+`packages/config/src/skills.ts` (12 skills, 3 por herói, baseado no OpenRpg,
+`docs/OPENRPG_REFERENCE.md` §4). O que continua PENDENTE é a PROGRESSÃO
+(upgrade/níveis/árvore), que só entra pós-MVP.
 
 ### P-030 — World Boss: regra de last hit
 

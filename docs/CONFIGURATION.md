@@ -1,7 +1,7 @@
 # Configuração Centralizada
 
-**Versão:** 0.1 · **Data:** 2026-09-30 · **Estado:** baseline inicial, sem código
-**Regra de origem:** §15, §20, §32, §33, §46, §105 do `Master-Prompt.md`
+**Versão:** 0.2 · **Data:** 2026-10-01 · **Estado:** implementada (`packages/config`)
+**Regra de origem:** §15, §20, §32, §33, §46, §105 do `Master-Prompt.md` · dados de classe/status/skills com base [OpenRpg](OPENRPG_REFERENCE.md)
 
 ---
 

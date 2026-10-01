@@ -152,6 +152,7 @@ Todas em [`docs/DECISIONS_LOG.md`](docs/DECISIONS_LOG.md).
 | **011** | O `GameState` é a **única** porta de mutação; `data` é exposto como `Readonly` e toda mudança incrementa `revision` (§86) |
 | **012** | Criação do Rei sem auto-criação (§62); retrato ≠ skin; regras de nickname em dados (`config.account.nickname`) |
 | **013** | Catálogo de heróis como dado remodelável; assets por ID do manifesto estruturados em folhas; validação cruzada config × manifesto no CI |
+| **014** | OpenRpg (MIT) como base de dados de classes/status/skills/itens; atributos STR/DEX/CON/INT/WIS/CHA derivando growth; catálogo de skills; divergências mapeadas em `docs/OPENRPG_REFERENCE.md` |
 
 ---
 
@@ -347,11 +348,11 @@ Todas as 15 têm teste **passando** hoje. Os arquivos abaixo existem e rodam em 
 
 ## 12. Resumo para a próxima sessão
 
-**Estado:** FASE 1, 2 e 3 concluídas; FASE 4 em curso com a **inserção genérica** (2026-10-01, decisão do usuário): o catálogo dos 4 heróis e dos inimigos virou dado remodelável (`packages/config/src/catalog.ts`, ADR-013) com papéis/perfis distintos (§10), físico × mágico (§18), assets por ID do manifesto (retrato + 6 folhas de animação) e validação cruzada config × manifesto no CI (nada de clones §10, nada de herói sem arte §62). 304 testes verdes (276 unit+integration + 28 arch).
+**Estado:** FASE 1, 2 e 3 concluídas; FASE 4 em curso com a **inserção genérica** + **base OpenRpg** (2026-10-01, decisões do usuário): o catálogo dos 4 heróis e dos inimigos é dado remodelável (ADR-013) e agora tem atributos STR/DEX/CON/INT/WIS/CHA derivando os stats de combate por fórmulas citáveis do OpenRpg (ADR-014, `docs/OPENRPG_REFERENCE.md`), mais um roster de 12 skills baseado nas abilities do OpenRpg. Validação cruzada config × manifesto no CI. 315 testes verdes.
 
 **Assets (2026-10-01):** as três lacunas vermelhas do inventário foram fechadas — UI em PT-BR (33 peças sem texto extraídas da `ui_kit`; barras decompostas em trilho+fills+caps para compor em runtime com números em PT-BR), áudio (22 SFX procedurais gerados por `scripts/gen-audio.mjs`, incluindo a escada de raridade do §108) e retratos dos 4 heróis (3 gerados no estilo do pack). Pipeline: 480 entradas no manifesto, `check:assets` e `check:assets:strict` verdes. Detalhes em `docs/ASSET_GAP.md` §3.
 
-**O que fazer:** **FASE 4 — Personagens**, no que não depende da identidade final: XP de herói com a curva da config (⛔ P-009), níveis de herói, seleção de 1 entre N e integração com inventário. A identidade definitiva (nomes, skills ⛔ P-022, raridades, curvas) continua com o usuário em **P-002** — quando decidida, a entrega é um diff de dados em `catalog.ts`, sem tocar game-core/engine/UI.
+**O que fazer:** **FASE 4 — Personagens**, no que não depende da identidade final: XP de herói com a curva da config (⛔ P-009), níveis de herói, seleção de 1 entre N e integração com inventário. A identidade definitiva (nomes, raridades, curvas finais) continua com o usuário em **P-002** — quando decidida, é um diff de dados em `catalog.ts`. Skills e atributos já têm base OpenRpg (ADR-014); MP/mana e defesa flat do OpenRpg estão REJEITADOS/adiados — ver `docs/OPENRPG_REFERENCE.md` §8.
 
 **O que perguntar ao usuário:** as 7 pendências críticas, começando por **P-002 (os 4 heróis)**. O catálogo provisório funciona para desenvolvimento, mas o §10 exige "diferenças reais" e isso só se confirma com decisão humana.
 

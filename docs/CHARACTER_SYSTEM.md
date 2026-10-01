@@ -194,7 +194,15 @@ O material para uma proposta existe. A **proposta** é o que falta, e ela precis
 
 ### 3.4 Atributos do herói
 
-O `Master-Prompt.md` lista que o herói possui "atributos" (§9) mas não define a lista. A referência técnica reaproveitada do repositório de referência (§9 do `SYSTEMS_SPEC.md` da referência) define 8 atributos, e essa lista é **tecnicamente sólida e coerente com o §36 do Master-Prompt** (que fala de `Attack`, `Defense`, `Critical`, `HP` como exemplos de atributos com X individual):
+São **duas camadas** (base OpenRpg, [`OPENRPG_REFERENCE.md`](OPENRPG_REFERENCE.md) §2–§3):
+
+1. **Atributos-base** (`CharacterAttributes`, identidade da classe):
+   `Strength · Dexterity · Constitution · Intelligence · Wisdom · Charisma`.
+   É o que a classe declara; trocar a fantasia de uma classe é editar 6 números.
+2. **Stats de combate** (`CombatStats`, projeção DERIVADA por
+   `growthFromAttributes`) — a lista de 8 herdada da referência técnica,
+   coerente com o §36 do Master-Prompt (que fala de `Attack`, `Defense`,
+   `Critical`, `HP` como exemplos de atributos com X individual):
 
 ```text
 HP · Attack · SpecialAttack · Defense · SpecialDefense · CritChance · AttackSpeed · Speed

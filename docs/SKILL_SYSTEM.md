@@ -1,7 +1,7 @@
 # Sistema de Skills
 
-**Versão:** 0.1 · **Data:** 2026-09-30 · **Estado:** especificado, conteúdo bloqueado (P-002)
-**Fonte:** §9, §25, §66, §81 do `Master-Prompt.md`
+**Versão:** 0.2 · **Data:** 2026-10-01 · **Estado:** modelo + roster de dados implementados (base OpenRpg)
+**Fonte:** §9, §25, §66, §81 do `Master-Prompt.md` · dados em `packages/config/src/skills.ts` · base [OpenRpg](OPENRPG_REFERENCE.md) §4
 
 ---
 
@@ -17,7 +17,12 @@ O jogador controla:
 
 O motor controla **quando** elas disparam.
 
-> Depende de [`P-002`](PENDING_RULES.md#p-002): as skills de cada um dos 4 heróis iniciais não estão definidas. O que segue é a **estrutura** que vai suportá-las.
+> O roster inicial (12 skills, 3 por herói) está implementado em
+> [`packages/config/src/skills.ts`](../packages/config/src/skills.ts) — baseado
+> nas 10 abilities do OpenRpg ([referência](OPENRPG_REFERENCE.md) §4). A
+> PROGRESSÃO de skills (upgrade/árvore) continua pendente (⛔ `P-022`, pós-MVP).
+> O `SkillDef` do catálogo é o subconjunto MVP do modelo abaixo (sem
+> `effects[]` composto ainda).
 
 ---
 

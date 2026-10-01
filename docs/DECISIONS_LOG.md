@@ -256,3 +256,35 @@ mecanicamente iguais" (§10) reprova no CI (growths e papéis precisam ser
 distintos). "Herói sem sprite" (§62) reprova no CI (id fora do manifesto).
 Quando `P-002` for decidida, a entrega é um diff de dados em `catalog.ts` —
 nomes, skills, raridades e números — sem tocar em game-core, engine ou UI.
+
+---
+
+## ADR-014 — OpenRpg como base de dados de classes, status, skills e itens
+
+**Status:** aceito · **Data:** 2026-10-01 · **decisão do usuário**
+
+**Contexto.** A P-002 (identidade dos 4 heróis) e a P-022 (skills) exigiam
+dados que não podíamos inventar sem base. O usuário indicou o
+[OpenRpg](https://github.com/openrpg/OpenRpg) (MIT) como **base** para
+classes, status, itens, balanceamento e skills — o que casar com o projeto.
+
+**Decisão.** Adotar o OpenRpg como referência de DADOS e CONVENÇÕES (nunca de
+regra de gameplay — o Master-Prompt prevalece):
+
+1. **Status:** atributos STR/DEX/CON/INT/WIS/CHA como identidade da classe;
+   `growth` de combate vira PROJEÇÃO derivada por fórmulas citáveis
+   (CON×5→HP, FOR/DES→ataque, etc.) em `config/src/attributes.ts`.
+2. **Skills:** catálogo `config/src/skills.ts` no nosso modelo de
+   `SKILL_SYSTEM.md`, com conteúdo baseado no roster de 10 abilities do
+   OpenRpg (formato de dano/alvo/custo/cooldown, gating por classe).
+3. **Itens/balance:** escada de qualidade mapeada (Mythical↔Celestial),
+   template×instância (já alinhado), modificação ↔ nosso X (§36), loot por
+   `DropRate` por entrada, curvas (`PresetCurves`) como família de referência
+   para P-009/P-005.
+4. **Registro:** `docs/OPENRPG_REFERENCE.md` lista tudo que foi adotado, o
+   que foi rejeitado e POR QUÊ (raças, MP, defesa flat, tipos de dano
+   detalhados, odds de raridade…).
+
+**Consequência.** Trocar a fantasia de uma classe = editar 6 atributos; a
+skill vira dado de catálogo; toda divergência com o Master-Prompt tem vencedor
+declarado na referência. Atribuição MIT registrada (§10 do documento).

@@ -197,6 +197,12 @@ Criação do Rei, nickname, skin, perfil, nível da conta.
 > ADR-013): 4 heróis com papéis e perfis de atributo distintos (§10),
 > físico × mágico coberto (§18), assets por ID do manifesto (retrato + 6
 > folhas de animação) e validação cruzada config × manifesto no CI.
+>
+> **2026-10-01 (2ª rodada):** o usuário indicou o **OpenRpg** como base de
+> classes/status/itens/skills (ADR-014,
+> [`OPENRPG_REFERENCE.md`](OPENRPG_REFERENCE.md)): atributos STR/DEX/CON/INT/
+> WIS/CHA como identidade (growth derivado por fórmulas citáveis) e roster de
+> 12 skills baseado nas abilities do OpenRpg.
 
 **O que já está construído (inserção genérica):**
 
