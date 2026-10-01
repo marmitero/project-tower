@@ -288,3 +288,39 @@ regra de gameplay — o Master-Prompt prevalece):
 **Consequência.** Trocar a fantasia de uma classe = editar 6 atributos; a
 skill vira dado de catálogo; toda divergência com o Master-Prompt tem vencedor
 declarado na referência. Atribuição MIT registrada (§10 do documento).
+
+---
+
+## ADR-015 — P-002 resolvida: identidades definitivas dos 4 heróis
+
+**Status:** aceito · **Data:** 2026-10-01 · **decisão delegada e autorizada pelo usuário**
+
+**Contexto.** `P-002` era a última pendência crítica que segurava a Fase 4.
+O usuário delegou a decisão ("você decide — algo completo e complexo, sem ser
+muito genérico, editável depois; pode adaptar do OpenRpg ou criar") e autorizou
+a criação dos conteúdos.
+
+**Decisão.** Quatro identidades definitivas em
+`packages/config/src/heroes.ts` (camada separada da mecânica):
+
+| id | Herói | Classe | Raridade | Assinatura |
+|---|---|---|---|---|
+| `hero_aldric` | Aldric, o Inabalável | Guardião (tank reativo) | Common | `skill_counter` |
+| `hero_kaia` | Kaia, a Pássaro-Livre | Arqueira (velocidade) | Uncommon | `skill_volley` |
+| `hero_maelis` | Maelis, a Estelar | Arcanista (área) | Rare | `skill_nova` |
+| `hero_vorath` | Vorath, o Silente | Invocador (DoT) | Epic | `skill_hex` |
+
+Cada identidade tem: nome + epíteto, lore (2–3 frases), 3 traços de
+personalidade, notas de voz (prepara P-061), raridade (escala de aquisição,
+§109), skill assinada, estilo de combate, alcance, `statPriority` (prepara
+auto-equip) e dica de aquisição futura — sempre de fontes que o §12 permite
+(nunca inimigos comuns da Torre).
+
+**Ancoragem.** Arquétipos e escada de raridade seguem o OpenRpg (ADR-014);
+nomes/epítetos/lore são criação autorizada. A mecânica (atributos→stats,
+skills) continua em `catalog.ts`/`attributes.ts`, referenciada por id.
+
+**Consequência.** P-002 sai das críticas (7→6). A Fase 4 destrava: heróis
+nascem nomeados com raridade própria; P-024 (afinidades) e P-061 (voz) ganham
+âncora. Remodelar qualquer herói é editar uma entrada de dado — nome, lore,
+raridade, prioridade de stats — sem tocar em código.

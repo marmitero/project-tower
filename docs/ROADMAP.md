@@ -203,6 +203,12 @@ Criação do Rei, nickname, skin, perfil, nível da conta.
 > [`OPENRPG_REFERENCE.md`](OPENRPG_REFERENCE.md)): atributos STR/DEX/CON/INT/
 > WIS/CHA como identidade (growth derivado por fórmulas citáveis) e roster de
 > 12 skills baseado nas abilities do OpenRpg.
+>
+> **2026-10-01 (3ª rodada):** **P-002 RESOLVIDA** por delegação do usuário
+> (ADR-015): identidades definitivas — **Aldric** (Guardião/Common), **Kaia**
+> (Arqueira/Uncommon), **Maelis** (Arcanista/Rare), **Vorath**
+> (Invocador/Epic) — com lore, personalidade, voz, estilo, `statPriority` e
+> aquisição futura, em `packages/config/src/heroes.ts`.
 
 **O que já está construído (inserção genérica):**
 
@@ -217,13 +223,14 @@ Criação do Rei, nickname, skin, perfil, nível da conta.
 - A seleção de 1 entre N.
 - A integração com inventário e equipamento.
 
-**O que precisa de `P-002`:** nomes definitivos, skills (⛔ `P-022`),
-raridades e curvas de balanceamento — tudo remodelação de dados no catálogo.
-
-> O material de apoio existe ([`ASSET_INVENTORY.md` §5.3](ASSET_INVENTORY.md#53-candidatos-para-os-4-heróis-iniciais)): sprites candidatos (`hero`, `mage`, `archer`, `necromancer`) que cobrem físico × mágico e têm traços de arma complementares.
+**P-002 RESOLVIDA (2026-10-01, ADR-015):** nomes definitivos, raridades,
+skills assinadas e estilo entraram em `packages/config/src/heroes.ts`. O que
+fica de fora da identidade: progressão de skills (⛔ `P-022`, pós-MVP) e curvas
+finais de balance (⛔ `P-009`, com dados de playtest).
 
 **Gate:** o jogador escolhe 1 dos 4, e a escolha tem impacto real (§10).
-*Parcial:* escolha e impacto mecânico existem; identidade final pendente.
+*Quase pronto:* escolha, impacto mecânico e identidade final existem; falta a
+seleção 1-entre-N na UI (Fase 4 em curso).
 
 ---
 

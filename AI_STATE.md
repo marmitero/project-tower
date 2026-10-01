@@ -153,18 +153,19 @@ Todas em [`docs/DECISIONS_LOG.md`](docs/DECISIONS_LOG.md).
 | **012** | Criação do Rei sem auto-criação (§62); retrato ≠ skin; regras de nickname em dados (`config.account.nickname`) |
 | **013** | Catálogo de heróis como dado remodelável; assets por ID do manifesto estruturados em folhas; validação cruzada config × manifesto no CI |
 | **014** | OpenRpg (MIT) como base de dados de classes/status/skills/itens; atributos STR/DEX/CON/INT/WIS/CHA derivando growth; catálogo de skills; divergências mapeadas em `docs/OPENRPG_REFERENCE.md` |
+| **015** | P-002 resolvida por delegação do usuário: identidades definitivas (Aldric/Kaia/Maelis/Vorath) em `config/src/heroes.ts` — nome, epíteto, lore, personalidade, voz, raridade, skill assinada, statPriority, aquisição (§12) |
 
 ---
 
 ## 6. Pendências — o estado mais importante
 
-**67 pendências catalogadas, 7 críticas.** Nenhuma foi inventada. Detalhes em [`docs/PENDING_RULES.md`](docs/PENDING_RULES.md).
+**67 pendências catalogadas — P-002 RESOLVIDA (2026-10-01), 6 críticas restantes.** Nenhuma foi inventada. Detalhes em [`docs/PENDING_RULES.md`](docs/PENDING_RULES.md).
 
-### As 7 críticas
+### As 6 críticas (P-002 resolvida por delegação do usuário)
 
 | ID | Pendência | Bloqueia | Material de apoio |
 |---|---|---|---|
-| 🔴 **P-002** | **Definição dos 4 heróis iniciais** | Fase 4 → vertical slice | 4 sprites candidatos (`hero`, `mage`, `archer`, `necromancer`) que cobrem físico × mágico e têm traços de arma complementares — [`ASSET_INVENTORY.md` §5.3](docs/ASSET_INVENTORY.md#53-candidatos-para-os-4-heróis-iniciais) |
+| ~~🔴 **P-002**~~ | ~~Definição dos 4 heróis iniciais~~ ✅ | — resolvida | Identidades em `packages/config/src/heroes.ts` (Aldric/Kaia/Maelis/Vorath), ADR-015 |
 | 🔴 **P-005** | Estrutura e curva da Torre | Fase 7 | — |
 | 🔴 **P-006** | Inimigos: stats, papéis, resistências | Fase 7 | 12 inimigos + 5 elites + 1 boss com sprites prontos |
 | 🔴 **P-008** | Todos os valores de Coin | Fase 10 | — |
@@ -182,11 +183,12 @@ Um valor inventado em silêncio é **pior** que um valor ausente, porque parece 
 
 ### Recomendação de prioridade
 
-Se apenas **uma** decisão for tomada, que seja **P-002 (os 4 heróis)**. É a única que destrava a cadeia inteira:
+~~P-002~~ resolvida (2026-10-01). A próxima decisão que destrava mais cadeia é o
+par **P-005/P-006 (estrutura da Torre + inimigos)**, que segura a Fase 7:
 
 ```text
-P-002 (4 heróis) → Fase 4 → Fase 5 → Fase 6 → Fase 7 (precisa P-005/P-006)
-P-002 também destrava P-024 (afinidades) e P-061 (identidade sonora)
+P-005/P-006 → Fase 7 (Torre) → Fase 8 (searching) → vertical slice
+P-008/P-036 (Coin) → Fase 10 · P-010 (X) → Fase 9 · P-011 (offline) → Fase 11
 ```
 
 ---
@@ -348,11 +350,16 @@ Todas as 15 têm teste **passando** hoje. Os arquivos abaixo existem e rodam em 
 
 ## 12. Resumo para a próxima sessão
 
-**Estado:** FASE 1, 2 e 3 concluídas; FASE 4 em curso com a **inserção genérica** + **base OpenRpg** (2026-10-01, decisões do usuário): o catálogo dos 4 heróis e dos inimigos é dado remodelável (ADR-013) e agora tem atributos STR/DEX/CON/INT/WIS/CHA derivando os stats de combate por fórmulas citáveis do OpenRpg (ADR-014, `docs/OPENRPG_REFERENCE.md`), mais um roster de 12 skills baseado nas abilities do OpenRpg. Validação cruzada config × manifesto no CI. 315 testes verdes.
+**Estado:** FASE 1, 2 e 3 concluídas; FASE 4 em curso. **P-002 RESOLVIDA** (2026-10-01, delegação do usuário, ADR-015): os 4 heróis têm identidades definitivas — **Aldric, o Inabalável** (Guardião/Common), **Kaia, a Pássaro-Livre** (Arqueira/Uncommon), **Maelis, a Estelar** (Arcanista/Rare), **Vorath, o Silente** (Invocador/Epic) — com lore, personalidade, notas de voz, skill assinada, `statPriority` e aquisição futura (§12), tudo em `packages/config/src/heroes.ts`. Mecânica derivada dos atributos OpenRpg (ADR-014). 324 testes verdes.
 
 **Assets (2026-10-01):** as três lacunas vermelhas do inventário foram fechadas — UI em PT-BR (33 peças sem texto extraídas da `ui_kit`; barras decompostas em trilho+fills+caps para compor em runtime com números em PT-BR), áudio (22 SFX procedurais gerados por `scripts/gen-audio.mjs`, incluindo a escada de raridade do §108) e retratos dos 4 heróis (3 gerados no estilo do pack). Pipeline: 480 entradas no manifesto, `check:assets` e `check:assets:strict` verdes. Detalhes em `docs/ASSET_GAP.md` §3.
 
-**O que fazer:** **FASE 4 — Personagens**, no que não depende da identidade final: XP de herói com a curva da config (⛔ P-009), níveis de herói, seleção de 1 entre N e integração com inventário. A identidade definitiva (nomes, raridades, curvas finais) continua com o usuário em **P-002** — quando decidida, é um diff de dados em `catalog.ts`. Skills e atributos já têm base OpenRpg (ADR-014); MP/mana e defesa flat do OpenRpg estão REJEITADOS/adiados — ver `docs/OPENRPG_REFERENCE.md` §8.
+**O que fazer:** **FASE 4 — Personagens** — XP de herói funcional (⛔ P-009
+para a curva final), níveis de herói, **seleção 1 entre N na UI** (o gate da
+fase) e integração com inventário. As identidades estão decididas (P-002
+resolvida); mudar um herói é editar `config/src/heroes.ts`. As decisões
+críticas restantes que destravam mais cadeia são **P-005/P-006** (Torre +
+inimigos, Fase 7).
 
 **O que perguntar ao usuário:** as 7 pendências críticas, começando por **P-002 (os 4 heróis)**. O catálogo provisório funciona para desenvolvimento, mas o §10 exige "diferenças reais" e isso só se confirma com decisão humana.
 

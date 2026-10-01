@@ -1,6 +1,6 @@
 # Pendências — Decisões que NÃO podem ser inventadas
 
-**Versão:** 0.1 · **Data:** 2026-09-30 · **Estado:** 67 pendências catalogadas
+**Versão:** 0.2 · **Data:** 2026-10-01 · **Estado:** 67 pendências catalogadas (P-002 resolvida)
 **Fonte:** §73 do `Master-Prompt.md`
 
 ---
@@ -40,9 +40,28 @@ O que separa o Tipo B do Tipo C é **custo de reversão e impacto no jogador**. 
 
 Estas seis separam a documentação da implementação.
 
-### P-002 — Definição dos 4 heróis iniciais
+### P-002 — Definição dos 4 heróis iniciais ✅ RESOLVIDA (2026-10-01)
 
 **Criticidade:** 🔴 CRÍTICA · **Bloqueia:** FASE 4, e portanto a vertical slice
+
+> **RESOLVIDA em 2026-10-01 por delegação do usuário** ("você decide — algo
+> completo e complexo, editável depois; pode adaptar do OpenRpg ou criar").
+> As identidades definitivas vivem em [`packages/config/src/heroes.ts`](../packages/config/src/heroes.ts)
+> (ADR-015):
+>
+> | id | Herói | Classe | Raridade | Assinatura | Estilo |
+> |---|---|---|---|---|---|
+> | `hero_aldric` | **Aldric, o Inabalável** | Guardião (tank reativo) | Common | `skill_counter` | Contra-ataque e mitigação |
+> | `hero_kaia` | **Kaia, a Pássaro-Livre** | Arqueira (velocidade) | Uncommon | `skill_volley` | Rajada e velocidade |
+> | `hero_maelis` | **Maelis, a Estelar** | Arcanista (área) | Rare | `skill_nova` | Explosão em área |
+> | `hero_vorath` | **Vorath, o Silente** | Invocador (DoT) | Epic | `skill_hex` | Veneno e drenagem |
+>
+> Cada herói tem lore, 3 traços de personalidade, notas de voz (⛔ P-061),
+> `statPriority` para loot futuro e dica de aquisição (§12 respeitado). A
+> raridade forma a escala de aquisição (§109 "preciso conseguir esse
+> personagem"). Mecânica (atributos→stats, skills) continua em `catalog.ts`/
+> `attributes.ts` — identidade e mecânica se referenciam por id; remodelar é
+> editar dados.
 
 O §10 define **quantos** (4) e **como** (escolhe 1), e exige diferenças reais de função, atributos, skills, estilo de combate e progressão. Proíbe explicitamente quatro personagens "visualmente diferentes mas mecanicamente iguais".
 
@@ -703,7 +722,7 @@ Uma por Boss ou uma compartilhada?
 
 | Criticidade | Quantidade | IDs |
 |---|---:|---|
-| 🔴 **CRÍTICA** | **7** | `P-002`, `P-005`, `P-006`, `P-008`, `P-010`, `P-011`, `P-036` |
+| 🔴 **CRÍTICA** | **6** | `P-005`, `P-006`, `P-008`, `P-010`, `P-011`, `P-036` (P-002 resolvida 2026-10-01) |
 | 🟡 **ALTA** | **20** | `P-001`, `P-003`, `P-004`, `P-006b`, `P-015`, `P-017`, `P-018`, `P-019`, `P-023`, `P-027`, `P-032`, `P-007`, `P-009`, `P-012`, `P-011a`, `P-047`, `P-053`, `P-057`, `P-058`, `P-014` |
 | 🟢 **MÉDIA** | **11** | `P-020`, `P-020b`, `P-021`, `P-024`, `P-025`, `P-033`, `P-006c`, `P-039`, `P-040`, `P-043`, `P-016` |
 | ⚪ **BAIXA** | **29** | `P-026`, `P-028`, `P-029`, `P-031`, `P-034`, `P-035`, `P-037`, `P-038`, `P-013`, `P-041`, `P-042`, `P-044`, `P-045`, `P-046`, `P-048`, `P-049`, `P-050`, `P-051`, `P-052`, `P-054`, `P-055`, `P-022`, `P-030`, `P-056`, `P-059`, `P-060`, `P-061`, `P-062`, `P-063` |
