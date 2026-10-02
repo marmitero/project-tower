@@ -5,7 +5,11 @@ import { resolve } from "node:path";
 const pkg = (name: string) => resolve(import.meta.dirname, "..", "..", "packages", name, "src", "index.ts");
 const pkgTsx = (name: string) => resolve(import.meta.dirname, "..", "..", "packages", name, "src", "index.ts");
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  // `--mode preview` (ver `scripts/serve-preview.mjs`) é o bundle LEVE que o
+  // servidor estático zero-dependências serve: sem sourcemap e sem copiar
+  // `public/` (os assets são servidos pela raiz `public/assets`). O modo
+  // padrão (produção) mantém o comportamento completo.
   // §67 — o bundle precisa funcionar em servidor de produção e abrir
   // direto no dispositivo. `relative` evita que o preview quebre por
   // caminho base.
@@ -39,7 +43,8 @@ export default defineConfig({
   },
   build: {
     target: "es2022",
-    sourcemap: true,
+    sourcemap: mode !== "preview",
+    copyPublicDir: mode !== "preview",
     rollupOptions: {
       output: {
         manualChunks: {
@@ -49,4 +54,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));

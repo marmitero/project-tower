@@ -2,6 +2,7 @@
 
 **Última atualização:** 2026-10-01
 **Estado:** **FASE 1–5 e 8 concluídas** · FASE 6 (Combate) é a próxima
+**Preview:** servidor estático autocontido (ADR-018) — `node scripts/serve-preview.mjs` (porta 5173). Se o ambiente resetar, subir UMA linha; não depende de `node_modules`.
 **Repositório:** `marmitero/project-tower`
 **Branch desta sessão:** `arena/01a0f1f1-project-tower`
 

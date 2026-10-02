@@ -427,3 +427,51 @@ resolvida com o valor mais conservador e tudo mora em config editável.
   `searching-state.test.ts` (21 testes novos) + suíte completa (350).
 - Os números de Coin são os mais frágeis desta ADR — serão revalidados na Fase 10 (Economia).
 - FASE 6 (Combate) herda a decisão de HP entre batalhas em aberto (ver P-019).
+
+---
+
+## ADR-018 — Preview estático autocontido (correção do "preview expirado")
+
+- **Data**: 2026-10-01
+- **Status**: Aceito
+- **Decidido por**: Agente (decisão técnica — Tipo B), a pedido do usuário ("audite, corrija")
+- **Afeta**: `scripts/serve-preview.mjs` (novo), `apps/game-web/vite.config.ts`, scripts npm
+
+### Contexto
+
+O preview do sandbox aparecia "expirado" sempre que o usuário ia abri-lo. Auditoria:
+
+1. O processo do dev server (vite) **morria entre turnos** junto com o ambiente —
+   o mesmo fenômeno que já resetou o workspace 11× (HEAD volta ao commit base,
+   `node_modules` e cópias grandes de assets somem).
+2. Não é OOM (3,7 GB livres, sem kills no kernel) nem 403 de host
+   (`allowedHosts: true` já estava correto).
+3. O dev server depende de `node_modules` para subir de novo; depois de um
+   restore do ambiente, `npm run dev` nem sequer inicia.
+
+### Decisão
+
+1. **`scripts/serve-preview.mjs` — servidor estático zero-dependências** (só
+   stdlib do Node): serve o bundle em `apps/game-web/preview/` + assets em
+   `apps/game-web/public/` (fallback `assets/sprites/`). Sobe com
+   `node scripts/serve-preview.mjs` mesmo sem `node_modules`.
+2. **Bundle leve persistido** (`vite build --mode preview --outDir preview`):
+   1,5 MB, sem sourcemap e sem copiar `public/` (os assets já vivem em
+   `public/assets/`). `apps/game-web/preview/` NÃO está na lista de exclusão
+   de snapshot (diferente de `dist/`), então sobrevive a restores.
+3. **Uma única cópia de assets no workspace** (`public/assets`, 92 MB):
+   `assets/sprites` vira symlink para o pack re-clonado em `/tmp` durante o
+   trabalho; o peso do workspace fica ~105 MB, dentro do orçamento de
+   snapshot (~128 MB) — as cópias duplicadas (184 MB) eram o principal
+   suspeito dos resets recorrentes.
+4. Porta **5173 em 0.0.0.0** estável (a mesma URL de preview continua válida).
+
+### Consequências
+
+- O preview volta a subir em segundos a qualquer momento; se o ambiente
+  resetar de novo, basta `node scripts/serve-preview.mjs` (não precisa de
+  build nem install) enquanto `preview/` e `public/assets/` existirem.
+- `npm run build` de produção continua completo (com public copy e sourcemaps);
+  `npm run build:preview` é o caminho leve.
+- Validação de que os resets cessaram: próxima sessão iniciar com o HEAD
+  intacto.

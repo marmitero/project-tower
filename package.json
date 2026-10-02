@@ -28,7 +28,9 @@
     "check": "npm run check:docs && npm run typecheck && npm run test && npm run test:arch && npm run check:assets && npm run check:no-secret && npm run check:debug-mode",
     "typecheck": "tsc --noEmit",
     "check:assets:strict": "node scripts/check-assets.mjs --strict",
-    "verify": "npm run check && npm run build"
+    "verify": "npm run check && npm run build",
+    "preview:static": "node scripts/serve-preview.mjs",
+    "build:preview": "npm run build:preview -w @tia/game-web"
   },
   "devDependencies": {
     "@types/node": "^26.6.3",
