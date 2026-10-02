@@ -631,3 +631,67 @@ body {
   .tia-hero-pick-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
   .tia-creation__actions { flex-direction: column-reverse; }
 }
+
+/* ------------------------------------- Equipe — slots (§15, FASE 5) */
+
+.tia-slot--locked {
+  opacity: 0.75;
+  border-style: dashed;
+}
+
+.tia-slot__actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tia-pool {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tia-pool__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tia-pool__name {
+  min-width: 120px;
+}
+
+/* ------------------------------- Searching (§27/§28, FASE 8) */
+
+.tia-searching {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px 0;
+}
+
+.tia-searching__label {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1px;
+}
+
+.tia-searching__dots {
+  display: inline-block;
+  animation: tia-dots 1.2s steps(4, end) infinite;
+}
+
+@keyframes tia-dots {
+  0% { opacity: 0.2; }
+  50% { opacity: 1; }
+  100% { opacity: 0.2; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tia-searching__dots { animation: none; }
+}
+
+.tia-note--bad {
+  color: #f7768e;
+}

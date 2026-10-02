@@ -1,6 +1,6 @@
 # Pendências — Decisões que NÃO podem ser inventadas
 
-**Versão:** 0.2 · **Data:** 2026-10-01 · **Estado:** 67 pendências catalogadas (P-002 resolvida)
+**Versão:** 0.3 · **Data:** 2026-10-01 · **Estado:** 67 pendências catalogadas (P-002, P-003, P-004, P-012, P-019, P-020b resolvidas)
 **Fonte:** §73 do `Master-Prompt.md`
 
 ---
@@ -172,9 +172,13 @@ O §9 diz que o herói tem "atributos" e o §71 que o equipamento tem `stats` e 
 
 ---
 
-### P-003 — Custo em Coin dos slots 2 e 3
+### P-003 — Custo em Coin dos slots 2 e 3 ✅ RESOLVIDA PROVISORIAMENTE (2026-10-01)
 
 **Criticidade:** 🟡 ALTA · **Bloqueia:** FASE 5
+
+> **RESOLVIDA em 2026-10-01 por delegação do usuário** (ADR-017): **slot 2 =
+> 50.000 Coin, slot 3 = 250.000 Coin** (`config.team.slots` — editável).
+> Provísório até a economia (P-008/P-036, Fase 10); ratificação humana recomendada.
 
 O §15 e o §46 exigem "nível mínimo + Coin" e que os valores sejam configuráveis, mas **não dão o número**. Os níveis (10 e 25) estão definidos.
 
@@ -182,9 +186,13 @@ O §15 e o §46 exigem "nível mínimo + Coin" e que os valores sejam configurá
 
 ---
 
-### P-004 — Curva de divisão de XP
+### P-004 — Curva de divisão de XP ✅ RESOLVIDA (2026-10-01)
 
 **Criticidade:** 🟡 ALTA · **Bloqueia:** FASE 5
+
+> **RESOLVIDA em 2026-10-01 por delegação do usuário** (ADR-017): divisão
+> **linear 1/n** — `config.xp.teamSplit = {1: 1.0, 2: 0.5, 3: 1/3}` com
+> `rounding: "floor"` (a soma nunca excede o pacote, §81). Editável.
 
 O §20 e o §81 exigem que o XP seja dividido, com "parcela menor" e "parcela ainda menor". **Não define a curva.**
 
@@ -236,9 +244,15 @@ O §23 lista as estruturas possíveis e o §24 define o combate de equipe. **Nen
 
 ---
 
-### P-019 — Política de derrota e HP entre batalhas
+### P-019 — Política de derrota e HP entre batalhas ✅ RESOLVIDA EM PARTE (2026-10-01)
 
 **Criticidade:** 🟡 ALTA · **Bloqueia:** FASE 8
+
+> **RESOLVIDA em 2026-10-01 por delegação do usuário** (ADR-017): derrota
+> encerra a caçada (`hunt = "defeated"`), sem recompensa, **sem auto-restart** —
+> recomeçar é ato explícito do jogador. **HP persistente entre batalhas**
+> permanece em aberto: o modelo atual zera por batalha; decidir junto do
+> modelo de dano na FASE 6 (Combate).
 
 O §26 define o loop e o §56 diz que o combate é automático, mas **não diz** o que acontece quando o herói cai: o loop continua com outro? o caído fica fora até curar? quanto tempo?
 
@@ -260,9 +274,13 @@ Default provisório: ordem fixa por slot, herdado da referência.
 
 ---
 
-### P-020b — Herói caído recebe XP?
+### P-020b — Herói caído recebe XP? ✅ RESOLVIDA (2026-10-01)
 
 **Criticidade:** 🟢 MÉDIA · **Bloqueia:** FASE 8
+
+> **RESOLVIDA em 2026-10-01 por delegação do usuário** (ADR-017): **não**.
+> Herói caído não consome parcela; a divisão é sobre os membros vivos.
+> (No modelo atual, sem HP persistente, todo membro recebe.)
 
 O §20 diz que o XP é dividido entre os **membros da equipe**. Não diz se um herói caído (mas ainda na equipe) continua consumindo a parte dele.
 
@@ -471,9 +489,15 @@ revisar com dados de playtest.
 
 ---
 
-### P-012 — Política de multi-aba e aba em background
+### P-012 — Política de multi-aba e aba em background ✅ RESOLVIDA (2026-10-01)
 
 **Criticidade:** 🟡 ALTA · **Bloqueia:** FASE 8
+
+> **RESOLVIDA em 2026-10-01 por delegação do usuário** (ADR-017): timestamps
+> absolutos persistidos — o relógio é a única verdade (§29: navegar/recarregar
+> não pausa nem reinicia). Blur não pausa. No MVP local, duas abas = última
+> gravação vence; detecção de conflito/sessão única fica para a Fase Online
+> (Supabase com versioning).
 
 O §29 diz que o timer deve continuar ou ser tratado de maneira consistente, e o §47 manda registrar `lastActiveAt`. **Não define** o comportamento com **duas abas do mesmo jogador**.
 
@@ -723,8 +747,8 @@ Uma por Boss ou uma compartilhada?
 | Criticidade | Quantidade | IDs |
 |---|---:|---|
 | 🔴 **CRÍTICA** | **6** | `P-005`, `P-006`, `P-008`, `P-010`, `P-011`, `P-036` (P-002 resolvida 2026-10-01) |
-| 🟡 **ALTA** | **20** | `P-001`, `P-003`, `P-004`, `P-006b`, `P-015`, `P-017`, `P-018`, `P-019`, `P-023`, `P-027`, `P-032`, `P-007`, `P-009`, `P-012`, `P-011a`, `P-047`, `P-053`, `P-057`, `P-058`, `P-014` |
-| 🟢 **MÉDIA** | **11** | `P-020`, `P-020b`, `P-021`, `P-024`, `P-025`, `P-033`, `P-006c`, `P-039`, `P-040`, `P-043`, `P-016` |
+| 🟡 **ALTA** | **16** | `P-001`, `P-006b`, `P-015`, `P-017`, `P-018`, `P-023`, `P-027`, `P-032`, `P-007`, `P-009`, `P-011a`, `P-047`, `P-053`, `P-057`, `P-058`, `P-014` |
+| 🟢 **MÉDIA** | **10** | `P-020`, `P-021`, `P-024`, `P-025`, `P-033`, `P-006c`, `P-039`, `P-040`, `P-043`, `P-016` |
 | ⚪ **BAIXA** | **29** | `P-026`, `P-028`, `P-029`, `P-031`, `P-034`, `P-035`, `P-037`, `P-038`, `P-013`, `P-041`, `P-042`, `P-044`, `P-045`, `P-046`, `P-048`, `P-049`, `P-050`, `P-051`, `P-052`, `P-054`, `P-055`, `P-022`, `P-030`, `P-056`, `P-059`, `P-060`, `P-061`, `P-062`, `P-063` |
 | **TOTAL** | **67** | |
 

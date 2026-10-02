@@ -178,6 +178,14 @@ export function App() {
 
 function Hud({ state }: { state: GameState }) {
   const king = state.data.king;
+  const hunt = state.data.hunt;
+  const huntLabel = state.activeBattle
+    ? "⚔ Em combate"
+    : hunt?.kind === "searching"
+      ? "🔍 Procurando…"
+      : hunt?.kind === "defeated"
+        ? "☠ Derrota"
+        : "🛡 No Reino";
   return (
     <header className="tia-hud">
       <div className="tia-hud__identity">
@@ -203,6 +211,11 @@ function Hud({ state }: { state: GameState }) {
         />
       </div>
       <div className="tia-hud__wallet">
+        <StatPill
+          label="Caçada"
+          value={huntLabel}
+          tone={hunt?.kind === "defeated" ? "bad" : state.activeBattle ? "good" : "neutral"}
+        />
         <StatPill label="Coin" value={state.data.wallet.coins.toLocaleString("pt-BR")} tone="warn" />
         <StatPill label="Diamante" value={state.data.wallet.diamonds.toLocaleString("pt-BR")} />
       </div>
@@ -348,33 +361,68 @@ function TeamScreen({
   onAssign: (id: HeroId, slot: 0 | 1 | 2) => void;
 }) {
   const team = state.data.team;
-  const members = teamHeroes(team, state.data.heroes);
   const unassigned = state.data.heroes.filter((h) => !team.members.includes(h.id));
+  const kingLevel = state.data.king.level;
+  const coins = state.data.wallet.coins;
 
   return (
     <Panel title="Equipe">
       <p className="tia-note">
         A equipe é gerenciamento e progressão. Na Torre, apenas 1 herói luta por vez (§17/§79); no Boss,
-        a equipe inteira ataca junto (§24/§80).
+        a equipe inteira ataca junto (§24/§80). O XP de herói é dividido entre os membros da equipe:
+        quanto mais heróis, mais lento cada um evolui (§20).
       </p>
       <div className="tia-slots">
         {([0, 1, 2] as const).map((index) => {
           const req = slotRequirement(index);
           const unlocked = index < team.unlockedSlots;
-          const member = members.find((_, i) => team.members[i] === team.members[index]) ?? null;
           const hero = state.data.heroes.find((h) => h.id === team.members[index]);
+          const canAfford = coins >= BigInt(req.costCoin);
+          const hasLevel = kingLevel >= req.kingLevel;
           return (
-            <div className="tia-slot" key={index}>
+            <div className={`tia-slot ${unlocked ? "" : "tia-slot--locked"}`} key={index}>
               <strong>Slot {index + 1}</strong>
               {unlocked ? (
                 <>
                   <span>{hero ? hero.name : "vazio"}</span>
-                  {hero && (
-                    <ActionButton
-                      label={team.activeHeroId === hero.id ? "Ativo" : "Tornar ativo"}
-                      variant={team.activeHeroId === hero.id ? "primary" : "secondary"}
-                      onClick={() => state.selectActiveHero(hero.id)}
-                    />
+                  {hero ? (
+                    <>
+                      <ProgressBar
+                        label={`Nv ${hero.level}`}
+                        value={heroProgress(hero)}
+                        max={1}
+                        color="#9ece6a"
+                        readout={`${hero.xp.toLocaleString("pt-BR")} XP`}
+                      />
+                      <div className="tia-slot__actions">
+                        <ActionButton
+                          label={team.activeHeroId === hero.id ? "Ativo" : "Tornar ativo"}
+                          variant={team.activeHeroId === hero.id ? "primary" : "secondary"}
+                          hint="Escolhe quem luta na Torre (§19)"
+                          onClick={() => {
+                            try {
+                              state.selectActiveHero(hero.id);
+                            } catch (error) {
+                              console.warn("[ui]", error);
+                            }
+                          }}
+                        />
+                        <ActionButton
+                          label="Remover"
+                          variant="secondary"
+                          hint="Tira o herói do slot (não apaga o herói)"
+                          onClick={() => {
+                            try {
+                              state.removeHeroFromSlot(index);
+                            } catch (error) {
+                              console.warn("[ui]", error);
+                            }
+                          }}
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <span className="tia-muted">Coloque um herói pelos botões abaixo.</span>
                   )}
                 </>
               ) : (
@@ -384,6 +432,14 @@ function TeamScreen({
                   </span>
                   <ActionButton
                     label="Desbloquear"
+                    disabled={!hasLevel || !canAfford}
+                    hint={
+                      !hasLevel
+                        ? `Seu Rei está no nível ${kingLevel}`
+                        : !canAfford
+                          ? "Coin insuficiente"
+                          : `Gastar ${req.costCoin.toLocaleString("pt-BR")} Coin`
+                    }
                     onClick={() => {
                       try {
                         state.unlockTeamSlot(index);
@@ -394,7 +450,6 @@ function TeamScreen({
                   />
                 </>
               )}
-              {!member && <span className="tia-muted"> </span>}
             </div>
           );
         })}
@@ -403,8 +458,20 @@ function TeamScreen({
       {unassigned.length > 0 && (
         <div className="tia-pool">
           <strong>Disponíveis</strong>
+          <p className="tia-muted">Escolha em qual slot cada herói entra (§19 — nada entra sozinho).</p>
           {unassigned.map((h) => (
-            <ActionButton key={h.id} label={h.name} variant="secondary" onClick={() => onAssign(h.id, 0)} />
+            <div className="tia-pool__row" key={h.id}>
+              <span className="tia-pool__name">{h.name}</span>
+              {([0, 1, 2] as const).map((slot) => (
+                <ActionButton
+                  key={slot}
+                  label={`Slot ${slot + 1}`}
+                  variant="secondary"
+                  disabled={slot >= team.unlockedSlots || team.members[slot] != null}
+                  onClick={() => onAssign(h.id, slot)}
+                />
+              ))}
+            </div>
           ))}
         </div>
       )}
@@ -460,6 +527,7 @@ function TowerScreen({ state, searching }: { state: GameState; searching: number
   const floor = state.currentFloor;
   const info = state.floorInfo(floor);
   const hunt = state.data.hunt;
+  const remainingMs = state.searchingRemainingMs();
 
   return (
     <Panel title={`Torre — Andar ${floor}`}>
@@ -467,13 +535,35 @@ function TowerScreen({ state, searching }: { state: GameState; searching: number
         {info.name} · Nível {info.enemyLevel} · Requer Rei Nv {info.requiredKingLevel}
       </p>
       <StatPill label="Melhor andar" value={state.data.tower.bestFloor} />
-      <StatPill label="Status" value={hunt?.kind ?? "idle"} tone={hunt?.kind === "defeated" ? "bad" : "neutral"} />
+      <StatPill
+        label="Status"
+        value={
+          state.activeBattle
+            ? "Em combate"
+            : hunt?.kind === "searching"
+              ? "Procurando…"
+              : hunt?.kind === "defeated"
+                ? "Derrota"
+                : "Pronto"
+        }
+        tone={hunt?.kind === "defeated" ? "bad" : state.activeBattle ? "good" : "neutral"}
+      />
 
       {hunt?.kind === "searching" && (
-        <div className="tia-searching">
-          <span>PROCURANDO…</span>
+        <div className="tia-searching" aria-live="polite">
+          <span className="tia-searching__label">
+            PROCURANDO<span className="tia-searching__dots" aria-hidden="true">…</span>{" "}
+            {(remainingMs / 1000).toFixed(1)}s
+          </span>
           <ProgressBar label="" value={searching} max={1} color="#e0af68" />
         </div>
+      )}
+
+      {hunt?.kind === "defeated" && (
+        <p className="tia-note tia-note--bad">
+          O herói caiu e a caçada terminou — nenhuma recompensa foi perdida, mas nada foi
+          creditado (§26). Recomeçar é uma sua decisão.
+        </p>
       )}
 
       {!state.data.team.activeHeroId && (
@@ -483,7 +573,15 @@ function TowerScreen({ state, searching }: { state: GameState; searching: number
       )}
 
       <ActionButton
-        label={state.activeBattle ? "Em combate" : "Entrar na Torre"}
+        label={
+          hunt?.kind === "defeated"
+            ? "Recomeçar a caçada"
+            : state.activeBattle
+              ? "Em combate"
+              : hunt?.kind === "searching"
+                ? "Procurando…"
+                : "Entrar na Torre"
+        }
         disabled={!state.data.team.activeHeroId || state.activeBattle !== null || hunt?.kind === "searching"}
         onClick={() => {
           try {

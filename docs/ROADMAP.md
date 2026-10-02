@@ -14,10 +14,10 @@ FASE 1  ✅ Documentação
 FASE 2  ✅ Fundação
 FASE 3  ✅ Rei                      ← CONCLUÍDA (gate batido)
 FASE 4  ✅ Personagens              ← CONCLUÍDA (gate batido, ADR-016)
-FASE 5  ⬜ Equipe                   ← PRÓXIMO PASSO (com FASE 8)
-FASE 6  ⬜ Combate
+FASE 5  ✅ Equipe                   ← CONCLUÍDA (gate batido, ADR-017)
+FASE 6  ⬜ Combate                  ← PRÓXIMO PASSO
 FASE 7  ⬜ Torre            ⛔ P-005, P-006
-FASE 8  ⬜ Searching loop
+FASE 8  ✅ Searching loop           ← CONCLUÍDA (gate batido, ADR-017)
 FASE 9  ⬜ Equipamentos     ⛔ P-010
 FASE 10 ⬜ Economia          ⛔ P-008, P-036
 FASE 11 ⬜ Offline           ⛔ P-011
@@ -27,9 +27,10 @@ Online ⬜ → Social ⬜ → Market ⬜ → PvP ⬜ → Monetização ⬜ → P
 ```
 
 Implementado até aqui: especificação, documentação, fundação tipada (contratos,
-config, engine, game-core, persistência, HUD base), FASE 3 (criação do Rei) e
-FASE 4 (escolha de herói §10 + códice + XP/níveis).
-Gameplay de Torre/combat/economia ainda **não** está implementado.
+config, engine, game-core, persistência, HUD base), FASE 3 (criação do Rei),
+FASE 4 (escolha de herói §10 + códice + XP/níveis) e FASES 5+8 (equipe/slots,
+XP dividido, loop de searching ~3s com UI). O loop idle já roda
+(batalha → procura → batalha); combate visual profundo e economia ainda **não**.
 
 ### Estimativa até o 1º MVP jogável (FASE 13) — 7 etapas
 
@@ -38,8 +39,8 @@ Estimativa de trabalho (2026-10-01), ajustável; cada etapa = um ciclo completo
 
 | Etapa | Fases | O que entra | Gate de decisão |
 |---|---|---|---|
-| 1 | FASE 5 + 8 | Equipe/slots (2=nv10+Coin, 3=nv25+Coin), searching ~3s com `tickSearch` | — |
-| 2 | FASE 6 | Combate visual de verdade: BattleCanvas nas batalhas reais, skills, números/feedback | — |
+| 1 ✅ | FASE 5 + 8 | Equipe/slots (2=nv10+50k, 3=nv25+250k), XP dividido 1/n, searching ~3s, loop idle | decidido em ADR-017 (P-003/P-004/P-012/P-019/P-020b) |
+| 2 | FASE 6 | Combate visual de verdade: BattleCanvas nas batalhas reais, skills, números/feedback | decidir HP entre batalhas (herança P-019) |
 | 3 | FASE 7 | Torre de ponta a ponta (andares, seleção, vitória/derrota) | ⛔ **P-005/P-006** (curva de andar) — pergunta ao usuário |
 | 4 | FASE 9 | Loot → equipamento → raridade → X → inventário/venda | ⛔ P-010 (regra de slots/equip) |
 | 5 | FASE 10 + 11 | Economia básica (Coin, custos de slot) + offline Free 2h | ⛔ **P-008/P-036/P-011** (economia) — pergunta ao usuário |
@@ -261,19 +262,26 @@ seleção 1-entre-N na UI (Fase 4 em curso).
 
 ---
 
-## 6. FASE 5 — Equipe
+## 6. FASE 5 — Equipe ✅
 
 Slots 1/2/3, desbloqueio por nível + Coin, seleção de herói ativo.
+
+> **2026-10-01 — FASE 5 CONCLUÍDA** (ADR-017): `unlockSlot`/`unlockTeamSlot`
+> (nível do Rei E Coin, atômico, em ordem), custos em `config.team.slots`
+> (⛔ P-003 provisório: 50.000 / 250.000), divisão de XP linear 1/n
+> (⛔ P-004: `config.xp.teamSplit`) e UI de Equipe completa — escolha de
+> slot, remoção, herói ativo, motivo de bloqueio. Gate:
+> `team-slot-unlock.test.ts` + `team-xp-split.test.ts` (14 testes).
 
 | # | Entregável | PEND |
 |---|---|---|
 | 1 | 1 slot, ativo desde o início | — |
-| 2 | Slot 2: nível 10 + Coin | `P-003` (custo) |
-| 3 | Slot 3: nível 25 + Coin | `P-003` (custo) |
+| 2 | Slot 2: nível 10 + Coin | `P-003` ✅ |
+| 3 | Slot 3: nível 25 + Coin | `P-003` ✅ |
 | 4 | Seleção e troca do herói ativo | — |
-| 5 | Divisão de XP por tamanho da equipe | `P-004` |
+| 5 | Divisão de XP por tamanho da equipe | `P-004` ✅ |
 
-**Gate:** `team-slot-unlock.test.ts` e `team-xp-split.test.ts` passando.
+**Gate:** `team-slot-unlock.test.ts` e `team-xp-split.test.ts` passando. ✅
 
 ---
 
@@ -314,22 +322,30 @@ Slots 1/2/3, desbloqueio por nível + Coin, seleção de herói ativo.
 
 ---
 
-## 9. FASE 8 — Searching loop
+## 9. FASE 8 — Searching loop ✅
 
 ```text
 Vitória → Recompensa → Procurando → ~3s → Novo inimigo
 ```
 
+> **2026-10-01 — FASE 8 CONCLUÍDA** (ADR-017): `SEARCHING` persistido com
+> timestamp absoluto (ADR-007), ~3s configurável (2,7–3,2s em
+> `config.searching`), navegar/recarregar não pausa (⛔ P-012: última
+> gravação vence no MVP local), derrota encerra a caçada sem auto-restart
+> (⛔ P-019: "Recomeçar a caçada" é ato do jogador) e a UI mostra
+> "PROCURANDO… X.Xs" com animação. Animação de identidade visual do §28
+> fica para `P-028` (com `P-005`, Fase 7). Gate: `searching-state.test.ts`.
+
 | # | Entregável | PEND |
 |---|---|---|
 | 1 | `SEARCHING` como estado persistido (ADR-007) | — |
-| 2 | Animação real de procura (§28) | `P-028` |
+| 2 | Animação real de procura (§28) | `P-028` (parcial: dots + barra) |
 | 3 | ~3s configurável (2,7–3,2s) | — |
 | 4 | Navegar **não** pausa (§29) | — |
-| 5 | Sobrevive a recarregar a página | `P-012` |
-| 6 | Política de defeat | `P-019`, `P-020b` |
+| 5 | Sobrevive a recarregar a página | `P-012` ✅ |
+| 6 | Política de defeat | `P-019` ✅, `P-020b` ✅ |
 
-**Gate:** `searching-state.test.ts` passando.
+**Gate:** `searching-state.test.ts` passando. ✅
 
 ---
 

@@ -358,3 +358,72 @@ A Fase 4 (Personagens) pedia "escolha 1-entre-N com impacto real (§10) + XP de 
 - Save e UI refletem §10/§12/§19 literalmente.
 - A aquisição dos outros 3 é a próxima lacuna de gameplay (Fase 9+: fragmentos/summons/mercado) — decisão de economia fica para P-005/P-006.
 - A construção visual dos retratos da escolha é retrato do pack + moldura; retratos ilustrados são aprimoramento visual opcional futuro (não é "mudar herói").
+
+---
+
+## ADR-017 — Ratificações da FASE 5+8: slots, XP dividido, searching e derrota
+
+- **Data**: 2026-10-01
+- **Status**: Aceito (valores econômicos PROVISÓRIOS — ratificação humana recomendada)
+- **Decidido por**: Usuário (autoridade delegada: "tome as decisões necessárias e relate-as no final")
+- **Afeta**: `config/src/game.ts`, `game-core` (team/progression/hunt/state), `game-web` (TeamScreen/TowerScreen/Hud), testes-gate
+
+### Contexto
+
+As Fases 5 (Equipe) e 8 (Searching) tinham 4 pendências classificadas como bloqueantes
+(`P-003`, `P-004`, `P-012`, `P-019`) mais `P-020b`. O motor já existia em grande parte
+(`unlockSlot`, `splitTeamXp`, `beginSearch`/`tickSearch`, loop idle no `boot.ts`); o que faltava
+era **fechar as decisões** e as lacunas de UI/integração. A instrução vigente delega decisão
+("tome as decisões necessárias… sempre com arquitetura editável"), então cada pendência foi
+resolvida com o valor mais conservador e tudo mora em config editável.
+
+### Decisões (ratificações)
+
+1. **⛔ P-003 — custo dos slots 2 e 3: 50.000 e 250.000 Coin** (`config.team.slots`).
+   Racional: escala compatível com as recompensas provisórias da Torre; a razão slot 3 ≈ 5×
+   slot 2 acompanha a diferença de nível (10 → 25). Provísório até a economia (P-008/P-036,
+   Fase 10) — mudar é editar `config.team.slots[i].costCoin`.
+2. **⛔ P-004 — curva de divisão de XP: linear 1/n** (`config.xp.teamSplit = {1: 1.0, 2: 0.5,
+   3: 1/3}`, `rounding: "floor"`). Racional: é literalmente o §20 ("dividido entre os membros");
+   alternativas não-lineares (100/65/43) mudam a estratégia de equipe e ficam para quando houver
+   dados de pacing. O `floor` garante que a soma nunca exceda o pacote (§81).
+3. **⛔ P-012 — multi-aba/background: timestamps absolutos persistidos; o relógio é a única
+   verdade (§29)**. Navegar/recarregar não pausa nem reinicia a procura (o `startedAt` viaja no
+   save). Blur da aba não pausa (`pausesOnTabBlur: false` — parar transformaria cada menu em
+   pausa). No MVP local, duas abas = última gravação vence; detecção de conflito e sessão
+   única são trabalho da Fase Online (Supabase, com versioning de save).
+4. **⛔ P-019 — derrota encerra a caçada; recomeçar é ato do jogador.**
+   `hunt = "defeated"`, nenhuma recompensa é creditada, o loop NÃO reinicia sozinho; o botão
+   "Recomeçar a caçada" (um `startTower()` explícito) é o caminho de volta. HP não persiste
+   entre batalhas no modelo atual (cada batalha nasce com stats completos) — a política de
+   **HP persistente entre batalhas** fica em aberto para a FASE 6 (Combate), quando o modelo de
+   dano/cura existir de verdade. Nada sobre recuperação é inventado até lá.
+5. **⛔ P-020b — herói caído não recebe a parcela de XP.** No modelo atual não existe "caído
+   entre batalhas" (todo membro recebe); quando a persistência de HP entrar, o filtro se aplica
+   em `applyRewards`: caído não consome parcela, a divisão é sobre os vivos.
+
+### Decisões de UI (mesma etapa)
+
+- **Equipe**: cada herói do pool entra no slot que o jogador escolher (§19 — nada entra sozinho);
+  slot tem "Remover"; "Desbloquear" mostra o motivo do bloqueio (nível vs Coin) e desabilita.
+- **Torre**: "PROCURANDO… X.Xs" com contagem regressiva e animação de pontos (§28 — animação
+  real de identidade visual fica para `P-028`, junto de `P-005`); botão "Recomeçar a caçada"
+  após derrota.
+- **HUD**: pílula "Caçada" (No Reino / Em combate / Procurando / Derrota) — o loop precisa ser
+  visível para "parecer jogo" (§62).
+
+### Alternativas rejeitadas
+
+- **Perguntar ao usuário antes de codar**: a instrução vigente pede autonomia com relato final;
+  os valores são provisórios e centralizados — o custo de mudar depois é baixo.
+- **Pausar em blur/background (P-012)**: contradiz §29 ("navegar não pausa") e criaria
+  divergência entre o que o relógio diz e o que o save diz.
+- **Auto-restart após derrota (P-019)**: esconderia do jogador o fato de que a equipe perdeu;
+  a tensão da derrota (§56) exige um gesto humano para retomar.
+
+### Consequências
+
+- As Fases 5 e 8 têm seus gates verdes: `team-slot-unlock.test.ts`, `team-xp-split.test.ts`,
+  `searching-state.test.ts` (21 testes novos) + suíte completa (350).
+- Os números de Coin são os mais frágeis desta ADR — serão revalidados na Fase 10 (Economia).
+- FASE 6 (Combate) herda a decisão de HP entre batalhas em aberto (ver P-019).

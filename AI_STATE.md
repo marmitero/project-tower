@@ -1,7 +1,7 @@
 # AI_STATE — handoff vivo do Tower Idle Adventure
 
 **Última atualização:** 2026-10-01
-**Estado:** **FASE 1–4 concluídas** · FASE 5+8 (Equipe/Slots + Searching) é a próxima
+**Estado:** **FASE 1–5 e 8 concluídas** · FASE 6 (Combate) é a próxima
 **Repositório:** `marmitero/project-tower`
 **Branch desta sessão:** `arena/01a0f1f1-project-tower`
 
@@ -251,13 +251,33 @@ criação, recebe apenas aquele, e os outros 3 ficam no códice bloqueados."
 Testes que precisam de mais heróis usam o helper `recruit()` (recrutamento
 explícito — o sistema real de aquisição é Fase 9+).
 
-### Depois da Fase 4
+### **FASE 5 + 8 — Equipe e Searching** ✅ CONCLUÍDAS (gates batidos, ADR-017)
+
+O que as fases entregaram:
 
 ```text
-FASE 5  Equipe                 ← PRÓXIMO PASSO (junto com FASE 8)
-FASE 6  Combate
+✅ Equipe/slots (§15/§46): slot 1 livre; slot 2 = Rei Nv 10 + 50.000 Coin;
+   slot 3 = Rei Nv 25 + 250.000 Coin (⛔ P-003 provisório, config.team.slots)
+✅ unlockSlot atômico + em ordem; UI completa: escolher slot, remover,
+   tornar ativo, motivo de bloqueio (nível vs Coin) no botão
+✅ XP dividido 1/n (⛔ P-004: config.xp.teamSplit, rounding floor) —
+   divisão integrada em applyRewards por MEMBRO da equipe (§20)
+✅ Searching (§26–§29): loop idle completo — vitória → PROCURANDO ~3s
+   (2,7–3,2s) → nova batalha; timestamp absoluto persistido (ADR-007);
+   navegar/recarregar não pausa (⛔ P-012: última gravação vence)
+✅ Derrota encerra a caçada, sem auto-restart; "Recomeçar a caçada" é ato
+   do jogador (⛔ P-019); caído não recebe XP (⛔ P-020b)
+✅ UI: "PROCURANDO… X.Xs" com animação, pílula "Caçada" no HUD
+```
+
+**Gate — VERIFICADO:** `team-slot-unlock.test.ts` + `team-xp-split.test.ts` +
+`searching-state.test.ts` (21 testes) e suíte completa (350 verdes).
+
+### Depois da Fase 5+8
+
+```text
+FASE 6  Combate                 ← PRÓXIMO PASSO (herda P-019: HP entre batalhas)
 FASE 7  Torre                  ⛔ P-005, P-006  (perguntar ao usuário na etapa 3)
-FASE 8  Searching loop         ⛔ P-012, P-019
 FASE 9  Equipamentos           ⛔ P-010
 FASE 10 Economia                ⛔ P-008, P-036  (perguntar ao usuário na etapa 5)
 FASE 11 Offline                 ⛔ P-011
@@ -368,25 +388,27 @@ Todas as 15 têm teste **passando** hoje. Os arquivos abaixo existem e rodam em 
 
 ## 12. Resumo para a próxima sessão
 
-**Estado:** FASE 1–4 concluídas. **FASE 4 (Personagens) fechada em 2026-10-01**
-(ADR-016): §10 literal — a criação tem 2 passos e o save nasce com **apenas o
-herói escolhido** (`starterIdentityId`); os outros 3 ficam no **códice
-derivado** (`heroCodex`), bloqueados com dica de aquisição. **P-002** (as
-identidades — Aldric/Kaia/Maelis/Vorath, ADR-015) e a mecânica OpenRpg
-(ADR-014) seguem válidas: mudar um herói é editar `config/src/heroes.ts`.
+**Estado:** FASE 1–5 e 8 concluídas. **FASE 5+8 (Equipe/Searching) fechadas em
+2026-10-01** (ADR-017): slots com desbloqueio por nível+Coin (P-003: 50k/250k
+provisório), XP dividido 1/n (P-004), loop idle de searching ~3s com
+timestamps absolutos (P-012) e derrota sem auto-restart (P-019/P-020b). As 5
+pendências foram ratificadas por delegação — os números de Coin são os mais
+frágeis e serão revalidados na Fase 10. Antes disso: FASE 4 (escolha de herói
+§10 + códice, ADR-016) e as identidades P-002 (ADR-015) — mudar um herói é
+editar `config/src/heroes.ts`.
 
 **Assets (2026-10-01):** as três lacunas vermelhas do inventário foram fechadas — UI em PT-BR (33 peças sem texto extraídas da `ui_kit`; barras decompostas em trilho+fills+caps para compor em runtime com números em PT-BR), áudio (22 SFX procedurais gerados por `scripts/gen-audio.mjs`, incluindo a escada de raridade do §108) e retratos dos 4 heróis (3 gerados no estilo do pack). Pipeline: 480 entradas no manifesto, `check:assets` e `check:assets:strict` verdes. Detalhes em `docs/ASSET_GAP.md` §3.
 
-**O que fazer:** **FASE 5 + 8 — Equipe/Slots + Searching** (etapa 1 de 7 até o
-MVP jogável, tabela em [`docs/ROADMAP.md`](docs/ROADMAP.md) §1): slots
-2 = nível 10 + Coin, slot 3 = nível 25 + Coin, `tickSearch` ~3s já existe —
-falta o loop de UI dele e a integração com a equipe. Depois: FASE 6
-(combate visual) e FASE 7 (Torre) — esta última **bloqueada por P-005/P-006**.
+**O que fazer:** **FASE 6 — Combate** (etapa 2 de 7 até o MVP jogável, tabela
+em [`docs/ROADMAP.md`](docs/ROADMAP.md) §1): BattleCanvas nas batalhas reais,
+ataques/skills visíveis, dano/morte/vitória/derrota com feedback. **Decisão
+herdada:** HP persistente entre batalhas (o que P-019 deixou em aberto) —
+decidir e registrar nesta fase.
 
-**Estimativa até o 1º MVP jogável (FASE 13): 7 etapas** — 1) Fase 5+8,
-2) Fase 6, 3) Fase 7 (gate P-005/P-006), 4) Fase 9, 5) Fase 10+11 (gate
-P-008/P-036/P-011), 6) Fase 12, 7) Fase 13 (MVP Local). Detalhe e riscos na
-tabela do ROADMAP.
+**Estimativa até o 1º MVP jogável (FASE 13): 7 etapas — 1 concluída** —
+1) ✅ Fase 5+8, 2) Fase 6, 3) Fase 7 (gate P-005/P-006), 4) Fase 9,
+5) Fase 10+11 (gate P-008/P-036/P-011), 6) Fase 12, 7) Fase 13 (MVP Local).
+Restam **6 etapas**. Detalhe e riscos na tabela do ROADMAP.
 
 **O que perguntar ao usuário:** na hora certa (etapas 3 e 5), as pendências
 **P-005/P-006** (curva de andares + inimigos da Torre) e **P-008/P-036/P-011**
