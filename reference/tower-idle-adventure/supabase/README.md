@@ -1,0 +1,17 @@
+# Supabase schema foundation — G2 (not production-ready)
+
+This directory is a **partial technical proof**, not a running backend. It contains one initial SQL migration, a disabled/empty seed file, Supabase CLI configuration and a PostgreSQL smoke-test harness. No Edge Function, Game API, Admin API, Auth workflow, Storage bucket/policy or gameplay transaction is included.
+
+## Current browser-first validation path
+
+Per the current project direction, do not install Supabase CLI, Docker, or Node.js on the user's computer to configure hosted platforms. The user reports that `tower-idle-adventure-dev` is connected to `marmitero/tower-idle-adventure`, with Working Directory `.`, **Deploy to production on**, and Production branch `main`, confirmed by the user. Automatic Branching/Preview Branch remains disabled by plan/user choice. The user reports that the initial migration appears as “Inserted at UTC” and `equipment_loadouts` plus `hunt_session_private_state` are visible in `public`, matching the migration; the agent has not independently accessed the Dashboard. Use synthetic data only; keep any real production database disconnected until G2/security gates.
+
+The 9 PGlite smoke tests were previously run in the agent environment; they use PGlite 0.5.8/PostgreSQL 18.3 and simulate `auth.users`, `auth.uid()` and Supabase roles. The proposed Supabase config targets PostgreSQL 15. These tests check migration syntax and selected PostgreSQL constraints/RLS/grants, but do **not** prove Supabase Auth, PostgREST/Data API, Edge Functions, Storage, provider-specific grants/config, production concurrency, rate limits, backups, or costs. The workflow `.github/workflows/supabase-schema-checks.yml` runs these checks and `npm audit` on a hosted runner for relevant PRs and pushes to `main`, without installing dependencies on the user's device. Its remote execution remains to be observed after the workflow is pushed and triggered.
+
+The user reports that the initial migration is recorded in the Supabase dev history and that tables are visible under `public`, consistent with application. Do not mark G2 complete from this evidence or PGlite alone. Since there is no per-PR Preview Branch on the current plan, test RLS/grants and required Auth/Data API behavior in the shared dev project after a reviewed merge to the confirmed `main` ref. The user reports Deploy to production enabled on the dev project and the migration history/public schema consistent with application of the initial migration. The integration's “production” label here means its base project/branch, not the game's public production database.
+
+`seed.sql` is disabled and intentionally contains no accounts or production content. The migration is a starting foundation for review; the user-reported migration history and schema are evidence of application to the dev project, not authorization to deploy further changes.
+
+## Known gaps in this foundation
+
+Account onboarding does not yet create the chosen character, starter gear, 300 Coins or initial consumables. The 300 unequipped-item cap, slot/template compatibility, ledger-to-balance atomicity, purchase/loot transactions, idempotent response replay/body-conflict handling, the 5-second hunt engine, shared rate limiter, release publish/rollback flow and Storage policies are not implemented. Account-deletion cascades and audit-log retention were exercised only in the PGlite harness; confirm them against real Supabase Auth before relying on them.

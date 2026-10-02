@@ -52,9 +52,12 @@ project-tower/
 ├── vitest.config.ts          projetos `arch`, `unit` e `integration`
 ├── .env.example              variáveis de ambiente documentadas
 ├── assets/
-│   ├── sprites/              pack de arte (422 PNG, 92 MiB) — NÃO versionado
+│   ├── sprites/              pack Nika Studio (422 PNG + licença) — VERSIONADO (ADR-019)
+│   ├── generated/            58 artefatos gerados (UI, SFX, retratos) — VERSIONADO
 │   ├── ATTRIBUTION.md        crédito exigido pela licença
 │   └── SOURCES.md            origem, recuperação e regras de arte nova
+├── reference/                material importado de repos de referência
+│   └── tower-idle-adventure/ docs de design, protótipos, schema Supabase
 ├── scripts/
 │   ├── check-docs.mjs        validador de documentação
 │   ├── extract-ui.mjs        extrai a ui_kit do pack (determinístico)
@@ -143,7 +146,7 @@ Todas em [`docs/DECISIONS_LOG.md`](docs/DECISIONS_LOG.md).
 | **001** | Precedência documental: `Master-Prompt.md` > decisão humana > `docs/` > referência externa |
 | **002** | 18 divergências mapeadas e resolvidas |
 | **003** | Reis e heróis com **XP separado** (abandona "nível compartilhado" da referência) |
-| **004** | Adotar o pack de sprites da referência; IDs estáveis; não empacotar os 92 MiB |
+| **004** | Adotar o pack de sprites da referência; IDs estáveis; não empacotar os 92 MiB *(parcialmente superado pelo ADR-019: os 92 MiB passaram a ser versionados em 2026-10-02)* |
 | **005** | Monorepo + `packages/engine` puro + `PersistenceService` LOCAL→SUPABASE |
 | **006** | Configuração centralizada como **dado tipado e validado**, não constante |
 | **007** | `SEARCHING` é **estado persistido** do game loop, não `setTimeout` de componente |
@@ -362,7 +365,7 @@ Todas as 15 têm teste **passando** hoje. Os arquivos abaixo existem e rodam em 
 | **Regra estrutural quebrada silenciosamente** | §79/§80 são testes de release. 15 invariantes com teste dedicado |
 | **Colocar a lógica no React** | `tests/arch/imports.test.ts` — 18 invariantes, roda em `npm run test:arch` |
 | **Espalhar números de balanceamento** | `packages/config` + `validateConfig()` no boot + INV-18 (todo arquivo de balanceamento cita §/P/ADR) |
-| **Empacotar os 92 MiB de sprites** | `scripts/build-assets.mjs` gera o manifesto `id -> caminho`; o código nunca monta caminho |
+| **Hardcodar caminho de sprite no código** | `scripts/build-assets.mjs` gera o manifesto `id -> caminho`; o código nunca monta caminho |
 | **Deixar Debug Mode em produção** | `scripts/check-debug-mode.mjs` — falha se `debugger` sobrar ou se debug ficar sem guarda de ambiente |
 | **UI com rótulos em inglês** | `scripts/extract-ui.mjs` só entrega peças sem texto (guardrail por componentes conectados); barras são decompostas e os números saem em PT-BR pelo runtime. Rótulos sempre em HTML/CSS |
 | **Placeholder chegar ao público** | `scripts/check-assets.mjs` detecta emoji-as-sprite, SVG inline e retângulo-colorido; `--strict` bloqueia o release sem sprites |
@@ -375,7 +378,7 @@ Todas as 15 têm teste **passando** hoje. Os arquivos abaixo existem e rodam em 
 
 | Não feito | Por quê |
 |---|---|
-| **Assets de arte** | ✅ RESOLVIDO. Pack recuperado (422 PNGs em `assets/sprites/`, ver `assets/SOURCES.md`) + 58 artefatos gerados (`assets/generated/`: 33 peças de UI sem texto, 22 SFX, 3 retratos). `scripts/build-assets.mjs` monta o manifesto (480 entradas) e `scripts/check-assets.mjs` valida catálogo REQUIRED + relatório de extração. `npm run check:assets:strict` segue sendo o gate de release. |
+| **Assets de arte** | ✅ RESOLVIDO. Pack **versionado neste repositório** desde 2026-10-02 (ADR-019): 422 PNGs em `assets/sprites/` (com LICENSE.txt da Nika Studio) + 58 artefatos gerados versionados em `assets/generated/` (33 peças de UI sem texto, 22 SFX, 3 retratos). Material de referência do repo de origem em `reference/tower-idle-adventure/`. `scripts/build-assets.mjs` monta o manifesto (480 entradas) e `scripts/check-assets.mjs` valida catálogo REQUIRED + relatório de extração. `npm run check:assets:strict` segue sendo o gate de release. O repositório `marmitero/tower-idle-adventure` NÃO é mais necessário. |
 | **Música e ambiência** | FASE de Polish (§15). Os 22 SFX cobrem o MVP (§60/§63); a estrutura alvo está em `docs/AUDIO_GUIDELINES.md` §3. |
 | **Implementação do Supabase** | A interface `PersistenceService` existe e a implementação LOCAL é real. A de Supabase entra na Fase Online, com RLS. |
 | **Inventário visual completo** | A lógica existe e é testada; a tela mostra a lista com raridade, nota e X. Falta ordenar/paginar conforme `P-025`/`P-016`. |

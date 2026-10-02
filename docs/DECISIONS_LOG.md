@@ -475,3 +475,55 @@ O preview do sandbox aparecia "expirado" sempre que o usuário ia abri-lo. Audit
   `npm run build:preview` é o caminho leve.
 - Validação de que os resets cessaram: próxima sessão iniciar com o HEAD
   intacto.
+
+---
+
+## ADR-019 — Assets versionados no repositório (autosuficiência total)
+
+- **Data**: 2026-10-02
+- **Status**: Aceito
+- **Decidido por**: Usuário ("faça push delas para nosso repo… de modo que não precisamos mais usar o tower-idle-adventure para nada")
+- **Afeta**: `.gitignore`, `assets/`, `reference/`, `scripts/serve-preview.mjs`, documentação
+
+### Contexto
+
+Os assets do pack viviam fora do Git (`assets/sprites/` ignorado) e eram
+recuperados com `git clone` do repositório `marmitero/tower-idle-adventure`
+a cada reset do ambiente. O usuário decidiu que o projeto deve ser
+**autosuficiente**: tudo dentro de `marmitero/project-tower`, sem dependência
+do repo de origem (só o OpenRpg como referência técnica, quando necessário).
+
+### Decisões
+
+1. **`assets/sprites/` — 422 PNGs + arquivos de licença do pack — VERSIONADOS**
+   (94 MiB). A licença MIT © 2026 Nika Studio exige manter o aviso de
+   copyright — `LICENSE.txt`, `ASSET_MANIFEST.md` e `README_IMPORT.txt`
+   ficam na raiz do pack, junto dos arquivos.
+2. **`assets/generated/` — 58 artefatos gerados — VERSIONADOS** (3,5 MiB):
+   33 peças de UI extraídas, 22 SFX procedurais e **3 retratos gerados**
+   (estes, irreprodutíveis por script). O custo é baixo e a alternativa
+   (destruí-los num reset) já quase aconteceu.
+3. **`reference/tower-idle-adventure/` — material de referência importado**
+   (352 KiB): README, 14 docs de design, protótipos `g2-hud` e o schema
+   Supabase (migrations/seed/tests) para a futura fase Online. Nada do
+   build referencia esta pasta — é consulta. Ver `reference/README.md`.
+4. **`apps/*/public/assets/` continua gerado** (cópia de trabalho de
+   `scripts/build-assets.mjs`), exceto o `manifest.json`, que é o contrato
+   `id -> caminho` e agora é **realmente** versionado — o padrão antigo
+   `apps/*/public/assets/` + `!…manifest.json` tinha um bug: gitignore não
+   re-inclui arquivos sob um diretório excluído; virou `assets/*` + exceção.
+5. **Entrada de `assets/sprites` no Git é o diretório real**, não symlink
+   (um symlink trackeado apontando para `/tmp` foi a causa de um trabalho
+   de cópia ser sobrescrito por `git reset --hard`).
+6. **`scripts/serve-preview.mjs` ganhou `assets/generated` como raiz** —
+   com sprites, generated e manifesto versionados, o preview sobe com
+   `node scripts/serve-preview.mjs` direto de um clone limpo.
+
+### Consequências
+
+- Clone do repo = jogo completo; `npm run assets:build` só repõe a cópia
+  de trabalho para o vite dev/build de produção.
+- O histórico ganha ~95 MiB de blobs (uma vez; o pack é estático).
+- `marmitero/tower-idle-adventure` deixa de ser dependência operacional;
+  a proveniência do pack e os créditos continuam documentados em
+  `assets/SOURCES.md` e `assets/ATTRIBUTION.md`.

@@ -551,4 +551,4 @@ Ver [`PENDING_RULES.md`](PENDING_RULES.md). Resumo do que mais bloqueia:
 - [`ROADMAP.md`](ROADMAP.md) — fases e gates
 - [`PENDING_RULES.md`](PENDING_RULES.md) — decisões que não podem ser inventadas
 - [`DECISIONS_LOG.md`](DECISIONS_LOG.md) — ADR e divergências
-- Repositório de referência: <https://github.com/marmitero/tower-idle-adventure> (fonte de assets e decisões técnicas)
+- Repositório de referência: <https://github.com/marmitero/tower-idle-adventure> (fonte original dos assets e decisões técnicas). **Desde 2026-10-02 (ADR-019), os assets e o material de referência estão versionados neste repositório** (`assets/sprites/`, `reference/tower-idle-adventure/`) — o repo externo não é mais necessário.

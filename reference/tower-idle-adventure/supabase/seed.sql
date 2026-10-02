@@ -1,0 +1,2 @@
+-- No local game/admin seed is enabled yet. Synthetic schema fixtures are isolated
+-- to `tests/schema-smoke.test.mjs`; do not insert production accounts or content here.

@@ -11,7 +11,7 @@
 
 > *"Antes de criar/substituir assets: 1. inspecionar o repositório; 2. verificar assets existentes; 3. verificar sprites; 4. verificar dimensões; 5. verificar personagens; 6. verificar inimigos; 7. verificar ícones; 8. verificar efeitos; 9. verificar backgrounds; 10. identificar recursos utilizáveis. **Utilizar primeiro o que já existe.**"* (§61)
 
-**Inspeção executada.** O repositório de referência `marmitero/tower-idle-adventure` contém **422 PNGs** de um pack completo e profissional. Esse pack é a base adotada. Ver [`ASSET_INVENTORY.md`](ASSET_INVENTORY.md).
+**Inspeção executada.** O repositório de referência `marmitero/tower-idle-adventure` contém **422 PNGs** de um pack completo e profissional. Esse pack é a base adotada. Ver [`ASSET_INVENTORY.md`](ASSET_INVENTORY.md). **2026-10-02 (ADR-019):** o pack está **versionado neste repositório** (`assets/sprites/`, com licença); o repositório de referência não é mais necessário.
 
 ### 1.2 Placeholders
 

@@ -27,6 +27,7 @@ const ROOT = join(fileURLToPath(new URL(".", import.meta.url)), "..");
 const ROOTS = [
   join(ROOT, "apps", "game-web", "preview"),
   join(ROOT, "apps", "game-web", "public"),
+  join(ROOT, "assets", "generated"),
   join(ROOT, "assets", "sprites"),
 ];
 const INDEX = join(ROOTS[0], "index.html");

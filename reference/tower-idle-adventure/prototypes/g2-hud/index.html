@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Protótipo UX não funcional do Tower Idle Adventure — dados fictícios, sem backend ou gameplay.">
+<title>G2 HUD Prototype · Tower Idle Adventure</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #090d13;
+    --surface: #101720;
+    --surface-2: #151f2a;
+    --surface-3: #1a2632;
+    --line: #283542;
+    --line-soft: rgba(190, 206, 218, .10);
+    --text: #edf2f4;
+    --muted: #8f9da8;
+    --dim: #64737e;
+    --gold: #e4ba71;
+    --gold-soft: #f0d39b;
+    --gold-bg: rgba(228, 186, 113, .11);
+    --teal: #74c8b8;
+    --teal-bg: rgba(116, 200, 184, .12);
+    --red: #e37c7b;
+    --blue: #92afd3;
+    --radius: 14px;
+    --shadow: 0 16px 50px rgba(0,0,0,.34);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-width: 320px; background: radial-gradient(ellipse at 53% -30%, #1e2b34 0, var(--bg) 48%); color: var(--text); }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  .prototype-banner { display:flex; justify-content:center; align-items:center; gap:10px; min-height:28px; padding:5px 14px; background:#342818; color:#f0d39b; border-bottom:1px solid rgba(228,186,113,.22); font-size:11px; letter-spacing:.08em; text-transform:uppercase; }
+  .prototype-banner .dot { width:6px; height:6px; border-radius:99px; background:var(--gold); box-shadow:0 0 11px var(--gold); }
+  .app-header { display:flex; align-items:center; gap:24px; min-height:72px; padding:12px 26px; border-bottom:1px solid var(--line-soft); background:rgba(10,15,21,.9); }
+  .brand { display:flex; align-items:center; gap:12px; min-width:240px; }
+  .brand-mark { display:grid; place-items:center; width:38px; height:38px; color:var(--gold); border:1px solid rgba(228,186,113,.35); border-radius:11px; background:linear-gradient(145deg,rgba(228,186,113,.16),rgba(228,186,113,.035)); font-size:19px; }
+  .brand-copy strong { display:block; font-size:13px; letter-spacing:.15em; }
+  .brand-copy span { display:block; margin-top:3px; color:var(--muted); font-size:10px; letter-spacing:.12em; text-transform:uppercase; }
+  .profile-strip { display:flex; align-items:center; gap:14px; flex:1; min-width:0; }
+  .player-avatar { display:grid; place-items:center; width:38px; height:38px; border-radius:50%; color:#dce7e8; background:linear-gradient(145deg,#526f70,#293b45); font-size:12px; font-weight:750; }
+  .profile-name { min-width:100px; }
+  .profile-name strong { display:block; font-size:12px; }
+  .profile-name span { display:block; margin-top:3px; color:var(--muted); font-size:10px; }
+  .xp-wrap { width:min(220px,25vw); }
+  .xp-label { display:flex; justify-content:space-between; gap:8px; margin-bottom:6px; color:var(--muted); font-size:10px; }
+  .xp-track, .hp-track { height:6px; overflow:hidden; border-radius:99px; background:#27313b; }
+  .xp-track i { display:block; height:100%; width:64%; background:linear-gradient(90deg,#b79051,var(--gold-soft)); border-radius:inherit; }
+  .header-spacer { flex:1; }
+  .coin-chip { display:flex; align-items:center; gap:8px; padding:9px 12px; border:1px solid rgba(228,186,113,.2); border-radius:11px; background:var(--gold-bg); color:var(--gold-soft); font-size:12px; white-space:nowrap; }
+  .coin-icon { display:grid; place-items:center; width:18px; height:18px; border:1px solid currentColor; border-radius:50%; font-size:9px; font-weight:800; }
+  .connection { display:flex; align-items:center; gap:7px; color:var(--teal); font-size:10px; white-space:nowrap; }
+  .connection i { width:7px; height:7px; background:var(--teal); border-radius:50%; }
+  .primary-nav { display:flex; align-items:center; gap:6px; padding:10px 25px; border-bottom:1px solid var(--line-soft); background:rgba(14,20,27,.88); overflow:auto; }
+  .nav-button { padding:8px 12px; border:0; border-radius:9px; background:transparent; color:var(--muted); font-size:11px; white-space:nowrap; transition:background .18s,color .18s; }
+  .nav-button:hover { color:var(--text); background:rgba(255,255,255,.04); }
+  .nav-button[aria-current="page"] { color:var(--gold-soft); background:var(--gold-bg); box-shadow:inset 0 0 0 1px rgba(228,186,113,.13); }
+  .page-shell { width:min(1600px,100%); margin:0 auto; padding:20px 24px 30px; }
+  .workspace { display:grid; grid-template-columns:224px minmax(420px,1fr) 220px; grid-template-areas:"team main automation" "log log log"; gap:14px; align-items:start; }
+  .panel { border:1px solid var(--line); border-radius:var(--radius); background:linear-gradient(155deg,rgba(20,30,40,.97),rgba(14,21,29,.97)); box-shadow:var(--shadow); }
+  .team-rail { grid-area:team; padding:14px; }
+  .main-column { grid-area:main; min-width:0; }
+  .automation-rail { grid-area:automation; padding:14px; }
+  .session-log { grid-area:log; overflow:hidden; }
+  .panel-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:13px; }
+  .eyebrow { color:var(--muted); font-size:9px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; }
+  .panel-heading h2, .panel-heading h3 { margin:4px 0 0; font-size:13px; font-weight:650; }
+  .text-button { padding:0; border:0; background:transparent; color:var(--gold); font-size:10px; }
+  .team-count { padding:5px 8px; border-radius:8px; background:var(--surface-3); color:var(--muted); font-size:10px; }
+  .character-card { padding:11px; margin-top:9px; border:1px solid var(--line-soft); border-radius:12px; background:rgba(255,255,255,.018); }
+  .character-top { display:flex; align-items:center; gap:9px; }
+  .portrait { position:relative; display:grid; place-items:center; width:38px; height:43px; flex:none; border-radius:11px 11px 13px 13px; color:#e2d4b5; background:linear-gradient(155deg,#645643,#283943); font-size:11px; font-weight:800; }
+  .portrait.mage { background:linear-gradient(155deg,#4c5c81,#293540); color:#c9d9ef; }
+  .portrait.rogue { background:linear-gradient(155deg,#47716d,#263a3d); color:#c2e1d9; }
+  .portrait.asset-hero, .portrait.asset-mage { background-repeat:no-repeat; background-size:400% 400%; background-position:0 0; image-rendering:pixelated; border-radius:7px; }
+  .portrait.asset-hero { background-image:url('../../sprites/characters/hero/hero_idle_sheet.png'); }
+  .portrait.asset-mage { background-image:url('../../sprites/characters/mage/mage_idle_sheet.png'); }
+  .character-info { flex:1; min-width:0; }
+  .character-info strong { display:block; overflow:hidden; font-size:11px; text-overflow:ellipsis; white-space:nowrap; }
+  .character-info span { display:block; margin-top:4px; color:var(--muted); font-size:9px; }
+  .mini-level { color:var(--gold-soft); font-size:9px; }
+  .hp-meta { display:flex; justify-content:space-between; margin:11px 0 6px; color:var(--muted); font-size:9px; }
+  .hp-track i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#4c9d87,#91c9a8); }
+  .character-card.low .hp-track i { background:linear-gradient(90deg,#a64e55,#de827e); }
+  .character-flags { display:flex; gap:5px; margin-top:9px; }
+  .tiny-pill { padding:4px 6px; border:1px solid var(--line-soft); border-radius:6px; color:var(--muted); font-size:8px; }
+  .empty-member { display:grid; place-items:center; min-height:70px; margin-top:9px; border:1px dashed #37434e; border-radius:11px; color:var(--dim); font-size:10px; }
+  .team-footer { margin-top:12px; padding-top:12px; border-top:1px solid var(--line-soft); color:var(--muted); font-size:9px; line-height:1.5; }
+  .section-view { display:none; }
+  .section-view.active { display:block; }
+  .view-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin:2px 0 14px; }
+  .view-heading h1 { margin:0; font-size:22px; font-weight:620; letter-spacing:-.03em; }
+  .view-heading p { margin:6px 0 0; color:var(--muted); font-size:11px; }
+  .subtle-link { color:var(--gold); font-size:10px; text-decoration:none; }
+  .lobby-hero { position:relative; display:flex; min-height:210px; overflow:hidden; align-items:flex-end; padding:23px; border:1px solid rgba(228,186,113,.22); border-radius:16px; background:radial-gradient(ellipse at 79% 14%,rgba(136,167,164,.18),transparent 34%),linear-gradient(118deg,#1e2b2d 0%,#18232a 49%,#2a2824 100%); }
+  .lobby-hero::before, .lobby-hero::after { position:absolute; content:""; pointer-events:none; }
+  .lobby-hero::before { width:280px; height:230px; right:7%; bottom:-95px; transform:rotate(29deg); background:linear-gradient(135deg,transparent 40%,rgba(2,8,13,.43) 41%),linear-gradient(45deg,transparent 40%,rgba(7,13,17,.44) 41%); clip-path:polygon(50% 0,100% 100%,0 100%); }
+  .lobby-hero::after { inset:0; background:linear-gradient(90deg,rgba(8,13,17,.66),transparent 72%); }
+  .hero-copy { position:relative; z-index:1; max-width:460px; }
+  .hero-kicker { color:var(--gold); font-size:9px; font-weight:750; letter-spacing:.17em; text-transform:uppercase; }
+  .hero-copy h2 { margin:9px 0 7px; font-size:25px; font-weight:600; letter-spacing:-.04em; }
+  .hero-copy p { max-width:380px; margin:0; color:#b6c0c2; font-size:11px; line-height:1.6; }
+  .hero-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:17px; }
+  .button { display:inline-flex; justify-content:center; align-items:center; gap:8px; min-height:36px; padding:0 13px; border:1px solid var(--line); border-radius:9px; background:var(--surface-3); color:var(--text); font-size:10px; font-weight:650; transition:transform .15s,filter .15s,background .15s; }
+  .button:hover { filter:brightness(1.12); transform:translateY(-1px); }
+  .button.primary { border-color:#c8a35e; background:linear-gradient(135deg,#ddbd7b,#b98f4e); color:#17140e; }
+  .button.ghost { border-color:rgba(255,255,255,.16); background:rgba(10,15,18,.32); }
+  .button.danger { border-color:rgba(227,124,123,.3); background:rgba(166,65,68,.12); color:#ffc0bc; }
+  .button.small { min-height:30px; padding:0 9px; font-size:9px; }
+  .button[disabled] { cursor:not-allowed; opacity:.48; transform:none; }
+  .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:12px; }
+  .stat-card { padding:13px 14px; border:1px solid var(--line); border-radius:12px; background:rgba(18,26,35,.88); }
+  .stat-card span { display:block; color:var(--muted); font-size:9px; }
+  .stat-card strong { display:block; margin-top:7px; font-size:17px; font-weight:650; }
+  .stat-card small { display:block; margin-top:5px; color:var(--teal); font-size:9px; }
+  .section-card { padding:15px; margin-top:12px; }
+  .section-card h2 { margin:0; font-size:12px; }
+  .section-card p { margin:6px 0 0; color:var(--muted); font-size:10px; line-height:1.55; }
+  .quick-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin-top:11px; }
+  .quick-card { text-align:left; min-height:85px; padding:13px; border:1px solid var(--line-soft); border-radius:11px; background:rgba(255,255,255,.025); }
+  .quick-card:hover { background:var(--surface-3); }
+  .quick-card .symbol { color:var(--gold); font-size:16px; }
+  .quick-card strong { display:block; margin-top:9px; font-size:10px; }
+  .quick-card span { display:block; margin-top:4px; color:var(--muted); font-size:9px; }
+  .automation-title { display:flex; align-items:center; gap:8px; }
+  .automation-title .gear { display:grid; place-items:center; width:26px; height:26px; border-radius:8px; background:var(--teal-bg); color:var(--teal); }
+  .setting-row { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:11px 0; border-bottom:1px solid var(--line-soft); }
+  .setting-row:last-of-type { border-bottom:0; }
+  .setting-label strong { display:block; font-size:10px; font-weight:600; }
+  .setting-label span { display:block; margin-top:4px; color:var(--muted); font-size:8px; }
+  .switch { position:relative; width:31px; height:18px; border:0; border-radius:99px; background:#39434d; }
+  .switch::after { position:absolute; top:3px; left:3px; width:12px; height:12px; border-radius:50%; background:#a6afb6; content:""; transition:transform .16s,background .16s; }
+  .switch[aria-checked="true"] { background:#398474; }
+  .switch[aria-checked="true"]::after { transform:translateX(13px); background:#ecfff8; }
+  .select-row { display:flex; justify-content:space-between; align-items:center; margin:12px 0 5px; color:var(--muted); font-size:9px; }
+  .fake-select { padding:5px 7px; border:1px solid var(--line); border-radius:7px; background:#101820; color:var(--text); font-size:9px; }
+  .automation-note { margin-top:12px; padding:9px; border-radius:8px; background:rgba(116,200,184,.07); color:#a9c9c1; font-size:8px; line-height:1.5; }
+  .floor-context { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 14px; border:1px solid var(--line); border-radius:12px; background:var(--surface); }
+  .floor-context strong { font-size:11px; }
+  .floor-context span { display:block; margin-top:4px; color:var(--muted); font-size:9px; }
+  .battle-stage { position:relative; display:flex; min-height:300px; justify-content:space-around; align-items:center; gap:12px; overflow:hidden; margin-top:11px; padding:22px; border:1px solid #33434d; border-radius:15px; background:radial-gradient(ellipse at 50% 120%,rgba(91,130,119,.2),transparent 52%),linear-gradient(160deg,#17232b,#10171d 73%); }
+  .battle-stage::before { position:absolute; right:10%; bottom:25px; left:10%; height:1px; background:linear-gradient(90deg,transparent,rgba(204,188,148,.23),transparent); content:""; }
+  .combatant { position:relative; z-index:1; width:115px; text-align:center; }
+  .mock-figure { display:grid; place-items:center; width:88px; height:120px; margin:0 auto 10px; border:1px solid rgba(215,193,145,.2); border-radius:45% 45% 18px 18px; background:radial-gradient(ellipse at 50% 28%,rgba(213,183,117,.22),transparent 29%),linear-gradient(155deg,#3e4845,#1a252a 72%); color:#d9c99f; font-size:25px; box-shadow:0 12px 30px rgba(0,0,0,.25); }
+  .mock-figure.enemy { border-color:rgba(198,116,112,.24); background:radial-gradient(ellipse at 50% 28%,rgba(205,110,98,.2),transparent 30%),linear-gradient(155deg,#513d43,#201f28 72%); color:#e1a39a; }
+  .mock-figure.asset-hero, .mock-figure.asset-slime { border:0; border-radius:0; background-repeat:no-repeat; background-size:400% 400%; background-position:0 0; image-rendering:pixelated; box-shadow:none; }
+  .mock-figure.asset-hero { background-image:url('../../sprites/characters/hero/hero_idle_sheet.png'); }
+  .mock-figure.asset-slime { background-image:url('../../sprites/characters/slime/slime_idle_sheet.png'); }
+  .combatant strong { display:block; font-size:10px; }
+  .combatant span { display:block; margin-top:4px; color:var(--muted); font-size:8px; }
+  .combatant .hp-track { margin-top:8px; }
+  .versus { z-index:1; color:var(--gold); font-size:9px; font-weight:800; letter-spacing:.14em; }
+  .battle-foot { display:flex; justify-content:space-between; gap:10px; margin-top:11px; color:var(--muted); font-size:9px; }
+  .battle-actions { display:flex; gap:7px; }
+  .view-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .team-detail { display:flex; align-items:center; gap:12px; padding:13px; border:1px solid var(--line-soft); border-radius:12px; background:rgba(255,255,255,.02); }
+  .team-detail .portrait { width:50px; height:56px; }
+  .detail-body { flex:1; min-width:0; }
+  .detail-body h3 { margin:0; font-size:12px; }
+  .detail-body p { margin:5px 0 0; color:var(--muted); font-size:9px; }
+  .equipment-summary { display:grid; grid-template-columns:repeat(2,1fr); gap:7px; margin-top:12px; }
+  .slot-chip { padding:8px; border:1px solid var(--line-soft); border-radius:8px; background:#111a22; color:var(--muted); font-size:9px; }
+  .slot-chip strong { display:block; margin-top:4px; color:var(--text); font-size:9px; }
+  .item-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; }
+  .item-card { min-width:0; padding:11px; border:1px solid var(--line); border-radius:12px; background:linear-gradient(145deg,#18232c,#10171e); }
+  .item-art { display:grid; place-items:center; height:62px; margin-bottom:10px; border-radius:9px; background:radial-gradient(circle at 50% 35%,rgba(228,186,113,.15),transparent 42%),#151e26; color:var(--gold-soft); font-size:23px; }
+  .item-rarity { color:var(--gold); font-size:8px; letter-spacing:.09em; text-transform:uppercase; }
+  .item-card h3 { overflow:hidden; margin:5px 0 0; font-size:10px; text-overflow:ellipsis; white-space:nowrap; }
+  .item-card p { margin:5px 0; color:var(--muted); font-size:8px; }
+  .item-stats { display:grid; grid-template-columns:1fr 1fr; gap:4px; margin:8px 0; color:#bbc6ca; font-size:8px; }
+  .grade { display:inline-block; padding:3px 6px; border-radius:5px; background:var(--gold-bg); color:var(--gold-soft); font-size:8px; }
+  .floor-list { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+  .floor-card { min-height:76px; padding:9px; text-align:left; border:1px solid var(--line); border-radius:10px; background:#111922; }
+  .floor-card:hover, .floor-card.selected { border-color:rgba(228,186,113,.55); background:var(--gold-bg); }
+  .floor-card:disabled { opacity:.45; cursor:not-allowed; }
+  .floor-card strong { display:block; color:var(--gold-soft); font-size:11px; }
+  .floor-card span { display:block; margin-top:7px; color:var(--muted); font-size:8px; }
+  .floor-preview { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:11px; padding:13px; border:1px solid var(--line); border-radius:11px; background:var(--surface); }
+  .floor-preview strong { display:block; font-size:11px; }
+  .floor-preview span { display:block; margin-top:5px; color:var(--muted); font-size:9px; }
+  .log-head { display:flex; justify-content:space-between; align-items:center; padding:11px 14px; border-bottom:1px solid var(--line-soft); }
+  .log-head strong { font-size:10px; }
+  .log-head span { color:var(--muted); font-size:8px; }
+  .log-list { display:flex; gap:8px; overflow:auto; padding:11px 14px; }
+  .log-entry { flex:none; padding:7px 9px; border:1px solid var(--line-soft); border-radius:8px; color:#bac5cb; background:rgba(255,255,255,.02); font-size:8px; white-space:nowrap; }
+  .log-entry.loot { border-color:rgba(228,186,113,.24); color:var(--gold-soft); }
+  .footnote { display:flex; justify-content:space-between; gap:12px; margin-top:10px; color:var(--dim); font-size:8px; }
+  .footnote a { color:var(--gold); }
+  .modal-backdrop { position:fixed; z-index:20; inset:0; display:none; place-items:center; padding:18px; background:rgba(4,7,10,.73); backdrop-filter:blur(7px); }
+  .modal-backdrop.open { display:grid; }
+  .modal { width:min(470px,100%); padding:19px; border:1px solid #39444d; border-radius:16px; background:#121a22; box-shadow:0 25px 90px rgba(0,0,0,.5); }
+  .modal-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+  .modal-head h2 { margin:0; font-size:16px; }
+  .modal-head p { margin:5px 0 0; color:var(--muted); font-size:9px; }
+  .close-button { width:30px; height:30px; border:1px solid var(--line); border-radius:8px; background:var(--surface-3); color:var(--muted); }
+  .shop-row { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--line-soft); }
+  .shop-row:last-of-type { border-bottom:0; }
+  .shop-row strong { display:block; font-size:10px; }
+  .shop-row span { display:block; margin-top:4px; color:var(--muted); font-size:8px; }
+  .shop-price { color:var(--gold-soft)!important; font-size:9px!important; }
+  .modal-note { margin-top:12px; padding:10px; border-radius:9px; background:rgba(228,186,113,.08); color:#e1cb9e; font-size:9px; line-height:1.5; }
+  .confirm-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:15px; }
+  .toast { position:fixed; z-index:30; right:22px; bottom:22px; max-width:min(380px,calc(100vw - 32px)); padding:12px 15px; border:1px solid rgba(116,200,184,.32); border-radius:11px; background:#13241f; color:#c8eee3; box-shadow:var(--shadow); font-size:10px; opacity:0; pointer-events:none; transform:translateY(10px); transition:.2s; }
+  .toast.show { opacity:1; transform:translateY(0); }
+  .prototype-note { color:#c3a873; }
+  @media (max-width:1180px) { .workspace { grid-template-columns:205px minmax(390px,1fr); grid-template-areas:"team main" "automation automation" "log log"; } .automation-rail { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; } .automation-rail .panel-heading { grid-column:1/-1; margin-bottom:0; } .automation-note { grid-column:1/-1; } }
+  @media (max-width:850px) { .app-header { flex-wrap:wrap; gap:12px; padding:11px 14px; } .brand { min-width:170px; } .profile-strip { flex-basis:100%; order:3; } .header-spacer { display:none; } .primary-nav { padding:8px 12px; } .page-shell { padding:14px 12px 24px; } .workspace { grid-template-columns:1fr; grid-template-areas:"main" "team" "automation" "log"; } .team-rail, .automation-rail { display:block; } .team-rail { order:2; } .automation-rail { order:3; } .view-heading h1 { font-size:19px; } .lobby-hero { min-height:200px; padding:18px; } .quick-grid { grid-template-columns:1fr 1fr; } .floor-list { grid-template-columns:repeat(2,1fr); } .item-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .battle-stage { min-height:250px; padding:12px; } .combatant { width:92px; } .mock-figure { width:66px; height:96px; } }
+  @media (max-width:520px) { .xp-wrap { width:100%; } .profile-strip { display:grid; grid-template-columns:auto 1fr; } .profile-strip .coin-chip { grid-column:1/-1; width:max-content; } .stats-row { grid-template-columns:1fr 1fr; } .stats-row .stat-card:last-child { grid-column:1/-1; } .quick-grid,.view-grid { grid-template-columns:1fr; } .item-grid { grid-template-columns:1fr 1fr; } .floor-preview { align-items:flex-start; flex-direction:column; } .battle-stage { min-height:215px; } .versus { display:none; } .footnote { flex-direction:column; } }
+  @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; animation:none!important; } }
+</style>
+</head>
+<body>
+<div class="prototype-banner"><span class="dot" aria-hidden="true"></span>G2 UX prototype · dados fictícios · sem gameplay, login ou backend</div>
+<header class="app-header">
+  <div class="brand" aria-label="Tower Idle Adventure">
+    <div class="brand-mark" aria-hidden="true">✦</div>
+    <div class="brand-copy"><strong>TOWER IDLE</strong><span>Adventure · Wireframe G2</span></div>
+  </div>
+  <div class="profile-strip">
+    <div class="player-avatar" aria-hidden="true">NV</div>
+    <div class="profile-name"><strong>NovaViajante</strong><span>Conta convidada · nível 08</span></div>
+    <div class="xp-wrap" aria-label="Progresso fictício de experiência">
+      <div class="xp-label"><span>Nível 08</span><span>640 / 800 XP</span></div>
+      <div class="xp-track"><i></i></div>
+    </div>
+    <div class="header-spacer"></div>
+    <div class="coin-chip" aria-label="480 Coins fictícios"><span class="coin-icon" aria-hidden="true">C</span><strong>480</strong><span>Coins</span></div>
+  </div>
+  <div class="connection"><i aria-hidden="true"></i><span>Conectado</span></div>
+</header>
+<nav class="primary-nav" aria-label="Navegação principal">
+  <button class="nav-button" data-view="lobby" aria-current="page">⌂ &nbsp;Lobby</button>
+  <button class="nav-button" data-view="team">♙ &nbsp;Equipe</button>
+  <button class="nav-button" data-view="inventory">▦ &nbsp;Inventário</button>
+  <button class="nav-button" data-view="tower">⌃ &nbsp;Torre</button>
+  <button class="nav-button" data-shop>◈ &nbsp;Loja NPC</button>
+</nav>
+<main class="page-shell">
+  <div class="workspace">
+    <aside class="panel team-rail" aria-label="Equipe fictícia">
+      <div class="panel-heading"><div><div class="eyebrow">Sua equipe</div><h2>Preparada para a hunt</h2></div><span class="team-count">2 / 3</span></div>
+      <article class="character-card">
+        <div class="character-top"><div class="portrait asset-hero" aria-hidden="true"></div><div class="character-info"><strong>Guerreiro</strong><span>Espada · Nível 08</span></div><span class="mini-level">1★</span></div>
+        <div class="hp-meta"><span>Vida</span><span>78% · 312 / 400</span></div><div class="hp-track"><i style="width:78%"></i></div>
+        <div class="character-flags"><span class="tiny-pill">Golpe pronto</span><span class="tiny-pill">Espada</span></div>
+      </article>
+      <article class="character-card">
+        <div class="character-top"><div class="portrait asset-mage" aria-hidden="true"></div><div class="character-info"><strong>Arcanista</strong><span>Cajado · Nível 08</span></div><span class="mini-level">1★</span></div>
+        <div class="hp-meta"><span>Vida</span><span>64% · 198 / 310</span></div><div class="hp-track"><i style="width:64%"></i></div>
+        <div class="character-flags"><span class="tiny-pill">Orbe pronto</span><span class="tiny-pill">Cajado</span></div>
+      </article>
+      <div class="empty-member">＋ &nbsp; Espaço disponível</div>
+      <div class="team-footer">Poder da equipe <strong style="color:var(--text);float:right">1.240</strong><br>Personagens e valores ilustrativos.</div>
+    </aside>
+
+    <section class="main-column" aria-live="polite">
+      <section id="view-lobby" class="section-view active" data-title="Lobby">
+        <div class="view-heading"><div><h1>Lobby</h1><p>Prepare sua equipe e escolha onde começar.</p></div><span class="subtle-link">Última hunt · 27 eventos</span></div>
+        <div class="lobby-hero">
+          <div class="hero-copy"><div class="hero-kicker">Próxima parada · nível mínimo 07</div><h2>Torre das Brumas</h2><p>Uma trilha silenciosa sobe pela névoa. Encontros automáticos, recompensas persistentes e nenhuma pressa para avançar.</p><div class="hero-actions"><button class="button primary" data-view="tower">Escolher andar <span aria-hidden="true">→</span></button><button class="button ghost" data-view="team">Preparar equipe</button></div></div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card"><span>Progresso da conta</span><strong>Nível 08</strong><small>640 / 800 XP</small></div>
+          <div class="stat-card"><span>Andar recomendado</span><strong>4º andar</strong><small>Requisito atendido</small></div>
+          <div class="stat-card"><span>Itens na mochila</span><strong>24 / 300</strong><small>Sem risco de lotação</small></div>
+        </div>
+        <div class="panel section-card"><h2>Acesso rápido</h2><p>Os detalhes ficam em painéis próprios para manter a área de jogo livre.</p><div class="quick-grid">
+          <button class="quick-card" data-view="team"><span class="symbol" aria-hidden="true">♙</span><strong>Equipe e atributos</strong><span>2 personagens ativos</span></button>
+          <button class="quick-card" data-view="inventory"><span class="symbol" aria-hidden="true">▦</span><strong>Inventário</strong><span>Comparar e equipar itens</span></button>
+          <button class="quick-card" data-shop><span class="symbol" aria-hidden="true">◈</span><strong>Loja de Coins</strong><span>Poções e revives</span></button>
+        </div></div>
+      </section>
+
+      <section id="view-team" class="section-view" data-title="Equipe">
+        <div class="view-heading"><div><h1>Equipe</h1><p>Monte sua formação e confira o equipamento por personagem.</p></div><span class="team-count">2 / 3 membros</span></div>
+        <div class="panel section-card" style="margin-top:0"><div class="panel-heading"><div><div class="eyebrow">Formação ativa</div><h2>Slot 1–3 · até três personagens</h2></div><button class="button small" data-toast="A edição de equipe é apenas visual neste protótipo.">Editar formação</button></div>
+          <div class="view-grid">
+            <article class="team-detail"><div class="portrait asset-hero" aria-hidden="true"></div><div class="detail-body"><h3>Guerreiro · 1★ · Nv 08</h3><p>Afinidade: Espada · HP 312 / 400</p><div class="hp-track" style="margin-top:9px"><i style="width:78%"></i></div></div><span class="grade">Poder 720</span></article>
+            <article class="team-detail"><div class="portrait asset-mage" aria-hidden="true"></div><div class="detail-body"><h3>Arcanista · 1★ · Nv 08</h3><p>Afinidade: Cajado · HP 198 / 310</p><div class="hp-track" style="margin-top:9px"><i style="width:64%"></i></div></div><span class="grade">Poder 520</span></article>
+            <article class="team-detail" style="border-style:dashed"><div class="empty-member" style="width:50px;min-height:56px;margin:0">＋</div><div class="detail-body"><h3>Slot disponível</h3><p>Desbloqueie outro personagem na progressão.</p></div></article>
+          </div>
+        </div>
+        <div class="panel section-card"><div class="panel-heading"><div><div class="eyebrow">Guerreiro · equipamento</div><h2>Resumo dos dez slots</h2></div><button class="text-button" data-view="inventory">Ver inventário →</button></div>
+          <div class="equipment-summary"><div class="slot-chip">Arma<strong>Espada da Bruma · Comum</strong></div><div class="slot-chip">Peitoral<strong>Couraça simples · Comum</strong></div><div class="slot-chip">Elmo<strong>Elmo do Viajante · Comum</strong></div><div class="slot-chip">Calça<strong>Calça reforçada · Comum</strong></div><div class="slot-chip">Bota<strong>Botas leves · Comum</strong></div><div class="slot-chip">Outros cinco slots<strong>Equipados · dados fictícios</strong></div></div>
+        </div>
+      </section>
+
+      <section id="view-inventory" class="section-view" data-title="Inventário">
+        <div class="view-heading"><div><h1>Inventário</h1><p>Compare rolagens e efeitos; nenhuma ação altera itens no protótipo.</p></div><span class="team-count">24 / 300</span></div>
+        <div class="panel section-card" style="margin-top:0"><div class="panel-heading"><div><div class="eyebrow">Equipamentos</div><h2>Mais recentes</h2></div><select class="fake-select" aria-label="Filtrar inventário"><option>Todos os slots</option><option>Armas</option><option>Armaduras</option></select></div>
+          <div class="item-grid">
+            <article class="item-card"><div class="item-art" aria-hidden="true">⚔</div><span class="item-rarity">Raro · nível 08</span><h3>Espada da Aurora</h3><p>Espada · uso pessoal</p><div class="item-stats"><span>Ataque +8,4</span><span>Crítico +2,1%</span><span>Defesa +1,5</span><span>Vida +13</span></div><span class="grade">Nota B · Poder 19</span><p>x Ataque: 37 · fator ×3,7</p><button class="button small" style="width:100%;margin-top:8px" data-toast="Comparação simulada — nenhum equipamento foi alterado.">Comparar</button></article>
+            <article class="item-card"><div class="item-art" aria-hidden="true">⌑</div><span class="item-rarity">Comum · nível 08</span><h3>Peitoral da Torre</h3><p>Peitoral · uso pessoal</p><div class="item-stats"><span>Defesa +5,2</span><span>Vida +21</span><span>Atq. Esp. +1,1</span><span>Vel. +0,8</span></div><span class="grade">Nota C · Poder 14</span><p>Rolagens independentes por atributo</p><button class="button small" style="width:100%;margin-top:8px" data-toast="Detalhes ilustrativos; nenhum item real existe.">Ver detalhes</button></article>
+            <article class="item-card"><div class="item-art" aria-hidden="true">✦</div><span class="item-rarity">Épico · nível 07</span><h3>Amuleto da Vigília</h3><p>Colar · uso pessoal</p><div class="item-stats"><span>Atq. Esp. +4,3</span><span>Crítico +1,8%</span><span>Def. Esp. +2,4</span><span>Vida +12</span></div><span class="grade">Nota A · Poder 22</span><p>Exemplo demonstrativo</p><button class="button small" style="width:100%;margin-top:8px" data-toast="Detalhes ilustrativos; nenhum item real existe.">Ver detalhes</button></article>
+          </div>
+        </div>
+        <div class="panel section-card"><h2>Leitura de item</h2><p><strong style="color:var(--text)">Nota</strong> compara as oito rolagens; <strong style="color:var(--text)">Poder</strong> estima atributos. Traços e características aparecem separados. Descartar é permanente e exige confirmação no jogo real.</p></div>
+      </section>
+
+      <section id="view-tower" class="section-view" data-title="Torre">
+        <div class="view-heading"><div><h1>Selecionar andar</h1><p>O avanço é sempre manual; o protótipo não inicia combate real.</p></div><span class="team-count">Conta nível 08</span></div>
+        <div class="panel section-card" style="margin-top:0"><div class="panel-heading"><div><div class="eyebrow">Torre das Brumas</div><h2>Escolha seu próximo encontro</h2></div><span class="eyebrow">1–10 andares</span></div>
+          <div class="floor-list" id="floor-list">
+            <button class="floor-card selected" data-floor="1"><strong>Andar 01</strong><span>Nível mín. 01 · Cinzas</span></button>
+            <button class="floor-card" data-floor="2"><strong>Andar 02</strong><span>Nível mín. 03 · Névoa</span></button>
+            <button class="floor-card" data-floor="3"><strong>Andar 03</strong><span>Nível mín. 05 · Vigias</span></button>
+            <button class="floor-card" data-floor="4"><strong>Andar 04</strong><span>Nível mín. 07 · Ruínas</span></button>
+            <button class="floor-card" data-floor="5"><strong>Andar 05</strong><span>Nível mín. 09 · Ossos</span></button>
+            <button class="floor-card" data-floor="6"><strong>Andar 06</strong><span>Nível mín. 11 · Brasa</span></button>
+            <button class="floor-card" data-floor="7"><strong>Andar 07</strong><span>Nível mín. 13 · Vazio</span></button>
+            <button class="floor-card" data-floor="8"><strong>Andar 08</strong><span>Nível mín. 15 · Runas</span></button>
+            <button class="floor-card" data-floor="9"><strong>Andar 09</strong><span>Nível mín. 17 · Ecos</span></button>
+            <button class="floor-card" data-floor="10"><strong>Andar 10</strong><span>Nível mín. 19 · Sentinela</span></button>
+          </div>
+          <div class="floor-preview"><div><strong id="floor-label">Andar 01 · Nível mínimo 01</strong><span>Inimigos comuns · XP/Coins e chance de equipamento ilustrativos.</span></div><button class="button primary" id="start-hunt">Abrir preview da hunt →</button></div>
+        </div>
+      </section>
+
+      <section id="view-hunt" class="section-view" data-title="Hunt">
+        <div class="view-heading"><div><h1>Hunt · Andar <span id="hunt-floor-title">01</span></h1><p>Visual estático de batalha. Nenhum turno ou recompensa é simulado.</p></div><div class="battle-actions"><button class="button small" data-shop>Loja rápida</button><button class="button danger small" data-end-hunt>Encerrar hunt</button></div></div>
+        <div class="floor-context"><div><strong>Encontro de demonstração · 2 inimigos</strong><span>Último estado ilustrativo · HP e loot não mudam</span></div><span class="team-count">● Sessão demo</span></div>
+        <div class="battle-stage" aria-label="Palco demonstrativo sem combate ativo">
+          <div class="combatant"><div class="mock-figure asset-hero" aria-hidden="true"></div><strong>Guerreiro</strong><span>Vida 78% · Golpe pesado</span><div class="hp-track"><i style="width:78%"></i></div></div>
+          <div class="versus" aria-hidden="true">VS</div>
+          <div class="combatant"><div class="mock-figure enemy asset-slime" aria-hidden="true"></div><strong>Slime de Cinza</strong><span>Vida 42% · Nv. demo</span><div class="hp-track"><i style="width:42%;background:linear-gradient(90deg,#a36856,#dca47c)"></i></div></div>
+        </div>
+        <div class="battle-foot"><span>Andar escolhido manualmente · Sem progresso offline · Dados fictícios</span><span>Encontro 01</span></div>
+      </section>
+    </section>
+
+    <aside class="panel automation-rail" aria-label="Configuração fictícia de automação">
+      <div class="panel-heading"><div class="automation-title"><span class="gear" aria-hidden="true">⚙</span><div><div class="eyebrow">Regras da equipe</div><h2>Automação</h2></div></div><span class="team-count">Demo</span></div>
+      <div class="setting-row"><div class="setting-label"><strong>Poções</strong><span>usar no limiar escolhido</span></div><button class="switch" role="switch" aria-checked="true" data-switch aria-label="Poções automáticas"></button></div>
+      <div class="select-row"><span>Limiar de HP</span><select class="fake-select" aria-label="Limiar de HP"><option>50%</option><option>40%</option><option>60%</option></select></div>
+      <div class="setting-row"><div class="setting-label"><strong>Revive</strong><span>consumir ao cair</span></div><button class="switch" role="switch" aria-checked="false" data-switch aria-label="Revive automático"></button></div>
+      <div class="setting-row"><div class="setting-label"><strong>Skills automáticas</strong><span>ordem fixa por slot</span></div><button class="switch" role="switch" aria-checked="true" data-switch aria-label="Skills automáticas"></button></div>
+      <div class="setting-row"><div class="setting-label"><strong>Voltar após derrota</strong><span>cura e repete o mesmo andar</span></div><button class="switch" role="switch" aria-checked="false" data-switch aria-label="Voltar após derrota"></button></div>
+      <div class="automation-note">Protótipo: controles não salvam nem consomem itens. No jogo real, cada alteração depende da confirmação do servidor.</div>
+    </aside>
+
+    <section class="panel session-log" aria-label="Log fictício da última hunt">
+      <div class="log-head"><strong>Última hunt <span style="color:var(--muted);font-weight:400">· até 100 eventos</span></strong><span>Dados ilustrativos · não persistidos</span></div>
+      <div class="log-list"><span class="log-entry">12:04 · Hunt iniciada no andar 4</span><span class="log-entry">12:04 · Guerreiro usou Golpe Pesado</span><span class="log-entry">12:05 · Slime de Cinza recebeu dano</span><span class="log-entry loot">12:05 · Exemplo de drop · Raro</span><span class="log-entry">12:06 · +45 XP · +35 Coins (demo)</span></div>
+    </section>
+  </div>
+  <div class="footnote"><span>Preview estático · sem rede · <a href="https://nikastudio.itch.io/fantasy-dungeon-top-down-pixel-rpg-asset-pack-unity-6-urp" target="_blank" rel="noopener noreferrer">Assets by Nika Studio</a></span><span class="prototype-note">Hero, mage e slime são estudos visuais provisórios; sem gameplay/API.</span></div>
+</main>
+
+<div class="modal-backdrop" id="shop-modal" role="dialog" aria-modal="true" aria-labelledby="shop-title">
+  <section class="modal">
+    <div class="modal-head"><div><h2 id="shop-title">Loja NPC · Coins</h2><p>Poções e revives · preços de demonstração</p></div><button class="close-button" data-close-shop aria-label="Fechar loja">×</button></div>
+    <div class="shop-row"><div><strong>Poção Comum</strong><span>Cura 20% do HP máximo</span></div><div style="text-align:right"><span class="shop-price">25 Coins</span><button class="button small" data-mock-purchase>Selecionar</button></div></div>
+    <div class="shop-row"><div><strong>Poção Incomum</strong><span>Cura 30% do HP máximo</span></div><div style="text-align:right"><span class="shop-price">60 Coins</span><button class="button small" data-mock-purchase>Selecionar</button></div></div>
+    <div class="shop-row"><div><strong>Revive 30%</strong><span>Restaura 30% do HP máximo</span></div><div style="text-align:right"><span class="shop-price">200 Coins</span><button class="button small" data-mock-purchase>Selecionar</button></div></div>
+    <div class="modal-note">Nenhuma compra acontece neste protótipo. No jogo, total, saldo e estoque seriam confirmados no servidor; a loja não pausaria a hunt.</div>
+    <div class="confirm-actions"><button class="button" data-close-shop>Fechar</button></div>
+  </section>
+</div>
+<div class="modal-backdrop" id="end-modal" role="dialog" aria-modal="true" aria-labelledby="end-title">
+  <section class="modal"><div class="modal-head"><div><h2 id="end-title">Encerrar esta hunt?</h2><p>Protótipo de confirmação — nenhuma sessão real será encerrada.</p></div><button class="close-button" data-close-end aria-label="Fechar confirmação">×</button></div>
+    <div class="modal-note">No MVP, XP/Coins de inimigos já derrotados permanecem; grupo incompleto não rola equipamento e o Lobby cura gratuitamente.</div>
+    <div class="confirm-actions"><button class="button" data-close-end>Continuar vendo</button><button class="button danger" data-confirm-end>Simular retorno ao Lobby</button></div></section>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+  const views = [...document.querySelectorAll('.section-view')];
+  const navButtons = [...document.querySelectorAll('[data-view]')];
+  const toast = document.getElementById('toast');
+  let toastTimer;
+  let selectedFloor = 1;
+  const announce = (message) => {
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+  };
+  const showView = (name) => {
+    views.forEach(view => view.classList.toggle('active', view.id === `view-${name}`));
+    document.querySelectorAll('.nav-button').forEach(button => {
+      if (button.dataset.view) {
+        if (button.dataset.view === name) button.setAttribute('aria-current', 'page');
+        else button.removeAttribute('aria-current');
+      }
+    });
+    window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+  };
+  navButtons.forEach(button => button.addEventListener('click', () => showView(button.dataset.view)));
+  document.querySelectorAll('[data-toast]').forEach(button => button.addEventListener('click', () => announce(button.dataset.toast)));
+  document.querySelectorAll('[data-switch]').forEach(button => button.addEventListener('click', () => {
+    const next = button.getAttribute('aria-checked') !== 'true';
+    button.setAttribute('aria-checked', String(next));
+    announce('Apenas estado visual de protótipo; nenhuma regra foi salva.');
+  }));
+  const shop = document.getElementById('shop-modal');
+  const end = document.getElementById('end-modal');
+  const openShop = () => { shop.classList.add('open'); shop.querySelector('[data-close-shop]').focus(); };
+  const closeShop = () => { shop.classList.remove('open'); document.querySelector('[data-shop]').focus(); };
+  document.querySelectorAll('[data-shop]').forEach(button => button.addEventListener('click', openShop));
+  document.querySelectorAll('[data-close-shop]').forEach(button => button.addEventListener('click', closeShop));
+  document.querySelectorAll('[data-mock-purchase]').forEach(button => button.addEventListener('click', () => announce('Compra desativada: este é somente um protótipo.')));
+  document.querySelectorAll('[data-floor]').forEach(button => button.addEventListener('click', () => {
+    selectedFloor = Number(button.dataset.floor);
+    document.querySelectorAll('[data-floor]').forEach(card => card.classList.toggle('selected', card === button));
+    document.getElementById('floor-label').textContent = `Andar ${String(selectedFloor).padStart(2,'0')} · Nível mínimo ${String(Math.max(1, selectedFloor * 2 - 1)).padStart(2,'0')}`;
+  }));
+  document.getElementById('start-hunt').addEventListener('click', () => {
+    document.getElementById('hunt-floor-title').textContent = String(selectedFloor).padStart(2,'0');
+    showView('hunt');
+    announce('Hunt demonstrativa aberta. Nenhum combate está sendo executado.');
+  });
+  document.querySelectorAll('[data-end-hunt]').forEach(button => button.addEventListener('click', () => end.classList.add('open')));
+  document.querySelectorAll('[data-close-end]').forEach(button => button.addEventListener('click', () => end.classList.remove('open')));
+  document.querySelector('[data-confirm-end]').addEventListener('click', () => {
+    end.classList.remove('open'); showView('lobby'); announce('Retorno de demonstração ao Lobby; dados fictícios não foram alterados.');
+  });
+  [shop,end].forEach(modal => modal.addEventListener('click', event => { if (event.target === modal) modal.classList.remove('open'); }));
+  document.addEventListener('keydown', event => { if (event.key === 'Escape') { shop.classList.remove('open'); end.classList.remove('open'); } });
+})();
+</script>
+</body>
+</html>

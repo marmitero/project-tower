@@ -38,23 +38,24 @@ npm-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Assets de arte de terceiros (92+ MiB) — NÃO versionar.
-# São binários de um pack de terceiros, com licença própria e revisão
-# própria. Versioná-los aqui poluiria o histórico do projeto com 422
-# blobs imutáveis que nunca mudam dentro deste repositório, e tornaria
-# qualquer clone e qualquer `git gc` mais lentos sem ganho.
+# Assets do pack Nika Studio — VERSIONADOS neste repositório desde 2026-10-02
+# (decisão do usuário: o projeto não depende mais do repositório
+# `marmitero/tower-idle-adventure`; tudo o que é necessário vive aqui).
 #
-# O que entra no Git: o manifesto de uso, o `ATTRIBUTION.md` e o
-# `SOURCES.md` que dizem de onde veio, sob qual licença e o que fazer
-# quando o diretório não estiver presente.
+# `assets/sprites/` entra no Git COMPLETO: os 422 PNGs do pack + os arquivos
+# de licença/manifesto do próprio pack (LICENSE.txt, ASSET_MANIFEST.md,
+# README_IMPORT.txt). A licença MIT da Nika Studio exige manter o aviso de
+# copyright junto — os arquivos ficam na raiz de `assets/sprites/`.
 #
-# O que NUNCA entra: o pack em si. O pipeline (`scripts/build-assets.mjs`)
-# consome `assets/sprites/` quando existe e falha alto quando os
-# obrigatórios faltam — que é o comportamento correto para arte ausente.
-assets/sprites/
-sprites/
+# O que continua NÃO versionado é o que é GERADO a partir daí:
+# `apps/*/public/assets/` (cópia de trabalho feita por
+# `scripts/build-assets.mjs`). O manifesto gerado (`manifest.json`) é
+# versionado porque é o contrato id -> caminho entre código e arte.
 
 # Build de assets derivados (gerados a partir de assets/sprites/)
-apps/*/public/assets/
+# `/*` e não `/` aqui: excluindo o DIRETÓRIO inteiro, a exceção do
+# manifesto abaixo seria anulada (gitignore não re-inclui arquivos sob
+# um diretório excluído).
+apps/*/public/assets/*
 # ...exceto o manifesto versionado que mapeia ID -> caminho
 !apps/*/public/assets/manifest.json

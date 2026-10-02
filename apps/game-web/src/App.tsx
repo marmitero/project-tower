@@ -180,12 +180,12 @@ function Hud({ state }: { state: GameState }) {
   const king = state.data.king;
   const hunt = state.data.hunt;
   const huntLabel = state.activeBattle
-    ? "⚔ Em combate"
+    ? "Em combate"
     : hunt?.kind === "searching"
-      ? "🔍 Procurando…"
+      ? "Procurando…"
       : hunt?.kind === "defeated"
-        ? "☠ Derrota"
-        : "🛡 No Reino";
+        ? "Derrota"
+        : "No Reino";
   return (
     <header className="tia-hud">
       <div className="tia-hud__identity">

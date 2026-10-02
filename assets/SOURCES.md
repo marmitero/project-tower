@@ -1,26 +1,30 @@
 # Fontes de assets
 
-## `assets/sprites/` — não versionado, por escolha
+## `assets/sprites/` — versionado neste repositório
 
 **O que é:** o pack *Fantasy Dungeon — PNG Sprites* (Nika Studio, v1.4),
-422 PNGs, 92 MiB.
+422 PNGs + os arquivos de licença/manifesto do próprio pack, 94 MiB.
 
-**De onde veio:** <https://github.com/marmitero/tower-idle-adventure> →
-`sprites/`. Esse repositório é do mesmo autor e é a origem canônica
-dentro da organização.
+**Status (2026-10-02):** **VERSIONADO AQUI**, por decisão do usuário — o
+projeto não depende mais do repositório de origem para nada. Clone deste
+repo = assets completos.
 
-**Por que está no `.gitignore`:** os arquivos são binários de terceiros,
-de um pack que não muda dentro deste repositório. Versioná-los aqui
-significaria 422 blobs imutáveis no histórico, mais lentos de clonar e
-de compactar, sem nenhum ganho de revisão. A licença e a atribuição ficam
-versionadas ([`ATTRIBUTION.md`](ATTRIBUTION.md)); os arquivos não.
+**Proveniência:** o pack entrou via
+<https://github.com/marmitero/tower-idle-adventure> (repositório do mesmo
+autor, origem canônica na organização). Esse repositório **não é mais
+necessário**; o material de referência não-arte que ele continha (docs de
+design, protótipos, schema Supabase) foi importado para
+[`../reference/tower-idle-adventure/`](../reference/README.md).
 
-**Como recuperar se o diretório sumir:**
+**Licença:** MIT © 2026 Nika Studio — o aviso de copyright é obrigatório e
+está preservado em `assets/sprites/LICENSE.txt` (raiz do pack). Créditos em
+[`ATTRIBUTION.md`](ATTRIBUTION.md). Não revender o pack como produto
+separado.
+
+**Como recuperar se os arquivos sumirem do working tree:**
 
 ```bash
-git clone --depth 1 https://github.com/marmitero/tower-idle-adventure /tmp/ref
-mkdir -p assets
-cp -r /tmp/ref/sprites assets/
+git checkout -- assets/sprites   # ou: git restore assets/sprites
 ```
 
 Verificar a integridade:
@@ -40,12 +44,12 @@ produto é pior do que um build que não acontece (§62).
 
 | Caminho | Versionado | Conteúdo |
 |---|---|---|
-| `assets/sprites/` | ❌ | Pack de terceiro, 92 MiB |
+| `assets/sprites/` | ✅ | Pack Nika Studio (422 PNG + LICENSE/manifesto do pack) |
 | `assets/ATTRIBUTION.md` | ✅ | Crédito obrigatório da licença |
 | `assets/SOURCES.md` | ✅ | Este arquivo |
-| `apps/*/public/assets/` | ❌ (só o manifesto) | Build derivado, seleção de release |
+| `reference/tower-idle-adventure/` | ✅ | Material importado do repo de origem (docs/protótipos/supabase) |
+| `apps/*/public/assets/` | ❌ (só o manifesto) | Build derivado (`node scripts/build-assets.mjs`), seleção de release |
 | `apps/*/public/assets/manifest.json` | ✅ | Mapa `id -> caminho` |
-| `sprites/` | ❌ | Alias legado, aceito pelo pipeline |
 
 ## Regras para arte nova
 

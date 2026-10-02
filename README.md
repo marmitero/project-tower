@@ -165,15 +165,17 @@ O projeto **não precisa criar nenhum asset novo** para a vertical slice.
 
 Inventário completo e licenças em [`docs/ASSET_INVENTORY.md`](docs/ASSET_INVENTORY.md).
 
-O pack está em `assets/sprites/` e **não é versionado** (92 MiB). Para recuperá-lo:
+O pack está em `assets/sprites/` e **é versionado neste repositório** desde
+2026-10-02 (o projeto não depende mais do repositório de origem). Se os
+arquivos sumirem do working tree, `git restore assets/sprites` resolve.
+Para regerar a cópia de trabalho do jogo (`apps/game-web/public/assets/`):
 
 ```bash
-git clone --depth 1 https://github.com/marmitero/tower-idle-adventure /tmp/ref
-mkdir -p assets && cp -r /tmp/ref/sprites assets/
 npm run assets:build
 ```
 
 Crédito e licença: [`assets/ATTRIBUTION.md`](assets/ATTRIBUTION.md).
+Origem e convenções: [`assets/SOURCES.md`](assets/SOURCES.md).
 O que ainda falta para o MVP: [`docs/ASSET_GAP.md`](docs/ASSET_GAP.md).
 
 ---

@@ -37,7 +37,7 @@ function isDir(dir) {
 
 const SRC_DIRS = [join(ROOT, "apps"), join(ROOT, "packages")].filter(isDir);
 
-const SKIP_DIRS = new Set(["node_modules", "dist", "build", ".git", "coverage", "public/assets"]);
+const SKIP_DIRS = new Set(["node_modules", "dist", "build", "preview", ".git", "coverage", "public/assets"]);
 
 /**
  * Padrões de placeholder PROIBIDOS em código de UI/render.
