@@ -324,3 +324,37 @@ skills) continua em `catalog.ts`/`attributes.ts`, referenciada por id.
 nascem nomeados com raridade própria; P-024 (afinidades) e P-061 (voz) ganham
 âncora. Remodelar qualquer herói é editar uma entrada de dado — nome, lore,
 raridade, prioridade de stats — sem tocar em código.
+
+---
+
+## ADR-016 — Escolha do herói inicial, códice e aquisição (FASE 4)
+
+- **Data**: 2026-10-01
+- **Status**: Aceito
+- **Decidido por**: Usuário (autoridade delegada: "você decide")
+- **Afeta**: `game-core/state.ts`, `game-core/codex.ts`, `game-web/CreationScreen.tsx`, `game-web/App.tsx`, testes de criação/loop
+
+### Contexto
+
+A Fase 4 (Personagens) pedia "escolha 1-entre-N com impacto real (§10) + XP de herói + níveis funcionais + integração com o fluxo de criação". O XP/nível já estavam funcionais (`grantHeroXp`/`heroStatsAtLevel`/`heroPower`, ADR-014) — a lacuna real era o fluxo de escolha. Havia uma ambiguidade material: o §10 diz "recebe apenas aquele", mas o save nascia com os 4 heróis possuídos.
+
+### Decisões
+
+1. **§10 literal: o jogador recebe APENAS o herói escolhido.** `GameState.createNew` ganha `starterIdentityId: string` obrigatório (id da identidade, ex. `hero_aldric`) e o save nasce com **1 herói** (`origin: "starter"`). Antes: os 4 nasciam possuídos — decisão antiga anulada por ser contraditória ao texto.
+2. **Momento da escolha: passo 2 do `CreationScreen`** ("Convocação do Campeão"). §63: a UI coleta a intenção e devolve `{nickname, skinId, heroId}`; quem cria o save é o `createGame` (boot.ts). A escolha é uma tela própria porque precisa de peso (§10) — escondê-la junto com o nome a transformaria em formulário.
+3. **§19 preservado: escolha = POSSE, não entrada na equipe.** Nenhum herói é colocado em slot pelo jogo; equipe continua ato explícito do jogador. O teste "NENHUM herói entra na equipe sem o jogador colocar" continua válido.
+4. **Códice derivado, sem mudança de schema do save.** `heroCodex(owned)` (`game-core/src/codex.ts`) deriva as 4 entradas do catálogo (`@tia/config` HEROES): `{identity, status: owned|locked, hero, portraitAssetId, acquisitionHint}`. Os 3 bloqueados aparecem na tela Heróis com a dica §12-safe da identidade. Um campo de save duplicaria o catálogo e criaria duas fontes de verdade. Quando o sistema de aquisição entrar (Fase 9+), desbloquear = criar o herói no save; o códice se atualiza sozinho.
+5. **Identificador da escolha = `identityId` (`hero_*`)** — o mesmo do roster P-002 (ADR-015). `createGame` (boot.ts) recebe `heroId` e repassa.
+6. **Testes que precisam de mais heróis recrutam explicitamente** (`recruit()` no `tower-loop.test.ts`, helper de teste documentado). O sistema real de aquisição é Fase 9+; até lá o save nasce com 1 e é isso que os testes de criação cobram.
+
+### Alternativas rejeitadas
+
+- **Manter 4 heróis possuídos + "o escolhido começa na equipe"**: violaria §19 (escolha ≠ entrada na equipe) e §10 ("recebe apenas aquele").
+- **Salvar o códice no save** (`heroesCodex: [{identityId, unlocked}]`): duplicação de catálogo; o save passaria a saber algo que é derivável. Revisitável se a aquisição ganhar progresso por-identidade (ex.: 12/30 fragmentos) — aí o progresso vira dado salvo em `heroFragments`.
+- **Escolher o herói DEPOIS da criação (tela à parte do hub)**: atrasaria o impacto inicial da escolha que o §10 quer na experiência inicial.
+
+### Consequências
+
+- Save e UI refletem §10/§12/§19 literalmente.
+- A aquisição dos outros 3 é a próxima lacuna de gameplay (Fase 9+: fragmentos/summons/mercado) — decisão de economia fica para P-005/P-006.
+- A construção visual dos retratos da escolha é retrato do pack + moldura; retratos ilustrados são aprimoramento visual opcional futuro (não é "mudar herói").

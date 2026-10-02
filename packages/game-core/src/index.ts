@@ -39,6 +39,8 @@ export type { CreateKingParams, CreateHeroParams } from "./creation.js";
 
 export { normalizeNickname, validateNickname, NICKNAME_MESSAGES } from "./nickname.js";
 export type { NicknameErrorCode, NicknameValidation } from "./nickname.js";
+export { heroCodex } from "./codex.js";
+export type { HeroCodexEntry, CodexStatus } from "./codex.js";
 
 export {
   kingXpToNext,

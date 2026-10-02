@@ -9,7 +9,7 @@ import type { SaveData } from "@tia/contracts";
 function newSave(): SaveData {
   return {
     ...JSON.parse(JSON.stringify({})),
-    ...(GameState.createNew({ accountId: ACCOUNT, nickname: "Testador", skinId: "royal", now: 0, masterSeed: 7 }).data as SaveData),
+    ...(GameState.createNew({ accountId: ACCOUNT, nickname: "Testador", skinId: "royal", starterIdentityId: "hero_aldric", now: 0, masterSeed: 7 }).data as SaveData),
   };
 }
 
@@ -189,7 +189,7 @@ describe("isolamento entre contas", () => {
 describe("progressão de slot sobrevive ao save", () => {
   it("slot desbloqueado e Coin gasto voltam iguais", async () => {
     const p = new LocalStoragePersistence(new MemoryStorage());
-    const state = GameState.createNew({ accountId: ACCOUNT, nickname: "T", skinId: "royal", now: 0, masterSeed: 1 });
+    const state = GameState.createNew({ accountId: ACCOUNT, nickname: "T", skinId: "royal", starterIdentityId: "hero_aldric", now: 0, masterSeed: 1 });
     const hero = state.data.heroes[0]!;
     // Ordem: primeiro ocupa o slot, só depois escolhe o herói ativo.
     // `setActiveHero` recusa um herói que não esteja na equipe (§19).
@@ -220,7 +220,7 @@ describe("progressão de slot sobrevive ao save", () => {
 
   it("membros nulos sobrevivem ao round-trip como null, não undefined", async () => {
     const p = new LocalStoragePersistence(new MemoryStorage());
-    const state = GameState.createNew({ accountId: ACCOUNT, nickname: "T", skinId: "royal", now: 0, masterSeed: 1 });
+    const state = GameState.createNew({ accountId: ACCOUNT, nickname: "T", skinId: "royal", starterIdentityId: "hero_aldric", now: 0, masterSeed: 1 });
     const data = state.data as SaveData;
     (data.team as { members: (string | null)[] }).members[0] = null;
     await p.save(ACCOUNT, data);

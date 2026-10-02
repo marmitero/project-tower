@@ -9,18 +9,18 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { classes, config } from "@tia/config";
-import { GameState } from "@tia/game-core";
+import { HEROES, classes, config } from "@tia/config";
+import { GameState, createHero, heroCodex } from "@tia/game-core";
 import { MemoryStorage } from "@tia/game-core";
 import { asAccountId } from "@tia/contracts";
-import type { AccountId, SaveData } from "@tia/contracts";
+import type { AccountId, Hero, SaveData } from "@tia/contracts";
 
 const ACCOUNT: AccountId = asAccountId("integration-account");
 
 function makeState(now = 1_700_000_000_000) {
   const storage = new MemoryStorage();
   let clock = now;
-  const state = GameState.createNew({ accountId: ACCOUNT, nickname: "Testador", skinId: "royal", now, masterSeed: 42 });
+  const state = GameState.createNew({ accountId: ACCOUNT, nickname: "Testador", skinId: "royal", starterIdentityId: "hero_aldric", now, masterSeed: 42 });
   return {
     state,
     storage,
@@ -39,16 +39,47 @@ function empower(state: GameState, level = 60, coins = 10_000_000n) {
   d.wallet.coins = coins;
 }
 
+/**
+ * Recruta um herói extra direto no save — helper de TESTE.
+ *
+ * O sistema real de aquisição (fragmentos/summons/mercado) entra nas Fases
+ * 9–10; até lá, §10 é claro: o jogador começa com 1 e os outros chegam por
+ * aquisição. Estes testes precisam de mais heróis para exercitar a divisão
+ * de XP (§20) e a invariante 1×1 (§17) — por isso o recrutamento é
+ * explícito e não um "cria 4 por padrão" escondido.
+ */
+function recruit(state: GameState, identityId: string, index: number): Hero {
+  const identity = HEROES.find((h) => h.id === identityId)!;
+  const hero = createHero({
+    accountId: asAccountId(state.data.king.accountId),
+    classId: identity.classId as Hero["classId"],
+    name: identity.name,
+    rarity: identity.rarity,
+    now: 0,
+    index,
+    origin: "summon",
+  });
+  (state.data as unknown as { heroes: Hero[] }).heroes.push(hero);
+  return hero;
+}
+
 describe("criação de Rei e escolha de herói (§10, §19)", () => {
-  it("o MVP começa com 4 heróis e o jogador escolhe 1", () => {
+  it("o MVP começa com 1 herói (o escolhido) e os outros 3 ficam no códice", () => {
     const { state } = makeState();
-    expect(state.data.heroes).toHaveLength(4);
+    // §10 — "recebe apenas aquele": o save nasce com o herói ESCOLHIDO.
+    expect(state.data.heroes).toHaveLength(1);
+    expect(state.data.heroes[0]!.origin).toBe("starter");
     expect(state.data.team.activeHeroId).toBeNull();
+
+    // Os outros 3 permanecem no códice, bloqueados (§10/§12).
+    const codex = heroCodex(state.data.heroes);
+    expect(codex).toHaveLength(4);
+    expect(codex.filter((c) => c.status === "locked")).toHaveLength(3);
   });
 
-  it("os 4 heróis são de classes DISTINTAS com dano físico e mágico", () => {
-    const { state } = makeState();
-    const used = new Set(state.data.heroes.map((h) => h.classId));
+  it("as 4 identidades são de classes DISTINTAS com dano físico e mágico", () => {
+    // O conjunto de escolha (§10) é o catálogo — 4 identidades, 4 classes.
+    const used = new Set(HEROES.map((h) => h.classId));
     expect(used.size).toBe(4);
 
     const defs = classes;
@@ -94,6 +125,8 @@ describe("Torre é sempre 1×1 (§17, §79 — INVARIANTE CENTRAL)", () => {
   it("mesmo com 3 heróis na equipe, a batalha tem 1 aliado e 1 inimigo", () => {
     const { state } = makeState();
     empower(state);
+    recruit(state, "hero_kaia", 1);
+    recruit(state, "hero_maelis", 2);
     const d = state.data as unknown as { team: { members: (string | null)[]; unlockedSlots: number } };
     // Simula equipe cheia sem passar pela economia de slots.
     d.team.members = [state.data.heroes[0]!.id, state.data.heroes[1]!.id, state.data.heroes[2]!.id];
@@ -211,6 +244,7 @@ describe("divisão de XP na prática (§20, §81)", () => {
 
     const duo = makeState();
     empower(duo.state);
+    recruit(duo.state, "hero_kaia", 1);
     const d = duo.state.data as unknown as { team: { members: (string | null)[]; unlockedSlots: number } };
     d.team.members = [duo.state.data.heroes[0]!.id, duo.state.data.heroes[1]!.id];
     d.team.unlockedSlots = 2;
@@ -231,6 +265,8 @@ describe("divisão de XP na prática (§20, §81)", () => {
   it("um herói fora da equipe NÃO recebe XP", () => {
     const { state } = makeState();
     empower(state);
+    recruit(state, "hero_kaia", 1);
+    recruit(state, "hero_maelis", 2);
     const d = state.data as unknown as { team: { members: (string | null)[]; unlockedSlots: number } };
     d.team.members = [state.data.heroes[0]!.id];
     d.team.unlockedSlots = 1;

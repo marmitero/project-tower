@@ -185,17 +185,15 @@ E proíbe explicitamente (§10, §105):
 
 > *"Não criar quatro personagens visualmente diferentes mas mecanicamente iguais."*
 
-O que **não** está definido: nome, classe, atributos-base, curva de crescimento, skills, raridade e estilo de combate de cada um.
+O que **não** está definido: ~~nome, classe, atributos-base, curva de crescimento, skills, raridade e estilo de combate de cada um.~~ **Tudo isso foi definido em P-002 (ADR-015)** — ver a tabela acima.
 
-**Por que isso não pode ser inventado pelo agente.** As cinco dimensões listadas ("função, atributos, skills, estilo de combate, progressão") são exatamente as decisões que definem a identidade do jogo. Quatro heróis inventados agora seriam reescritos quando o jogador real escolher — e a chance de os quatro acertarem a fantasia é baixa. É Tipo C (§73).
+**Fluxo de escolha (FASE 4, ADR-016 — implementado):**
 
-**O que já está disponível para acelerar a decisão:**
-
-- **11 archetypes visuais** no inventory de assets: `hero`, `mage`, `archer`, `necromancer`, `fireorc`, `orc`, `slimeking`, `shadowgoblin`, `bloodskeleton`, `elitearcher`, `villager`/`merchant`.
-- **9 tipos de arma** já especificados em [`WEAPON_SYSTEM.md`](WEAPON_SYSTEM.md), cada um com um traço mecânico distinto.
-- **Traços de arma** que sugerem arquétipos naturally: Espada (reativo/guarda), Adaga (DoT), Machado (dano bruto), Maça (crítico), Besta (velocidade), Cajado (AoE), Livro Arcano (sifão), Luvas (stun), Garras (multi-hit).
-
-O material para uma proposta existe. A **proposta** é o que falta, e ela precisa de aprovação humana.
+1. A criação tem 2 passos: Rei (nome + skin, §5) → **"Convocação do Campeão"** (§10).
+2. O passo 2 mostra os 4 candidatos com retrato, nome + epíteto, raridade, classe/estilo e skill assinada — dados todos do catálogo (`heroes.ts`/`catalog.ts`/`skills.ts`), nenhuma regra na UI.
+3. `createGame({heroId})` → `GameState.createNew({starterIdentityId})`: o save nasce com **apenas o herói escolhido** (§10 literal).
+4. Os outros 3 aparecem na tela Heróis como **códice derivado** (`heroCodex` em `game-core/src/codex.ts`): bloqueados, com a dica de aquisição §12-safe. Não há campo de códice no save — desbloquear é criar o herói (sistema de aquisição: Fase 9+).
+5. **§19 preservado:** escolha = posse. Nenhum herói entra em slot sem o jogador mandar.
 
 ### 3.4 Atributos do herói
 

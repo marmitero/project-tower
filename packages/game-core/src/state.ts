@@ -20,7 +20,7 @@ import type {
   SaveData,
 } from "@tia/contracts";
 import type { AccountId, HeroId } from "@tia/contracts";
-import { HEROES, classes, config, type ClassGrowth } from "@tia/config";
+import { heroById as heroIdentityById, classes, config, type ClassGrowth } from "@tia/config";
 import { RngHub, hashString, step, type Prng } from "@tia/engine";
 import { createKing, createTeam, createWallet, createHero, activeTeamSize, changeKingSkin } from "./creation.js";
 import { createInventory } from "./inventory.js";
@@ -70,7 +70,14 @@ export class GameState {
   // -------------------------------------------------------------------------
 
   /**
-   * Cria um save novo: 1 Rei, 4 heróis (§10 — o jogador escolhe 1).
+   * Cria um save novo: 1 Rei + o herói ESCOLHIDO (§10 — "recebe apenas
+   * aquele"; os outros 3 permanecem indisponíveis no códice, obtíveis
+   * depois pelo sistema geral de aquisição).
+   *
+   * `starterIdentityId` é o id da identidade em `@tia/config` heroes.ts
+   * (ex.: "hero_aldric") — a escolha do jogador na criação. Quem entra na
+   * equipe é outra conversa (§19): nenhum herói é colocado em slot sem o
+   * jogador mandar.
    *
    * `clock` é o relógio VIVO do dono do estado. O padrão congela em
    * `params.now` (o que torna os testes determinísticos); o app passa o
@@ -82,6 +89,8 @@ export class GameState {
       accountId: AccountId;
       nickname: string;
       skinId: string;
+      /** Id da identidade escolhida (P-002) — `HEROES[].id`. */
+      starterIdentityId: string;
       now: number;
       masterSeed: number;
     },
@@ -92,20 +101,24 @@ export class GameState {
     const team = createTeam(params.accountId);
     const inventory = createInventory(params.accountId);
 
-    // §10 — o MVP começa com 4 heróis e o jogador ESCOLHE 1. Nenhum entra
-    // na equipe aqui: escolher é ato do jogador (§19). Identidades (nome,
-    // raridade) vêm do roster P-002 (`@tia/config` heroes.ts).
-    const heroes = HEROES.map((identity, i) =>
+    // §10 — o jogador escolhe 1 dos 4 e RECEBE APENAS AQUELE. As
+    // identidades (nome, raridade) vêm do roster P-002 (`@tia/config`
+    // heroes.ts); o códice (heróis bloqueados) é derivado, não salvo.
+    const identity = heroIdentityById[params.starterIdentityId];
+    if (!identity) {
+      throw new Error(`Identidade de herói desconhecida: ${params.starterIdentityId}`);
+    }
+    const heroes = [
       createHero({
         accountId: params.accountId,
         classId: identity.classId as Hero["classId"],
         name: identity.name,
         rarity: identity.rarity,
         now: params.now,
-        index: i,
+        index: 0,
         origin: "starter",
       }),
-    );
+    ];
 
     const save: SaveData = {
       schemaVersion: 1,

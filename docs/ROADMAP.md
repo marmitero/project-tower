@@ -13,8 +13,8 @@ FASE 0  ✅ Inspeção
 FASE 1  ✅ Documentação
 FASE 2  ✅ Fundação
 FASE 3  ✅ Rei                      ← CONCLUÍDA (gate batido)
-FASE 4  ⬜ Personagens      ⛔ P-002  ← PRÓXIMO PASSO
-FASE 5  ⬜ Equipe
+FASE 4  ✅ Personagens              ← CONCLUÍDA (gate batido, ADR-016)
+FASE 5  ⬜ Equipe                   ← PRÓXIMO PASSO (com FASE 8)
 FASE 6  ⬜ Combate
 FASE 7  ⬜ Torre            ⛔ P-005, P-006
 FASE 8  ⬜ Searching loop
@@ -27,8 +27,27 @@ Online ⬜ → Social ⬜ → Market ⬜ → PvP ⬜ → Monetização ⬜ → P
 ```
 
 Implementado até aqui: especificação, documentação, fundação tipada (contratos,
-config, engine, game-core, persistência, HUD base) e a FASE 3 (criação do Rei).
+config, engine, game-core, persistência, HUD base), FASE 3 (criação do Rei) e
+FASE 4 (escolha de herói §10 + códice + XP/níveis).
 Gameplay de Torre/combat/economia ainda **não** está implementado.
+
+### Estimativa até o 1º MVP jogável (FASE 13) — 7 etapas
+
+Estimativa de trabalho (2026-10-01), ajustável; cada etapa = um ciclo completo
+(documentação → implementação → testes → commit/push):
+
+| Etapa | Fases | O que entra | Gate de decisão |
+|---|---|---|---|
+| 1 | FASE 5 + 8 | Equipe/slots (2=nv10+Coin, 3=nv25+Coin), searching ~3s com `tickSearch` | — |
+| 2 | FASE 6 | Combate visual de verdade: BattleCanvas nas batalhas reais, skills, números/feedback | — |
+| 3 | FASE 7 | Torre de ponta a ponta (andares, seleção, vitória/derrota) | ⛔ **P-005/P-006** (curva de andar) — pergunta ao usuário |
+| 4 | FASE 9 | Loot → equipamento → raridade → X → inventário/venda | ⛔ P-010 (regra de slots/equip) |
+| 5 | FASE 10 + 11 | Economia básica (Coin, custos de slot) + offline Free 2h | ⛔ **P-008/P-036/P-011** (economia) — pergunta ao usuário |
+| 6 | FASE 12 | Boss como atividade separada (só o essencial do MVP) | ⛔ P-018 |
+| 7 | FASE 13 | MVP Local: HUD final, Debug Mode, save local, pass de estabilidade/UX | — |
+
+Riscos de prazo: P-005/P-006 e P-008/P-036 são decisões SUAS (bloqueiam as
+etapas 3 e 5); a etapa 2 (combate visual) é a mais incerta em esforço.
 
 ---
 
@@ -209,6 +228,14 @@ Criação do Rei, nickname, skin, perfil, nível da conta.
 > (Arqueira/Uncommon), **Maelis** (Arcanista/Rare), **Vorath**
 > (Invocador/Epic) — com lore, personalidade, voz, estilo, `statPriority` e
 > aquisição futura, em `packages/config/src/heroes.ts`.
+>
+> **2026-10-01 (4ª rodada) — FASE 4 CONCLUÍDA** (ADR-016): §10 literal —
+> `createNew` recebe `starterIdentityId` e o save nasce com **1 herói**
+> (os outros 3 ficam no códice derivado, bloqueados, com dica de aquisição
+> §12-safe). A escolha virou o **passo 2 da criação** ("Convocação do
+> Campeão"), com retrato/raridade/classe/skill assinada por herói. §19
+> preservado: escolha = posse; equipe continua ato explícito. XP/níveis já
+> eram funcionais (ADR-014) — Fase 4 fechou o fluxo de escolha + códice.
 
 **O que já está construído (inserção genérica):**
 

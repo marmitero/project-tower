@@ -11,6 +11,7 @@ import { ActionButton, MissingAssetsWarning, Panel, ProgressBar, StatPill } from
 import { classes, config } from "@tia/config";
 import {
   GameState,
+  heroCodex,
   kingProgress,
   heroProgress,
   heroPower,
@@ -88,6 +89,7 @@ export function App() {
       const gameState = await createGame({
         nickname: result.nickname,
         skinId: result.skinId,
+        heroId: result.heroId,
         onStateChanged: (s) => setState(s),
       });
       setState(gameState);
@@ -268,10 +270,12 @@ function HeroesScreen({
 }) {
   const inv = state.data.inventory;
   const roster = state.data.heroes;
+  const codex = heroCodex(roster);
   return (
     <Panel title={`Heróis (${roster.length})`}>
       <p className="tia-note">
         Heróis são ilimitados (§13). Todo herói tem XP próprio, separado do Rei (§45).
+        Você começou com 1 campeão; os outros são obtidos pelo mundo (§10).
       </p>
       {roster.map((hero) => {
         const assigned = state.data.team.members.indexOf(hero.id);
@@ -307,6 +311,31 @@ function HeroesScreen({
           </div>
         );
       })}
+
+      <h2 className="tia-codex__title">Códice de campeões</h2>
+      <p className="tia-note">
+        Os campeões ainda não recrutados aguardam ser encontrados — cada um com sua própria
+        história e raridade (§109).
+      </p>
+      <div className="tia-codex">
+        {codex.map((entry) => (
+          <div
+            className={`tia-codex__entry ${entry.status === "locked" ? "tia-codex__entry--locked" : ""}`}
+            key={entry.identity.id}
+          >
+            {entry.portraitAssetId && (
+              <img className="tia-codex__portrait" src={assetUrl(entry.portraitAssetId) ?? undefined} alt="" />
+            )}
+            <strong>{entry.identity.name}</strong>
+            <span className="tia-codex__epithet">{entry.identity.epithet}</span>
+            {entry.status === "owned" ? (
+              <StatPill label="Status" value="Recrutado" tone="good" />
+            ) : (
+              <span className="tia-codex__hint">{entry.acquisitionHint}</span>
+            )}
+          </div>
+        ))}
+      </div>
     </Panel>
   );
 }

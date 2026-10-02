@@ -20,11 +20,11 @@ import {
   LocalStoragePersistence,
   MemoryStorage,
   SAVE_PREFIX,
+  heroCodex,
   placeHero,
   setActiveHero,
   validateNickname,
 } from "@tia/game-core";
-import { HEROES } from "@tia/config";
 import { asAccountId } from "@tia/contracts";
 import { boot, createGame } from "../../apps/game-web/src/boot.js";
 
@@ -50,7 +50,7 @@ describe("fluxo de criação do Rei (§5, §8)", () => {
       clock: () => NOW,
       seed: 7,
       nickname: "Aldric",
-      skinId: "paladin",
+      skinId: "paladin", heroId: "hero_maelis",
     });
 
     const king = state.data.king;
@@ -67,7 +67,7 @@ describe("fluxo de criação do Rei (§5, §8)", () => {
 
   it("boot subsequente reidrata o MESMO Rei (1 conta = 1 Rei, §8)", async () => {
     const persistence = makePersistence();
-    await createGame({ accountId: ACCOUNT, persistence, nickname: "Bruna", skinId: "royal" });
+    await createGame({ accountId: ACCOUNT, persistence, nickname: "Bruna", skinId: "royal", heroId: "hero_kaia" });
 
     const { state, recovered } = await boot({ accountId: ACCOUNT, persistence });
     expect(recovered).toBe(false);
@@ -94,16 +94,34 @@ describe("fluxo de criação do Rei (§5, §8)", () => {
     expect(validateNickname("Aldric").ok).toBe(true);
   });
 
-  it("os 4 heróis nascem com as identidades do roster P-002", async () => {
-    const state = await createGame({ accountId: ACCOUNT, persistence: makePersistence(), nickname: "Roster", skinId: "royal" });
-    const names = state.data.heroes.map((h) => h.name);
-    expect(names).toEqual(HEROES.map((h) => h.name));
-    // Raridade por herói (escala de aquisição) e retrato preenchido.
-    for (const [i, hero] of state.data.heroes.entries()) {
-      expect(hero.rarity).toBe(HEROES[i]!.rarity);
-      expect(hero.portraitAssetId.length).toBeGreaterThan(0);
-      expect(hero.level).toBe(1);
+  it("§10 — o jogador recebe APENAS o herói escolhido; o códice mostra os 4", async () => {
+    const state = await createGame({ accountId: ACCOUNT, persistence: makePersistence(), nickname: "Roster", skinId: "royal", heroId: "hero_kaia" });
+
+    // Recebe apenas aquele (§10).
+    expect(state.data.heroes).toHaveLength(1);
+    const hero = state.data.heroes[0]!;
+    expect(hero.name).toBe("Kaia");
+    expect(hero.classId).toBe("ranger");
+    expect(hero.rarity).toBe("uncommon");
+    expect(hero.portraitAssetId.length).toBeGreaterThan(0);
+    expect(hero.level).toBe(1);
+    expect(hero.origin).toBe("starter");
+
+    // O códice deriva os 4 do catálogo: 1 recrutado, 3 bloqueados (§10).
+    const codex = heroCodex(state.data.heroes);
+    expect(codex).toHaveLength(4);
+    expect(codex.filter((c) => c.status === "owned")).toHaveLength(1);
+    const locked = codex.filter((c) => c.status === "locked");
+    expect(locked).toHaveLength(3);
+    for (const entry of locked) {
+      expect(entry.acquisitionHint.length, entry.identity.id).toBeGreaterThan(10);
     }
+  });
+
+  it("escolha de identidade desconhecida é rejeitada (sem herói fantasma)", async () => {
+    await expect(
+      createGame({ accountId: ACCOUNT, persistence: makePersistence(), nickname: "Fantasma", skinId: "royal", heroId: "hero_inexistente" }),
+    ).rejects.toThrow(/desconhecida/);
   });
 });
 
@@ -111,7 +129,7 @@ describe("relógio vivo do estado (regressão)", () => {
   it("createNew com clock injetado: a busca termina quando o tempo anda", () => {
     let now = 1_000_000;
     const state = GameState.createNew(
-      { accountId: asAccountId("clock-account"), nickname: "Crono", skinId: "royal", now, masterSeed: 3 },
+      { accountId: asAccountId("clock-account"), nickname: "Crono", skinId: "royal", starterIdentityId: "hero_aldric", now, masterSeed: 3 },
       { now: () => now },
     );
 

@@ -1,7 +1,7 @@
 # AI_STATE — handoff vivo do Tower Idle Adventure
 
-**Última atualização:** 2026-09-30
-**Estado:** **FASE 1 (Documentação) e FASE 2 (Fundação) concluídas** · FASE 3 (Rei) é a próxima
+**Última atualização:** 2026-10-01
+**Estado:** **FASE 1–4 concluídas** · FASE 5+8 (Equipe/Slots + Searching) é a próxima
 **Repositório:** `marmitero/project-tower`
 **Branch desta sessão:** `arena/01a0f1f1-project-tower`
 
@@ -229,19 +229,37 @@ O que a Fase 3 entregou:
 | Debug Mode ausente do bundle de produção | ✅ | `scripts/check-debug-mode.mjs` |
 | `check-docs` passando | ✅ | `OK 32 documentos verificados, 0 erros` |
 
-### Depois da Fase 3
+### **FASE 4 — Personagens** ✅ CONCLUÍDA (gate batido, ADR-016)
+
+O que a Fase 4 entregou:
 
 ```text
-FASE 4  Personagens            ⛔ P-002 (identidade final) ← EM CURSO
-         └ inserção genérica aprovada 2026-10-01 (ADR-013): catálogo dos 4
-           heróis como dado, assets por ID do manifesto, validação no CI
-         └ falta: XP/níveis de herói funcionais e seleção 1 entre N
-FASE 5  Equipe                 ⛔ P-003, P-004
+✅ Escolha 1-entre-N (§10 literal): createNew recebe starterIdentityId e o
+   save nasce com APENAS o herói escolhido (origin: "starter")
+✅ Passo 2 da criação "Convocação do Campeão": 4 candidatos com retrato,
+   nome+epíteto, raridade, classe/estilo e skill assinada (dados do catálogo)
+✅ Códice derivado (game-core/src/codex.ts heroCodex): os outros 3 aparecem
+   bloqueados com dica de aquisição §12-safe — NÃO é campo de save
+✅ §19 preservado: escolha = posse; equipe continua ato explícito do jogador
+✅ XP/níveis de herói já funcionais (ADR-014: grantHeroXp → heroStatsAtLevel
+   recalcula stats; heroPower; heroProgress na UI)
+```
+
+**Gate — VERIFICADO por `tests/integration/creation-flow.test.ts` e
+`tests/integration/tower-loop.test.ts`:** "o jogador escolhe 1 herói na
+criação, recebe apenas aquele, e os outros 3 ficam no códice bloqueados."
+Testes que precisam de mais heróis usam o helper `recruit()` (recrutamento
+explícito — o sistema real de aquisição é Fase 9+).
+
+### Depois da Fase 4
+
+```text
+FASE 5  Equipe                 ← PRÓXIMO PASSO (junto com FASE 8)
 FASE 6  Combate
-FASE 7  Torre                  ⛔ P-005, P-006
+FASE 7  Torre                  ⛔ P-005, P-006  (perguntar ao usuário na etapa 3)
 FASE 8  Searching loop         ⛔ P-012, P-019
 FASE 9  Equipamentos           ⛔ P-010
-FASE 10 Economia                ⛔ P-008, P-036
+FASE 10 Economia                ⛔ P-008, P-036  (perguntar ao usuário na etapa 5)
 FASE 11 Offline                 ⛔ P-011
 FASE 12 Boss                    ⛔ P-018
 FASE 13 MVP LOCAL               ← o vertical slice
@@ -350,18 +368,29 @@ Todas as 15 têm teste **passando** hoje. Os arquivos abaixo existem e rodam em 
 
 ## 12. Resumo para a próxima sessão
 
-**Estado:** FASE 1, 2 e 3 concluídas; FASE 4 em curso. **P-002 RESOLVIDA** (2026-10-01, delegação do usuário, ADR-015): os 4 heróis têm identidades definitivas — **Aldric, o Inabalável** (Guardião/Common), **Kaia, a Pássaro-Livre** (Arqueira/Uncommon), **Maelis, a Estelar** (Arcanista/Rare), **Vorath, o Silente** (Invocador/Epic) — com lore, personalidade, notas de voz, skill assinada, `statPriority` e aquisição futura (§12), tudo em `packages/config/src/heroes.ts`. Mecânica derivada dos atributos OpenRpg (ADR-014). 324 testes verdes.
+**Estado:** FASE 1–4 concluídas. **FASE 4 (Personagens) fechada em 2026-10-01**
+(ADR-016): §10 literal — a criação tem 2 passos e o save nasce com **apenas o
+herói escolhido** (`starterIdentityId`); os outros 3 ficam no **códice
+derivado** (`heroCodex`), bloqueados com dica de aquisição. **P-002** (as
+identidades — Aldric/Kaia/Maelis/Vorath, ADR-015) e a mecânica OpenRpg
+(ADR-014) seguem válidas: mudar um herói é editar `config/src/heroes.ts`.
 
 **Assets (2026-10-01):** as três lacunas vermelhas do inventário foram fechadas — UI em PT-BR (33 peças sem texto extraídas da `ui_kit`; barras decompostas em trilho+fills+caps para compor em runtime com números em PT-BR), áudio (22 SFX procedurais gerados por `scripts/gen-audio.mjs`, incluindo a escada de raridade do §108) e retratos dos 4 heróis (3 gerados no estilo do pack). Pipeline: 480 entradas no manifesto, `check:assets` e `check:assets:strict` verdes. Detalhes em `docs/ASSET_GAP.md` §3.
 
-**O que fazer:** **FASE 4 — Personagens** — XP de herói funcional (⛔ P-009
-para a curva final), níveis de herói, **seleção 1 entre N na UI** (o gate da
-fase) e integração com inventário. As identidades estão decididas (P-002
-resolvida); mudar um herói é editar `config/src/heroes.ts`. As decisões
-críticas restantes que destravam mais cadeia são **P-005/P-006** (Torre +
-inimigos, Fase 7).
+**O que fazer:** **FASE 5 + 8 — Equipe/Slots + Searching** (etapa 1 de 7 até o
+MVP jogável, tabela em [`docs/ROADMAP.md`](docs/ROADMAP.md) §1): slots
+2 = nível 10 + Coin, slot 3 = nível 25 + Coin, `tickSearch` ~3s já existe —
+falta o loop de UI dele e a integração com a equipe. Depois: FASE 6
+(combate visual) e FASE 7 (Torre) — esta última **bloqueada por P-005/P-006**.
 
-**O que perguntar ao usuário:** as 7 pendências críticas, começando por **P-002 (os 4 heróis)**. O catálogo provisório funciona para desenvolvimento, mas o §10 exige "diferenças reais" e isso só se confirma com decisão humana.
+**Estimativa até o 1º MVP jogável (FASE 13): 7 etapas** — 1) Fase 5+8,
+2) Fase 6, 3) Fase 7 (gate P-005/P-006), 4) Fase 9, 5) Fase 10+11 (gate
+P-008/P-036/P-011), 6) Fase 12, 7) Fase 13 (MVP Local). Detalhe e riscos na
+tabela do ROADMAP.
+
+**O que perguntar ao usuário:** na hora certa (etapas 3 e 5), as pendências
+**P-005/P-006** (curva de andares + inimigos da Torre) e **P-008/P-036/P-011**
+(economia/offline). Fora isso, seguir com autoridade delegada.
 
 **Como validar:**
 

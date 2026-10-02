@@ -78,12 +78,13 @@ export async function boot(options: BootOptions = {}): Promise<{ state: GameStat
 }
 
 /**
- * Cria o Rei e grava o primeiro save (§5 — nome + skin escolhidos pelo
- * jogador). Vive aqui e não no React pelo mesmo motivo do `boot`: quem
- * conhece relógio, persistência e semente é este arquivo.
+ * Cria o Rei, escolhe o herói inicial e grava o primeiro save (§5 — nome +
+ * skin; §10 — o jogador escolhe 1 herói e recebe apenas aquele). Vive aqui
+ * e não no React pelo mesmo motivo do `boot`: quem conhece relógio,
+ * persistência e semente é este arquivo.
  */
 export async function createGame(
-  options: BootOptions & { nickname: string; skinId: string },
+  options: BootOptions & { nickname: string; skinId: string; heroId: string },
 ): Promise<GameState> {
   const clock: Clock = options.clock ?? (() => Date.now());
   const accountId = options.accountId ?? LOCAL_ACCOUNT;
@@ -95,6 +96,7 @@ export async function createGame(
       accountId: asAccountId(accountId),
       nickname: options.nickname,
       skinId: options.skinId,
+      starterIdentityId: options.heroId,
       now: clock(),
       masterSeed: seed,
     },
