@@ -188,6 +188,13 @@ Decisão técnica: **o estado de hunt continua rodando por baixo de qualquer tel
 
 ---
 
+### 4.1 Opções, guia e erro (Fase 13)
+
+- Aba **Opções**: Som · Seu progresso (salvar agora, baixar cópia, carregar arquivo, apagar com confirmação, restaurar a cópia anterior) · Como jogar · Sobre e créditos (**"Assets by Nika Studio"** com link, exigência da licença).
+- **"Próximo passo"**: faixa no topo das telas com a próxima ação sugerida e botão "Ir para …". É só uma dica — nunca age pelo jogador.
+- **Tela de erro** (`ErrorBoundary`): "Algo deu errado" com *Recarregar* e *Baixar uma cópia do save*; o progresso não fica preso numa tela branca.
+- **Texto de jogo** não cita seções do Master-Prompt, IDs de pendência (`P-xxx`) nem ADRs: o smoke de UI reprova.
+
 ## 5. Responsividade
 
 > **DESKTOP-FIRST + MOBILE-READY** (§67, §95)

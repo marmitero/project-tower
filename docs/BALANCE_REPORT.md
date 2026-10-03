@@ -1,10 +1,6 @@
-
-> tower-idle-adventure@0.1.0 report:balance
-> vite-node --config vitest.config.ts scripts/balance-report.ts --md
-
 # Relatório de balanceamento — Torre (gerado)
 
-> Gerado por `npm run report:balance -- --md`. Não edite à mão.
+> Gerado por `npm run -s report:balance -- --md > docs/BALANCE_REPORT.md`. Não edite à mão.
 
 ## Pacing do Rei por andar (ciclo luta+procura ≈ 15 s)
 
@@ -144,5 +140,14 @@
 | Carrasco Sangrento | 5000 | 3150 | 150 s | 2 por 480 min | 0% · 66 s · -100% HP | 0% · 91 s · -100% HP | 100% · 54 s · -56% HP |
 | Lorde das Sombras | 10000 | 6300 | 150 s | 2 por 720 min | 0% · 43 s · -100% HP | 0% · 71 s · -100% HP | 100% · 49 s · -59% HP |
 | Colosso da Torre | 19500 | 12300 | 180 s | 1 por 1440 min | 0% · 77 s · -100% HP | 0% · 93 s · -100% HP | 100% · 56 s · -59% HP |
+
+## Ritmo das primeiras 4 horas (jogo real, sem atalhos: não equipa, não vende e fica no andar 1)
+
+| Herói inicial | 1º drop de equipamento | Rei nv 5 | Rei nv 10 (abre Slot 2, andar 2 e a Arena) | Rei nv 25 (abre Slot 3) | Rei nv 50 | Rei após 4 h | Coin após 4 h | Mochila após 4 h |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Aldric | 15 min | 12 min | 24 min | 57 min | 2.1 h | nv 83 | 139.008 | 145 |
+| Kaia | 11 min | 8 min | 18 min | 47 min | 1.7 h | nv 90 | 161.712 | 165 |
+| Maelis | 11 min | 9 min | 18 min | 46 min | 1.8 h | nv 88 | 156.288 | 157 |
+| Vorath | 11 min | 9 min | 18 min | 46 min | 1.8 h | nv 88 | 155.184 | 157 |
 
 Parâmetros: defesa K = 100 + 5×(nível−1); regen 5%/s em PROCURANDO; inimigos HP×2.5, Ataque×0.05.

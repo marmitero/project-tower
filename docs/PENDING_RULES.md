@@ -1,6 +1,6 @@
 # Pendências — Decisões que NÃO podem ser inventadas
 
-**Versão:** 0.5 · **Data:** 2026-10-03 · **Estado:** 67 pendências catalogadas (P-008/P-036/P-017/P-018/P-021(Boss)/P-029/P-062 provisórias; P-011/P-011a, P-002, P-003, P-004, P-005, P-006, P-010, P-012, P-016, P-019, P-020, P-020b, P-023, P-024, P-025, P-033 resolvidas)
+**Versão:** 0.6 · **Data:** 2026-10-03 (revisão da Fase 13, ADR-028) · **Estado:** 67 pendências catalogadas (P-008/P-036/P-017/P-018/P-021(Boss)/P-029/P-062 provisórias; P-011/P-011a, P-002, P-003, P-004, P-005, P-006, P-010, P-012, P-016, P-019, P-020, P-020b, P-023, P-024, P-025, P-033 resolvidas)
 **Fonte:** §73 do `Master-Prompt.md`
 
 ---
@@ -797,6 +797,22 @@ Não são pendências do Master-Prompt: são consequências **medidas** das deci
 | **R-03** | **Andar 10 (168 h) é o gargalo.** Faixa de 2.500 níveis com inimigos nv 2.500. | jogador chegando ao nível 2.500 | estreitar a faixa, subir `enemyLevel` do andar, subir a recompensa |
 | **R-04** | **Idle "knife-edge":** herói ≥ 0,9× do nível do andar aguenta, 0,8× cai. Isso é um limite duro; equipamento (R-02) vai alargar a janela. | FASE 9 | `regenOnSearchingPctPerSec`, `enemyAttackMultiplier` |
 | **R-05** | **Tempo de luta por classe:** o Guardião luta mais devagar (10–24 s por luta; as demais classes 7–15 s), então rende menos XP/hora. O custo de vida está equilibrado (11–14% por luta), o tempo não. | revisão de classes | equilibrar skills/atributos de dano do Guardião |
+
+---
+
+## 6c. Revisão dos números provisórios com jogo real (Fase 13, ADR-028)
+
+Medido com o jogo real (`GameState` + `advanceIdle`, sem atalhos) em `docs/BALANCE_REPORT.md` → "Ritmo das primeiras 4 horas". **Nenhum número foi alterado**: eles são plausíveis para um MVP e a decisão final depende de **playtest humano**.
+
+| Pendência | O que a medição mostrou | Veredito |
+|---|---|---|
+| **P-008 / P-036** (Coin, Market) | ≈ 35 mil Coin/h no andar 1; Slot 2 (50 mil) em ≈ 1,4 h; poção básica (45 Coin) acessível em < 1 min; Rei nv 10 em 18–24 min | mantida (provisória) |
+| **P-003** (custo dos slots) | Slot 2 chega ≈ 1 h depois do nível 10; o Slot 3 (250 mil) é meta de horas, coerente com "slot é conquista" | mantida |
+| **P-017 / P-018 / P-029** (Boss) | Gosma (nv Rei 10) disponível ≈ 20 min após o início; recompensa 3× na 1ª vitória; recarga 10 min / 2 min | mantidas |
+| **R-03** (andar 10) | sem mudança (168 h) | aberto |
+| **R-05** (tempo de luta por classe) | Guardião ≈ 30% mais lento que as demais (nv 10 em 24 min vs 18 min) | reconfirmado; alavanca: `classes` |
+
+Ratificar estes números **depois de jogar**; qualquer ajuste é edição de dados em `packages/config` (e `npm run -s report:balance -- --md > docs/BALANCE_REPORT.md` para reconferir).
 
 ---
 

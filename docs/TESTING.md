@@ -404,6 +404,10 @@ Três camadas:
 
 ---
 
+### 8.3 Estado real (Fase 13)
+
+Implementado de outro jeito que o rascunho acima, mais simples e mais forte: o Debug Mode é uma **flag de build** (`VITE_DEBUG_MODE=true`; `--mode debug` no Vite) e o painel é carregado por `lazy` só com a flag ligada — o bundle do jogador **não contém o código**. A verificação é mecânica e dupla: `scripts/check-debug-mode.mjs` (fontes: toda menção protegida por `import.meta.env`; `.env.example` sem `true`) e `scripts/check-preview.mjs` (o bundle versionado não pode ter as strings do painel). As ferramentas em si são lógica pura em `packages/game-core/src/debug.ts`, com `debug.test.ts` (15 testes).
+
 ## 9. E2E — o caminho do §118
 
 Os 20 passos do §118 são literalmente o roteiro do MVP. Eles viram **um** teste E2E de fumaça:
@@ -441,6 +445,22 @@ test("MVP loop completo (§118)", async ({ page }) => {
   await expect(page.getByTestId("king-level")).not.toHaveText("1");
 });
 ```
+
+---
+
+### 9.1 Como o §118 é realmente testado (Fase 13)
+
+Sem navegador gráfico no ambiente, o roteiro foi dividido em camadas que **rodam em todo `npm run check`**:
+
+| Camada | Arquivo | O que prova |
+|---|---|---|
+| Jornada do jogador (lógica) | `tests/integration/mvp-journey.test.ts` | os 20 passos do §118 com `createGame`/`boot`, persistência local, `advanceIdle` e offline (5 h fora → teto Free 2 h) |
+| Estabilidade | `tests/integration/soak.test.ts` | 3 h simuladas × 4 heróis + 5 aberturas offline, invariantes e ida-e-volta do save |
+| Interface (jsdom) | `apps/game-web/src/__tests__/ui-smoke.test.tsx` | App React real: criação → todas as telas → Opções (som, baixar/carregar/apagar/restaurar save) → ErrorBoundary; sem `§N`/`P-xxx` no texto |
+| Entrega | `scripts/check-preview.mjs` | servidor real do `JOGAR.bat`: index → JS/CSS → manifesto → ~494 assets, bundle em dia e sem debug, nomes compatíveis com Windows |
+| Matriz | `tests/integration/acceptance-doc.test.ts` | [`MVP_ACCEPTANCE.md`](MVP_ACCEPTANCE.md) lista os 22 itens do §78 e os 20 do §118 e só cita arquivos que existem |
+
+**Limite:** a **aparência** na tela (sprites, animação, layout) só se valida jogando. Um E2E com Playwright continua desejável quando houver navegador no CI.
 
 ---
 

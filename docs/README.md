@@ -42,6 +42,8 @@ AI_STATE.md → GDD.md → GAME_SYSTEMS.md → documento do sistema específico 
 | [`BALANCE_REPORT.md`](BALANCE_REPORT.md) | Relatório de balanceamento da Torre **gerado** (`npm run report:balance -- --md`): pacing por andar, custo de vida por papel, sustentabilidade idle |
 | [`ADMIN_PANEL.md`](ADMIN_PANEL.md) | Painel Administrativo futuro (FASE 14): contrato `ContentPack`, escopo, regra Admin-Ready por fase |
 | [`BOSS_SYSTEM.md`](BOSS_SYSTEM.md) | Atividades de Boss separadas da Torre, combate de equipe, fragmentos |
+| [`PLAY_LOCAL.md`](PLAY_LOCAL.md) | **Como jogar no seu computador** (Windows 10 passo a passo, `JOGAR.bat`), solução de problemas, como o zip é verificado |
+| [`MVP_ACCEPTANCE.md`](MVP_ACCEPTANCE.md) | Matriz de aceite do MVP local: §78 (22 testes) e §118 (20 passos) → testes que os protegem |
 | [`INVENTORY_SYSTEM.md`](INVENTORY_SYSTEM.md) | Inventário, filtros, ordenação, equipar, vender, descartar, anunciar |
 | [`AUTOMATION_SYSTEM.md`](AUTOMATION_SYSTEM.md) | Loop idle, estado Procurando, offline progress, automação de decisões |
 | [`ECONOMY_SYSTEM.md`](ECONOMY_SYSTEM.md) | Coin e demais moedas, fontes, sumidouros, balanceamento e auditoria |

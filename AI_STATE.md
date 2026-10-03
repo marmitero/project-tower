@@ -1,7 +1,7 @@
 # AI_STATE — handoff vivo do Tower Idle Adventure
 
-**Última atualização:** 2026-10-03
-**Estado:** **FASE 1–12 concluídas (6 de 7 etapas até o MVP)** — Arena dos Chefes (ADR-027) sobre Market/Bot/Hub/offline (ADR-025/026) · próxima: **FASE 13 — MVP Local** (HUD final, Debug Mode, save local, estabilidade/UX), sempre com a regra Admin-Ready
+**Última atualização:** 2026-10-03 (Fase 13)
+**Estado:** **FASE 1–13 concluídas — MVP LOCAL JOGÁVEL (7 de 7 etapas)** (ADR-028). Próximo: **FASE 14 — Painel Admin** (pós-MVP, regra Admin-Ready) e a **Fase Online**. Como jogar no Windows: [`docs/PLAY_LOCAL.md`](docs/PLAY_LOCAL.md) (`JOGAR.bat`).
 **Preview:** servidor estático autocontido (ADR-018) — `node scripts/serve-preview.mjs` (porta 5173). Se o ambiente resetar, subir UMA linha; não depende de `node_modules`.
 **Repositório:** `marmitero/project-tower`
 **Branch desta sessão:** `arena/01a0f1f1-project-tower`
@@ -335,6 +335,8 @@ Todas as 15 têm teste **passando** hoje. Os arquivos abaixo existem e rodam em 
 | [`docs/EQUIPMENT_SYSTEM.md`](docs/EQUIPMENT_SYSTEM.md) | Slots, raridades, X, god rolls |
 | [`docs/TOWER_SYSTEM.md`](docs/TOWER_SYSTEM.md) | Andares e estado Procurando |
 | [`docs/BOSS_SYSTEM.md`](docs/BOSS_SYSTEM.md) | Atividades de Boss |
+| [`docs/PLAY_LOCAL.md`](docs/PLAY_LOCAL.md) | Jogar no Windows (passo a passo), problemas comuns, como o zip é verificado |
+| [`docs/MVP_ACCEPTANCE.md`](docs/MVP_ACCEPTANCE.md) | Matriz de aceite do MVP (§78 + §118 → testes) |
 | [`docs/BALANCE_REPORT.md`](docs/BALANCE_REPORT.md) | Balanceamento da Torre (gerado) |
 | [`docs/ADMIN_PANEL.md`](docs/ADMIN_PANEL.md) | Painel Admin futuro + contrato `ContentPack` |
 | [`docs/INVENTORY_SYSTEM.md`](docs/INVENTORY_SYSTEM.md) | Inventário, filtros, comparação |
@@ -466,23 +468,32 @@ editar `config/src/heroes.ts`.
 - Testes: `engine/boss-battle` (16), `game-core/boss` (33), `config/boss-content` (12), assets dos chefes (integração), migração de save v5→v6. Suíte completa verde.
 - **Cuidados:** a tentativa é consumida ao ENTRAR; `GameState.clock()` em toda marca de tempo; recalibrar chefes se mexer em IAS/equipamento/XP (`npm run report:balance -- --md`).
 
-**O que fazer:** **FASE 13 — MVP Local** (etapa 7 de 7): HUD final, Debug Mode (§93, só dev), save local robusto, passe de estabilidade/UX/performance, revisão dos números provisórios (P-008/P-017/P-018/P-029) com jogo real, e rodar o loop completo (Rei → herói → Torre → loot → Market → Arena) sem quebra. **Regra AR:** tudo no `ContentPack`.
+### Fase 13 — MVP Local (ADR-028, 2026-10-03)
 
-**Estimativa até o 1º MVP jogável (FASE 13): 7 etapas — 6 concluídas** —
+- **Debug Mode (§77/§93):** `packages/game-core/src/debug.ts` (`createDebugTools`, lógica pura, passa pelas regras do jogo; itens com `origin: "admin"`; `DEBUG_UNAVAILABLE` lista chat/auth/mercado da comunidade) + `apps/game-web/src/DebugPanel.tsx` (botão "DEBUG"). **Só existe no bundle com `VITE_DEBUG_MODE=true`** (`debug-flag.ts`; `lazy`). `npm run play:debug` / `JOGAR-DEBUG.bat` compilam `--mode debug` em `apps/game-web/preview-debug/` (gitignored). O bundle versionado **nunca** tem debug (`scripts/check-debug-mode.mjs` + `scripts/check-preview.mjs`).
+- **Opções** (`SettingsScreen.tsx`): som (`settings.ts`, fora do save), salvar agora, **baixar/carregar save**, **apagar progresso** (confirmação + backup em `tia:save:local:backup` + "Restaurar a cópia anterior"), "Como jogar", créditos (Nika Studio). `saveTools.ts` concentra export/import/reset; `pageActions` isola `reload`/`download` p/ teste. Também aparece na tela de criação ("Já tenho um save…"). **Importar/apagar PARA o loop antes** (senão `beforeunload` regravaria o save antigo — coberto por teste); `startLoop.stop()` agora remove `beforeunload`/`pagehide`.
+- **Guia "Próximo passo"** (`guide.ts`): regras puras e ordenadas (equipe → Torre → equipar → poção → slot 2 → Arena); nunca age pelo jogador. **ErrorBoundary** (`ErrorBoundary.tsx`): recarregar / baixar cópia do save. Interface sem `§N`/`P-xxx`/ADR (o smoke de UI reprova).
+- **Testes novos:** `apps/game-web/src/__tests__/ui-smoke.test.tsx` (React real em jsdom, projeto `ui` do vitest; canvas do Phaser trocado por stub), `settings.test.ts`, `tests/integration/mvp-journey.test.ts` (§118, 20 passos), `soak.test.ts` (3 h × 4 heróis + offline em sequência, invariantes e ida-e-volta do save), `acceptance-doc.test.ts` (matriz `docs/MVP_ACCEPTANCE.md` não mente).
+- **Windows sem instalação:** `JOGAR.bat` (ASCII + CRLF; `.gitattributes` `*.bat -text`) → `scripts/play.mjs` (só Node ≥ 18; loopback 127.0.0.1+::1 → sem aviso de firewall; porta fixa **5173**, usa a próxima só se ocupada por outro programa e AVISA; abre o navegador; mensagens sem acento no Windows) sobre `serve-preview.mjs` (agora exporta `startServer`/`createHandler`; URL malformada → 400, não derruba). `npm run build:preview` grava `apps/game-web/preview/BUILD_INFO.json` (hash das fontes, CRLF normalizado) e `npm run check` (`check:preview`) reprova bundle velho, debug no bundle, qualquer 404 do index/JS/CSS/manifesto/~494 assets e arquivos do repo incompatíveis com Windows. Guia completo: `docs/PLAY_LOCAL.md`.
+- **Revisão dos números (jogo real):** `docs/BALANCE_REPORT.md` ganhou "Ritmo das primeiras 4 horas" (Rei nv 10 em 18–24 min, nv 25 em ≈ 46–57 min, nv 50 em ≈ 1,7–2,1 h; 1º drop ≈ 11–15 min; Slot 2 (50 mil Coin) ≈ 1,4 h). **Nenhum número foi alterado**; riscos R-03/R-05 reconfirmados (Guardião é ≈ 30% mais lento). P-008/P-017/P-018/P-029/P-036 seguem provisórias — dependem de playtest humano.
+- **Cuidados:** rodar `npm run build:preview` e commitar `apps/game-web/preview/` SEMPRE que mudar `apps/game-web/src` ou `packages/*/src` (o `check` reprova); `.bat` só ASCII/CRLF; não usar `file://`; o save é por navegador+endereço (`localhost:5173`).
+
+**O que fazer:** **FASE 14 — Painel Admin** (`docs/ADMIN_PANEL.md`; ContentPack/`config` já são serializáveis e validados) e a **Fase Online** (Google Auth, Supabase, cloud save, Mercado da comunidade com taxa de 15%). Antes, **jogar o MVP** (`JOGAR.bat`) e ratificar os números provisórios.
+
+**Estimativa até o 1º MVP jogável (FASE 13): 7 etapas — 7 concluídas ✅** —
 1) ✅ Fase 5+8, 2) ✅ Fase 6, 3) ✅ Fase 7, 4) ✅ Fase 9, 5) ✅ Fase 10+11,
-6) ✅ Fase 12 (Boss), 7) Fase 13 (MVP Local).
-Resta **1 etapa**. Detalhe e riscos na tabela do ROADMAP.
+6) ✅ Fase 12 (Boss), 7) ✅ Fase 13 (MVP Local). **MVP local jogável entregue.**
 
 **O que perguntar ao usuário:** ratificar os números provisórios de Coin e de Boss (P-008/P-017/P-018/P-029) depois de jogar a Fase 13. Fora isso, seguir com autoridade delegada; ratificar preços do Market (P-008/P-036) quando houver playtest.
 
 **Como validar:**
 
 ```bash
-npm run check     # docs + typecheck + testes + arch + assets + segredos + debug
+npm run check     # docs + typecheck + testes (unit/integração/UI) + arch + assets + segredos + debug + bundle/zip do Windows
 npm run verify    # check + build
 npm run dev       # http://localhost:5173
 ```
 
-**Estado atual do servidor de dev:** rodando em `http://localhost:5173` com `allowedHosts: true` (necessário para o preview do ambiente não receber 403).
+**Estado atual do servidor de dev:** rodando em `http://localhost:5173` com `allowedHosts: true` (necessário para o preview do ambiente não receber 403). Jogar sem instalar nada além do Node: `JOGAR.bat` / `npm run play`.
 
 **Onde estão as regras:** [`Master-Prompt.md`](Master-Prompt.md) é a autoridade. Dúvida de regra? Leia lá primeiro.

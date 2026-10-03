@@ -21,14 +21,34 @@ FASE 8  · Searching loop      ✅
 FASE 9  · Equipamentos        ✅
 FASE 10 · Economia (Market)   ✅
 FASE 11 · Offline             ✅
-FASE 12 · Boss                ✅  ← fase atual concluída (2026-10-03)
-FASE 13 · MVP Local           ⬜  ← próxima (última etapa até o 1º MVP jogável)
-FASE 14 · Painel Admin        ⬜  (pós-MVP)
+FASE 12 · Boss                ✅
+FASE 13 · MVP Local           ✅  ← fase atual concluída (2026-10-03) — MVP LOCAL JOGÁVEL
+FASE 14 · Painel Admin        ⬜  ← próxima (pós-MVP)
 ```
 
-**6 de 7 etapas até o primeiro MVP jogável.** O jogo já roda no navegador de ponta a ponta: criar o Rei → escolher 1 dos 4 heróis → montar equipe (slots 2 e 3 por nível + Coin) → subir a Torre 1×1 em loop automático → XP, Coin e equipamento com raridade/X → inventário, venda e Market → Bot e Hub → offline (Free 2 h) → **Arena dos Chefes**.
+**7 de 7 etapas até o primeiro MVP jogável — concluído.** O jogo roda no navegador de ponta a ponta: criar o Rei → escolher 1 dos 4 heróis → montar equipe (slots 2 e 3 por nível + Coin) → subir a Torre 1×1 em loop automático → XP, Coin e equipamento com raridade/X → inventário, venda e Market → Bot e Hub → offline (Free 2 h) → Arena dos Chefes → **salvar, fechar e voltar**.
 
-### Fase 12 — Arena dos Chefes (a mais recente)
+## Jogar agora
+
+**Windows 10/11 (sem instalar nada além do Node.js):** baixe o zip, **extraia**, dê duplo clique em **`JOGAR.bat`** → o jogo abre em `http://localhost:5173`.
+Passo a passo ilustrado de texto, com solução de problemas: **[`docs/PLAY_LOCAL.md`](docs/PLAY_LOCAL.md)**.
+
+```text
+https://github.com/marmitero/project-tower/archive/refs/heads/arena/01a0f1f1-project-tower.zip
+```
+
+Linux/macOS: `./jogar.sh` (ou `npm run play`). **Nunca** abra `index.html` direto (`file://`): não funciona.
+
+### Fase 13 — MVP Local (a mais recente)
+
+- **Debug Mode (§77)** — painel de testes (Coin/XP/nível, heróis, equipamento, andar, Boss, offline, teste de loot) **só em build de desenvolvimento** (`npm run play:debug`); o jogo do jogador não contém o código.
+- **Opções** — som, **baixar/carregar/apagar save** (com confirmação e cópia de segurança), “Como jogar”, créditos do pack.
+- **“Próximo passo”** guia o iniciante; **tela de erro** com saída; interface sem jargão interno.
+- **Estabilidade testada** — jornada do §118 (20 passos), 3 h simuladas × 4 heróis, offline em sequência, interface inteira em jsdom, e o **bundle do zip rastreado por HTTP** (todos os ~494 assets) a cada `npm run check`.
+- **Aceite** — [`docs/MVP_ACCEPTANCE.md`](docs/MVP_ACCEPTANCE.md) liga cada item do §78 e do §118 ao teste que o protege · decisão: [`ADR-028`](docs/DECISIONS_LOG.md).
+- **Números revisados com jogo real** (`docs/BALANCE_REPORT.md` → “Ritmo das primeiras 4 horas”): Rei nv 10 em ≈ 20 min, Slot 2 em ≈ 1,4 h. Nada foi alterado; os provisórios dependem de playtest humano.
+
+### Fase 12 — Arena dos Chefes
 
 Chefe é uma **atividade separada da Torre**: a **equipe inteira** (até 3 heróis) enfrenta **um** chefe, todos atacando ao mesmo tempo. A Torre continua 1×1 e sem chefe em nenhum andar; fragmentos de herói só saem daqui.
 
@@ -38,14 +58,14 @@ Chefe é uma **atividade separada da Torre**: a **equipe inteira** (até 3 heró
 - **100% editável:** tudo está em `config.boss` (`ContentPack` v4, com validação) — adicionar ou rebalancear um chefe é mudar dados, sem tocar em código. O futuro Painel Admin edita este mesmo bloco.
 - Regras completas: [`docs/BOSS_SYSTEM.md`](docs/BOSS_SYSTEM.md) §14 · decisão: [`ADR-027`](docs/DECISIONS_LOG.md) · números medidos: [`docs/BALANCE_REPORT.md`](docs/BALANCE_REPORT.md).
 
-> Os números de Coin e de Boss são **provisórios** (P-008, P-017, P-018, P-029) e serão revisados com jogo real na Fase 13.
+> Os números de Coin e de Boss continuam **provisórios** (P-008, P-017, P-018, P-029): foram revisados na Fase 13 e **mantidos**; ratifique-os depois de jogar.
 
 | | |
 |---|---|
 | Especificação | [`Master-Prompt.md`](Master-Prompt.md) — 125 seções, fonte de autoridade |
-| Documentação | [`docs/`](docs/README.md) — 36 documentos (+ este README e o `AI_STATE.md`) |
+| Documentação | [`docs/`](docs/README.md) — 38 documentos (+ este README e o `AI_STATE.md`) |
 | Handoff | [`AI_STATE.md`](AI_STATE.md) — **leia primeiro** |
-| Testes | 616 unitários/integração + 28 de arquitetura (`npm run check`) |
+| Testes | 656 de lógica, interface (jsdom), jornada §118 e soak + 28 de arquitetura (`npm run check`) |
 | Assets | **422 sprites** do pack Nika Studio, versionados no repositório |
 | Pendências | Nenhuma crítica aberta; decisões provisórias em [`docs/PENDING_RULES.md`](docs/PENDING_RULES.md) |
 
@@ -54,9 +74,12 @@ Chefe é uma **atividade separada da Torre**: a **equipe inteira** (até 3 heró
 ```bash
 npm install
 npm run assets:build   # gera a cópia de trabalho dos assets (uma vez)
-npm run dev            # http://localhost:5173
-npm run check          # docs + tipos + testes + arquitetura + assets + segredos
-npm run report:balance # relatório de balanceamento (Torre, equipamento, Market, Chefes)
+npm run dev            # http://localhost:5173 (desenvolvimento, com recarga)
+npm run play           # como o JOGAR.bat: bundle versionado, sem Vite
+npm run play:debug     # idem, COM o painel de Debug Mode (só desenvolvimento)
+npm run build:preview  # recompila o bundle versionado (obrigatório ao mudar o código)
+npm run check          # docs + tipos + testes (lógica, UI, jornada, soak) + arquitetura + assets + segredos + debug + bundle/zip do Windows
+npm run -s report:balance -- --md > docs/BALANCE_REPORT.md   # relatório de balanceamento
 ```
 
 ---
@@ -147,6 +170,8 @@ Você configura, decide, observa. **Nunca** clica para atacar.
 | Documento | O que é |
 |---|---|
 | **[`AI_STATE.md`](AI_STATE.md)** | **Handoff vivo.** Estado atual, decisões, pendências, próximo passo |
+| **[`docs/PLAY_LOCAL.md`](docs/PLAY_LOCAL.md)** | **Como jogar no Windows** (passo a passo) e solução de problemas |
+| [`docs/MVP_ACCEPTANCE.md`](docs/MVP_ACCEPTANCE.md) | Matriz de aceite do MVP: §78 e §118 → testes |
 | [`docs/GDD.md`](docs/GDD.md) | Visão, pilares, fantasia central, escopo |
 | [`docs/GAME_SYSTEMS.md`](docs/GAME_SYSTEMS.md) | Mapa de todos os sistemas e suas dependências |
 | [`docs/ROADMAP.md`](docs/ROADMAP.md) | Fases, gates e entregáveis |

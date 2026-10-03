@@ -8,8 +8,9 @@
  * um número em `packages/config`? Rode isto e veja o efeito antes de commitar.
  * O Painel Admin (FASE 14) vai expor esta mesma API como pré-visualização.
  */
-import { classes, config, enemies } from "@tia/config";
-import { averageBossFight, averageDuel, coinsPerKillFor, floorMatchups, itemPrice, rollGearSet, simulateHunt, towerPacing } from "@tia/game-core";
+import { HEROES, classes, config, enemies } from "@tia/config";
+import { asAccountId } from "@tia/contracts";
+import { GameState, averageBossFight, averageDuel, coinsPerKillFor, floorMatchups, itemPrice, rollGearSet, simulateHunt, towerPacing } from "@tia/game-core";
 
 const md = process.argv.includes("--md");
 const CYCLE = 15;
@@ -20,7 +21,7 @@ const line = (s = "") => out.push(s);
 const title = (s: string) => (md ? line(`\n## ${s}\n`) : line(`\n=== ${s} ===`));
 
 line(md ? "# Relatório de balanceamento — Torre (gerado)" : "RELATÓRIO DE BALANCEAMENTO — TORRE");
-line(md ? "\n> Gerado por `npm run report:balance -- --md`. Não edite à mão." : "");
+line(md ? "\n> Gerado por `npm run -s report:balance -- --md > docs/BALANCE_REPORT.md`. Não edite à mão." : "");
 
 title("Pacing do Rei por andar (ciclo luta+procura ≈ 15 s)");
 const pacing = towerPacing(CYCLE);
@@ -139,6 +140,48 @@ title("Chefes da Arena (heróis no nível do chefe, sem equipamento, sem Bot)");
     const cd = b.attempts.kind === "cooldown" ? `${Math.round(b.attempts.afterWinMs / 60000)} min / ${Math.round(b.attempts.afterLossMs / 60000)} min` : b.attempts.kind === "window" ? `${b.attempts.maxAttempts} por ${Math.round(b.attempts.windowMs / 60000)} min` : "sem limite";
     if (md) line(`| ${b.name} | ${b.requiredKingLevel} | ${b.level} | ${Math.round(b.timeLimitMs / 1000)} s | ${cd} | ${cells.join(" | ")} |`);
     else line(`${b.name} (Rei ${b.requiredKingLevel}, nv ${b.level}): ${teams.map(([n], i) => `${n} ${cells[i]}`).join(" | ")}`);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Ritmo das primeiras horas — o jogo REAL (GameState + advanceIdle), sem atalhos
+// ---------------------------------------------------------------------------
+{
+  title("Ritmo das primeiras 4 horas (jogo real, sem atalhos: não equipa, não vende e fica no andar 1)");
+  const HOURS = 4;
+  const MARKS: Array<[string, (s: GameState) => boolean]> = [
+    ["1º drop de equipamento", (s) => s.data.inventory.equipment.length > 0],
+    ["Rei nv 5", (s) => s.data.king.level >= 5],
+    ["Rei nv 10 (abre Slot 2, andar 2 e a Arena)", (s) => s.data.king.level >= 10],
+    ["Rei nv 25 (abre Slot 3)", (s) => s.data.king.level >= 25],
+    ["Rei nv 50", (s) => s.data.king.level >= 50],
+  ];
+  if (md) {
+    line(`| Herói inicial | ${MARKS.map(([n]) => n).join(" | ")} | Rei após ${HOURS} h | Coin após ${HOURS} h | Mochila após ${HOURS} h |`);
+    line(`|---|${MARKS.map(() => "---:").join("|")}|---:|---:|---:|`);
+  }
+  for (const identity of HEROES) {
+    let now = 1_700_000_000_000;
+    const st = GameState.createNew(
+      { accountId: asAccountId(`pace-${identity.id}`), nickname: "Ritmo", skinId: "royal", starterIdentityId: identity.id, now, masterSeed: 5 },
+      { now: () => now },
+    );
+    const hero = st.data.heroes[0]!;
+    st.assignHeroToSlot(hero.id, 0);
+    st.selectActiveHero(hero.id);
+    st.startTower();
+    const at: Array<number | null> = MARKS.map(() => null);
+    for (let t = 0; t < HOURS * 3_600_000; t += 250) {
+      now += 250;
+      st.advanceIdle(250);
+      MARKS.forEach(([, test], i) => {
+        if (at[i] === null && test(st)) at[i] = t / 3_600_000;
+      });
+    }
+    const cells = at.map((v) => (v === null ? "—" : h(v)));
+    const tail = [`nv ${st.data.king.level}`, st.data.wallet.coins.toLocaleString("pt-BR"), String(st.data.inventory.equipment.length)];
+    if (md) line(`| ${identity.name} | ${cells.join(" | ")} | ${tail.join(" | ")} |`);
+    else line(`${identity.name}: ${MARKS.map(([n], i) => `${n} ${cells[i]}`).join(" · ")} · após ${HOURS} h: ${tail.join(" / ")}`);
   }
 }
 

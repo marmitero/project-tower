@@ -22,7 +22,7 @@ FASE 9  ✅ Equipamentos        ← CONCLUÍDA (gate batido, ADR-023/024)
 FASE 10 ✅ Economia (Market)  ← CONCLUÍDA (ADR-025; preços provisórios P-008/P-036)
 FASE 11 ✅ Offline           ← CONCLUÍDA (ADR-026; simulação do online)
 FASE 12 ✅ Boss              ← CONCLUÍDA (ADR-027; chefes 100% dado, números provisórios)
-FASE 13 ⬜ MVP LOCAL        ← próxima
+FASE 13 ✅ MVP LOCAL        ← CONCLUÍDA (ADR-028; MVP local jogável — `docs/MVP_ACCEPTANCE.md`)
 FASE 14 ⬜ Painel Admin      (pós-MVP — docs/ADMIN_PANEL.md, ADR-022)
 Online ⬜ → Social ⬜ → Market ⬜ → PvP ⬜ → Monetização ⬜ → Polish ⬜ → Beta ⬜ → Lançamento
 ```
@@ -33,7 +33,7 @@ FASE 4 (escolha de herói §10 + códice + XP/níveis) e FASES 5+8 (equipe/slots
 XP dividido, loop de searching ~3s com UI), FASE 6 (combate visual, HP
 persistente) e FASE 7 (Torre de 40 andares, 11 inimigos por papel, teto de nível
 20.000). O loop idle já roda de ponta a ponta (batalha → procura → batalha) com
-XP desacelerando por andar; loot/equipamento/inventário/venda **sim** (Fase 9); Market, Bot, Hub e offline (Fases 10/11) e a **Arena dos Chefes** (Fase 12) também. Falta o fechamento do MVP (Fase 13).
+XP desacelerando por andar; loot/equipamento/inventário/venda **sim** (Fase 9); Market, Bot, Hub e offline (Fases 10/11) e a **Arena dos Chefes** (Fase 12) também; a **Fase 13** fechou o MVP local (Debug Mode, Opções/save seguro, guia, estabilidade, `JOGAR.bat`). **Próximo: Fase 14 (Painel Admin) e a Fase Online.**
 
 ### Estimativa até o 1º MVP jogável (FASE 13) — 7 etapas
 
@@ -48,7 +48,7 @@ Estimativa de trabalho (2026-10-01), ajustável; cada etapa = um ciclo completo
 | 4 ✅ | FASE 9 | Loot → equipamento → raridade → X → inventário/venda; heróis adquiridos balanceados | decidido em ADR-023/024 (P-010/P-016/P-023/P-024/P-025/P-033) |
 | 5 ✅ | FASE 10 + 11 | Market (poções/revives/caixas), Bot, Hub e offline como simulação do online (Free 2 h) | decidido em ADR-025/026 (P-008/P-036 provisórias; P-011/P-011a resolvidas) |
 | 6 ✅ | FASE 12 | Boss como atividade separada: 8 chefes data-driven (fases, resistências, tentativas, fragmentos), Arena na UI | decidido em ADR-027 (P-017/P-018/P-021/P-029/P-062 provisórias) |
-| 7 | FASE 13 | MVP Local: HUD final, Debug Mode, save local, pass de estabilidade/UX | — |
+| 7 ✅ | FASE 13 | MVP Local: Debug Mode, save local seguro (exportar/importar/apagar com backup), Opções, guia “Próximo passo”, ErrorBoundary, jornada §118 e soak em teste, caminho Windows sem instalação (`JOGAR.bat`) | decidido em ADR-028 |
 
 Riscos de prazo: P-008/P-036 são decisões SUAS (bloqueiam a etapa 5). A etapa 4
 resolveu o R-02 (equipamento escala pelo stat de referência do nível) e o mediu
@@ -470,7 +470,22 @@ Os 20 passos do §118 são o critério de aceite:
 17. melhorar personagem · 18. avançar na Torre · 19. fechar navegador
 20. retornar e recuperar progresso offline
 
-**Gate de release:** a matriz de 22 testes do §78 + os E2E do §118.
+**Gate de release:** a matriz de 22 testes do §78 + os E2E do §118 — **batido**, ver [`MVP_ACCEPTANCE.md`](MVP_ACCEPTANCE.md).
+
+### Entregue na Fase 13 (ADR-028)
+
+| # | Entrega | Onde |
+|---|---|---|
+| 1 | **Debug Mode (§77)** — painel só em build de dev (`VITE_DEBUG_MODE`); economia, XP/nível, heróis, equipamento, Torre/andar, Boss, offline, teste de loot | `packages/game-core/src/debug.ts`, `apps/game-web/src/DebugPanel.tsx` |
+| 2 | **Opções**: som (liga/volume), salvar agora, **baixar/carregar save**, **apagar progresso** (confirmação + backup + restaurar), “Como jogar”, créditos do pack | `SettingsScreen.tsx`, `saveTools.ts`, `settings.ts` |
+| 3 | **Guia “Próximo passo”** para quem começa (não age pelo jogador) | `guide.ts` |
+| 4 | **ErrorBoundary** (recarregar / baixar cópia do save) e save gravado também em `pagehide` | `ErrorBoundary.tsx`, `boot.ts` |
+| 5 | **Texto de jogo limpo**: sem `§N`/`P-xxx`/ADR na interface; correções de texto (poção % sem herói, plural de equipamento) | telas |
+| 6 | **Jornada §118** (20 passos) e **soak** (3 h × 4 heróis, offline em sequência) como testes | `tests/integration/mvp-journey.test.ts`, `soak.test.ts` |
+| 7 | **Fumaça de UI** (React real em jsdom): criação → todas as telas → Opções/save/erro | `apps/game-web/src/__tests__/ui-smoke.test.tsx` |
+| 8 | **Windows sem instalação**: `JOGAR.bat` + `scripts/play.mjs` (só Node.js), `check-preview` (rastreio HTTP do bundle e de todos os assets, carimbo de fontes, arquivos compatíveis com o Windows) | [`PLAY_LOCAL.md`](PLAY_LOCAL.md) |
+| 9 | **Revisão dos números** com jogo real (ritmo das primeiras 4 h) em `BALANCE_REPORT.md`; nenhum número alterado | `scripts/balance-report.ts` |
+| 10 | Matriz de aceite verificável (§78 + §118) | [`MVP_ACCEPTANCE.md`](MVP_ACCEPTANCE.md), `tests/integration/acceptance-doc.test.ts` |
 
 ---
 

@@ -160,8 +160,8 @@ Derivada do §96 e §122, com as correções de dependência que a inspeção re
 
 ```text
 FASE 0  ✅ Inspeção (repo, assets, docs, gaps)
-FASE 1  ✅ Documentação (este conjunto + AI_STATE)          ← ESTAMOS AQUI
-FASE 2  ⬜ Fundação
+FASE 1  ✅ Documentação (este conjunto + AI_STATE)
+FASE 2  ✅ Fundação
             ├── packages/config         (nenhum hardcode)
             ├── packages/engine         (Battle Engine puro)
             ├── packages/contracts      (tipos compartilhados)
@@ -169,18 +169,20 @@ FASE 2  ⬜ Fundação
             ├── PersistenceService      (LOCAL → SUPABASE)
             ├── Asset pipeline          (subset de sprites/)
             └── Debug Mode
-FASE 3  ⬜ Rei
-FASE 4  ⬜ Personagens        ⛔ bloqueado por P-002
-FASE 5  ⬜ Equipe
-FASE 6  ⬜ Combate 1×1
-FASE 7  ⬜ Torre              ⛔ bloqueado por P-005
-FASE 8  ⬜ Searching loop
-FASE 9  ⬜ Equipamentos       ⛔ bloqueado por P-010
-FASE 10 ⬜ Economia            ⛔ bloqueado por P-008
-FASE 11 ⬜ Offline             ⛔ bloqueado por P-011
-FASE 12 ⬜ Boss
-FASE 13 ⬜ MVP LOCAL (vertical slice)
+FASE 3  ✅ Rei
+FASE 4  ✅ Personagens
+FASE 5  ✅ Equipe
+FASE 6  ✅ Combate 1×1
+FASE 7  ✅ Torre
+FASE 8  ✅ Searching loop
+FASE 9  ✅ Equipamentos
+FASE 10 ✅ Economia
+FASE 11 ✅ Offline
+FASE 12 ✅ Boss
+FASE 13 ✅ MVP LOCAL (vertical slice)
 ```
+
+> **Atualização (Fase 13):** todas as fases até a 13 estão concluídas e os bloqueios abaixo foram resolvidos (ver [`ROADMAP.md`](ROADMAP.md) e [`PENDING_RULES.md`](PENDING_RULES.md)). O texto seguinte é o raciocínio histórico da época da documentação.
 
 **Sobre os bloqueios.** Cinco pendências Tipo C separam a documentação da implementação. Elas não são "detalhes a resolver no meio do código" — o §73 é explícito: *"Não inventar. Registrar PENDING e, quando necessário, solicitar decisão humana."*
 

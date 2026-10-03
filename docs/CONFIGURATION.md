@@ -391,3 +391,18 @@ packages/config/src/
 ```
 
 Toda constante de balanceamento no resto do código **precisa** vir daqui. Um lint rule deve rejeitar literais mágicos nos diretórios de gameplay.
+
+---
+
+## 17. Preferências do jogador e opções de build (Fase 13)
+
+Fora do `config` de balanceamento (não afetam o jogo, nunca entram no save de progresso):
+
+| O quê | Onde | Como editar |
+|---|---|---|
+| Som (liga/desliga, volume 0–1; padrão ligado, 0,4) | `apps/game-web/src/settings.ts` (`DEFAULT_SETTINGS`), `localStorage` `tia:settings` | mudar o padrão em `DEFAULT_SETTINGS`; o jogador muda em **Opções** |
+| Debug Mode | `VITE_DEBUG_MODE` (build), `apps/game-web/src/debug-flag.ts` | `npm run play:debug`; **nunca** `true` em `.env.example` nem no bundle versionado |
+| Passos do guia "Próximo passo" | `apps/game-web/src/guide.ts` (`STEPS`) | primeira regra aplicável vence; só lê o estado |
+| Texto do "Como jogar" | `apps/game-web/src/SettingsScreen.tsx` (`HOW_TO_PLAY`) | lista de frases |
+| Versão exibida | `apps/game-web/src/version.ts` | a cada marco jogável |
+| Porta do `JOGAR.bat` | `scripts/play.mjs` (`PORT`, padrão 5173) | mudar a porta **muda o endereço e, portanto, o save do navegador** |
