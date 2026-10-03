@@ -82,6 +82,13 @@ describe("migração de configVersion", () => {
     expect(migrated.configVersion).toBe(config.configVersion);
   });
 
+  it("save v5 (sem Boss) migra para v6 com progresso de chefes vazio", () => {
+    const save = { ...newSave(), configVersion: 5 } as unknown as Record<string, unknown>;
+    delete save.boss;
+    const migrated = migrateSave(save as never, config.configVersion) as unknown as { boss: { records: object; battlesStarted: number } };
+    expect(migrated.boss).toEqual({ records: {}, battlesStarted: 0 });
+  });
+
   it("carregar um save antigo o atualiza automaticamente", async () => {
     const storage = new MemoryStorage();
     const persistence = new LocalStoragePersistence(storage);

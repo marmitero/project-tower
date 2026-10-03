@@ -43,6 +43,12 @@ function configAssetIds(): { label: string; id: string }[] {
       out.push({ label: `enemies.${e.id}.sheets.${key}`, id });
     }
   }
+  for (const b of config.boss.bosses) {
+    for (const [key, id] of Object.entries(b.assets.sheets)) {
+      out.push({ label: `boss.${b.id}.sheets.${key}`, id });
+    }
+    if (b.assets.portrait) out.push({ label: `boss.${b.id}.portrait`, id: b.assets.portrait });
+  }
   for (const t of config.equipment.templates) {
     out.push({ label: `equipment.templates.${t.id}.icon`, id: t.iconAssetId });
   }

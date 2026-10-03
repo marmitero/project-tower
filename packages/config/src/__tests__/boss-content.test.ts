@@ -80,7 +80,7 @@ describe("bossErrors — validação do roster", () => {
 
   it("exige as 5 folhas de sprite do chefe e escala em [0,5; 4]", () => {
     const b = clone();
-    delete (b.bosses[0]!.assets.sheets as Record<string, unknown>).idle;
+    delete (b.bosses[0]!.assets.sheets as unknown as Record<string, unknown>).idle;
     b.bosses[1]!.scale = 9;
     const msg = bossErrors(b, 20_000).join("\n");
     expect(msg).toMatch(/sprite idle ausente/);
