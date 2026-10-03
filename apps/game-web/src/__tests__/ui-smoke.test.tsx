@@ -142,7 +142,7 @@ describe("UI — do zero ao jogo", () => {
     vi.resetModules();
     await mountApp();
     expect(text()).toContain("Dom_Persistente");
-    expect(container.querySelector("input")).toBeNull(); // não voltou para a criação
+    expect(container.querySelector("input:not(.tia-chat__input)")).toBeNull(); // não voltou para a criação
   });
 
   it("save corrompido não derruba o jogo: cai na criação e guarda um backup", async () => {
@@ -298,5 +298,81 @@ describe("UI — guia, Opções e proteção do save", () => {
     await click("Recarregar o jogo");
     expect(reload).toHaveBeenCalledTimes(1);
     expect(byLabel("Baixar uma cópia do save")).toBeTruthy();
+  });
+});
+
+describe("UI — layout do HUB (ADR-031)", () => {
+  async function startGame() {
+    await mountApp();
+    await typeInto(container.querySelector("input") as HTMLInputElement, "Dom_Layout");
+    await click("Escolher campeão");
+    await click(/^Convocar/);
+    await tick(30);
+  }
+  const q = (sel: string) => container.querySelector(sel);
+
+  it("a navegação fica no TOPO, antes da barra de XP do Rei, e o jogo fica entre a equipe e o chat", async () => {
+    await startGame();
+    const nav = q(".tia-nav")!;
+    const hud = q(".tia-hud")!;
+    const stage = q(".tia-stage")!;
+    expect(nav.compareDocumentPosition(hud) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(hud.compareDocumentPosition(stage) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const kids = [...stage.children].map((c) => c.getAttribute("aria-label"));
+    expect(kids).toEqual(["Equipe", "Jogo", "Chat global"]);
+  });
+
+  it("as telas abrem SOBRE o jogo, clicar de novo na aba (ou em Fechar) fecha", async () => {
+    await startGame();
+    expect(q(".tia-overlay")).toBeNull();
+    await click("Rei");
+    expect(q(".tia-overlay")).toBeTruthy();
+    await click("Rei");
+    expect(q(".tia-overlay")).toBeNull();
+    await click("Torre");
+    expect(q(".tia-gamebox .tia-overlay")).toBeTruthy();
+    await click("Fechar");
+    expect(q(".tia-overlay")).toBeNull();
+  });
+
+  it("o painel da equipe mostra os 3 slots (herói no 1, os outros bloqueados)", async () => {
+    await startGame();
+    const panel = q(".tia-teampanel")!;
+    expect(panel.textContent).toMatch(/Nv 1/);
+    expect(panel.querySelectorAll(".tia-slotcard").length).toBe(3);
+    expect(panel.querySelectorAll(".tia-slotcard--locked").length).toBe(2);
+    expect(panel.textContent).toMatch(/Bloqueado/);
+    await click("Gerenciar");
+    expect(q(".tia-overlay")!.textContent).toContain("Equipe");
+  });
+
+  it("o painel de dados mostra XP/h, Coin/h, Custo/h e Lucro/h e se oculta pelo botão do canto (preferência persiste)", async () => {
+    await startGame();
+    const t = q(".tia-hunt")!.textContent ?? "";
+    for (const k of ["XP/h Rei", "Coin/h", "Custo/h", "Lucro/h", "Melhor andar", "Faixa do Rei", "XP por abate", "Abates p/ próx. Nv", "Status"]) expect(t).toContain(k);
+    expect(t).not.toMatch(/undefined|NaN/);
+    await click("Ocultar dados ▾");
+    expect(q(".tia-hunt")).toBeNull();
+    expect(JSON.parse(localStorage.getItem("tia:settings")!).statsOpen).toBe(false);
+    await click("Dados ▴");
+    expect(q(".tia-hunt")).toBeTruthy();
+  });
+
+  it("o chat é simulado (e diz isso), mostra a mensagem como TEXTO e limita o tamanho", async () => {
+    await startGame();
+    const chat = q(".tia-chat")!;
+    expect(chat.textContent).toContain("simulado");
+    const input = chat.querySelector("input") as HTMLInputElement;
+    expect(input.maxLength).toBe(140);
+    await typeInto(input, "<b>oi</b> pessoal");
+    await click("Enviar");
+    expect(chat.textContent).toContain("<b>oi</b> pessoal");
+    expect(chat.querySelector("b")).toBeNull();
+    // segundo envio imediato é barrado (rate limit) com aviso visível
+    await typeInto(input, "de novo");
+    await click("Enviar");
+    expect(chat.querySelector("[role=alert]")).toBeTruthy();
+    await click("Recolher");
+    expect(q(".tia-chat input")).toBeNull();
   });
 });

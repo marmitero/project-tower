@@ -916,3 +916,181 @@ body {
 .tia-start-options summary { cursor: pointer; min-height: var(--touch); display: flex; align-items: center; color: var(--muted); font-size: 14px; }
 .tia-start-options[open] > summary { color: var(--text); }
 .tia-start-options .tia-main { padding: 8px 0; }
+
+/* ======================================================================
+   Layout do HUB (ADR-031): nav no topo · equipe | jogo | chat · dados sob o jogo.
+   Tudo cabe numa tela (sem rolar a página); só o conteúdo das telas rola, por dentro.
+   ====================================================================== */
+
+.tia-app--game {
+  max-width: 1600px;
+  height: 100dvh;
+  min-height: 560px;
+  gap: 0;
+}
+
+.tia-app--game .tia-nav {
+  position: static;
+  order: 0;
+  padding: 6px 10px;
+  border-top: 0;
+  border-bottom: 1px solid var(--border);
+}
+.tia-app--game .tia-nav .tia-btn { flex: 1 1 auto; min-height: 38px; }
+
+.tia-app--game .tia-hud { position: static; padding: 6px 12px; }
+
+.tia-app--game .tia-guide { margin: 6px 10px 0; padding: 4px 10px; font-size: 13px; }
+.tia-app--game .tia-guide .tia-btn { min-height: 32px; }
+
+.tia-stage {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(200px, 260px) minmax(0, 1fr) minmax(220px, 300px);
+  gap: 10px;
+  padding: 10px;
+}
+.tia-stage--nochat { grid-template-columns: minmax(200px, 260px) minmax(0, 1fr) auto; }
+
+.tia-center { min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+
+/* O jogo: ocupa o espaço que sobra; o canvas (Phaser RESIZE) preenche a caixa. */
+.tia-gamebox {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 240px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #07060d;
+}
+.tia-gamebox .tia-canvas { position: absolute; inset: 0; width: auto; height: auto; margin: 0; border: 0; border-radius: 0; }
+
+.tia-gamebox__toggle {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 4;
+  min-height: 30px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--text);
+  background: rgba(21, 19, 31, 0.88);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.tia-gamebox__toggle:hover { border-color: var(--accent); }
+
+/* Telas (Rei, Heróis…) abrem SOBRE o jogo, com rolagem interna. */
+.tia-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  background: rgba(11, 10, 18, 0.97);
+}
+.tia-overlay__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.tia-overlay__head h2 { margin: 0; font-size: 16px; }
+.tia-overlay__head .tia-btn { min-height: 34px; }
+.tia-overlay .tia-main { flex: 1; min-height: 0; overflow: auto; padding: 12px; }
+
+/* Painel de dados da caçada: compacto, colado sob o jogo. */
+.tia-hunt {
+  flex: 0 0 auto;
+  max-height: 38%;
+  overflow: auto;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.tia-hunt--boss { padding: 0; max-height: 46%; }
+.tia-hunt__top { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.tia-hunt__hp { flex: 1 1 220px; min-width: 180px; }
+.tia-controls { display: flex; gap: 6px; flex-wrap: wrap; }
+.tia-hunt .tia-controls .tia-btn, .tia-hunt__foot .tia-btn { min-height: 32px; padding: 4px 10px; font-size: 12px; }
+.tia-hunt__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 4px 8px; }
+.tia-hunt__cell { display: flex; flex-direction: column; min-width: 0; padding: 3px 6px; background: var(--bg-2); border-radius: 6px; border-left: 3px solid var(--border); }
+.tia-hunt__cell--good { border-left-color: var(--good); }
+.tia-hunt__cell--bad { border-left-color: var(--bad); }
+.tia-hunt__cell--warn { border-left-color: var(--warn); }
+.tia-hunt__label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
+.tia-hunt__value { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tia-hunt__foot { display: flex; gap: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap; font-size: 11px; }
+.tia-hunt .tia-note { margin: 0; font-size: 12px; }
+
+/* Colunas laterais */
+.tia-side {
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.tia-side__head { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+.tia-side__head h2 { margin: 0; font-size: 14px; }
+.tia-side__head .tia-btn { min-height: 30px; padding: 2px 10px; font-size: 12px; }
+
+.tia-teampanel__slots { display: flex; flex-direction: column; gap: 8px; overflow: auto; min-height: 0; }
+.tia-slotcard { display: flex; flex-direction: column; gap: 6px; padding: 8px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; }
+.tia-slotcard--active { border-color: var(--good); }
+.tia-slotcard--locked, .tia-slotcard--empty { opacity: 0.75; border-style: dashed; font-size: 12px; }
+.tia-slotcard__head { display: flex; align-items: center; gap: 8px; }
+.tia-slotcard__portrait { width: 40px; height: 40px; object-fit: cover; image-rendering: pixelated; border-radius: 6px; background: #07060d; }
+.tia-slotcard__id { display: flex; flex-direction: column; flex: 1; min-width: 0; font-size: 12px; }
+.tia-slotcard__id strong { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tia-slotcard__tag { font-size: 10px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.05em; }
+.tia-slotcard--active .tia-slotcard__tag { color: var(--good); font-weight: 700; }
+.tia-slotcard .tia-btn { min-height: 30px; font-size: 12px; }
+
+/* Chat */
+.tia-chat__sim { color: var(--muted); font-weight: 400; font-size: 10px; }
+.tia-chat__tools { display: flex; gap: 4px; }
+.tia-chat__btn { min-height: 28px; padding: 2px 8px; font-size: 11px; color: var(--text); background: var(--bg-2); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; }
+.tia-chat__btn[aria-pressed="true"] { border-color: var(--warn); color: var(--warn); }
+.tia-chat__btn:disabled { opacity: 0.5; cursor: default; }
+.tia-chat__list { flex: 1; min-height: 0; margin: 0; padding: 0; list-style: none; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
+.tia-chat__msg { overflow-wrap: anywhere; line-height: 1.35; }
+.tia-chat__time { color: var(--muted); font-size: 10px; }
+.tia-chat__author { color: var(--accent); }
+.tia-chat__msg--self .tia-chat__author { color: var(--good); }
+.tia-chat__msg--system { color: var(--warn); font-style: italic; }
+.tia-chat__msg--system .tia-chat__author { color: var(--warn); }
+.tia-chat__form { display: grid; grid-template-columns: 1fr auto; gap: 4px; align-items: center; }
+.tia-chat__input { min-width: 0; min-height: 32px; padding: 4px 8px; font-size: 12px; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 6px; }
+.tia-chat__count { grid-column: 1; font-size: 10px; color: var(--muted); text-align: right; }
+.tia-chat__error { grid-column: 1 / -1; font-size: 11px; color: var(--bad); }
+.tia-chat--closed { width: auto; align-self: start; }
+
+/* Telas estreitas / baixas: coluna única; as telas abrem em tela cheia; o chat vira faixa inferior. */
+@media (max-width: 959px) {
+  .tia-app--game { height: auto; min-height: 100dvh; }
+  .tia-stage, .tia-stage--nochat { display: flex; flex-direction: column; padding: 8px; }
+  .tia-center { order: 1; }
+  .tia-teampanel { order: 2; }
+  .tia-chat { order: 3; position: sticky; bottom: 0; z-index: 8; max-height: 44vh; }
+  .tia-chat--closed { width: 100%; align-self: stretch; }
+  .tia-gamebox { flex: 0 0 auto; height: clamp(220px, 56vw, 380px); }
+  .tia-hunt { max-height: none; }
+  .tia-overlay { position: fixed; z-index: 30; }
+  .tia-teampanel__slots { flex-direction: row; flex-wrap: wrap; }
+  .tia-slotcard { flex: 1 1 200px; }
+}

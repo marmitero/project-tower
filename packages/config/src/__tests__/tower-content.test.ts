@@ -153,7 +153,9 @@ describe("ContentPack (ADR-022)", () => {
       enemies.find((e) => e.id === "slime")!.growth.hp * 2,
     );
     expect(config.tower.floors[0]!.name).toBe("Hall Editado");
-    expect(evalCurve(config.xp.king.curve, 10)).toBe(Math.floor(40 * Math.pow(40, 1.35)));
+    const c = config.xp.king.curve;
+    expect(c.base).toBe(40);
+    expect(evalCurve(c, 10)).toBe(Math.floor(40 * Math.pow(10 + (c.offset ?? 0), c.exponent)));
     expect(() => validateConfig()).not.toThrow();
   });
 

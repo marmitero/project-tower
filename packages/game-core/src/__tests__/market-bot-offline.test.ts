@@ -341,7 +341,8 @@ describe("Offline = simulação do online (ADR-026)", () => {
       advance(250);
       state.advanceIdle(250);
     }
-    expect(state.data.hunt === null || ["searching", "in_battle"].includes(state.data.hunt.kind)).toBe(true);
+    // "defeated" também é retomada válida: o herói pode cair no Hub (curva de XP mais lenta = Nv 7 após 3 h).
+    expect(state.data.hunt === null || ["searching", "in_battle", "defeated"].includes(state.data.hunt.kind)).toBe(true);
     expect(state.data.offline.lastActiveAt).toBe(START + 3 * HOUR);
   });
 });

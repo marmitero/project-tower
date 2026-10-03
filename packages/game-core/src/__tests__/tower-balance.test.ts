@@ -150,28 +150,44 @@ describe("desgaste e sustentabilidade da caçada idle (ADR-021, reescrito no ADR
   });
 });
 
-describe("pacing do Rei (P-009 — XP moderado e desacelerando)", () => {
+describe("pacing do Rei (ADR-031 — Nv 1→100 ≈ 24 h, depois achata)", () => {
   const pacing = towerPacing(25); // ciclo médio luta+procura+premiação (ADR-030): ≈25 s
   const total = pacing.at(-1)!.cumulativeHours;
+  /** Horas acumuladas ao chegar ao andar `f` (1-based) — o fim da faixa dele. */
+  const hoursAtFloor = (f: number) => pacing[f - 1]!.cumulativeHours;
 
-  it("andar 1 é rápido (≤ 1 h) e o jogo inteiro é demorado, mas finito (1.000–2.000 h)", () => {
-    expect(pacing[0]!.hours).toBeLessThanOrEqual(1);
-    expect(total).toBeGreaterThan(1000);
-    expect(total).toBeLessThan(2000);
+  it("Nv 1→100 (andares 1–4) leva ≈ 24 h", () => {
+    expect(hoursAtFloor(4)).toBeGreaterThan(23);
+    expect(hoursAtFloor(4)).toBeLessThan(25);
   });
 
-  it("do andar 4 ao 9 cada andar demora mais que o anterior (curva desacelera)", () => {
-    for (let f = 4; f <= 9; f += 1) {
-      expect(pacing[f]!.hours, `andar ${f + 1}`).toBeGreaterThan(pacing[f - 1]!.hours);
+  it("Nv 1→1000 leva ≈ 105–135 h: o herói Nv 1000 já vale o investimento", () => {
+    expect(hoursAtFloor(7)).toBeGreaterThan(105);
+    expect(hoursAtFloor(7)).toBeLessThan(135);
+  });
+
+  it("o jogo inteiro (Nv 20.000) é demorado, mas finito (600–950 h)", () => {
+    expect(total).toBeGreaterThan(600);
+    expect(total).toBeLessThan(950);
+  });
+
+  it("o tempo ACUMULADO sempre cresce e nenhuma faixa é grátis nem eterna", () => {
+    for (let f = 1; f < pacing.length; f += 1) {
+      expect(pacing[f]!.cumulativeHours, `andar ${f + 1}`).toBeGreaterThan(pacing[f - 1]!.cumulativeHours);
+    }
+    for (const p of pacing) {
+      expect(p.hours).toBeGreaterThan(2);
+      expect(p.hours).toBeLessThan(150);
     }
   });
 
-  it("do andar 11 ao 40 cada andar custa entre 15 e 60 h e cresce devagar", () => {
-    for (let f = 10; f < 40; f += 1) {
-      expect(pacing[f]!.hours, `andar ${f + 1}`).toBeGreaterThan(15);
-      expect(pacing[f]!.hours, `andar ${f + 1}`).toBeLessThan(60);
-      if (f > 10) expect(pacing[f]!.hours).toBeGreaterThanOrEqual(pacing[f - 1]!.hours);
-    }
+  it("achatar a curva é de propósito: o tempo por 100 níveis CAI conforme o Rei avança (a faixa larga é que demora)", () => {
+    const per100 = (f: number) => {
+      const p = pacing[f - 1]!;
+      return p.hours / ((p.maxLevel - p.minLevel) / 100);
+    };
+    expect(per100(1)).toBeGreaterThan(per100(5));
+    expect(per100(5)).toBeGreaterThan(per100(10));
   });
 
   it("o andar 10 (2.500→5.000 só com inimigos nv 2.500) é o gargalo declarado", () => {
