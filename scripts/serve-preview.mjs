@@ -21,16 +21,19 @@
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { join, normalize, extname, sep } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
-const ROOT = join(fileURLToPath(new URL(".", import.meta.url)), "..");
-const ROOTS = [
-  join(ROOT, "apps", "game-web", "preview"),
-  join(ROOT, "apps", "game-web", "public"),
-  join(ROOT, "assets", "generated"),
-  join(ROOT, "assets", "sprites"),
-];
-const INDEX = join(ROOTS[0], "index.html");
+export const ROOT = join(fileURLToPath(new URL(".", import.meta.url)), "..");
+
+/** Raízes servidas, em ordem. `previewDir` permite servir o build de debug (`npm run play:debug`). */
+export function serverRoots(previewDir = join(ROOT, "apps", "game-web", "preview")) {
+  return [
+    previewDir,
+    join(ROOT, "apps", "game-web", "public"),
+    join(ROOT, "assets", "generated"),
+    join(ROOT, "assets", "sprites"),
+  ];
+}
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -71,21 +74,25 @@ async function tryFile(path) {
   return null;
 }
 
-const server = createServer(async (req, res) => {
-  const urlPath = req.url === "/" ? "/index.html" : (req.url ?? "/index.html");
+export function createHandler({ previewDir } = {}) {
+  const ROOTS = serverRoots(previewDir);
+  const INDEX = join(ROOTS[0], "index.html");
+  return async (req, res) => {
+    const rawUrl = (req.url ?? "/").split("?")[0] || "/";
+    const urlPath = rawUrl === "/" ? "/index.html" : rawUrl;
 
-  // 1) asset ou arquivo direto nas raízes, em ordem.
-  //    `/assets/<caminho>` também é tentado SEM o prefixo: o manifesto
-  //    aponta `<caminho>` relativo ao pack versionado (assets/sprites,
-  //    assets/generated). Assim o preview funciona num clone limpo, sem
-  //    depender da cópia gerada em `public/assets/` (não versionada).
-  const stripped = urlPath.startsWith("/assets/") ? urlPath.slice("/assets".length) : null;
-  const attempts = [];
-  for (const root of ROOTS) {
+    // 1) asset ou arquivo direto nas raízes, em ordem.
+    //    `/assets/<caminho>` também é tentado SEM o prefixo: o manifesto
+    //    aponta `<caminho>` relativo ao pack versionado (assets/sprites,
+    //    assets/generated). Assim o preview funciona num clone limpo, sem
+    //    depender da cópia gerada em `public/assets/` (não versionada).
+    const stripped = urlPath.startsWith("/assets/") ? urlPath.slice("/assets".length) : null;
+    const attempts = [];
+    for (const root of ROOTS) {
     attempts.push([root, urlPath]);
     if (stripped) attempts.push([root, stripped]);
-  }
-  for (const [root, rel] of attempts) {
+    }
+    for (const [root, rel] of attempts) {
     const candidate = safeJoin(root, rel);
     if (!candidate) continue;
     const hit = await tryFile(candidate);
@@ -99,10 +106,10 @@ const server = createServer(async (req, res) => {
       res.end(body);
       return;
     }
-  }
+    }
 
-  // 2) SPA fallback: qualquer rota não-asset recebe o index do bundle
-  if (!extname(urlPath)) {
+    // 2) SPA fallback: qualquer rota não-asset recebe o index do bundle
+    if (!extname(urlPath)) {
     try {
       const body = await readFile(INDEX);
       res.writeHead(200, {
@@ -115,15 +122,60 @@ const server = createServer(async (req, res) => {
     } catch {
       /* index ausente: cai no 404 abaixo */
     }
+    }
+
+    res.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
+    res.end("404 — não encontrado");
+  };
+}
+
+/**
+ * Sobe o servidor em cada host pedido (padrão: só loopback, IPv4 + IPv6 — sem aviso de firewall
+ * no Windows). Devolve `{ port, close }`. `port: 0` escolhe uma porta livre (testes).
+ */
+export async function startServer({ port = 5173, hosts = ["127.0.0.1", "::1"], previewDir } = {}) {
+  const handler = createHandler({ previewDir });
+  const servers = [];
+  let boundPort = port;
+  for (const [i, host] of hosts.entries()) {
+    // Uma URL malformada (ex.: `%E0%A4%A`) lança dentro do handler: sem isto derrubaria o servidor.
+    const srv = createServer((req, res) => {
+      handler(req, res).catch(() => {
+        try {
+          res.writeHead(400, { "content-type": "text/plain; charset=utf-8" });
+          res.end("400 — pedido inválido");
+        } catch {
+          /* resposta já iniciada */
+        }
+      });
+    });
+    try {
+      await new Promise((resolve, reject) => {
+        srv.once("error", reject);
+        srv.listen(i === 0 ? port : boundPort, host, () => {
+          srv.off("error", reject);
+          resolve(undefined);
+        });
+      });
+    } catch (error) {
+      // O 1º host é obrigatório. Os demais (ex.: ::1 sem IPv6 na máquina) são opcionais.
+      if (i === 0) throw error;
+      continue;
+    }
+    if (i === 0) boundPort = srv.address().port;
+    servers.push(srv);
   }
+  return {
+    port: boundPort,
+    close: () => Promise.all(servers.map((srv) => new Promise((r) => srv.close(() => r(undefined))))),
+  };
+}
 
-  res.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
-  res.end("404 — não encontrado");
-});
-
-const PORT = Number(process.env.PORT ?? 5173);
-const HOST = process.env.HOST ?? "0.0.0.0";
-server.listen(PORT, HOST, () => {
-  console.log(`[preview] servindo apps/game-web/preview + public em http://${HOST}:${PORT}`);
-  for (const root of ROOTS) console.log(`[preview] raiz: ${root}`);
-});
+// CLI: `node scripts/serve-preview.mjs` (preview do ambiente de desenvolvimento, 0.0.0.0).
+if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
+  const PORT = Number(process.env.PORT ?? 5173);
+  const HOST = process.env.HOST ?? "0.0.0.0";
+  const { port } = await startServer({ port: PORT, hosts: [HOST] });
+  console.log(`[preview] servindo apps/game-web/preview + public em http://${HOST}:${port}`);
+  for (const root of serverRoots()) console.log(`[preview] raiz: ${root}`);
+}

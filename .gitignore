@@ -59,3 +59,4 @@ pnpm-debug.log*
 apps/*/public/assets/*
 # ...exceto o manifesto versionado que mapeia ID -> caminho
 !apps/*/public/assets/manifest.json
+apps/game-web/preview-debug/

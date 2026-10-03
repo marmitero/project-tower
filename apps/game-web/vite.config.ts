@@ -5,7 +5,11 @@ import { resolve } from "node:path";
 const pkg = (name: string) => resolve(import.meta.dirname, "..", "..", "packages", name, "src", "index.ts");
 const pkgTsx = (name: string) => resolve(import.meta.dirname, "..", "..", "packages", name, "src", "index.ts");
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ mode }) => {
+  // `preview` = bundle versionado que o jogador final usa; `debug` = build LOCAL com o painel de
+  // Debug Mode (`npm run play:debug`), nunca commitado (pasta `preview-debug/` no .gitignore).
+  const light = mode === "preview" || mode === "debug";
+  return {
   // `--mode preview` (ver `scripts/serve-preview.mjs`) é o bundle LEVE que o
   // servidor estático zero-dependências serve: sem sourcemap e sem copiar
   // `public/` (os assets são servidos pela raiz `public/assets`). O modo
@@ -41,10 +45,12 @@ export default defineConfig(({ mode }) => ({
     port: 4173,
     allowedHosts: true,
   },
+  // O painel de debug só entra no bundle do modo `debug` (ver `src/debug-flag.ts`).
+  define: mode === "debug" ? { "import.meta.env.VITE_DEBUG_MODE": JSON.stringify("true") } : {},
   build: {
     target: "es2022",
-    sourcemap: mode !== "preview",
-    copyPublicDir: mode !== "preview",
+    sourcemap: !light,
+    copyPublicDir: !light,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -54,4 +60,5 @@ export default defineConfig(({ mode }) => ({
       },
     },
   },
-}));
+};
+});

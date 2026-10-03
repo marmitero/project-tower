@@ -1,0 +1,3 @@
+# Arquivos .bat precisam de quebra de linha CRLF e NUNCA podem ser convertidos (o zip do GitHub inclui o blob como está).
+*.bat -text
+*.sh text eol=lf

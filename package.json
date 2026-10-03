@@ -25,13 +25,16 @@
     "assets:build": "node scripts/build-assets.mjs",
     "check:no-secret": "node scripts/check-no-secret.mjs",
     "check:debug-mode": "node scripts/check-debug-mode.mjs",
-    "check": "npm run check:docs && npm run typecheck && npm run test && npm run test:arch && npm run check:assets && npm run check:no-secret && npm run check:debug-mode",
+    "check": "npm run check:docs && npm run typecheck && npm run test && npm run test:arch && npm run check:assets && npm run check:no-secret && npm run check:debug-mode && npm run check:preview",
     "typecheck": "tsc --noEmit",
     "check:assets:strict": "node scripts/check-assets.mjs --strict",
     "verify": "npm run check && npm run build",
     "preview:static": "node scripts/serve-preview.mjs",
-    "build:preview": "npm run build:preview -w @tia/game-web",
-    "report:balance": "vite-node --config vitest.config.ts scripts/balance-report.ts"
+    "build:preview": "npm run build:preview -w @tia/game-web && node scripts/preview-info.mjs write",
+    "report:balance": "vite-node --config vitest.config.ts scripts/balance-report.ts",
+    "check:preview": "node scripts/check-preview.mjs",
+    "play": "node scripts/play.mjs",
+    "play:debug": "npm run build:debug -w @tia/game-web && node scripts/play.mjs --debug"
   },
   "devDependencies": {
     "@types/node": "^26.6.3",
