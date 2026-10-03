@@ -12,6 +12,8 @@ import { enemies, ENEMY_ROLES } from "./enemies.js";
 import { curveErrors } from "./curves.js";
 import { skills, skillsById } from "./skills.js";
 import { HEROES } from "./heroes.js";
+import { equipmentErrors } from "./equipment.js";
+import { heroAcquisitionErrors } from "./acquisition.js";
 import {
   ATTRIBUTE_IDS,
   growthFromAttributes,
@@ -153,9 +155,14 @@ export function validateConfig(cfg: GameConfig = config): GameConfig {
     cfg.loot.x.min < cfg.loot.x.max,
     `loot.x.min (${cfg.loot.x.min}) deve ser menor que max (${cfg.loot.x.max})`,
   );
+  check(cfg.loot.x.min > 0, "loot.x.min deve ser > 0 (X zero anularia o atributo)");
   check(
-    cfg.loot.x.min >= 1,
-    "loot.x.min deve ser >= 1",
+    Number.isInteger(cfg.loot.x.decimals) && cfg.loot.x.decimals >= 0 && cfg.loot.x.decimals <= 4,
+    "loot.x.decimals deve ser inteiro em [0, 4]",
+  );
+  check(
+    Number.isInteger(cfg.loot.x.shape.samples) && cfg.loot.x.shape.samples >= 1 && cfg.loot.x.shape.power > 0,
+    "loot.x.shape inválido (samples inteiro >= 1, power > 0)",
   );
   check(
     cfg.loot.x.independentPerAttribute,
@@ -246,6 +253,14 @@ export function validateConfig(cfg: GameConfig = config): GameConfig {
   );
   check(cfg.inventory.equipmentMaxItems > 0, "inventory.equipmentMaxItems deve ser > 0");
   check(cfg.inventory.pageSize > 0, "inventory.pageSize deve ser > 0");
+  check(
+    cfg.inventory.onFull === "autoSell" || cfg.inventory.onFull === "discard",
+    "inventory.onFull deve ser 'autoSell' ou 'discard'",
+  );
+
+  // --- Equipamento (ADR-023) e aquisição de heróis (ADR-024) ---------------
+  errors.push(...equipmentErrors(cfg.equipment));
+  errors.push(...heroAcquisitionErrors(cfg.heroAcquisition));
 
   errors.push(...collectCatalogErrors());
 

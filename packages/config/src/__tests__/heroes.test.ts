@@ -9,7 +9,9 @@
 import { describe, expect, it } from "vitest";
 import {
   HEROES,
+  ATTRIBUTE_IDS,
   RARITY_ORDER,
+  config,
   classes,
   heroById,
   heroIdentityForClass,
@@ -35,10 +37,20 @@ describe("roster P-002 — 4 identidades completas", () => {
     }
   });
 
-  it("a escada de raridade cobre a progressão de aquisição (§109)", () => {
-    const rarities = HEROES.map((h) => h.rarity);
-    expect(rarities).toEqual(["common", "uncommon", "rare", "epic"]);
-    for (const r of rarities) expect(RARITY_ORDER).toContain(r);
+  it("os 4 heróis iniciais são TODOS incomuns (adendo 2026-10-03, ADR-024)", () => {
+    expect(HEROES.map((h) => h.rarity)).toEqual(["uncommon", "uncommon", "uncommon", "uncommon"]);
+    expect(config.heroAcquisition.starterRarity).toBe("uncommon");
+    // Neutro: incomum multiplica os stats por 1,0 — a calibração da Torre vale como está.
+    expect(config.heroAcquisition.rarityStatMultiplier.uncommon).toBe(1);
+  });
+
+  it("a variação de raridade existe na AQUISIÇÃO, e cobre toda a escada (§109)", () => {
+    for (const r of RARITY_ORDER) expect(config.heroAcquisition.rarityChance[r]).toBeGreaterThan(0);
+  });
+
+  it("os 4 têm o mesmo orçamento de atributos (aquisição balanceada entre classes)", () => {
+    const totals = classes.map((c) => ATTRIBUTE_IDS.reduce((a, id) => a + c.attributes[id], 0));
+    expect(new Set(totals).size).toBe(1);
   });
 
   it("1 herói por classe, com skill assinada da própria classe", () => {

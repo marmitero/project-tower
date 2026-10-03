@@ -22,7 +22,7 @@ export {
   tower,
 } from "./game.js";
 export { validateConfig, validateCatalog, ConfigValidationError } from "./validate.js";
-export { RARITY_ORDER, RARITY_MULTIPLIER, rarityMultiplier } from "./rarity.js";
+export { RARITY_ORDER } from "./rarity.js";
 // ⛔ P-002 / P-006 / P-001 / P-025 — catálogo PROVISÓRIO (inserção genérica
 // aprovada 2026-10-01). Ver o aviso no topo do `catalog.ts`.
 export {
@@ -32,7 +32,6 @@ export {
   CHARACTER_SHEET_KEYS,
   EQUIPABLE_STATS,
   EQUIP_SLOTS,
-  EQUIP_TEMPLATES,
 } from "./catalog.js";
 export {
   enemies,
@@ -95,3 +94,38 @@ export type {
   CharacterAssets,
   HeroAssets,
 } from "./catalog.js";
+export {
+  GEAR_EFFECT_KINDS,
+  GRADES,
+  DEFAULT_SLOTS,
+  defaultEquipmentConfig,
+  defaultTemplates,
+  defaultRarity,
+  defaultGrades,
+  defaultTiers,
+  defaultUnits,
+  defaultWeaponTraits,
+  defaultFeatures,
+  referenceStat,
+  materialForLevel,
+  equipmentErrors,
+  gearEffectErrors,
+  type GearEffect,
+  type GearEffectKind,
+  type WeaponTraitDef,
+  type FeatureDef,
+  type Grade,
+  type GradeDef,
+  type TierDef,
+  type StatUnit,
+  type ItemTemplate,
+  type ItemTemplateStat,
+  type EquipSlotDef,
+  type RarityDef,
+  type EquipmentConfig,
+} from "./equipment.js";
+export {
+  defaultHeroAcquisition,
+  heroAcquisitionErrors,
+  type HeroAcquisitionConfig,
+} from "./acquisition.js";

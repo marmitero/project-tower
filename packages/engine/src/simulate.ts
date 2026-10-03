@@ -21,9 +21,10 @@ import type {
   StatusEffect,
 } from "@tia/contracts";
 import type { BattleId, HeroId } from "@tia/contracts";
-import type { CombatConfig } from "@tia/config";
-import { Prng } from "./rng.js";
-import { actionIntervalMs, computeDamage, rollCritical } from "./formula.js";
+import type { CombatConfig, GearEffect } from "@tia/config";
+import { Prng, hashString } from "./rng.js";
+import { actionIntervalMs, computeDamage, dotDamage, rollCritical } from "./formula.js";
+import { buildGearProfile, type GearCaps, type GearProfile } from "./gear.js";
 import {
   allEnemies,
   initialTurnOrder,
@@ -31,7 +32,7 @@ import {
   selectSingleTarget,
   towerTargetFor,
 } from "./targeting.js";
-import { clearOnDeath, hasStun, statMultiplier, tickStatuses } from "./status.js";
+import { applyDot, applyStun, clearOnDeath, hasStun, statMultiplier, tickStatuses } from "./status.js";
 import { asBattleId, asHeroId } from "@tia/contracts";
 
 export interface SkillDef {
@@ -53,6 +54,8 @@ export interface BattleSetup {
   enemySeed: CombatantSeed[];
   skills?: Record<string, SkillDef[]>;
   config: CombatConfig;
+  /** Tetos para a soma de efeitos de equipamento (`equipment.effectCaps`). */
+  gearCaps?: GearCaps;
 }
 
 export interface CombatantSeed {
@@ -80,15 +83,21 @@ export interface CombatantSeed {
   sprites?: Record<string, string>;
   /** Tintura 0xRRGGBB (só apresentação). */
   tint?: number;
+  /**
+   * Efeitos de equipamento (traço de arma + características). O engine só
+   * executa o vocabulário `GearEffect` — não conhece itens (ADR-023).
+   */
+  effects?: GearEffect[];
 }
 
 interface InternalCombatant extends Combatant {
   basicAttackType: "physical" | "magic";
   skills: SkillDef[];
   cooldowns: Map<string, number>;
+  gear: GearProfile;
 }
 
-function makeCombatant(seed: CombatantSeed, skills: SkillDef[]): InternalCombatant {
+function makeCombatant(seed: CombatantSeed, skills: SkillDef[], caps?: GearCaps): InternalCombatant {
   const hp = Math.max(0, Math.min(seed.startHp ?? seed.stats.hp, seed.stats.hp));
   return {
     id: seed.id,
@@ -112,6 +121,7 @@ function makeCombatant(seed: CombatantSeed, skills: SkillDef[]): InternalCombata
     basicAttackType: seed.basicAttackType ?? "physical",
     skills,
     cooldowns: new Map(),
+    gear: buildGearProfile(seed.effects, caps),
   };
 }
 
@@ -136,8 +146,8 @@ export function createBattle(setup: BattleSetup): BattleState {
       ? setup.enemySeed.slice(0, 1) // §17/§79
       : setup.enemySeed.slice(0, 1);
 
-  const allies = allySeeds.map((s) => makeCombatant(s, skills[s.id] ?? []));
-  const enemies = enemySeeds.map((s) => makeCombatant(s, skills[s.id] ?? []));
+  const allies = allySeeds.map((s) => makeCombatant(s, skills[s.id] ?? [], setup.gearCaps));
+  const enemies = enemySeeds.map((s) => makeCombatant(s, skills[s.id] ?? [], setup.gearCaps));
 
   // §64: determinismo. Seed por batalha, nunca Math.random.
   // A ordem de Velocidade define quem age PRIMEIRO DENTRO do mesmo tick
@@ -208,6 +218,12 @@ export function step(state: BattleState, untilMs: number, config: CombatConfig):
     state.elapsedMs += TICK_MS;
     state.tick += 1;
 
+    // Pulsos de DoT (veneno de equipamento): ANTES do tick de status, para que o
+    // último pulso aconteça no mesmo tick em que o efeito expira. Pulso não crita
+    // e não dispara outros efeitos (§66/ADR-001).
+    applyDotPulses(state, config);
+    if (state.status !== "active") break;
+
     // Expiração de status (§66: status_removed com reason "expired").
     const { effects, expired } = tickStatuses(state.effects, TICK_MS);
     state.effects = effects;
@@ -232,7 +248,10 @@ export function step(state: BattleState, untilMs: number, config: CombatConfig):
       if (!isAlive(actor)) continue;
       performAction(actor, state, config);
       // Reagenda.
-      const interval = actionIntervalMs(statMultiplier(actor.statuses, "attackSpeed"), config);
+      // IAS = DES (stats.attackSpeed) + bônus de equipamento; um status de velocidade
+      // multiplica a CADÊNCIA. (Antes do ADR-023 o multiplicador de status era passado
+      // como se fosse o IAS: todo mundo agia a cada 1 s e a DES não valia nada.)
+      const interval = actionIntervalMs(actor.stats.attackSpeed + actor.gear.attackSpeed, config) / Math.max(0.1, statMultiplier(actor.statuses, "attackSpeed"));
       actor.nextActionAtMs = state.elapsedMs + Math.max(1, Math.round(interval));
     }
 
@@ -268,12 +287,23 @@ function opponentsOf(actor: InternalCombatant, state: BattleState): Combatant[] 
   return actor.side === "ally" ? state.enemies : state.allies;
 }
 
+function actorRng(state: BattleState, actor: InternalCombatant): Prng {
+  // Um fluxo por (batalha, tick, ator): dois atores no mesmo tick não compartilham sorteios.
+  return new Prng((state.seed ^ Math.imul(state.tick, 2654435761) ^ hashString(actor.id)) >>> 0);
+}
+
 function performAction(actor: InternalCombatant, state: BattleState, config: CombatConfig): void {
-  if (hasStun(state.effects, actor.id)) return; // stun perde a ação, não acumula
+  if (hasStun(state.effects, actor.id)) {
+    // Atordoamento: perde 1 ação e é consumido (não acumula, não rouba 2 ações de quem age rápido).
+    state.effects = state.effects.filter((e) => !(e.statusId === "stun" && e.targetId === actor.id));
+    syncStatusCopies(state);
+    emit(state, { type: "status_removed", targetId: actor.id, statusId: "stun", reason: "consumed" });
+    return;
+  }
 
   emit(state, { type: "turn_started", actorId: actor.id });
 
-  const rng = new Prng((state.seed ^ (state.tick * 2654435761)) >>> 0);
+  const rng = actorRng(state, actor);
   const enemies = opponentsOf(actor, state);
 
   // 1) Tentativa de skill (prioridade: slot em ordem, se pronta e habilitada).
@@ -281,12 +311,13 @@ function performAction(actor: InternalCombatant, state: BattleState, config: Com
     (s) => s.enabled && (actor.cooldowns.get(s.id) ?? 0) <= state.elapsedMs && s.damageType !== "none",
   );
   if (used) {
-    actor.cooldowns.set(used.id, state.elapsedMs + used.cooldownMs);
+    actor.cooldowns.set(used.id, state.elapsedMs + used.cooldownMs * (1 - actor.gear.cooldownReduction));
     emit(state, { type: "skill_used", actorId: actor.id, skillId: used.id });
     const targets = used.targeting === "all_enemies" ? allEnemies(enemies) : [selectSingleTarget(enemies)].filter(Boolean) as Combatant[];
     for (const target of targets) {
       const hits = Math.max(1, used.hitCount);
       for (let h = 0; h < hits; h += 1) {
+        if (!isAlive(actor) || !isAlive(target)) break;
         // Uma skill sem dano (`damageType: "none"`) é de suporte/buff e não
         // produz `damage_dealt`. `P-022` ainda não define o catálogo de
         // efeitos; o engine aceita, mas não fabrica dano para elas.
@@ -294,6 +325,7 @@ function performAction(actor: InternalCombatant, state: BattleState, config: Com
           dealDamage(actor, target, used.coefficient, used.damageType, state, config, rng, "skill", used.id);
         }
       }
+      rollOnHitProcs(actor, target, state, rng, config);
     }
     return;
   }
@@ -307,7 +339,90 @@ function performAction(actor: InternalCombatant, state: BattleState, config: Com
     : selectSingleTarget(enemies);
 
   if (!target) return;
-  dealDamage(actor, target, 1.0, actor.basicAttackType, state, config, rng, "basic");
+
+  // Área (Cajado): atinge todos os inimigos; coef. por alvo só quando há mais de um.
+  const group = actor.gear.area && enemies.length > 1 ? allEnemies(enemies) : [target];
+  const perTarget = actor.gear.area && enemies.length > 1 ? actor.gear.area.perTargetCoefficient : 1;
+  // Golpe duplo (Garras): o básico vira N golpes de `coefficient`.
+  const strikes = actor.gear.multiHit?.hits ?? 1;
+  const strikeCoef = (actor.gear.multiHit?.coefficient ?? 1) * perTarget;
+
+  for (const t of group) {
+    for (let h = 0; h < strikes; h += 1) {
+      if (!isAlive(actor) || !isAlive(t)) break;
+      dealDamage(actor, t, strikeCoef, actor.basicAttackType, state, config, rng, "basic");
+    }
+    // Sifão (Livro): o básico mágico cura uma fração do Ataque Especial.
+    if (actor.gear.basicHeal > 0 && actor.basicAttackType === "magic" && isAlive(actor)) {
+      heal(actor, actor, Math.floor(actor.stats.specialAttack * actor.gear.basicHeal), state);
+    }
+    rollOnHitProcs(actor, t, state, rng, config);
+  }
+}
+
+/** Cura limitada ao HP faltante; emite `heal_dealt` só se curou algo. */
+function heal(source: InternalCombatant, target: Combatant, amount: number, state: BattleState): void {
+  if (!isAlive(target)) return;
+  const real = Math.min(Math.max(0, amount), target.maxHp - target.hp);
+  if (real <= 0) return;
+  target.hp += real;
+  emit(state, { type: "heal_dealt", sourceId: source.id, targetId: target.id, amount: real });
+}
+
+/** Veneno e atordoamento do equipamento: 1 rolagem por ação, só se o alvo sobreviveu. */
+function rollOnHitProcs(actor: InternalCombatant, target: Combatant, state: BattleState, rng: Prng, config: CombatConfig): void {
+  if (!isAlive(actor) || !isAlive(target)) return;
+  const tgt = target as InternalCombatant;
+
+  for (const dot of actor.gear.dots) {
+    if (!rng.bool(dot.chance)) continue;
+    const offensive = actor.basicAttackType === "magic" ? actor.stats.specialAttack : actor.stats.attack;
+    const defense = actor.basicAttackType === "magic" ? target.stats.specialDefense : target.stats.defense;
+    const potency = dotDamage({ offensivePower: offensive, coefficient: dot.coefficient, targetDefense: defense, targetLevel: target.level, config });
+    state.effects = applyDot(state.effects, state.effects, {
+      effectId: `dot:${actor.id}:${target.id}`,
+      sourceId: actor.id,
+      targetId: target.id,
+      potency,
+      tickIntervalMs: dot.intervalMs,
+      durationMs: dot.pulses * dot.intervalMs,
+    });
+    syncStatusCopies(state);
+    emit(state, { type: "effect_triggered", sourceId: actor.id, effectId: "dot", label: "Veneno" });
+    emit(state, { type: "status_applied", targetId: target.id, statusId: "poison", stacks: 1, durationMs: dot.pulses * dot.intervalMs });
+  }
+
+  for (const stun of actor.gear.stuns) {
+    if (!rng.bool(stun.chance)) continue;
+    // Cobre a PRÓXIMA ação do alvo (que pode ser mais lenta que `durationMs`).
+    const untilNext = Math.max(0, tgt.nextActionAtMs - state.elapsedMs) + TICK_MS;
+    const durationMs = Math.min(3_000, Math.max(stun.durationMs, untilNext));
+    state.effects = applyStun(state.effects, state.effects, {
+      effectId: `stun:${actor.id}:${target.id}`,
+      sourceId: actor.id,
+      targetId: target.id,
+      durationMs,
+    });
+    syncStatusCopies(state);
+    emit(state, { type: "effect_triggered", sourceId: actor.id, effectId: "stun", label: "Atordoado" });
+    emit(state, { type: "status_applied", targetId: target.id, statusId: "stun", stacks: 1, durationMs });
+  }
+}
+
+/** Pulsos de DoT desde o último tick. */
+function applyDotPulses(state: BattleState, config: CombatConfig): void {
+  for (const e of state.effects.slice()) {
+    if (e.statusId !== "poison" || !e.tickIntervalMs) continue;
+    const before = e.durationMs - e.remainingMs;
+    const pulses = Math.floor((before + TICK_MS) / e.tickIntervalMs) - Math.floor(before / e.tickIntervalMs);
+    if (pulses <= 0) continue;
+    const target = findCombatant(state, e.targetId);
+    const source = findCombatant(state, e.sourceId);
+    for (let i = 0; i < pulses; i += 1) {
+      if (!target || !source || !isAlive(target)) break;
+      applyDamage(source, target, Math.max(1, e.multiplier), "dot", false, state, config, 0);
+    }
+  }
 }
 
 function dealDamage(
@@ -318,33 +433,49 @@ function dealDamage(
   state: BattleState,
   config: CombatConfig,
   rng: Prng,
-  source: "basic" | "skill",
+  source: "basic" | "skill" | "counter",
   skillId?: string,
 ): void {
   const offensive = damageType === "magic" ? actor.stats.specialAttack : actor.stats.attack;
-  const targetDefense = damageType === "magic" ? target.stats.specialDefense : target.stats.defense;
+  const baseDefense = damageType === "magic" ? target.stats.specialDefense : target.stats.defense;
+  // Ruptura de Guarda: ignora uma fração da defesa do alvo.
+  const targetDefense = baseDefense * (1 - actor.gear.defensePierce);
+  const bonus = damageType === "magic" ? actor.gear.damageMagic : actor.gear.damagePhysical;
 
   emit(state, { type: "attack_started", actorId: actor.id, skillId: source === "skill" ? skillId : undefined });
 
-  const { finalDamage, beforeMitigation, mitigatedPercent } = computeDamage({
+  const { finalDamage, mitigatedPercent } = computeDamage({
     offensivePower: offensive,
     coefficient,
     targetDefense,
     targetLevel: target.level,
-    damageModifiers: 1,
+    damageModifiers: 1 + bonus,
     config,
   });
 
-  const critBonus = 0; // traços de arma (Maça +10pp) entram em Fase 9 via SKILL/effect
   const { isCritical } = rollCritical({
     critChance: actor.critChance,
-    bonusFlatPercent: critBonus,
+    bonusFlatPercent: actor.gear.critChance * 100,
     rngNext: rng.next(),
     config,
   });
 
   const damage = isCritical ? Math.floor(finalDamage * config.critMultiplier) : finalDamage;
   applyDamage(actor, target, damage, damageType, isCritical, state, config, mitigatedPercent);
+
+  // Roubo Vital: cura uma fração do dano direto (1× por golpe).
+  if (actor.gear.lifesteal > 0) heal(actor, actor, Math.floor(damage * actor.gear.lifesteal), state);
+
+  // Contracorte: reação do alvo a um ataque direto. Reação não gera reação (sem recursão).
+  if (source !== "counter" && isAlive(target) && isAlive(actor)) {
+    const tgt = target as InternalCombatant;
+    for (const c of tgt.gear.counters) {
+      if (!rng.bool(c.chance)) continue;
+      emit(state, { type: "effect_triggered", sourceId: tgt.id, effectId: "counter", label: "Contracorte" });
+      dealDamage(tgt, actor, c.coefficient, tgt.basicAttackType, state, config, rng, "counter");
+      if (!isAlive(actor)) break;
+    }
+  }
 }
 
 function applyDamage(

@@ -1,3 +1,5 @@
+import { defaultEquipmentConfig } from "./equipment.js";
+import { defaultHeroAcquisition } from "./acquisition.js";
 import { buildDefaultFloors, defaultTowerDifficulty, defaultTowerRewards, defaultXpCurve, LEVEL_CAP, type TowerConfig } from "./tower.js";
 import type {
   LootConfig,
@@ -118,12 +120,14 @@ export const loot: LootConfig = {
   // §36 — o X é gerado INDIVIDUALMENTE por atributo.
   x: {
     independentPerAttribute: true,
-    // ⛔ P-010 — a faixa do X não está definida no Master-Prompt. O exemplo
-    // do §36 (Attack × 1.72, Defense × 0.93, HP × 2.08) é compatível com
-    // inteiro 1-50 e fator x/10, que é a convenção reaproveitada da
-    // referência, mas NÃO é uma regra deste projeto.
-    min: 1,
-    max: 50,
+    // ⛔ P-010 — o §36 só dá o EXEMPLO (Attack × 1.72, Defense × 0.93, HP × 2.08).
+    // ADR-023: X fracionário em centésimos, entre 0,50 e 2,50, em sino (média
+    // ≈ 1,05; ≥ 2,00 em ~1% das linhas). A convenção antiga (inteiro 1–50) foi
+    // abandonada por não casar com o exemplo do §36.
+    min: 0.5,
+    max: 2.5,
+    decimals: 2,
+    shape: { samples: 3, power: 2 },
   },
 
   // §12 — REGRA ABSOLUTA. Fragmentos nunca vêm de inimigo comum da Torre.
@@ -166,7 +170,10 @@ export const combat: CombatConfig = {
   defenseConstantPerLevel: 5,
   critCap: 0.75,
   critMultiplier: 1.5,
-  baseActionIntervalMs: 2_000,
+  // ADR-023 — T₀ = 1 s com IAS 0. Antes: 2 s, e o engine passava o multiplicador de status (=1)
+  // como se fosse o IAS ⇒ todo combatente agia a cada 1 s e a DES/IAS de equipamento não valia nada.
+  // Agora o IAS vale: intervalo = T₀ / (1 + IAS), com IAS em [−0,5; +1,0] ⇒ 2 s … 0,5 s.
+  baseActionIntervalMs: 1_000,
   iasCapMin: -0.5,
   iasCapMax: 1.0,
   minDamage: 1,
@@ -183,15 +190,6 @@ export const combat: CombatConfig = {
 // §39/§41/§43/§44/§49 — Economia
 // ---------------------------------------------------------------------------
 
-const RARITY_MULTIPLIER: Record<string, number> = {
-  common: 1.0,
-  uncommon: 1.2,
-  rare: 1.5,
-  epic: 2.0,
-  legendary: 2.5,
-  celestial: 3.0,
-};
-
 export const economy: EconomyConfig = {
   market: {
     // §41 — ÚNICO número econômico fechado do projeto.
@@ -207,11 +205,8 @@ export const economy: EconomyConfig = {
   equipment: {
     // §39 — "Equipamentos podem ser vendidos por Coin."
     sellEnabled: true,
-    // ⛔ P-008 — o preço de venda não foi definido pelo Master-Prompt.
-    // Provisório: proporcional ao Poder, escalado pela raridade, para que
-    // revenda tenha significado sem inflar a economia.
-    sellPrice: (rarity, power) =>
-      Math.max(1, Math.floor(power * 0.35 * (RARITY_MULTIPLIER[rarity] ?? 1))),
+    // ⛔ P-008 — o preço de venda não foi definido pelo Master-Prompt. O preço
+    // é DADO (`equipment.sell`, ADR-023): Coin-por-abate × raridade × nota.
   },
   vip: {
     // §49 — "VIP deve ser mantido no projeto... A arquitetura deve ser criada
@@ -233,6 +228,7 @@ export const inventory: InventoryConfig = {
   // ⛔ P-016 — o §13 fala em heróis ilimitados e é SILENCIOSO sobre
   // equipamentos. Um limite é necessário (UI, memória, banda).
   equipmentMaxItems: 300,
+  onFull: "autoSell",
   pageSize: 50,
   defaultSort: "rarityDesc",
 };
@@ -261,7 +257,7 @@ export const tower: TowerConfig = {
  * item só com a memória de outra zona hora vira lixo silenciosamente.
  */
 export const config: GameConfig = {
-  configVersion: 3,
+  configVersion: 4,
   account,
   team,
   xp,
@@ -271,6 +267,8 @@ export const config: GameConfig = {
   economy,
   inventory,
   tower,
+  equipment: defaultEquipmentConfig(),
+  heroAcquisition: defaultHeroAcquisition(),
 };
 
 export default config;

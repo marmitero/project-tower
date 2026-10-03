@@ -57,14 +57,42 @@ export type { XpAward } from "./progression.js";
 
 export {
   rollEquipment,
+  rollEquipmentOf,
   rollFragments,
   rollRewardBundle,
-  equipmentStats,
-  equipmentPower,
-  heroFinalStats,
+  rollX,
+  pickTemplate,
+  pickStatLines,
+  buildEquipment,
+  isLegacyEquipment,
+  migrateLegacyEquipment,
   sourceAllowsFragments,
   emptyRewardBundle,
 } from "./loot.js";
+export {
+  templateById,
+  traitById,
+  featureById,
+  traitForWeaponType,
+  itemName,
+  isOrphan,
+  lineValue,
+  equipmentStats,
+  equipmentPower,
+  itemEffects,
+  requiredHeroLevel,
+  meetsRequirement,
+  offensiveStatsOf,
+  hasAffinity,
+  activeEquipped,
+  heroFinalStats,
+  heroGearEffects,
+  compareItems,
+  COMPARED_STATS,
+  sellPrice,
+} from "./gear.js";
+export { rollHeroAcquisition, createAcquiredHero } from "./hero-acquisition.js";
+export type { HeroRoll } from "./hero-acquisition.js";
 export type { LootSource, LootContext, FragmentDrop, RollBundleParams } from "./loot.js";
 
 export {
@@ -73,19 +101,31 @@ export {
   removeEquipment,
   findEquipment,
   sellEquipment,
+  sellMany,
+  selectForBulkSale,
   sellPriceOf,
+  storeDrop,
+  bagItems,
+  bagCount,
+  isBagFull,
+  equippedIdSet,
   equipItem,
   unequipItem,
+  rescaleHeroHp,
   equippedItems,
   heroPower,
   heroCombatStats,
+  heroCombatEffects,
   addStack,
   removeStack,
   heroById,
   InventoryFullError,
-  SlotOccupiedError,
   AlreadyEquippedError,
+  EquipRequirementError,
+  ItemEquippedError,
+  ItemLockedError,
 } from "./inventory.js";
+export type { StoreResult, BulkSaleFilter } from "./inventory.js";
 
 export {
   slotRequirement,

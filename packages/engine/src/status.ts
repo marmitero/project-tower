@@ -79,6 +79,7 @@ export function applyDot(
     stacks: 1,
     maxStacks: 1,
     multiplier: input.potency,
+    tickIntervalMs: input.tickIntervalMs,
     durationMs: input.durationMs,
     remainingMs: input.durationMs,
     dispellable: true,

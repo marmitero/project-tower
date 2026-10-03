@@ -37,7 +37,11 @@ export interface HeroIdentityDef {
   personality: [string, string, string];
   /** Notas de voz para dublagem/efeitos (⛔ P-061 futuro). */
   voiceNotes: string;
-  /** Raridade = identidade de aquisição ("preciso conseguir esse personagem", §109). */
+  /**
+   * Raridade do herói INICIAL (adendo de 2026-10-03, ADR-024): os 4 são
+   * `uncommon` — ninguém começa com vantagem de raridade. A variação de
+   * raridade/qualidade existe só na AQUISIÇÃO pelo jogo (`acquisition.ts`).
+   */
   rarity: Rarity;
   /** Assinatura da skill ativa (deve casar com `catalog.ts`). */
   signatureSkillId: string;
@@ -64,7 +68,7 @@ export const HEROES: HeroIdentityDef[] = [
       "Perdeu um olho, não a palavra: enquanto ele estiver de pé, nada passa.",
     personality: ["estoico", "protetor", "teimoso"],
     voiceNotes: "Voz grave e frases curtas; quase nunca eleva o tom; silêncios longos entre as palavras.",
-    rarity: "common",
+    rarity: "uncommon",
     signatureSkillId: "skill_counter",
     combatStyle: "Contra-ataque e mitigação — vence desgastando quem ousa atacá-lo.",
     range: "melee",
@@ -104,7 +108,7 @@ export const HEROES: HeroIdentityDef[] = [
       "ela engoliu as chamas num punhado de luz — e virou a coisa mais perigosa da sala.",
     personality: ["curiosa", "distraída", "devastadora"],
     voiceNotes: "Dicção clara e didática; pausa como quem revela um segredo; ri quando a conta fecha.",
-    rarity: "rare",
+    rarity: "uncommon",
     signatureSkillId: "skill_nova",
     combatStyle: "Explosão em área — vence antes que a luta comece.",
     range: "ranged",
@@ -124,7 +128,7 @@ export const HEROES: HeroIdentityDef[] = [
       "Drena o que os outros derramam — e cobra juros da dívida.",
     personality: ["silencioso", "paciente", "perturbadoramente educado"],
     voiceNotes: "Sussurro estável, sem urgência; nunca completa a ameaça em voz alta.",
-    rarity: "epic",
+    rarity: "uncommon",
     signatureSkillId: "skill_hex",
     combatStyle: "Veneno e drenagem — vence em todas as lutas longas.",
     range: "ranged",

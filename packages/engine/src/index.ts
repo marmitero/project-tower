@@ -28,6 +28,7 @@ export {
   clearOnDeath,
   DEFAULT_STATUS_DURATION_MS,
 } from "./status.js";
+export { buildGearProfile, emptyGearProfile, type GearProfile, type GearCaps } from "./gear.js";
 export { createBattle, step, TICK_MS } from "./simulate.js";
 export type { BattleSetup, CombatantSeed, SkillDef } from "./simulate.js";
 // O estado de batalha é um tipo de CONTRATO: o engine o produz, mas quem o

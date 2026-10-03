@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { config, validateConfig, ConfigValidationError, RARITY_ORDER, rarityMultiplier } from "../index.js";
+import { config, validateConfig, ConfigValidationError, RARITY_ORDER } from "../index.js";
 import type { GameConfig } from "../types.js";
 
 /** Clone profundo do config para mutação em teste. */
@@ -249,13 +249,13 @@ describe("valores do Master-Prompt na configuração", () => {
 
 describe("multiplicadores de raridade (§34)", () => {
   it("são monotônicos crescentes com a raridade", () => {
-    const values = RARITY_ORDER.map(rarityMultiplier);
+    const values = RARITY_ORDER.map((r) => config.equipment.rarity[r].multiplier);
     for (let i = 1; i < values.length; i += 1) {
       expect(values[i]!).toBeGreaterThan(values[i - 1]!);
     }
   });
 
   it("Celestial é 3x Common", () => {
-    expect(rarityMultiplier("celestial")).toBeCloseTo(rarityMultiplier("common") * 3, 6);
+    expect(config.equipment.rarity.celestial.multiplier).toBeCloseTo(config.equipment.rarity.common.multiplier * 3, 6);
   });
 });

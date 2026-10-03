@@ -19,12 +19,10 @@
 import type { Equipment, LootOrigin, RewardBundle } from "@tia/contracts";
 import type { AccountId, ClassId, EquipmentId } from "@tia/contracts";
 import { asClassId, asEquipmentId } from "@tia/contracts";
-import { config, RARITY_ORDER, type EquipSlotId, type Rarity, type StatId } from "@tia/config";
-import { EQUIP_SLOTS, EQUIP_TEMPLATES, EQUIPABLE_STATS } from "@tia/config";
-import { powerOf, qualityGrade, type Prng } from "@tia/engine";
+import { config, RARITY_ORDER, type ItemTemplate, type Rarity, type StatId } from "@tia/config";
+import { Prng, qualityGrade } from "@tia/engine";
 import { newEquipmentId } from "./ids.js";
-import { emptyStats, addStats } from "./creation.js";
-import type { CombatStats } from "@tia/contracts";
+import { templateById, traitForWeaponType } from "./gear.js";
 
 export type LootSource =
   | { kind: "tower_enemy" } // §12 — NUNCA gera fragmento
@@ -54,114 +52,139 @@ export interface LootContext {
 }
 
 /**
- * Sorteia um equipamento. Retorna `null` nos 95% de casos sem drop.
+ * Rola UM X (§36, ⛔ P-010 → ADR-023): fracionário, em sino, média ≈ 1,05.
  *
- * A ordem das rolagens é fixa e documentada porque determinismo exige que
- * ela não mude: equipmentChance → raridade → slot → X por atributo → seed.
- * Adicionar uma rolagem no meio muda todos os itens seguintes.
+ *   u = média de `samples` uniformes (sino em [0,1])
+ *   X = min + (max − min) × u^power        (arredondado a `decimals` casas)
+ *
+ * `power` > 1 puxa a massa para baixo e deixa o "god roll" (X ≥ 2,0) raro: ~1%.
  */
-export function rollEquipment(rng: Prng, ctx: LootContext): Equipment | null {
-  // §32 — 5% de chance de drop.
-  if (!rng.bool(config.loot.equipmentChance)) return null;
+export function rollX(rng: Prng): number {
+  const { min, max, decimals, shape } = config.loot.x;
+  let u = 0;
+  for (let i = 0; i < shape.samples; i += 1) u += rng.next();
+  u /= shape.samples;
+  const x = min + (max - min) * Math.pow(u, shape.power);
+  const f = Math.pow(10, decimals);
+  return Math.min(max, Math.max(min, Math.round(x * f) / f));
+}
 
-  // §33 — raridade, ponderada pela tabela da config.
-  const rarity = rng.weightedKey(config.loot.rarity as Record<Rarity, number>);
+/** Sorteia o template: primeiro o slot (pesos dos slots), depois o template do slot. */
+export function pickTemplate(rng: Prng): ItemTemplate {
+  const slots = config.equipment.slots;
+  const slot = slots[rng.weightedIndex(slots.map((s) => s.dropWeight))]!;
+  const pool = config.equipment.templates.filter((t) => t.slot === slot.id);
+  return pool[rng.weightedIndex(pool.map((t) => t.dropWeight))]!;
+}
 
-  const slot = rng.pick(EQUIP_SLOTS) as EquipSlotId;
-  const template = EQUIP_TEMPLATES[slot];
-
-  // §36 — X INDIVIDUAL por atributo. São 8 rolagens independentes, e
-  // "Attack × 1.72, Defense × 0.93" do §36 é exatamente o caso comum:
-  // um item pode ser ótimo e ruim ao mesmo tempo.
-  const xValues: Record<StatId, number> = {
-    hp: 0,
-    attack: 0,
-    specialAttack: 0,
-    defense: 0,
-    specialDefense: 0,
-    critChance: 0,
-    attackSpeed: 0,
-    speed: 0,
-  };
-  for (const stat of EQUIPABLE_STATS) {
-    xValues[stat] = rng.int(config.loot.x.min, config.loot.x.max);
+/**
+ * Escolhe as linhas de atributo do item: a PRIMEIRA do template é a principal
+ * (sempre rola); as demais saem do pool, sem repetir, ponderadas pelo peso.
+ */
+export function pickStatLines(rng: Prng, template: ItemTemplate, lines: number): StatId[] {
+  const [primary, ...rest] = template.stats;
+  const chosen: StatId[] = [primary!.stat];
+  const pool = [...rest];
+  while (chosen.length < lines && pool.length > 0) {
+    const idx = rng.weightedIndex(pool.map((p) => p.weight));
+    chosen.push(pool.splice(idx, 1)[0]!.stat);
   }
+  return chosen;
+}
 
-  // §35 — a nota é a média das rolagens, independente da raridade.
-  // Raridade alta com nota baixa é um outcome legítimo e desejável.
-  const { quality, grade } = qualityGrade(Object.values(xValues), config.loot.x.max);
+export interface BuildEquipmentContext {
+  accountId: AccountId;
+  origin: LootOrigin;
+  sourceLevel: number;
+  itemIndex: number;
+  createdAt?: number;
+}
 
-  // O seed fica no item: permite reconstruir exatamente como ele nasceu,
-  // que é o que o §86 exige do servidor.
+/**
+ * Constrói o item a partir de raridade + template já decididos.
+ * Ordem das rolagens (fixa): linhas → X por linha → característica → seed.
+ */
+export function buildEquipment(rng: Prng, ctx: BuildEquipmentContext, rarity: Rarity, template: ItemTemplate): Equipment {
+  const eq = config.equipment;
+  const rdef = eq.rarity[rarity];
+
+  // §36 — X INDIVIDUAL por atributo: "Attack × 1.72, Defense × 0.93" é o caso
+  // comum — um item pode ser ótimo e ruim ao mesmo tempo.
+  const lines = pickStatLines(rng, template, rdef.statLines);
+  const xValues: Partial<Record<StatId, number>> = {};
+  for (const stat of lines) xValues[stat] = rollX(rng);
+
+  // §34/§35 — a Nota é a média normalizada dos X, independente da raridade.
+  // Raridade alta com nota baixa é um resultado legítimo e desejável.
+  const { quality, grade } = qualityGrade(Object.values(xValues) as number[], config.loot.x, eq.grades);
+
+  const trait = template.slot === "weapon" ? traitForWeaponType(template.weaponType) : undefined;
+  const feature = rdef.hasFeature && eq.features.length > 0 ? rng.pick(eq.features) : undefined;
+
+  // O seed fica no item: permite reconstruir como ele nasceu (§86).
   const seed = rng.int(1, 0x7fffffff);
-  const id: EquipmentId = newEquipmentId(ctx.accountId, ctx.itemIndex, seed);
 
   return {
-    id,
+    id: newEquipmentId(ctx.accountId, ctx.itemIndex, seed),
     ownerAccountId: ctx.accountId,
-    slot,
-    itemTypeId: `${slot}.${rarity}`,
-    weaponType: template.weaponType,
-    level: Math.max(1, ctx.sourceLevel),
+    slot: template.slot,
+    itemTypeId: template.id,
+    ...(template.weaponType ? { weaponType: template.weaponType } : {}),
+    level: Math.max(1, Math.floor(ctx.sourceLevel)),
     rarity,
     xValues,
     quality,
     grade,
-    createdAt: 0,
+    ...(trait ? { traitId: trait.id } : {}),
+    ...(feature ? { featureId: feature.id } : {}),
+    createdAt: ctx.createdAt ?? 0,
     origin: ctx.origin,
     seed,
   };
 }
 
 /**
- * Stats finais de um equipamento.
+ * Sorteia um equipamento. Retorna `null` nos 95% de casos sem drop.
  *
- * O X é um MULTIPLICADOR, não um somatório: `base × (x / 10)`, com x=10
- * significando "o valor base". Isso é o que faz "Attack × 1.72" ter o
- * significado que o §36 sugere, e é o que torna um god roll raro e um
- * item ruim desejáveis ao mesmo tempo.
+ * Ordem das rolagens: equipmentChance → raridade → slot → template → (buildEquipment).
+ * Adicionar uma rolagem no meio muda todos os itens seguintes.
  */
-export function equipmentStats(item: Equipment): CombatStats {
-  const template = EQUIP_TEMPLATES[item.slot];
-  const scale = rarityScale(item.rarity);
-  const stats = emptyStats();
-
-  for (const stat of EQUIPABLE_STATS) {
-    const x = item.xValues[stat] ?? 0;
-    const base = stat === template.stat ? template.base : template.base * 0.25;
-    const value = base * (x / 10) * scale;
-    // Atributos em fração (critChance, attackSpeed) não são escalados por
-    // `base`: aplicar um multiplicador de raridade a 0.03 produz 0.09 de
-    // crítico num item raro, o que destrói o teto de crítico inteiro.
-    if (stat === "critChance") stats.critChance += x / 1000;
-    else if (stat === "attackSpeed") stats.attackSpeed += x / 1000;
-    else stats[stat] += value;
-  }
-
-  return stats;
+export function rollEquipment(rng: Prng, ctx: LootContext): Equipment | null {
+  // §32 — 5% de chance de drop.
+  if (!rng.bool(config.loot.equipmentChance)) return null;
+  // §33 — raridade, ponderada pela tabela da config.
+  const rarity = rng.weightedKey(config.loot.rarity as Record<Rarity, number>);
+  const template = pickTemplate(rng);
+  return buildEquipment(rng, ctx, rarity, template);
 }
 
-function rarityScale(rarity: Rarity): number {
-  switch (rarity) {
-    case "common": return 1.0;
-    case "uncommon": return 1.2;
-    case "rare": return 1.5;
-    case "epic": return 2.0;
-    case "legendary": return 2.5;
-    case "celestial": return 3.0;
-  }
+/** Rolagem FORÇADA (sem os 5%): para a UI de debug, testes e futuras caixas/bosses. */
+export function rollEquipmentOf(rng: Prng, ctx: LootContext, forced: { rarity?: Rarity; templateId?: string } = {}): Equipment {
+  const rarity = forced.rarity ?? rng.weightedKey(config.loot.rarity as Record<Rarity, number>);
+  const template = (forced.templateId ? templateById(forced.templateId) : undefined) ?? pickTemplate(rng);
+  return buildEquipment(rng, ctx, rarity, template as ItemTemplate);
 }
 
-/** §71 — o poder exibido no item é o poder dos SEUS stats. */
-export function equipmentPower(item: Equipment): number {
-  return powerOf(equipmentStats(item));
+/**
+ * Migração (config v3 → v4): itens antigos (`itemTypeId` "slot.raridade", X
+ * inteiro 1–50) são RECONSTRUÍDOS a partir do seed no modelo novo, preservando
+ * id, dono, nível, raridade, slot, origem e data. Determinístico.
+ */
+export function isLegacyEquipment(item: Equipment): boolean {
+  return item.itemTypeId.includes(".");
 }
 
-/** Stats finais do herói: base do nível + tudo que está equipado (§71). */
-export function heroFinalStats(heroStats: CombatStats, equipped: Equipment[]): CombatStats {
-  let total = heroStats;
-  for (const item of equipped) total = addStats(total, equipmentStats(item));
-  return total;
+export function migrateLegacyEquipment(item: Equipment): Equipment {
+  const rng = new Prng(item.seed);
+  const pool = config.equipment.templates.filter((t) => t.slot === item.slot);
+  const template = pool[rng.weightedIndex(pool.map((t) => t.dropWeight))] ?? pickTemplate(rng);
+  const rebuilt = buildEquipment(
+    rng,
+    { accountId: item.ownerAccountId as AccountId, origin: item.origin, sourceLevel: item.level, itemIndex: 0, createdAt: item.createdAt },
+    item.rarity,
+    template,
+  );
+  return { ...rebuilt, id: item.id, seed: item.seed, ...(item.lockedByListingId ? { lockedByListingId: item.lockedByListingId } : {}) };
 }
 
 // ---------------------------------------------------------------------------
@@ -229,7 +252,8 @@ const ORIGIN_BY_SOURCE: Record<LootSource["kind"], LootOrigin> = {
 /** Monta o pacote completo de uma vitória. */
 export function rollRewardBundle(params: RollBundleParams): RewardBundle {
   const equipment: Equipment[] = [];
-  const dropCount = params.rng.int(0, 1); // ⛔ P-008 provisório
+  // 1 rolagem por abate: a chance de equipamento (§32 — 5%) vale POR abate.
+  const dropCount = 1;
   for (let i = 0; i < dropCount; i += 1) {
     const item = rollEquipment(params.rng, {
       accountId: params.accountId,

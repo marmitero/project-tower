@@ -120,7 +120,9 @@ function applyHeroLevelStats(hero: Hero, growth: ClassGrowth, level: number): vo
   hero.stats = heroStatsAtLevel(growth, level);
   const gained = hero.stats.hp - oldMax;
   if (typeof hero.currentHp === "number" && hero.currentHp > 0 && gained > 0) {
-    hero.currentHp = Math.min(hero.stats.hp, hero.currentHp + gained);
+    // Sem clamp ao HP-base: com equipamento o máximo real é maior (base + peças).
+    // O ganho de HP-máx. do level-up é o mesmo, então o teto continua respeitado.
+    hero.currentHp = hero.currentHp + gained;
   }
 }
 

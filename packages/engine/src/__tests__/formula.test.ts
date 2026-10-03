@@ -116,24 +116,24 @@ describe("crítico", () => {
 });
 
 describe("velocidade de ataque", () => {
-  it("intervalo base é T0 = 2000ms com IAS 0", () => {
-    expect(actionIntervalMs(0, config.combat)).toBe(2000);
+  it("intervalo base é T0 = 1000ms com IAS 0 (ADR-023)", () => {
+    expect(actionIntervalMs(0, config.combat)).toBe(1000);
   });
 
   it("IAS +100% dá metade do intervalo (teto)", () => {
-    expect(actionIntervalMs(1, config.combat)).toBe(1000);
+    expect(actionIntervalMs(1, config.combat)).toBe(500);
   });
 
   it("IAS -50% dobra o intervalo (piso)", () => {
-    expect(actionIntervalMs(-0.5, config.combat)).toBe(4000);
+    expect(actionIntervalMs(-0.5, config.combat)).toBe(2000);
   });
 
   it("IAS é limitado: 10.0 não gera intervalo zero", () => {
-    expect(actionIntervalMs(10, config.combat)).toBe(1000);
+    expect(actionIntervalMs(10, config.combat)).toBe(500);
   });
 
   it("IAS é limitado: -99 não gera loop infinito", () => {
-    expect(actionIntervalMs(-99, config.combat)).toBe(4000);
+    expect(actionIntervalMs(-99, config.combat)).toBe(2000);
   });
 });
 
@@ -168,21 +168,38 @@ describe("Poder (§34, §38 — comparativo, não preditivo)", () => {
 });
 
 describe("Nota de qualidade (§34, §35 — independente da raridade)", () => {
+  const range = { min: 0.5, max: 2.5 };
+  const grades = config.equipment.grades;
+
   it("todos os X no máximo ⇒ nota 100, grau S", () => {
-    const { quality, grade } = qualityGrade([50, 50, 50, 50], 50);
+    const { quality, grade } = qualityGrade([2.5, 2.5, 2.5, 2.5], range, grades);
     expect(quality).toBe(100);
     expect(grade).toBe("S");
   });
 
-  it("X baixos ⇒ grau baixo", () => {
-    const { grade } = qualityGrade([1, 1, 1, 1], 50);
+  it("todos os X no mínimo ⇒ nota 0, grau F (a nota usa a FAIXA, não x/max)", () => {
+    const { quality, grade } = qualityGrade([0.5, 0.5], range, grades);
+    expect(quality).toBe(0);
     expect(grade).toBe("F");
   });
 
+  it("a nota é a média normalizada: X = ponto médio da faixa ⇒ 50", () => {
+    expect(qualityGrade([1.5, 1.5, 1.5], range, grades).quality).toBeCloseTo(50, 6);
+  });
+
   it("a nota NÃO depende da raridade: mesma rolagem, mesma nota", () => {
-    const a = qualityGrade([10, 20, 30, 40], 50);
-    const b = qualityGrade([10, 20, 30, 40], 50);
+    const a = qualityGrade([1.0, 2.0, 1.5], range, grades);
+    const b = qualityGrade([1.0, 2.0, 1.5], range, grades);
     expect(a.quality).toBe(b.quality);
+  });
+
+  it("a letra vem da tabela passada (dado), na ordem do maior limiar", () => {
+    const custom = [
+      { grade: "S" as const, minQuality: 10 },
+      { grade: "F" as const, minQuality: 0 },
+    ];
+    expect(qualityGrade([1.0], range, custom).grade).toBe("S"); // nota 25
+    expect(qualityGrade([0.5], range, custom).grade).toBe("F");
   });
 });
 

@@ -1,4 +1,5 @@
 import type {
+  CharacterAttributes,
   Rarity,
   StatId,
   EquipSlotId,
@@ -34,6 +35,8 @@ export interface StatusEffect {
   stat?: StatId;
   durationMs: number;
   remainingMs: number;
+  /** Só DoT: intervalo entre pulsos (ms). */
+  tickIntervalMs?: number;
   dispellable: boolean;
 }
 
@@ -164,6 +167,14 @@ export interface Hero {
   spriteAssetId: string;
   portraitAssetId: string;
   rarity: Rarity;
+  /**
+   * Atributos PRÓPRIOS deste herói (ADR-024): dois heróis da mesma classe podem
+   * ter atributos diferentes (aquisição com variação). Os stats de combate
+   * derivam daqui + `rarity`. Migração: saves antigos recebem os da classe.
+   */
+  attributes: CharacterAttributes;
+  /** Qualidade da rolagem de atributos, 0–100 (50 = o herói padrão da classe). */
+  quality: number;
   level: number;
   /** §45 — pool de XP DO HERÓI. */
   xp: bigint;
@@ -196,12 +207,17 @@ export interface Equipment {
   id: EquipmentId;
   ownerAccountId: string;
   slot: EquipSlotId;
+  /** Id do template em `config.equipment.templates` (ex.: "weapon_sword"). */
   itemTypeId: string;
   weaponType?: WeaponType;
   level: number;
   rarity: Rarity;
-  /** §36 — X INDIVIDUAL por atributo. */
-  xValues: Record<StatId, number>;
+  /**
+   * §36 — X INDIVIDUAL por atributo, só dos atributos que o item rolou (ADR-023:
+   * 2–4 linhas conforme a raridade). Fracionário (ex.: 1.72). Os stats finais
+   * são DERIVADOS em runtime (template + nível + raridade + X), nunca gravados.
+   */
+  xValues: Partial<Record<StatId, number>>;
   quality: number;
   grade: "S" | "A" | "B" | "C" | "D" | "E" | "F";
   traitId?: string;

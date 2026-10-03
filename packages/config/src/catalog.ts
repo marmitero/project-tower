@@ -126,7 +126,7 @@ const classSeeds: Omit<HeroClassDef, "growth">[] = [
     affinityWeapon: "sword",
     assets: { portrait: "portraits/hero", sheets: charSheets("hero") },
     // Identidade (base OpenRpg Fighter): tanque físico bruto.
-    attributes: { strength: 26, dexterity: 10, constitution: 28, intelligence: 8, wisdom: 14, charisma: 12 },
+    attributes: { strength: 26, dexterity: 10, constitution: 28, intelligence: 8, wisdom: 14, charisma: 14 },
     // ⛔ P-022 — a identidade da skill e sua progressão ainda não são regra.
     activeSkillId: "skill_counter",
     passiveSkillIds: ["passive_bulwark", "passive_riposte"],
@@ -166,7 +166,7 @@ const classSeeds: Omit<HeroClassDef, "growth">[] = [
     affinityWeapon: "claws",
     assets: { portrait: "portraits/necromancer", sheets: charSheets("necromancer") },
     // Identidade: sustain/DoT mágico (INT+SAB equilibrados).
-    attributes: { strength: 12, dexterity: 16, constitution: 18, intelligence: 24, wisdom: 18, charisma: 16 },
+    attributes: { strength: 12, dexterity: 16, constitution: 18, intelligence: 24, wisdom: 18, charisma: 12 },
     activeSkillId: "skill_hex",
     passiveSkillIds: ["passive_venom", "passive_drain"],
   },
@@ -217,16 +217,3 @@ export const EQUIP_SLOTS: readonly EquipSlotId[] = [
   "pet",
 ];
 
-/** ⛔ P-025 provisório — template por slot. Base antes do X. */
-export const EQUIP_TEMPLATES: Record<EquipSlotId, { stat: StatId; base: number; weaponType?: WeaponType }> = {
-  weapon: { stat: "attack", base: 12, weaponType: "sword" },
-  chest: { stat: "defense", base: 9 },
-  head: { stat: "specialDefense", base: 7 },
-  legs: { stat: "hp", base: 70 },
-  boots: { stat: "speed", base: 5 },
-  glove: { stat: "attack", base: 6 },
-  amulet: { stat: "specialAttack", base: 10 },
-  aura: { stat: "critChance", base: 3 },
-  wings: { stat: "attackSpeed", base: 4 },
-  pet: { stat: "hp", base: 50 },
-};

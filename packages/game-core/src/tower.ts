@@ -15,7 +15,7 @@
  */
 
 import type { CombatStats, Hero, King, RewardBundle, TowerFloor } from "@tia/contracts";
-import { config, enemies as ENEMY_DEFS, evalCurve, type EnemyDef, type FloorDef } from "@tia/config";
+import { config, enemies as ENEMY_DEFS, evalCurve, type EnemyDef, type FloorDef, type GearEffect } from "@tia/config";
 import type { CombatantSeed, SkillDef as EngineSkillDef } from "@tia/engine";
 import { createBattle, Prng, type BattleState } from "@tia/engine";
 import { newBattleId } from "./ids.js";
@@ -178,6 +178,8 @@ export interface StartTowerBattleParams {
   sequence: number;
   /** HP inicial da batalha (ADR-020 — HP persiste entre batalhas). */
   heroStartHp?: number;
+  /** Efeitos de equipamento do herói (traço de arma + características) — ADR-023. */
+  heroEffects?: GearEffect[];
   /** Skills do herói, já mapeadas para o engine (§56 — disparam sozinhas). */
   heroSkills?: EngineSkillDef[];
   /** Folhas de animação do herói e do inimigo (dicas de apresentação, §64). */
@@ -219,6 +221,7 @@ export function startTowerBattle(params: StartTowerBattleParams): BattleState {
     heroId: hero.id,
     basicAttackType: params.heroBasicAttackType,
     sprites: params.heroSprites,
+    ...(params.heroEffects && params.heroEffects.length > 0 ? { effects: params.heroEffects } : {}),
   };
 
   const enemySeed: CombatantSeed = {
@@ -242,6 +245,7 @@ export function startTowerBattle(params: StartTowerBattleParams): BattleState {
     enemySeed: [enemySeed],
     skills: params.heroSkills ? { [hero.id]: params.heroSkills } : {},
     config: config.combat,
+    gearCaps: config.equipment.effectCaps,
   });
 }
 

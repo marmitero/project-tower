@@ -10,6 +10,8 @@
  */
 
 import type { SaveData } from "@tia/contracts";
+import { classes, config } from "@tia/config";
+import { isLegacyEquipment, migrateLegacyEquipment } from "../loot.js";
 
 export interface PersistenceService {
   readonly backend: "local" | "supabase";
@@ -83,6 +85,27 @@ export function migrateSave(data: SaveData, toConfigVersion: number): SaveData {
     // do save não mudou (nível/XP continuam números), então não há reescrita:
     // o andar salvo é normalizado em `GameState.hydrate` (clampFloor), porque
     // o conteúdo é editável (ADR-022) e o andar pode deixar de existir.
+    // v3 → v4 (ADR-023/024): equipamento por template e herói com atributos próprios.
+    //  - itens antigos ("slot.raridade", X inteiro 1–50) são RECONSTRUÍDOS do seed no
+    //    modelo novo (id, dono, nível, raridade, slot e origem preservados);
+    //  - heróis ganham `attributes`/`quality` (os da classe) e os INICIAIS passam a
+    //    `uncommon` (adendo: todos incomuns na seleção). Heróis não iniciais mantêm a raridade.
+    if (out.configVersion < 4) {
+      out = {
+        ...out,
+        inventory: { ...out.inventory, equipment: out.inventory.equipment.map((e) => (isLegacyEquipment(e) ? migrateLegacyEquipment(e) : e)) },
+        heroes: out.heroes.map((h) => {
+          const cls = classes.find((c) => c.id === h.classId);
+          const attributes = h.attributes ?? { ...(cls?.attributes ?? { strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10 }) };
+          return {
+            ...h,
+            attributes,
+            quality: typeof h.quality === "number" ? h.quality : 50,
+            rarity: h.origin === "starter" ? config.heroAcquisition.starterRarity : h.rarity,
+          };
+        }),
+      };
+    }
     out.configVersion = toConfigVersion;
   }
   return out;

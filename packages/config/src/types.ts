@@ -13,6 +13,8 @@
 
 import type { CurveDef } from "./curves.js";
 import type { TowerConfig } from "./tower.js";
+import type { EquipmentConfig } from "./equipment.js";
+import type { HeroAcquisitionConfig } from "./acquisition.js";
 
 export type Rarity =
   | "common"
@@ -169,8 +171,16 @@ export interface LootConfig {
    */
   x: {
     independentPerAttribute: true;
-    min: number; // ⛔ P-010 provisório
-    max: number; // ⛔ P-010 provisório
+    /** X mínimo e máximo (⛔ P-010, ADR-023): fracionário — o exemplo do §36 é "× 1.72". */
+    min: number;
+    max: number;
+    /** Casas decimais gravadas no item (2 = centésimos). */
+    decimals: number;
+    /**
+     * Forma da distribuição: `u` = média de `samples` uniformes (sino),
+     * normalizado e elevado a `power` ⇒ média perto de 1,0 e god roll raro.
+     */
+    shape: { samples: number; power: number };
   };
 
   /**
@@ -253,7 +263,6 @@ export interface EconomyConfig {
   equipment: {
     /** §39 — "Equipamentos podem ser vendidos por Coin." */
     sellEnabled: true;
-    sellPrice: (rarity: Rarity, power: number) => number; // ⛔ P-008 provisório
   };
   vip: {
     /** §49 — arquitetura criada desde cedo, valores só na fase de monetização. */
@@ -269,7 +278,14 @@ export interface EconomyConfig {
 export interface InventoryConfig {
   /** §13 — heróis ilimitados. Regra dura, sem limite artificial. */
   heroLimit: null;
-  equipmentMaxItems: number; // ⛔ P-016 provisório
+  /** Capacidade da mochila: itens NÃO equipados (⛔ P-016 provisório). */
+  equipmentMaxItems: number;
+  /**
+   * O que fazer com um drop quando a mochila está cheia (⛔ P-016, ADR-023):
+   * `autoSell` vende na hora pelo preço normal (idle não trava nem perde valor);
+   * `discard` descarta o item.
+   */
+  onFull: "autoSell" | "discard";
   pageSize: number;
   defaultSort: "rarityDesc" | "powerDesc" | "qualityDesc" | "levelDesc";
 }
@@ -289,4 +305,8 @@ export interface GameConfig {
   economy: EconomyConfig;
   inventory: InventoryConfig;
   tower: TowerConfig;
+  /** Equipamento como dado (ADR-023). */
+  equipment: EquipmentConfig;
+  /** Aquisição de heróis (ADR-024). */
+  heroAcquisition: HeroAcquisitionConfig;
 }

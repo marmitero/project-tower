@@ -15,19 +15,30 @@
 import type {
   BattleEvent,
   BattleState,
+  Equipment,
   Hero,
   RewardBundle,
   SaveData,
 } from "@tia/contracts";
-import type { AccountId, HeroId } from "@tia/contracts";
-import { heroById as heroIdentityById, classes, config, skills, type ClassGrowth } from "@tia/config";
+import type { AccountId, EquipmentId, HeroId } from "@tia/contracts";
+import { heroById as heroIdentityById, classes, config, skills, type ClassGrowth, type EquipSlotId } from "@tia/config";
 import { RngHub, hashString, step, type Prng, type SkillDef as EngineSkillDef } from "@tia/engine";
-import { createKing, createTeam, createWallet, createHero, activeTeamSize, changeKingSkin } from "./creation.js";
+import { createKing, createTeam, createWallet, createHero, activeTeamSize, changeKingSkin, heroGrowth } from "./creation.js";
 import { createInventory } from "./inventory.js";
 import { createOfflineProgress, beginSearching, isSearchingComplete, computeOffline, commitOffline, touchActive, rollSearchingDuration } from "./hunt.js";
 import { requireActiveHero, placeHero, setActiveHero, unlockSlot, firstAssigned, removeHero } from "./team.js";
 import { teamHeroes } from "./team.js";
-import { addEquipment, heroCombatStats, sellEquipment } from "./inventory.js";
+import {
+  equipItem,
+  heroCombatEffects,
+  heroCombatStats,
+  selectForBulkSale,
+  sellEquipment,
+  sellMany,
+  storeDrop,
+  unequipItem,
+  type BulkSaleFilter,
+} from "./inventory.js";
 import { grantHeroXp, grantKingXp, splitTeamXp } from "./progression.js";
 import {
   startTowerBattle,
@@ -50,10 +61,21 @@ export interface GameStateDeps {
   masterSeed: number;
 }
 
+/** O que a UI mostra no banner de drop (ADR-023). */
+export interface LootNotice {
+  item: Equipment;
+  outcome: StoreOutcome;
+  /** Coin recebida quando vendido na hora. */
+  price: bigint;
+}
+type StoreOutcome = "stored" | "autoSold" | "discarded";
+
 export interface GameEvents {
   /** Eventos de batalha para o renderer (§66). */
   onBattleEvents?: (events: BattleEvent[]) => void;
   onReward?: (bundle: RewardBundle) => void;
+  /** Cada drop de equipamento e o que aconteceu com ele (guardado / vendido na hora / descartado). */
+  onLoot?: (drops: LootNotice[]) => void;
   onStateChanged?: (state: GameState) => void;
 }
 
@@ -219,10 +241,9 @@ export class GameState {
     return this.state.heroes.find((h) => h.id === id);
   }
 
+  /** Crescimento do herói: atributos PRÓPRIOS + raridade (ADR-024), não os da classe. */
   private growthOf(hero: Hero): ClassGrowth {
-    const cls = classes.find((c) => c.id === hero.classId);
-    if (!cls) throw new Error(`Classe desconhecida: ${hero.classId}`);
-    return cls.growth;
+    return heroGrowth(hero);
   }
 
   /** §19 — o jogador escolhe o herói ativo. */
@@ -295,6 +316,7 @@ export class GameState {
       king: this.state.king,
       hero,
       heroStats,
+      heroEffects: heroCombatEffects(hero, this.state.inventory),
       floor,
       seed,
       sequence: this.battleSequence,
@@ -411,14 +433,18 @@ export class GameState {
       members.forEach((hero, i) => grantHeroXp(hero, BigInt(parts[i] ?? 0), this.growthOf(hero)));
     }
 
+    // Mochila cheia (⛔ P-016): `inventory.onFull` decide (padrão: vende na hora).
+    // A Coin e o XP já foram creditados — o limite nunca reverte a recompensa.
+    const notices: LootNotice[] = [];
     for (const item of bundle.equipment) {
-      try {
-        addEquipment(this.state.inventory, item);
-      } catch {
-        // Limite de inventário: o item é descartado, mas a Coin e o XP
-        // continuam. Emitir o item como "perdido" é preferível a reverter
-        // a recompensa inteira.
-      }
+      const r = storeDrop(this.state.inventory, this.state.wallet, this.state.heroes, item);
+      notices.push({ item, outcome: r.outcome, price: r.price });
+    }
+    if (notices.length > 0) this.listeners.onLoot?.(notices);
+
+    // O level-up conserva o HP perdido, mas o teto real inclui o equipamento.
+    for (const hero of members) {
+      hero.currentHp = Math.min(hero.currentHp, heroCombatStats(hero, this.state.inventory).hp);
     }
 
     for (const frag of bundle.fragments) {
@@ -431,11 +457,53 @@ export class GameState {
     this.dirty = true;
   }
 
-  /** §39 — vender equipamento por Coin. */
-  sell(equipmentId: Parameters<typeof sellEquipment>[2]): bigint {
-    const result = sellEquipment(this.state.inventory, this.state.wallet, equipmentId);
+  // -------------------------------------------------------------------------
+  // Equipamento (ADR-023)
+  // -------------------------------------------------------------------------
+
+  /** Equipa um item (substitui o do mesmo slot). Lança `EquipRequirementError` se o herói não tem nível. */
+  equip(heroId: HeroId, equipmentId: EquipmentId): { item: Equipment; replaced: Equipment | null } {
+    const hero = this.heroById(heroId);
+    if (!hero) throw new Error(`Herói não encontrado: ${heroId}`);
+    this.assertNotInBattle(hero);
+    const result = equipItem(this.state.inventory, hero, equipmentId, this.state.heroes);
+    this.touch();
+    return result;
+  }
+
+  unequip(heroId: HeroId, slot: EquipSlotId): EquipmentId | null {
+    const hero = this.heroById(heroId);
+    if (!hero) throw new Error(`Herói não encontrado: ${heroId}`);
+    this.assertNotInBattle(hero);
+    const id = unequipItem(this.state.inventory, hero, slot);
+    this.touch();
+    return id;
+  }
+
+  /** Trocar equipamento no meio da luta mudaria os stats do combatente em curso: só entre as lutas. */
+  private assertNotInBattle(hero: Hero): void {
+    if (this.battle && this.battle.status === "active" && this.battle.allies.some((a) => a.heroId === hero.id)) {
+      throw new Error("Não é possível trocar equipamento durante a luta.");
+    }
+  }
+
+  /** §39 — vender equipamento por Coin (item equipado não vende). */
+  sell(equipmentId: EquipmentId): bigint {
+    const result = sellEquipment(this.state.inventory, this.state.wallet, equipmentId, this.state.heroes);
     this.touch();
     return result.price;
+  }
+
+  /** Venda em massa pelos ids. Devolve o total de Coin e quantos foram pulados. */
+  sellItems(ids: readonly EquipmentId[]): { count: number; total: bigint; skipped: number } {
+    const r = sellMany(this.state.inventory, this.state.wallet, ids, this.state.heroes);
+    this.touch();
+    return { count: r.sold.length, total: r.total, skipped: r.skipped };
+  }
+
+  /** Itens que o filtro venderia (para a UI mostrar "vender N itens por X Coin" ANTES de confirmar). */
+  previewBulkSale(filter: BulkSaleFilter): Equipment[] {
+    return selectForBulkSale(this.state.inventory, this.state.heroes, filter);
   }
 
   // -------------------------------------------------------------------------

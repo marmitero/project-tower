@@ -80,7 +80,7 @@ export function rollCritical(params: {
  *   intervalo = T₀ / (1 + IAS)
  *
  * IAS é limitado a [iasCapMin, iasCapMax] = [-0.5, +1.0], o que dá
- * intervalo de 4000ms a 1000ms. Isso impede loops extremos de ataque sem
+ * intervalo de 2000ms a 500ms (T₀ = 1000ms). Isso impede loops extremos de ataque sem
  * remover builds de velocidade.
  */
 export function actionIntervalMs(attackSpeed: number, config: CombatConfig): number {
@@ -128,26 +128,25 @@ export function powerOf(stats: CombatStats): number {
 /**
  * Nota — qualidade das rolagens, independente da raridade (§34/§35).
  *
- *   Nota% = média(x_i / maxX) × 100
+ *   Nota% = média((x_i − xMin) / (xMax − xMin)) × 100
+ *
+ * Normalizar pela FAIXA (não por `x/xMax`) faz a nota ir de 0 a 100 de verdade:
+ * X mínimo em todas as linhas = 0%, X máximo = 100%. A letra vem da tabela
+ * `equipment.grades` (ordenada do maior para o menor `minQuality`) — dado, não
+ * limiar fixo no código (ADR-023).
  */
-export function qualityGrade(xValues: readonly number[], maxX: number): {
-  quality: number;
-  grade: "S" | "A" | "B" | "C" | "D" | "E" | "F";
-} {
-  if (xValues.length === 0 || maxX <= 0) return { quality: 0, grade: "F" };
-  const mean = xValues.reduce((a, b) => a + b, 0) / xValues.length;
-  const quality = (mean / maxX) * 100;
-
-  const grade =
-    quality >= 90 ? "S"
-    : quality >= 80 ? "A"
-    : quality >= 70 ? "B"
-    : quality >= 60 ? "C"
-    : quality >= 50 ? "D"
-    : quality >= 40 ? "E"
-    : "F";
-
-  return { quality, grade };
+export function qualityGrade<G extends string>(
+  xValues: readonly number[],
+  range: { min: number; max: number },
+  grades: readonly { grade: G; minQuality: number }[],
+): { quality: number; grade: G } {
+  const last = grades[grades.length - 1]?.grade as G;
+  const span = range.max - range.min;
+  if (xValues.length === 0 || span <= 0) return { quality: 0, grade: last };
+  const mean = xValues.reduce((a, b) => a + (b - range.min) / span, 0) / xValues.length;
+  const quality = Math.min(100, Math.max(0, mean * 100));
+  const found = grades.find((g) => quality >= g.minQuality);
+  return { quality, grade: (found?.grade ?? last) as G };
 }
 
 /** Divisão de XP entre membros da equipe (§20, §81). */

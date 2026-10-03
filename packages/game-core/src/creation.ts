@@ -11,7 +11,7 @@
 
 import type { CombatStats, Hero, HeroOrigin, King, Wallet, Team } from "@tia/contracts";
 import type { AccountId, ClassId, HeroId, KingId } from "@tia/contracts";
-import { classes, config, heroIdentityForClass, type ClassGrowth, type KingSkinConfig } from "@tia/config";
+import { classes, config, growthFromAttributes, type CharacterAttributes, type Rarity, type ClassGrowth, type KingSkinConfig } from "@tia/config";
 import { newHeroId, newKingId } from "./ids.js";
 
 /** @param nowInjected-clock em ms; injetado para que o teste seja determinístico. */
@@ -99,7 +99,12 @@ export interface CreateHeroParams {
   accountId: AccountId;
   classId: ClassId;
   name: string;
+  /** Padrão: a raridade do herói inicial (`heroAcquisition.starterRarity`, adendo ADR-024). */
   rarity?: Hero["rarity"];
+  /** Atributos próprios (aquisição com variação). Padrão: os da classe. */
+  attributes?: CharacterAttributes;
+  /** Qualidade da rolagem (0–100). Padrão: 50 = herói padrão da classe. */
+  quality?: number;
   level?: number;
   origin?: HeroOrigin;
   now: number;
@@ -118,7 +123,9 @@ export function createHero(params: CreateHeroParams): Hero {
     throw new Error(`Classe desconhecida: ${String(params.classId)}`);
   }
   const level = Math.max(1, Math.floor(params.level ?? 1));
-  const stats = heroStatsAtLevel(cls.growth, level);
+  const attributes = { ...(params.attributes ?? cls.attributes) };
+  const rarity = params.rarity ?? config.heroAcquisition.starterRarity;
+  const stats = heroStatsAtLevel(growthForHero(attributes, rarity), level);
   return {
     id: newHeroId(params.accountId, params.index),
     ownerAccountId: params.accountId,
@@ -126,7 +133,9 @@ export function createHero(params: CreateHeroParams): Hero {
     name: params.name,
     spriteAssetId: cls.assets.sheets.idle,
     portraitAssetId: cls.assets.portrait,
-    rarity: params.rarity ?? heroIdentityForClass(params.classId).rarity,
+    rarity,
+    attributes,
+    quality: params.quality ?? 50,
     level,
     // §45 — pool do herói, separado do do Rei.
     xp: 0n,
@@ -142,6 +151,38 @@ export function createHero(params: CreateHeroParams): Hero {
     obtainedAt: params.now,
     origin: params.origin ?? "starter",
   };
+}
+
+/**
+ * Crescimento de UM herói (ADR-024): atributos próprios → derivação OpenRpg
+ * (`growthFromAttributes`) × multiplicador da raridade (`heroAcquisition`).
+ * `uncommon` = ×1,0 — os heróis iniciais valem exatamente o que a Torre calibrou.
+ * Crítico, IAS e velocidade não escalam por raridade (são identidade de classe).
+ */
+export function growthForHero(attributes: CharacterAttributes, rarity: Rarity): ClassGrowth {
+  const g = growthFromAttributes(attributes);
+  const m = config.heroAcquisition.rarityStatMultiplier[rarity] ?? 1;
+  if (m === 1) return g;
+  const flat = (v: number) => Math.floor(v * m);
+  const per = (v: number) => +(v * m).toFixed(1);
+  return {
+    ...g,
+    hp: flat(g.hp),
+    hpPerLevel: per(g.hpPerLevel),
+    attack: flat(g.attack),
+    attackPerLevel: per(g.attackPerLevel),
+    specialAttack: flat(g.specialAttack),
+    specialAttackPerLevel: per(g.specialAttackPerLevel),
+    defense: flat(g.defense),
+    defensePerLevel: per(g.defensePerLevel),
+    specialDefense: flat(g.specialDefense),
+    specialDefensePerLevel: per(g.specialDefensePerLevel),
+  };
+}
+
+/** Crescimento do herói VIVO (usa os atributos e a raridade dele, não os da classe). */
+export function heroGrowth(hero: Pick<Hero, "attributes" | "rarity">): ClassGrowth {
+  return growthForHero(hero.attributes, hero.rarity);
 }
 
 /**
