@@ -71,7 +71,7 @@ export interface DerivedGrowth {
  * - `specialAttack = INT×1,2 + SAB×0,3` — INT domina, SAB sustenta;
  * - `defense = 2 + CON×0,8`; `specialDefense = 2 + SAB×0,9`;
  * - `critChance = 0,02 + DES×0,004` (teto de 0,75 do engine é validado);
- * - `attackSpeed = max(0, (DES−10)×0,02)` — identidade de velocidade;
+ * - `attackSpeed = max(0, (DES−10)×0,01)` (ADR-030: era 0,02) — identidade de velocidade;
  * - `speed = 6 + DES×0,5`.
  *
  * Linhas "perLevel" são ~11–14% do base (ritmo compatível com a curva de XP
@@ -95,7 +95,7 @@ export function growthFromAttributes(a: CharacterAttributes): DerivedGrowth {
     specialDefense: Math.floor(specialDefense),
     specialDefensePerLevel: +(specialDefense * 0.11).toFixed(1),
     critChance: +(0.02 + a.dexterity * 0.004).toFixed(3),
-    attackSpeed: +Math.max(0, (a.dexterity - 10) * 0.02).toFixed(2),
+    attackSpeed: +Math.max(0, (a.dexterity - 10) * 0.01).toFixed(2),
     speed: +(6 + a.dexterity * 0.5).toFixed(1),
   };
 }

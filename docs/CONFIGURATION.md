@@ -166,7 +166,7 @@ Ou seja, um Celestial cai em aproximadamente **1 a cada 20.000 inimigos**. Isso 
 | `combat.towerAutoBossFloors` | Andares com boss na Torre | **[]** — lista vazia | §21, §55 (Tipo A) |
 | `combat.critCap` | Teto de crítico | 0.75 | referência (ADR-001) |
 | `combat.critMultiplier` | Dano do crítico | 1.5 | referência |
-| `combat.baseActionIntervalMs` | T₀ | 2000 | referência |
+| `combat.baseActionIntervalMs` | T₀ (ataque base ≈ 2 s) | 2000 | ADR-030 |
 | `combat.iasCapMin` / `Max` | Limite de IAS | −0.5 / +1.0 | referência |
 | `combat.defenseConstant` | Constante da mitigação | 100 | referência |
 | `combat.seedStrategy` | Determinismo | `battleSeed` persistido por batalha | ADR-008 |
@@ -222,9 +222,9 @@ Tudo é validado (`marketErrors`, `botErrors`, `offlineErrors`) com o caminho do
 |---|---|---|---|
 | `tower.floors[]` | Andares (`FloorDef`: faixa, `enemyLevel`, `requiredKingLevel`, `pool`, `visual`) | ✅ 40 andares — ADR-021 (P-005) | §22 |
 | `enemies[]` (`EnemyDef`) | Inimigos: 6 atributos, papel, tipo de dano, `statMultiplier` | ✅ 11 inimigos — ADR-021 (P-006) | §22, §54 |
-| `tower.enemyStatMultiplier` / `enemyHpMultiplier` / `enemyAttackMultiplier` | Calibração global da Torre | ✅ 1 / 2,5 / 0,05 (calibrados por simulação) | ADR-021 |
+| `tower.enemyStatMultiplier` / `enemyHpMultiplier` / `enemyAttackMultiplier` | Calibração global da Torre | ✅ 1 / 2,0 / 0,18 (ADR-030; era 1 / 2,5 / 0,05) | ADR-021, ADR-030 |
 | `tower.rewards.{kingXp,heroXp,coin}` | `CurveDef` de recompensa por abate | ✅ XP; Coin ⛔ P-008 | ADR-021 |
-| `combat.defenseConstantPerLevel` · `combat.regenOnSearchingPctPerSec` | K de defesa por nível · regen em PROCURANDO | ✅ 5 · 0,05 | ADR-021 |
+| `combat.defenseConstantPerLevel` · `combat.regenOnSearchingPctPerSec` | K de defesa por nível · regen em PROCURANDO | ✅ 5 · 0,01 (ADR-030; era 0,05) | ADR-021, ADR-030 |
 | `tower.selectMode` | Seleção de andar | **manual** | §19, §107 |
 | `tower.autoAdvance` | Avanço automático de andar | **false** | §19 (Tipo A) |
 | `tower.bossInTower` | Boss em andar fixo | **false — PROIBIDO** | §21, §55 (Tipo A) |
@@ -252,7 +252,7 @@ Tudo é validado (`marketErrors`, `botErrors`, `offlineErrors`) com o caminho do
 | ID | Chave | Valor | Fonte |
 |---|---|---|---|
 | `xp.king.levelCap` | Teto nível do Rei | ✅ **20.000** (P-009, ADR-021) | §46 |
-| `xp.king.requiredPerLevel` | Curva | ✅ `floor(20·(N+30)^1,35)` | §46 |
+| `xp.king.requiredPerLevel` | Curva | ✅ `floor(14·(N+30)^1,35)` (ADR-030; era 20·) | §46 |
 | `xp.hero.levelCap` | Teto nível do herói | ✅ **20.000** | §9 |
 | `xp.hero.requiredPerLevel` | Curva | ✅ idêntica à do Rei (pools separados) | §9 |
 | `xp.separatePools` | Rei e herói independentes | **true** | §45 (Tipo A) |
@@ -312,8 +312,10 @@ Regra: valor de conteúdo **nunca** é constante na lógica; muda-se o JSON e o 
 | `equipment.affinityBonus` | **0,05** |
 | `equipment.sell` | abates equivalentes 3/5/12/40/150/600; fator de nota 0,5–2,0 |
 | `equipment.weaponTraits[]` / `features[]` | 9 traços / 4 características, como `GearEffect` |
+| `equipment.attackSpeedLevelCurve` | IAS do item × `min + (1−min)·min(1,(nível/fullAtLevel)^expoente)` — `fullAtLevel` 10.000 · expoente 0,35 · piso 0,05 (ADR-030); unidade de IAS `equipment.unit.attackSpeed` = 0,035 |
+| `boss.towerReference` | `{hpMultiplier 1,8, attackMultiplier 0,065}` — dificuldade da Torre "congelada" para os chefes (ADR-030) |
 | `equipment.effectCaps` | crítico 0,4 · vel. 0,6 · dano 0,6 · perfuração 0,4 · roubo vital 0,2 · recarga 0,4 |
-| `combat.baseActionIntervalMs` | **1000** (T₀; `intervalo = T₀/(1+IAS)`) |
+| `combat.baseActionIntervalMs` | **2000** (T₀; `intervalo = T₀/(1+IAS)`; ADR-030) |
 | `heroAcquisition.*` | `starterRarity` incomum · `rarityChance` 50/30/15/4/0,9/0,1 · `rarityStatMultiplier` 0,94…1,30 · `attributeRoll` 0,85–1,15 |
 
 Tudo isso é exportado/validado/aplicado no `ContentPack` v2 e `configVersion` é **4**.

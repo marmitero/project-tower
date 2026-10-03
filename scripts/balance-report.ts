@@ -13,7 +13,7 @@ import { asAccountId } from "@tia/contracts";
 import { GameState, averageBossFight, averageDuel, coinsPerKillFor, floorMatchups, itemPrice, rollGearSet, simulateHunt, towerPacing } from "@tia/game-core";
 
 const md = process.argv.includes("--md");
-const CYCLE = 15;
+const CYCLE = 25;
 const h = (n: number) => (n < 1 ? `${Math.max(1, Math.round(n * 60))} min` : n < 100 ? `${n.toFixed(1)} h` : `${Math.round(n)} h`);
 const pct = (n: number) => `${(n * 100).toFixed(0)}%`;
 const out: string[] = [];
@@ -23,7 +23,7 @@ const title = (s: string) => (md ? line(`\n## ${s}\n`) : line(`\n=== ${s} ===`))
 line(md ? "# Relatório de balanceamento — Torre (gerado)" : "RELATÓRIO DE BALANCEAMENTO — TORRE");
 line(md ? "\n> Gerado por `npm run -s report:balance -- --md > docs/BALANCE_REPORT.md`. Não edite à mão." : "");
 
-title("Pacing do Rei por andar (ciclo luta+procura ≈ 15 s)");
+title("Pacing do Rei por andar (ciclo luta+procura ≈ 25 s)");
 const pacing = towerPacing(CYCLE);
 if (md) {
   line("| Andar | Nome | Faixa do Rei | Inimigos | Abates | Tempo | Acumulado |");
@@ -93,7 +93,7 @@ for (const m of floorMatchups(10, 2500, 3).filter((x) => x.classId === "guardian
   line(`${md ? "- " : ""}guardian × ${m.enemy.name}: ${pct(m.duel.avgHpLostFraction)} de vida, ${m.duel.avgDurationSec.toFixed(1)} s (chance ${pct(m.chance)})`);
 }
 
-title("Market — preços e caixas (ADR-025; 1 abate ≈ 1 ciclo de 15 s)");
+title("Market — preços e caixas (ADR-025; 1 abate ≈ 1 ciclo de 25 s)");
 {
   const need = config.heroAcquisition.fragmentsRequired;
   const coinPerKill = (kingLevel: number) => coinsPerKillFor(kingLevel);
@@ -182,6 +182,51 @@ title("Chefes da Arena (heróis no nível do chefe, sem equipamento, sem Bot)");
     const tail = [`nv ${st.data.king.level}`, st.data.wallet.coins.toLocaleString("pt-BR"), String(st.data.inventory.equipment.length)];
     if (md) line(`| ${identity.name} | ${cells.join(" | ")} | ${tail.join(" | ")} |`);
     else line(`${identity.name}: ${MARKS.map(([n], i) => `${n} ${cells[i]}`).join(" · ")} · após ${HOURS} h: ${tail.join(" / ")}`);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// ADR-030 — o desgaste e as poções no jogo REAL (30 min no andar 1, com e sem compra de poção)
+// ---------------------------------------------------------------------------
+{
+  title("Desgaste e poções (jogo real, 30 min no andar 1: sem poção × compra poções com o Coin)");
+  const MIN30 = 30 * 60_000;
+  for (const buy of [false, true]) {
+    for (const identity of HEROES) {
+      let now = 1_700_000_000_000;
+      const st = GameState.createNew(
+        { accountId: asAccountId(`wear-${identity.id}`), nickname: "Desgaste", skinId: "royal", starterIdentityId: identity.id, now, masterSeed: 5 },
+        { now: () => now },
+      );
+      const hero = st.data.heroes[0]!;
+      st.assignHeroToSlot(hero.id, 0);
+      st.selectActiveHero(hero.id);
+      st.startTower();
+      let bought = 0;
+      let defeats = 0;
+      let wasDefeated = false;
+      let fights = 0;
+      let wasIn = false;
+      let lowest = 1;
+      for (let t = 0; t < MIN30; t += 250) {
+        now += 250;
+        st.advanceIdle(250);
+        if (buy && t % 10_000 === 0) {
+          for (let i = 0; i < 4; i += 1) {
+            try { st.buyItem("potion_basic", 1); bought += 1; } catch { break; }
+          }
+        }
+        const kind = st.data.hunt?.kind;
+        if (kind === "defeated" && !wasDefeated) defeats += 1;
+        wasDefeated = kind === "defeated";
+        const inBattle = !!st.battle;
+        if (inBattle && !wasIn) fights += 1;
+        wasIn = inBattle;
+        if (st.battle) lowest = Math.min(lowest, st.battle.allies[0]!.hp / st.battle.allies[0]!.maxHp);
+      }
+      const stock = st.data.inventory.items.reduce((a, i) => a + i.quantity, 0);
+      line(`${md ? "- " : ""}${buy ? "com compra" : "sem poção"} · ${identity.name}: ${fights} lutas · ${defeats} derrota(s) · menor HP ${pct(lowest)}${buy ? ` · ${bought - stock} poções usadas (${((bought - stock) / Math.max(1, fights)).toFixed(2)}/luta)` : ""}`);
+    }
   }
 }
 

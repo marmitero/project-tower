@@ -177,8 +177,8 @@ export const combat: CombatConfig = {
   critMultiplier: 1.5,
   // ADR-023 — T₀ = 1 s com IAS 0. Antes: 2 s, e o engine passava o multiplicador de status (=1)
   // como se fosse o IAS ⇒ todo combatente agia a cada 1 s e a DES/IAS de equipamento não valia nada.
-  // Agora o IAS vale: intervalo = T₀ / (1 + IAS), com IAS em [−0,5; +1,0] ⇒ 2 s … 0,5 s.
-  baseActionIntervalMs: 1_000,
+  // ADR-030: intervalo = T₀ / (1 + IAS), T₀ = 2 s, IAS em [−0,5; +1,0] ⇒ 4 s … 1 s (rápido só com equipamento de nível alto).
+  baseActionIntervalMs: 2_000,
   iasCapMin: -0.5,
   iasCapMax: 1.0,
   minDamage: 1,
@@ -187,8 +187,8 @@ export const combat: CombatConfig = {
   // recomeçar a caçada (após derrota, ou botão "Descansar") cura 100%.
   // Trocar para `false` reabre a política de recuperação sem tocar em código.
   healOnHuntRestart: true,
-  // ADR-021 — ≈15% do HP por procura de ≈3 s (calibrado em simulação).
-  regenOnSearchingPctPerSec: 0.05,
+  // ADR-030 — ≈3% do HP por procura de ≈3 s (era 15%): sem equipamento o desgaste acumula e pede poção.
+  regenOnSearchingPctPerSec: 0.01,
 };
 
 // ---------------------------------------------------------------------------
@@ -265,7 +265,7 @@ export const tower: TowerConfig = {
  * item só com a memória de outra zona hora vira lixo silenciosamente.
  */
 export const config: GameConfig = {
-  configVersion: 6,
+  configVersion: 7,
   account,
   team,
   xp,

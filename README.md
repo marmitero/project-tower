@@ -69,7 +69,7 @@ Chefe é uma **atividade separada da Torre**: a **equipe inteira** (até 3 heró
 | Especificação | [`Master-Prompt.md`](Master-Prompt.md) — 125 seções, fonte de autoridade |
 | Documentação | [`docs/`](docs/README.md) — 38 documentos (+ este README e o `AI_STATE.md`) |
 | Handoff | [`AI_STATE.md`](AI_STATE.md) — **leia primeiro** |
-| Testes | 674 de lógica, interface (jsdom), jornada §118 e soak + 28 de arquitetura (`npm run check`) |
+| Testes | 683 de lógica, interface (jsdom), jornada §118 e soak + 28 de arquitetura (`npm run check`) |
 | Assets | **422 sprites** do pack Nika Studio, versionados no repositório |
 | Pendências | Nenhuma crítica aberta; decisões provisórias em [`docs/PENDING_RULES.md`](docs/PENDING_RULES.md) |
 

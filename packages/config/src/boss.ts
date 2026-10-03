@@ -158,6 +158,13 @@ export interface BossConfig {
   persistHpAfter: boolean;
   /** Ao terminar, a caçada da Torre retoma sozinha (idle, §111). `false` = fica pausada. */
   resumeTowerAfter: boolean;
+  /**
+   * ADR-030 — multiplicadores de dificuldade da Torre "congelados" para os chefes: os stats do
+   * chefe saem do inimigo-base dividido pela dificuldade ATUAL da Torre e multiplicado por esta
+   * referência. Assim rebalancear a Torre (`tower.enemyHpMultiplier`/`enemyAttackMultiplier`) não
+   * mexe nos chefes; a dificuldade deles se edita aqui e em `multipliers` de cada `BossDef`.
+   */
+  towerReference: { hpMultiplier: number; attackMultiplier: number };
   bot: BossBotConfig;
 }
 
@@ -447,6 +454,7 @@ export function defaultBossConfig(): BossConfig {
     startAtFullHp: true,
     persistHpAfter: false,
     resumeTowerAfter: true,
+    towerReference: { hpMultiplier: 1.8, attackMultiplier: 0.065 },
     bot: { enabled: true, maxPotionsPerBattle: 8, maxRevivesPerBattle: 3, potionCooldownMs: 2_500 },
   };
 }
@@ -506,6 +514,10 @@ export function bossErrors(b: unknown, levelCap = Number.POSITIVE_INFINITY): str
   check(typeof c.startAtFullHp === "boolean", "boss.startAtFullHp deve ser booleano");
   check(typeof c.persistHpAfter === "boolean", "boss.persistHpAfter deve ser booleano");
   check(typeof c.resumeTowerAfter === "boolean", "boss.resumeTowerAfter deve ser booleano");
+  if (c.towerReference !== undefined) {
+    check(isNum(c.towerReference.hpMultiplier) && c.towerReference.hpMultiplier > 0, "boss.towerReference.hpMultiplier deve ser > 0");
+    check(isNum(c.towerReference.attackMultiplier) && c.towerReference.attackMultiplier > 0, "boss.towerReference.attackMultiplier deve ser > 0");
+  }
   const bot = c.bot;
   if (!bot) errors.push("boss.bot ausente");
   else {

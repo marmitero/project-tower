@@ -116,24 +116,24 @@ describe("crítico", () => {
 });
 
 describe("velocidade de ataque", () => {
-  it("intervalo base é T0 = 1000ms com IAS 0 (ADR-023)", () => {
-    expect(actionIntervalMs(0, config.combat)).toBe(1000);
+  it("intervalo base é T0 = 2000ms com IAS 0 (ADR-023, ADR-030)", () => {
+    expect(actionIntervalMs(0, config.combat)).toBe(2000);
   });
 
   it("IAS +100% dá metade do intervalo (teto)", () => {
-    expect(actionIntervalMs(1, config.combat)).toBe(500);
+    expect(actionIntervalMs(1, config.combat)).toBe(1000);
   });
 
   it("IAS -50% dobra o intervalo (piso)", () => {
-    expect(actionIntervalMs(-0.5, config.combat)).toBe(2000);
+    expect(actionIntervalMs(-0.5, config.combat)).toBe(4000);
   });
 
   it("IAS é limitado: 10.0 não gera intervalo zero", () => {
-    expect(actionIntervalMs(10, config.combat)).toBe(500);
+    expect(actionIntervalMs(10, config.combat)).toBe(1000);
   });
 
   it("IAS é limitado: -99 não gera loop infinito", () => {
-    expect(actionIntervalMs(-99, config.combat)).toBe(2000);
+    expect(actionIntervalMs(-99, config.combat)).toBe(4000);
   });
 });
 

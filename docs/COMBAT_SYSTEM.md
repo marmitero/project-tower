@@ -135,6 +135,8 @@ Dois atributos separados, com funções distintas:
 
 Limite de IAS: **−50% a +100%** → intervalo de 4000 ms a 1000 ms. Isso impede loops extremos de ataque sem remover builds de velocidade.
 
+**Ritmo (ADR-030).** Sem equipamento todo herói ataca a cada **1,5–2 s** (IAS base = `(DES−10)×0,01`, só o Arqueiro passa de 0,1). O IAS dos itens cresce com o **nível do item** (`equipment.attackSpeedLevelCurve`): equipamento de nível baixo/médio quase não acelera (Celestial 2,5× no Nv 500 ≈ 1,4 s), e só no Nv ≈ 10.000 chega ao piso de **1 s**. Os inimigos usam o mesmo T₀.
+
 **Desempate determinístico:** maior Velocidade → menor posição de equipe → menor ID. Nunca sorteado.
 
 ### 4.4 Alvos
@@ -280,7 +282,7 @@ Política vigente (ADR-020, 2026-10-03):
   e encerra a caçada (`hunt = "defeated"` — ADR-017).
 - **A chain automática NÃO cura**: a próxima batalha continua do HP do fim da
   anterior. É a tensão do andar: o jogador decide se continua ou recua.
-- **Regeneração em PROCURANDO** (ADR-021): `combat.regenOnSearchingPctPerSec` (5%/s ≈ 15% do HP por procura de ≈ 3 s) recupera o herói **vivo** entre as lutas. Não reanima herói caído. Isso refina "a chain não cura": a chain não cura *instantaneamente*, mas o idle on-curve se sustenta.
+- **Regeneração em PROCURANDO** (ADR-021): `combat.regenOnSearchingPctPerSec` (ADR-030: 1%/s ≈ 3% do HP por procura de ≈ 3 s; era 5%/s) recupera um pouco o herói **vivo** entre as lutas. Não reanima herói caído. Sem equipamento o desgaste (≈ 20–35% por luta) NÃO se sustenta sozinho: pede poção (Bot) ou equipamento.
 - **Subir de nível conserva o HP perdido** (o HP máximo ganho entra no HP atual; herói caído continua caído).
 - **Cooldowns ficam prontos** ao iniciar a próxima batalha.
 - **Buffs/debuffs/DoT expiram** no fim da batalha.

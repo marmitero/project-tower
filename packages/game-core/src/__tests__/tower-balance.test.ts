@@ -22,10 +22,12 @@ describe("duelo on-curve (herói no nível do inimigo do andar)", () => {
           const a = averageDuel({ classId: cls.id, heroLevel: level, enemyId: enemy.id, enemyLevel: level }, 4);
           const tag = `${cls.id} × ${enemy.id} (andar ${floor})`;
           expect(a.winRate, tag).toBe(1);
-          expect(a.avgDurationSec, tag).toBeGreaterThan(3);
-          expect(a.avgDurationSec, tag).toBeLessThan(30);
-          // elite pode doer mais; o resto custa no máximo ~1/5 da vida
-          expect(a.avgHpLostFraction, tag).toBeLessThan(enemy.role === "elite" ? 0.35 : 0.22);
+          // ADR-030 — luta lenta (ataque base de 2 s) mas não eterna, e que sempre custa vida
+          expect(a.avgDurationSec, tag).toBeGreaterThan(6);
+          expect(a.avgDurationSec, tag).toBeLessThan(45);
+          expect(a.avgHpLostFraction, tag).toBeGreaterThan(0.08);
+          // elite pode doer mais; o resto custa no máximo ~metade da vida
+          expect(a.avgHpLostFraction, tag).toBeLessThan(enemy.role === "elite" ? 0.75 : 0.55);
         }
       }
     });
@@ -86,7 +88,7 @@ describe("ser mais forte importa (o andar segura o jogador)", () => {
       expect(weak.avgHpLostFraction, cls.id).toBeGreaterThan(3 * onCurve.avgHpLostFraction);
       expect(weak.avgHpLostFraction, cls.id).toBeGreaterThan(0.25);
       expect(strong.winRate, cls.id).toBe(1);
-      expect(strong.avgHpLostFraction, cls.id).toBeLessThan(0.05);
+      expect(strong.avgHpLostFraction, cls.id).toBeLessThan(0.1);
     }
   });
 
@@ -109,7 +111,7 @@ describe("ser mais forte importa (o andar segura o jogador)", () => {
   });
 });
 
-describe("caçada idle sustentável (regen de PROCURANDO — ADR-021)", () => {
+describe("desgaste e sustentabilidade da caçada idle (ADR-021, reescrito no ADR-030)", () => {
   const cases: Array<[number, number]> = [
     [1, 1],
     [5, 100],
@@ -117,10 +119,20 @@ describe("caçada idle sustentável (regen de PROCURANDO — ADR-021)", () => {
     [11, 5000],
     [40, 19_500],
   ];
-  it.each(cases)("andar %i: herói 5%% acima do nível-base aguenta 150 lutas seguidas (4 classes)", (floor, minLevel) => {
+  it.each(cases)("andar %i: sem poção nem equipamento, o herói on-curve NÃO aguenta idle (cai em < 30 lutas)", (floor, minLevel) => {
     for (const cls of classes) {
-      const r = simulateHunt({ classId: cls.id, heroLevel: Math.ceil(minLevel * 1.05), floor, fights: 150, seed: 2 });
-      expect(r.defeated, cls.id).toBe(false);
+      const r = simulateHunt({ classId: cls.id, heroLevel: minLevel, floor, fights: 150, seed: 2 });
+      expect(r.defeated, cls.id).toBe(true);
+      expect(r.fights, cls.id).toBeLessThan(30);
+      expect(r.fights, cls.id).toBeGreaterThan(1);
+    }
+  });
+
+  it("com equipamento celestial o herói on-curve aguenta 150 lutas (equipamento é o remédio)", () => {
+    for (const cls of classes) {
+      const gear = rollGearSet(cls.id, 500, 3, { rarity: "celestial", x: 2.5 });
+      const lost = averageDuel({ classId: cls.id, heroLevel: 500, enemyId: "orc", enemyLevel: 500, gear }, 3).avgHpLostFraction;
+      expect(lost, cls.id).toBeLessThan(0.03);
     }
   });
 
@@ -132,20 +144,14 @@ describe("caçada idle sustentável (regen de PROCURANDO — ADR-021)", () => {
     }
   });
 
-  it("sem regen, o mesmo herói on-curve acabaria derrotado (a regen é necessária)", () => {
-    const prev = config.combat.regenOnSearchingPctPerSec;
-    config.combat.regenOnSearchingPctPerSec = 0;
-    try {
-      const r = simulateHunt({ classId: "ranger", heroLevel: 2625, floor: 10, fights: 150, seed: 2 });
-      expect(r.defeated).toBe(true);
-    } finally {
-      config.combat.regenOnSearchingPctPerSec = prev;
-    }
+  it("a regen de PROCURANDO existe mas é pequena (≤ 2%/s): não apaga o desgaste", () => {
+    expect(config.combat.regenOnSearchingPctPerSec).toBeGreaterThan(0);
+    expect(config.combat.regenOnSearchingPctPerSec).toBeLessThanOrEqual(0.02);
   });
 });
 
 describe("pacing do Rei (P-009 — XP moderado e desacelerando)", () => {
-  const pacing = towerPacing(15); // ciclo médio luta+procura medido: ≈15 s
+  const pacing = towerPacing(25); // ciclo médio luta+procura+premiação (ADR-030): ≈25 s
   const total = pacing.at(-1)!.cumulativeHours;
 
   it("andar 1 é rápido (≤ 1 h) e o jogo inteiro é demorado, mas finito (1.000–2.000 h)", () => {

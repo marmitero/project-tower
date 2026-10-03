@@ -69,6 +69,14 @@ export function isOrphan(item: Equipment): boolean {
 const REFERENCE_STATS = ["hp", "attack", "specialAttack", "defense", "specialDefense"] as const;
 type ReferenceStat = (typeof REFERENCE_STATS)[number];
 
+/** ADR-030 — fração do IAS "cheio" que um item de `level` entrega (curva em `equipment.attackSpeedLevelCurve`). */
+export function attackSpeedLevelFactor(level: number): number {
+  const cv = config.equipment.attackSpeedLevelCurve;
+  if (!cv) return 1;
+  const t = Math.min(1, Math.pow(Math.max(1, level) / cv.fullAtLevel, cv.exponent));
+  return cv.minFactor + (1 - cv.minFactor) * t;
+}
+
 /** Valor de UMA linha do item. */
 export function lineValue(item: Equipment, stat: StatId): number {
   const template = templateById(item.itemTypeId);
@@ -78,7 +86,8 @@ export function lineValue(item: Equipment, stat: StatId): number {
   const unit = config.equipment.unit[stat];
   const rarity = config.equipment.rarity[item.rarity].multiplier;
   const base = unit.mode === "ofReference" ? referenceStat(stat as ReferenceStat, item.level) * unit.value : unit.value;
-  const raw = base * line.weight * rarity * x;
+  const levelFactor = stat === "attackSpeed" ? attackSpeedLevelFactor(item.level) : 1;
+  const raw = base * line.weight * rarity * x * levelFactor;
   const isFraction = stat === "critChance" || stat === "attackSpeed";
   return isFraction ? Math.round(raw * 10_000) / 10_000 : stat === "speed" ? Math.round(raw * 10) / 10 : Math.max(1, Math.floor(raw));
 }

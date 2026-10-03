@@ -198,6 +198,12 @@ export interface EquipmentConfig {
   };
   weaponTraits: WeaponTraitDef[];
   features: FeatureDef[];
+  /**
+   * ADR-030 — a Velocidade de Ataque (IAS) de um item cresce com o NÍVEL do item: com T₀ de 2 s,
+   * só equipamento de nível alto leva o ataque perto de 1 s. `fator = minFactor + (1 − minFactor)
+   * × min(1, (nível / fullAtLevel)^exponent)`. Os demais atributos não usam esta curva.
+   */
+  attackSpeedLevelCurve: { fullAtLevel: number; exponent: number; minFactor: number };
   /** Tetos para a SOMA de efeitos de vários itens (um balanço contra empilhamento). */
   effectCaps: {
     critChance: number;
@@ -330,7 +336,7 @@ export function defaultUnits(): Record<StatId, StatUnit> {
     defense: { mode: "ofReference", value: 0.06 },
     specialDefense: { mode: "ofReference", value: 0.06 },
     critChance: { mode: "flat", value: 0.012 },
-    attackSpeed: { mode: "flat", value: 0.02 },
+    attackSpeed: { mode: "flat", value: 0.035 },
     speed: { mode: "flat", value: 1.0 },
   };
 }
@@ -431,6 +437,7 @@ export function defaultEquipmentConfig(): EquipmentConfig {
     },
     weaponTraits: defaultWeaponTraits(),
     features: defaultFeatures(),
+    attackSpeedLevelCurve: { fullAtLevel: 10_000, exponent: 0.35, minFactor: 0.05 },
     effectCaps: {
       critChance: 0.4,
       attackSpeed: 0.6,
@@ -681,6 +688,12 @@ export function equipmentErrors(eq: unknown, validAssetIds?: ReadonlySet<string>
         check(["hp", "attack", "specialAttack", "defense", "specialDefense"].includes(s), `equipment.unit.${s}: "ofReference" só vale para hp/ataques/defesas`);
       }
     }
+  }
+  const cv = c.attackSpeedLevelCurve;
+  if (cv !== undefined) {
+    check(isNum(cv.fullAtLevel) && cv.fullAtLevel >= 1, "equipment.attackSpeedLevelCurve.fullAtLevel deve ser >= 1");
+    check(isNum(cv.exponent) && cv.exponent > 0 && cv.exponent <= 2, "equipment.attackSpeedLevelCurve.exponent deve estar em (0, 2]");
+    check(isNum(cv.minFactor) && cv.minFactor >= 0 && cv.minFactor <= 1, "equipment.attackSpeedLevelCurve.minFactor deve estar em [0, 1]");
   }
   check(isNum(c.requirement?.levelRatio) && c.requirement.levelRatio >= 0 && c.requirement.levelRatio <= 1, "equipment.requirement.levelRatio deve estar em [0, 1]");
   check(isNum(c.affinityBonus) && c.affinityBonus >= 0 && c.affinityBonus <= 1, "equipment.affinityBonus deve estar em [0, 1]");

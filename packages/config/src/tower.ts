@@ -203,7 +203,7 @@ export function defaultTowerRewards(): TowerRewardsConfig {
  * mesma curva (pools continuam separados).
  */
 export function defaultXpCurve(): CurveDef {
-  return { kind: "power", base: 20, exponent: 1.35, offset: 30 };
+  return { kind: "power", base: 14, exponent: 1.35, offset: 30 };
 }
 
 /** Multiplicadores globais de dificuldade — calibrados por `balance.ts` (ver ADR-021). */
@@ -213,5 +213,5 @@ export function defaultTowerDifficulty(): { enemyStatMultiplier: number; enemyHp
   // Ataque dos inimigos é baixo POR CONSTRUÇÃO: na Torre idle o herói precisa
   // sobreviver a centenas de lutas seguidas, e o piso da dificuldade vem do
   // nível, não de um golpe que tira metade da vida.
-  return { enemyStatMultiplier: 1, enemyHpMultiplier: 2.5, enemyAttackMultiplier: 0.05 };
+  return { enemyStatMultiplier: 1, enemyHpMultiplier: 2.0, enemyAttackMultiplier: 0.18 };
 }

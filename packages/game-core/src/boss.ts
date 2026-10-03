@@ -188,11 +188,15 @@ export function bossStats(def: BossDef): CombatStats {
   });
   const base = enemyStatsAtLevel(template, def.level);
   const m = def.multipliers;
+  // ADR-030: o chefe não herda a dificuldade ATUAL da Torre; usa a referência congelada do boss.
+  const ref = config.boss.towerReference;
+  const hpK = ref ? ref.hpMultiplier / config.tower.enemyHpMultiplier : 1;
+  const atkK = ref ? ref.attackMultiplier / config.tower.enemyAttackMultiplier : 1;
   return {
     ...base,
-    hp: Math.max(1, Math.floor(base.hp * m.hp)),
-    attack: Math.floor(base.attack * m.attack),
-    specialAttack: Math.floor(base.specialAttack * m.attack),
+    hp: Math.max(1, Math.floor(base.hp * hpK * m.hp)),
+    attack: Math.floor(base.attack * atkK * m.attack),
+    specialAttack: Math.floor(base.specialAttack * atkK * m.attack),
     defense: Math.floor(base.defense * m.defense),
     specialDefense: Math.floor(base.specialDefense * m.defense),
     speed: Math.max(1, Math.floor(base.speed * m.speed)),

@@ -310,7 +310,7 @@ Por isso o jogador **escolhe o andar** (§6): um herói atrasado treina num anda
 
 ### 7.4 Regeneração em PROCURANDO
 
-`combat.regenOnSearchingPctPerSec` (0,05 → ≈ 15% do HP por procura de ≈ 3 s). Sem a regen, um herói on-curve perderia ≈ 12% por luta e todo idle terminaria em derrota (teste prova). A regen **não** reanima herói caído; `Descansar`/`Recomeçar` seguem curando 100% (ADR-020).
+`combat.regenOnSearchingPctPerSec` (ADR-021 calibrou 0,05 → ≈ 15% do HP por procura; **ADR-030 reduziu para 0,01 → ≈ 3%**, para o desgaste pedir poção/equipamento). Na época, sem a regen, um herói on-curve perderia ≈ 12% por luta e todo idle terminaria em derrota (teste prova). A regen **não** reanima herói caído; `Descansar`/`Recomeçar` seguem curando 100% (ADR-020).
 
 ---
 

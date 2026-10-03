@@ -1,6 +1,6 @@
 # AI_STATE — handoff vivo do Tower Idle Adventure
 
-**Última atualização:** 2026-10-03 (pós-Fase 13: correção da tela preta e arena de batalha — ADR-029)
+**Última atualização:** 2026-10-03 (pós-Fase 13: rebalanceamento de ritmo e desafio do combate — ADR-030)
 **Estado:** **FASE 1–13 concluídas — MVP LOCAL JOGÁVEL (7 de 7 etapas)** (ADR-028). Próximo: **FASE 14 — Painel Admin** (pós-MVP, regra Admin-Ready) e a **Fase Online**. Como jogar no Windows: [`docs/PLAY_LOCAL.md`](docs/PLAY_LOCAL.md) (`JOGAR.bat`).
 **Preview:** servidor estático autocontido (ADR-018) — `node scripts/serve-preview.mjs` (porta 5173). Se o ambiente resetar, subir UMA linha; não depende de `node_modules`.
 **Repositório:** `marmitero/project-tower`
@@ -467,6 +467,14 @@ editar `config/src/heroes.ts`.
 - **Calibração por tamanho de equipe** (`BALANCE_REPORT.md`, seção "Chefes da Arena"): chefe 1 vence com 1 herói; chefe 2 com 2; chefes 3–8 exigem 3 heróis no nível do chefe. Nível do chefe ≈ nível do Rei exigido × f(n) (f = 1 / 0,74 / 0,63).
 - Testes: `engine/boss-battle` (16), `game-core/boss` (33), `config/boss-content` (12), assets dos chefes (integração), migração de save v5→v6. Suíte completa verde.
 - **Cuidados:** a tentativa é consumida ao ENTRAR; `GameState.clock()` em toda marca de tempo; recalibrar chefes se mexer em IAS/equipamento/XP (`npm run report:balance -- --md`).
+
+### Pós-Fase 13 — Rebalanceamento: ritmo e desafio do combate (ADR-030, 2026-10-03)
+
+- **Pedido:** batalhas mais difíceis (sem equipamento perde mais vida e usa mais poções), mais lentas, ataque ≈ 2 s acelerado por equipamento, rápido só em nível alto.
+- **Agora:** `combat.baseActionIntervalMs` 2000; IAS base `(DES−10)×0,01`; IAS de item × `equipment.attackSpeedLevelCurve` (cresce com o nível do item; 1 s só ≈ Nv 10.000); `tower.enemyHpMultiplier` 2,0 / `enemyAttackMultiplier` 0,18; `regenOnSearchingPctPerSec` 0,01; curva de XP `14·(N+30)^1,35` (compensa o ciclo ≈ 1,7× mais longo); chefes passam a usar `boss.towerReference` (não herdam a dificuldade da Torre). `configVersion` 7.
+- **Medido (`npm run -s report:balance`):** luta on-curve sem equipamento ≈ 14–22 s e −21…−36% de HP; sem poção o herói cai a cada ≈ 5–6 lutas no andar 1; com compra de poção básica, 0 derrotas e ≈ 0,1–0,2 poção/luta; Celestial 2,5× continua ≈ 0%. Chefes: 3 heróis vencem com −50…−65% de HP (como antes), 1 e 2 perdem.
+- **Testes:** `game-core/combat-pace` (novo), `tower-balance` (reescrito o bloco de sustentabilidade), `engine/formula`.
+- **Cuidados:** todos os botões estão em config (ver ADR-030). Mexer em T₀/IAS/dificuldade exige regenerar `docs/BALANCE_REPORT.md` e conferir os chefes; o ciclo de pacing assumido é 25 s.
 
 ### Pós-Fase 13 — Tela preta da batalha e arena (ADR-029, 2026-10-03)
 
