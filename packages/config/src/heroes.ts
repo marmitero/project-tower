@@ -55,6 +55,11 @@ export interface HeroIdentityDef {
     /** Flavor da obtenção futura — SEMPRE fonte que o §12 permite. */
     hint: string;
   };
+  /**
+   * Arte PRÓPRIA da identidade (ADR-032): retrato e atlas `ita-atlas-v1`. Ausente ⇒ o herói usa
+   * a arte da classe (`catalog.ts`). É o que permite 5 heróis visualmente distintos por classe.
+   */
+  assets?: { portrait?: string; atlas?: string };
 }
 
 export const HEROES: HeroIdentityDef[] = [

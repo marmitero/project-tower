@@ -23,6 +23,7 @@ import { statSync } from "node:fs";
 import { join, relative, extname, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { REQUIRED, IMAGE_EXT, AUDIO_EXT } from "./build-assets.mjs";
+import { auditGenerated } from "../tools/art/audit.mjs";
 
 const ROOT = join(fileURLToPath(new URL(".", import.meta.url)), "..");
 const STRICT = process.argv.includes("--strict");
@@ -154,6 +155,15 @@ async function main() {
     console.warn("[assets] sem extraction-report.json — rode `node scripts/extract-ui.mjs`.");
     if (STRICT) process.exit(1);
   }
+
+  // Arte gerada pela fase de estilização (ADR-032): formato, orçamentos e contador de gerações.
+  const art = await auditGenerated(join(ROOT, "assets", "generated"));
+  if (art.problems.length > 0) {
+    console.error("[assets] FALHA — arte gerada fora da especificação (docs/ART_PIPELINE.md):");
+    for (const p of art.problems) console.error(`  - ${p}`);
+    process.exit(1);
+  }
+  console.log(`[assets] arte gerada: ${art.stats.atlases} atlas, ${art.stats.arenaKits} kits de arena, ${(art.stats.artBytes / 1024).toFixed(0)} KB (orçamento 25 MB)`);
 
   if (problems.length > 0) {
     console.error("[assets] FALHA — placeholders proibidos em código (§62):");

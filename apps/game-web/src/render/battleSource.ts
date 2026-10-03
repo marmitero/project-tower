@@ -12,7 +12,7 @@
  * que mudou. Não existe ordem de inicialização nem referência a vigiar.
  */
 import type { BattleState } from "@tia/contracts";
-import { classes } from "@tia/config";
+import { classes, heroSpriteRecord } from "@tia/config";
 import { floorDef, type GameState } from "@tia/game-core";
 import { DEFAULT_THEME_ID } from "./arenaThemes";
 
@@ -20,7 +20,7 @@ import { DEFAULT_THEME_ID } from "./arenaThemes";
 export interface IdleActor {
   id: string;
   name: string;
-  /** IDs de manifesto das folhas (`idle`, `walk`, `attack`, `hurt`, `death`…). */
+  /** IDs de manifesto: folhas (`idle`, `walk`, `attack`, `hurt`, `death`…) e, se houver, `atlas` (ita-atlas-v1). */
   sprites: Record<string, string>;
 }
 
@@ -55,7 +55,7 @@ export function buildBattleView(state: GameState): BattleView {
     walking: !battle && data.hunt?.kind === "searching",
     hero:
       hero && cls
-        ? { id: hero.id, name: hero.name, sprites: cls.assets.sheets as unknown as Record<string, string> }
+        ? { id: hero.id, name: hero.name, sprites: heroSpriteRecord(hero) ?? {} }
         : null,
     theme,
   };

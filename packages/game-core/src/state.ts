@@ -21,7 +21,7 @@ import type {
   SaveData,
 } from "@tia/contracts";
 import type { AccountId, EquipmentId, HeroId } from "@tia/contracts";
-import { heroById as heroIdentityById, classes, config, skills, type BotSettings, type ClassGrowth, type EquipSlotId, type Rarity } from "@tia/config";
+import { heroById as heroIdentityById, heroSpriteRecord, classes, config, skills, type BotSettings, type ClassGrowth, type EquipSlotId, type Rarity } from "@tia/config";
 import { RngHub, hashString, step, healCombatant, reviveCombatant, type Prng, type SkillDef as EngineSkillDef } from "@tia/engine";
 import type { DebugContext } from "./debug.js";
 import { createKing, createTeam, createWallet, createHero, activeTeamSize, changeKingSkin, heroGrowth } from "./creation.js";
@@ -225,6 +225,7 @@ export class GameState {
       createHero({
         accountId: params.accountId,
         classId: identity.classId as Hero["classId"],
+        identityId: identity.id,
         name: identity.name,
         rarity: identity.rarity,
         now: params.now,
@@ -448,9 +449,7 @@ export class GameState {
       // ter tensão. Recuperação é ato do jogador (restartHunt/restActiveHero).
       heroStartHp: hero.currentHp,
       heroSkills: engineSkillsFor(hero.classId),
-      heroSprites: classes.find((c) => c.id === hero.classId)?.assets.sheets as unknown as
-        | Record<string, string>
-        | undefined,
+      heroSprites: heroSpriteRecord(hero),
       // Físico × mágico importa (ADR-021): arcanist/shadowcaller batem em Def. Esp.
       heroBasicAttackType: classes.find((c) => c.id === hero.classId)?.damageType === "magic" ? "magic" : "physical",
     });
@@ -1072,7 +1071,7 @@ export class GameState {
         stats,
         effects: heroCombatEffects(hero, this.state.inventory),
         skills: engineSkillsFor(hero.classId),
-        sprites: cls?.assets.sheets as unknown as Record<string, string> | undefined,
+        sprites: heroSpriteRecord(hero),
         basicAttackType: (cls?.damageType === "magic" ? "magic" : "physical") as "physical" | "magic",
         startHp: full ? stats.hp : hero.currentHp,
       };

@@ -70,8 +70,15 @@ export function charSheets(name: string): CharacterSheets {
 export interface CharacterAssets {
   /** `portraits/*` — nem todo inimigo tem; heróis têm sempre. */
   portrait?: string;
-  /** `characters/<id>/*` — corpo animado. */
+  /** `characters/<id>/*` — corpo animado (formato legado do pack, 4 direções). */
   sheets: CharacterSheets;
+  /**
+   * Atlas compacto `ita-atlas-v1` (docs/ART_PIPELINE.md §3): 1 PNG voltado à direita com
+   * idle/walk/attack/hurt/death; a esquerda é espelhada em runtime. Quando presente e
+   * carregável, TEM PRIORIDADE sobre `sheets`; `sheets` vira o fallback visual (o arquétipo
+   * do pack que serviu de atlas-guia).
+   */
+  atlas?: string;
 }
 
 /** Herói SEMPRE tem retrato (§4 — a HUD mostra o busto). */

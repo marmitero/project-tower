@@ -180,6 +180,8 @@ export interface Hero {
   id: HeroId;
   ownerAccountId: string;
   classId: ClassId;
+  /** Identidade (`HEROES` do config) — dona da arte própria (ADR-032). Ausente em saves antigos e em heróis adquiridos por rolagem. */
+  identityId?: string;
   name: string;
   spriteAssetId: string;
   portraitAssetId: string;

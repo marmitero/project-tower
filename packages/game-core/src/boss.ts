@@ -30,7 +30,7 @@ import {
   type CombatantSeed,
   type SkillDef as EngineSkillDef,
 } from "@tia/engine";
-import { buildEnemy } from "@tia/config";
+import { buildEnemy, spriteRecord } from "@tia/config";
 import { newBattleId } from "./ids.js";
 import { rollEquipmentOf } from "./loot.js";
 import { enemyStatsAtLevel, towerRewardsForEnemyLevel } from "./tower.js";
@@ -248,7 +248,7 @@ export function bossSeed(def: BossDef): CombatantSeed {
     stats: bossStats(def),
     enemyId: def.id,
     basicAttackType: def.damageType,
-    sprites: def.assets.sheets as unknown as Record<string, string>,
+    sprites: spriteRecord(def.assets),
     ...(def.tint !== null ? { tint: def.tint } : {}),
     scale: def.scale,
     isBoss: true,

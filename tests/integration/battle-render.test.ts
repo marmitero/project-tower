@@ -22,7 +22,7 @@ import { HEROES, classes, config, enemies } from "@tia/config";
 import { GameState, createHero } from "@tia/game-core";
 import { asAccountId } from "@tia/contracts";
 import type { BattleEvent, Hero } from "@tia/contracts";
-import { ARENA_THEMES, DEFAULT_THEME_ID, arenaThemeFor, themeAssetIds } from "../../apps/game-web/src/render/arenaThemes.js";
+import { allArenaThemes, DEFAULT_THEME_ID, arenaThemeFor, themeAssetIds } from "../../apps/game-web/src/render/arenaThemes.js";
 import { ARENA_LAYOUT, computeArenaGeometry, hash01, pickFloorTile, pickWallTile } from "../../apps/game-web/src/render/arenaLayout.js";
 import { VFX_ATLAS, VFX_KINDS, vfxScale } from "../../apps/game-web/src/render/vfxAtlas.js";
 import { damageVfx, planBatch } from "../../apps/game-web/src/render/BattleRenderer.js";
@@ -52,14 +52,15 @@ function pngSize(path: string): { w: number; h: number } {
 describe("arena — temas e assets", () => {
   it("todo tema de andar da Torre tem arena (e o de chefe existe)", () => {
     const used = new Set(config.tower.floors.map((f) => f.visual.theme));
-    for (const t of used) expect(ARENA_THEMES[t], `tema de andar sem arena: ${t}`).toBeDefined();
-    expect(ARENA_THEMES.boss).toBeDefined();
-    expect(ARENA_THEMES[DEFAULT_THEME_ID]).toBeDefined();
+    const ids = new Set(allArenaThemes().map((k) => k.id));
+    for (const t of used) expect(ids.has(t), `tema de andar sem arena: ${t}`).toBe(true);
+    expect(ids.has("boss")).toBe(true);
+    expect(ids.has(DEFAULT_THEME_ID)).toBe(true);
     expect(arenaThemeFor("tema-que-nao-existe").id).toBe(DEFAULT_THEME_ID);
   });
 
   it("todo asset de todo tema existe no manifesto e em disco", () => {
-    for (const theme of Object.values(ARENA_THEMES)) {
+    for (const theme of allArenaThemes()) {
       expect(theme.wall.length).toBeGreaterThan(0);
       expect(theme.floor.length).toBeGreaterThan(0);
       for (const id of themeAssetIds(theme)) {
@@ -70,7 +71,7 @@ describe("arena — temas e assets", () => {
   });
 
   it("a escolha de ladrilhos é determinística e respeita a cadência de tochas", () => {
-    const t = ARENA_THEMES.masmorra!;
+    const t = arenaThemeFor("masmorra");
     expect(hash01(7, 3)).toBe(hash01(7, 3));
     expect(hash01(7, 3)).not.toBe(hash01(8, 3));
     for (let i = -8; i < 40; i += 1) {

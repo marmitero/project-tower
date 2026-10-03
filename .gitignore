@@ -60,3 +60,7 @@ apps/*/public/assets/*
 # ...exceto o manifesto versionado que mapeia ID -> caminho
 !apps/*/public/assets/manifest.json
 apps/game-web/preview-debug/
+
+# Fase de arte (ADR-032): saídas brutas dos geradores e folhas de revisão — nunca versionadas
+assets/_incoming/
+assets/_review/

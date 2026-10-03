@@ -140,7 +140,7 @@ describe("ContentPack v4 — Boss", () => {
     delete v3.boss;
     expect(validateContentPack(v3)).toEqual([]);
     const migrated = migrateContentPack(v3) as ContentPack;
-    expect(migrated.schemaVersion).toBe(4);
+    expect(migrated.schemaVersion).toBe(5);
     expect(migrated.boss).toEqual(defaultContentPack().boss);
     expect(() => applyContentPack(v3)).not.toThrow();
   });

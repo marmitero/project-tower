@@ -98,6 +98,8 @@ export function activeTeamSize(team: Team): number {
 export interface CreateHeroParams {
   accountId: AccountId;
   classId: ClassId;
+  /** Identidade do herói (arte própria, ADR-032). */
+  identityId?: string;
   name: string;
   /** Padrão: a raridade do herói inicial (`heroAcquisition.starterRarity`, adendo ADR-024). */
   rarity?: Hero["rarity"];
@@ -130,6 +132,7 @@ export function createHero(params: CreateHeroParams): Hero {
     id: newHeroId(params.accountId, params.index),
     ownerAccountId: params.accountId,
     classId: params.classId,
+    ...(params.identityId ? { identityId: params.identityId } : {}),
     name: params.name,
     spriteAssetId: cls.assets.sheets.idle,
     portraitAssetId: cls.assets.portrait,

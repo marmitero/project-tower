@@ -15,7 +15,7 @@
  */
 
 import type { CombatStats, Hero, King, RewardBundle, TowerFloor } from "@tia/contracts";
-import { config, enemies as ENEMY_DEFS, evalCurve, type EnemyDef, type FloorDef, type GearEffect } from "@tia/config";
+import { config, spriteRecord, enemies as ENEMY_DEFS, evalCurve, type EnemyDef, type FloorDef, type GearEffect } from "@tia/config";
 import type { CombatantSeed, SkillDef as EngineSkillDef } from "@tia/engine";
 import { createBattle, Prng, type BattleState } from "@tia/engine";
 import { newBattleId } from "./ids.js";
@@ -232,7 +232,7 @@ export function startTowerBattle(params: StartTowerBattleParams): BattleState {
     stats: enemyStatsAtLevel(def, info.enemyLevel),
     enemyId: def.id,
     basicAttackType: def.damageType,
-    sprites: def.assets.sheets as unknown as Record<string, string>,
+    sprites: spriteRecord(def.assets),
     // Tintura do andar (apresentação, §64): o renderer decide como aplicar.
     ...(tint !== null ? { tint } : {}),
   };

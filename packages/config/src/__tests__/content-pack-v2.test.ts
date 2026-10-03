@@ -23,7 +23,7 @@ const fresh = (): ContentPack => structuredClone(defaultContentPack());
 
 describe("ContentPack v2", () => {
   it("o schema é v4 (Boss, além de Market/Bot/offline) e o pack padrão valida", () => {
-    expect(CONTENT_PACK_SCHEMA_VERSION).toBe(4);
+    expect(CONTENT_PACK_SCHEMA_VERSION).toBe(5);
     expect(validateContentPack(defaultContentPack())).toEqual([]);
   });
 
@@ -39,7 +39,7 @@ describe("ContentPack v2", () => {
     for (const k of ["equipment", "loot", "inventory", "heroAcquisition"]) delete v1[k];
     expect(validateContentPack(v1)).toEqual([]);
     const migrated = migrateContentPack(v1) as ContentPack;
-    expect(migrated.schemaVersion).toBe(4);
+    expect(migrated.schemaVersion).toBe(5);
     expect(migrated.equipment).toEqual(defaultContentPack().equipment);
     expect(() => applyContentPack(v1)).not.toThrow();
   });

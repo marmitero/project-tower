@@ -15,7 +15,7 @@
  *     `config.xp.*`), então todo `import { enemies }` continua válido.
  *  5. Versionado (`schemaVersion`): pack antigo é migrado, nunca reinterpretado.
  *
- * Escopo atual (schema v4 = v3 + Bosses — FASE 12, ADR-027; v3 = v2 + Market, Bot/Hub e Offline — FASE 10+11, ADR-025/026): inimigos, andares, recompensas, curvas de XP e dificuldade
+ * Escopo atual (schema v5 = v4 + kits de arena — ADR-032; v4 = v3 + Bosses — FASE 12, ADR-027; v3 = v2 + Market, Bot/Hub e Offline — FASE 10+11, ADR-025/026): inimigos, andares, recompensas, curvas de XP e dificuldade
  * (v1) + equipamento (slots, templates, traços de arma, características, raridade, notas,
  * materiais, venda, requisito, tetos de efeito), drop (chance, tabela de raridade, forma do X),
  * mochila e aquisição de heróis (v2, FASE 9). Heróis/classes/skills/bosses entram nas fases
@@ -42,9 +42,10 @@ import { bossErrors, defaultBossConfig, type BossConfig } from "./boss.js";
 import { botErrors, defaultBotConfig, defaultMarketConfig, defaultOfflineConfig, marketErrors, offlineErrors, type BotConfig, type MarketConfig, type OfflineConfig } from "./market.js";
 import type { InventoryConfig, LootConfig } from "./types.js";
 import { CHARACTER_SHEET_KEYS } from "./catalog.js";
+import { arenaKitErrors, arenaKits, defaultArenaKits, type ArenaKitDef } from "./arenas.js";
 import { LEVEL_CAP, buildDefaultFloors, defaultTowerDifficulty, defaultTowerRewards, defaultXpCurve, type FloorDef, type TowerRewardsConfig } from "./tower.js";
 
-export const CONTENT_PACK_SCHEMA_VERSION = 4;
+export const CONTENT_PACK_SCHEMA_VERSION = 5;
 
 export interface ContentPack {
   schemaVersion: typeof CONTENT_PACK_SCHEMA_VERSION;
@@ -78,6 +79,8 @@ export interface ContentPack {
   offline: OfflineConfig;
   /** v4 — Bosses da Arena: chefes, fases, tentativas e recompensas (ADR-027). */
   boss: BossConfig;
+  /** v5 — kits de arena por andar (ADR-032). */
+  arenas: ArenaKitDef[];
 }
 
 export type PackLoot = Pick<LootConfig, "equipmentChance" | "rarity"> & { x: Omit<LootConfig["x"], "independentPerAttribute"> };
@@ -114,6 +117,7 @@ export function defaultContentPack(): ContentPack {
     ...defaultV2Blocks(),
     ...defaultV3Blocks(),
     ...defaultV4Blocks(),
+    ...defaultV5Blocks(),
   };
 }
 
@@ -125,6 +129,11 @@ function defaultV3Blocks(): Pick<ContentPack, "market" | "bot" | "offline"> {
 /** Blocos novos do schema v4 com os valores de fábrica. */
 function defaultV4Blocks(): Pick<ContentPack, "boss"> {
   return { boss: defaultBossConfig() };
+}
+
+/** Blocos novos do schema v5 com os valores de fábrica. */
+function defaultV5Blocks(): Pick<ContentPack, "arenas"> {
+  return { arenas: defaultArenaKits() };
 }
 
 /** Blocos novos do schema v2 com os valores de fábrica. */
@@ -175,6 +184,12 @@ export function migrateContentPack(input: unknown): unknown {
     for (const [k, v] of Object.entries(d)) if (pack[k] === undefined) pack[k] = v;
     pack.schemaVersion = 4;
   }
+  // v4 → v5: kits de arena (ADR-032) — o que antes era a tabela `ARENA_THEMES` do render.
+  if (pack.schemaVersion === 4) {
+    const d = defaultV5Blocks();
+    for (const [k, v] of Object.entries(d)) if (pack[k] === undefined) pack[k] = v;
+    pack.schemaVersion = 5;
+  }
   return pack;
 }
 
@@ -212,6 +227,7 @@ export function exportContentPack(name = "exportado"): ContentPack {
     bot: config.bot,
     offline: config.offline,
     boss: config.boss,
+    arenas: arenaKits,
   } satisfies ContentPack);
 }
 
@@ -250,6 +266,11 @@ export function validateContentPack(raw: unknown): string[] {
   errors.push(...botErrors(pack.bot, pack.market));
   errors.push(...offlineErrors(pack.offline));
   errors.push(...bossErrors(pack.boss, cap > 0 ? cap : undefined));
+  errors.push(
+    ...arenaKitErrors(pack.arenas, {
+      floorThemes: Array.isArray(pack.tower?.floors) ? pack.tower.floors.map((f) => f?.visual?.theme).filter((t): t is string => typeof t === "string") : [],
+    }),
+  );
   const loot = pack.loot;
   if (!loot) errors.push("loot ausente");
   else {
@@ -297,6 +318,7 @@ export function validateContentPack(raw: unknown): string[] {
       for (const key of CHARACTER_SHEET_KEYS) {
         check(typeof e.assets?.sheets?.[key] === "string", `${at}: sprite ${key} ausente`);
       }
+      check(e.assets?.atlas === undefined || (typeof e.assets.atlas === "string" && e.assets.atlas.length > 0), `${at}: assets.atlas deve ser um id de manifesto (ou ausente)`);
     }
   }
 
@@ -385,6 +407,8 @@ export function applyContentPack(raw: unknown): void {
   config.boss.bosses.splice(0, config.boss.bosses.length, ...pack.boss.bosses);
   const { bosses: _bosses, ...bossRules } = pack.boss;
   Object.assign(config.boss, bossRules);
+  // v5 — kits de arena substituídos EM LUGAR.
+  arenaKits.splice(0, arenaKits.length, ...pack.arenas);
 }
 
 /** Volta ao conteúdo de fábrica (útil em testes e no botão "restaurar padrão" do painel). */

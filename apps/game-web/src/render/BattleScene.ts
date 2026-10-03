@@ -26,6 +26,8 @@ import { arenaThemeFor, DEFAULT_THEME_ID, themeAssetIds } from "./arenaThemes";
 import { battleFeedbackQueue, planBatch, type FeedbackPlan, type VfxRequest } from "./BattleRenderer";
 import { EMPTY_VIEW, type BattleViewSource, type IdleActor } from "./battleSource";
 import { playSfx } from "./sfx";
+import { TextureBudget } from "./textureBudget";
+import { animKeyFor, FRAMES_PER_ANIM, resolveSpriteSource, SHEET_NAMES, sourceUrls, type SheetName, type SpriteSource } from "./spriteSource";
 import { VFX_ATLAS, VFX_KINDS, type VfxKind, vfxFrameName, vfxScale } from "./vfxAtlas";
 
 export interface BattleSceneData {
@@ -80,16 +82,11 @@ export function computeLayout(
   return { ally, allies: [ally], enemy: { x: width * 0.7, y: height * 0.76 } };
 }
 
-type SheetName = "idle" | "walk" | "attack" | "hurt" | "death";
 /** Sem estas a luta não pode ser desenhada; `walk` é opcional (cai no `idle`). */
 const REQUIRED_SHEETS: readonly SheetName[] = ["idle", "attack", "hurt", "death"];
-const ALL_SHEETS: readonly SheetName[] = ["idle", "walk", "attack", "hurt", "death"];
 
 const SHEET_FRAMES = { frameWidth: 256, frameHeight: 256 };
-/** rows do sheet Nika (README_IMPORT): 0=down, 1=up, 2=left, 3=right. */
-const ROW_LEFT = 2;
-const ROW_RIGHT = 3;
-const FRAME_COUNT = 4;
+const FRAME_COUNT = FRAMES_PER_ANIM;
 
 type AnimKeys = Partial<Record<SheetName, string>>;
 
@@ -107,6 +104,7 @@ interface FighterView {
   /** Ainda caminhando até o ponto de luta (nome/barra aparecem ao chegar). */
   entering: boolean;
   anims?: AnimKeys;
+  src?: SpriteSource;
 }
 
 interface Walker {
@@ -114,6 +112,7 @@ interface Walker {
   sprite: Phaser.GameObjects.Sprite | null;
   shadow: Phaser.GameObjects.Ellipse | null;
   anims?: AnimKeys;
+  src?: SpriteSource;
   state: "idle" | "walk" | null;
 }
 
@@ -136,6 +135,9 @@ export class BattleScene extends Phaser.Scene {
 
   private readonly loadingKeys = new Set<string>();
   private readonly failedKeys = new Set<string>();
+  /** Carga por andar (ADR-032): orçamento das texturas de personagem + anims criadas por textura. */
+  private readonly budget = new TextureBudget();
+  private readonly animsByTexture = new Map<string, Set<string>>();
   private readonly waiters: Array<{ keys: string[]; cb: () => void }> = [];
   private vfxReady = false;
 
@@ -376,20 +378,22 @@ export class BattleScene extends Phaser.Scene {
   private createWalker(hero: IdleActor): void {
     const walker: Walker = { heroId: hero.id, sprite: null, shadow: null, state: null };
     this.walker = walker;
-    const urls = this.sheetUrls(hero.sprites, ["idle", "walk"]);
-    if (!urls.idle) {
+    if (!resolveSpriteSource(hero.sprites, "ally", (id) => assetUrl(id)).urls.idle) {
       this.setNotice("Arte do herói ausente (idle).");
       return;
     }
-    this.ensure(this.sheetItems(urls), () => {
-      if (this.walker !== walker || !urls.idle || !this.textures.exists(urls.idle)) return;
+    this.withSource(hero.sprites, "ally", (src) => {
+      const idle = src.urls.idle;
+      if (this.walker !== walker || !idle || !this.textures.exists(idle)) return;
       const layout = computeLayout("tower", this.scale.width, this.scale.height);
       const scale = this.spriteScale();
-      walker.anims = this.buildAnims(urls, ROW_RIGHT);
+      walker.src = src;
+      walker.anims = this.buildAnims(src);
       walker.shadow = this.makeShadow(layout.ally, scale);
       walker.sprite = this.add
-        .sprite(layout.ally.x, layout.ally.y, urls.idle, ROW_RIGHT * FRAME_COUNT)
+        .sprite(layout.ally.x, layout.ally.y, idle, src.startFrame.idle ?? 0)
         .setOrigin(0.5, 1)
+        .setFlipX(src.flipX)
         .setScale(scale)
         .setDepth(5);
       walker.state = null; // o próximo `syncWalker` escolhe idle/walk
@@ -491,30 +495,36 @@ export class BattleScene extends Phaser.Scene {
     shadow?.setPosition(base.x, base.y - 3 * scale).setSize(120 * scale, 26 * scale).setDisplaySize(120 * scale, 26 * scale);
   }
 
-  /** URLs das folhas pedidas (as que existem no manifesto). */
-  private sheetUrls(sheets: Record<string, string> | undefined, names: readonly SheetName[]): Partial<Record<SheetName, string>> {
-    const out: Partial<Record<SheetName, string>> = {};
-    for (const name of names) {
-      const id = sheets?.[name];
-      const url = id ? assetUrl(id) : null;
-      if (url) out[name] = url;
-    }
-    return out;
+  /**
+   * Resolve a origem do sprite (atlas ou folhas legadas), garante as texturas e chama `cb`.
+   * Se o atlas não carregar, cai nas folhas legadas da mesma entidade (fallback visual).
+   */
+  private withSource(sprites: Record<string, string> | undefined, side: "ally" | "enemy", cb: (src: SpriteSource) => void): void {
+    const first = resolveSpriteSource(sprites, side, (id) => assetUrl(id));
+    this.ensure(
+      sourceUrls(first).map((key) => ({ key, sheet: true })),
+      () => {
+        const idle = first.urls.idle;
+        if (first.kind === "atlas" && !(idle && this.textures.exists(idle))) {
+          const legacy = resolveSpriteSource(sprites, side, (id) => assetUrl(id), { preferAtlas: false });
+          this.ensure(
+            sourceUrls(legacy).map((key) => ({ key, sheet: true })),
+            () => cb(legacy),
+          );
+        } else cb(first);
+      },
+    );
   }
 
-  private sheetItems(urls: Partial<Record<SheetName, string>>): Array<{ key: string; sheet: boolean }> {
-    return Object.values(urls).map((key) => ({ key, sheet: true }));
-  }
-
-  private buildAnims(urls: Partial<Record<SheetName, string>>, row: number): AnimKeys {
+  private buildAnims(src: SpriteSource): AnimKeys {
     const rate: Record<SheetName, number> = { idle: 7, walk: 10, attack: 12, hurt: 12, death: 8 };
     const keys: AnimKeys = {};
-    for (const name of ALL_SHEETS) {
-      const url = urls[name];
-      if (!url || !this.textures.exists(url)) continue;
-      const key = `${url}:${row}`;
+    for (const name of SHEET_NAMES) {
+      const url = src.urls[name];
+      const key = animKeyFor(src, name);
+      if (!url || !key || !this.textures.exists(url)) continue;
       if (!this.anims.exists(key)) {
-        const start = row * FRAME_COUNT;
+        const start = src.startFrame[name] ?? 0;
         this.anims.create({
           key,
           frames: Array.from({ length: FRAME_COUNT }, (_, k) => ({ key: url, frame: start + k })),
@@ -523,8 +533,36 @@ export class BattleScene extends Phaser.Scene {
         });
       }
       keys[name] = key;
+      const set = this.animsByTexture.get(url) ?? new Set<string>();
+      set.add(key);
+      this.animsByTexture.set(url, set);
     }
+    this.noteTextures(src);
     return keys;
+  }
+
+  /** Registra o uso das texturas do sprite e descarrega as antigas se passou do orçamento. */
+  private noteTextures(src: SpriteSource): void {
+    const now = this.time?.now ?? 0;
+    for (const url of sourceUrls(src)) {
+      if (!this.textures.exists(url)) continue;
+      const img = this.textures.get(url).getSourceImage() as { width: number; height: number };
+      this.budget.touch(url, img.width * img.height * 4, now);
+    }
+    this.trimTextures();
+  }
+
+  private trimTextures(): void {
+    const pinned = new Set<string>();
+    if (this.walker?.src) for (const u of sourceUrls(this.walker.src)) pinned.add(u);
+    for (const f of this.fighters.values()) if (f.src) for (const u of sourceUrls(f.src)) pinned.add(u);
+    for (const key of this.budget.plan(pinned)) {
+      for (const animKey of this.animsByTexture.get(key) ?? []) this.anims.remove(animKey);
+      this.animsByTexture.delete(key);
+      if (this.textures.exists(key)) this.textures.remove(key);
+      this.loadingKeys.delete(key);
+      this.budget.forget(key);
+    }
   }
 
   private createFighter(
@@ -565,31 +603,33 @@ export class BattleScene extends Phaser.Scene {
     this.fighters.set(id, view);
 
     // §62 — ausência de arte é bloqueio visível, nunca silenciosa.
-    const urls = this.sheetUrls(sheets, ALL_SHEETS);
+    const urls = resolveSpriteSource(sheets, side, (id) => assetUrl(id)).urls;
     const missing = REQUIRED_SHEETS.filter((n) => !urls[n]);
     if (missing.length > 0) {
       this.setNotice(`Arte ausente: ${c?.name ?? id} (${missing.join(", ")}) — rode npm run assets:build`);
       return;
     }
-    this.ensure(this.sheetItems(urls), () => {
+    this.withSource(sheets, side, (src) => {
       // a cena pode ter sido reconstruída enquanto carregava
       if (this.fighters.get(view.id) !== view) return;
-      if (REQUIRED_SHEETS.every((n) => urls[n] && this.textures.exists(urls[n]!))) this.spawnSprite(view, urls);
+      if (REQUIRED_SHEETS.every((n) => src.urls[n] && this.textures.exists(src.urls[n]!))) this.spawnSprite(view, src);
       else this.setNotice(`Arte não carregou: ${c?.name ?? id}`);
     });
   }
 
-  private spawnSprite(view: FighterView, urls: Partial<Record<SheetName, string>>): void {
-    const row = view.side === "ally" ? ROW_RIGHT : ROW_LEFT;
-    view.anims = this.buildAnims(urls, row);
+  private spawnSprite(view: FighterView, src: SpriteSource): void {
+    const urls = src.urls;
+    view.src = src;
+    view.anims = this.buildAnims(src);
     const idleKey = view.anims.idle!;
     const scale = this.scaleFor(view);
     const startX = view.entering ? this.scale.width + 130 * scale : view.base.x;
 
     view.shadow = this.makeShadow({ x: startX, y: view.base.y }, scale);
     const sprite = this.add
-      .sprite(startX, view.base.y, urls.idle!, row * FRAME_COUNT)
+      .sprite(startX, view.base.y, urls.idle!, src.startFrame.idle ?? 0)
       .setOrigin(0.5, 1)
+      .setFlipX(src.flipX)
       .setScale(scale)
       .setDepth(5);
     // Cor do andar (ADR-021): só apresentação, vinda do dado do andar via engine.
@@ -599,7 +639,7 @@ export class BattleScene extends Phaser.Scene {
 
     if (view.dead) {
       // já nasce caído: último quadro da folha de morte, esmaecido
-      sprite.setTexture(urls.death!, row * FRAME_COUNT + FRAME_COUNT - 1).setAlpha(0.25);
+      sprite.setTexture(urls.death!, (src.startFrame.death ?? 0) + FRAME_COUNT - 1).setAlpha(0.25);
       view.entering = false;
     } else if (view.entering) {
       sprite.play(view.anims.walk ?? idleKey);

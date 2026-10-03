@@ -74,6 +74,18 @@ export {
 } from "./content.js";
 export { skills, skillsById, type SkillDef, type SkillTargeting, type SkillDamageType, type SkillTag } from "./skills.js";
 export {
+  arenaKits,
+  arenaKitById,
+  arenaKitAssetIds,
+  arenaKitErrors,
+  defaultArenaKits,
+  DEFAULT_ARENA_KIT_ID,
+  BOSS_ARENA_KIT_ID,
+  type ArenaKitDef,
+  type ArenaPropDef,
+} from "./arenas.js";
+export { ITA_ATLAS, ATLAS_SPRITE_KEY, spriteRecord, heroSpriteRecord, heroPortraitId } from "./atlas.js";
+export {
   HEROES,
   heroById,
   heroIdentityForClass,
