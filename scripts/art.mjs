@@ -23,6 +23,7 @@
 import { writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { reflowRows } from "../tools/art/reflow.mjs";
 import { GUIDE_BY_KIND, HEIGHT_BY_KIND, ARENA, PACK, BUDGET } from "../tools/art/spec.mjs";
 import { readRaw, writePng, resizeSmart, frameOf, crop, bbox } from "../tools/art/image.mjs";
 import { chromaKey } from "../tools/art/key.mjs";
@@ -109,7 +110,10 @@ async function main() {
       const kind = need(opt.kind, "--kind");
       const guideName = opt.guide ?? GUIDE_BY_KIND[kind];
       const outDir = resolve(opt.out ?? join(ROOT, "assets/generated"));
-      const { raw: keyed, stats } = chromaKey(await readRaw(need(args[0], "<bruto>")));
+      const { raw: keyed0, stats } = chromaKey(await readRaw(need(args[0], "<bruto>")));
+      // geradores que devolvem a folha quadrada: reorganiza as 5 linhas sem esticar (tools/art/reflow.mjs)
+      const { raw: keyed, reflowed, bands } = reflowRows(keyed0);
+      if (reflowed) console.log(`${id}: folha fora de 4:5 — linhas reposicionadas sem reamostrar (${bands.map((b) => b.join("-")).join(", ")})`);
       const { atlas, report } = normalizeAtlas(keyed, { kind, snap: opt.snap ? Number(opt.snap) : 0 });
       const guide = await buildGuide(CHARS, guideName);
       const verdict = validateAtlas(atlas, guide, { kind });

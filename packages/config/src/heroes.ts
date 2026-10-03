@@ -108,6 +108,9 @@ export const HEROES: HeroIdentityDef[] = [
       origin: "starter",
       hint: "Herói inicial; depois, fragmentos em eventos e caixas especiais.",
     },
+    // ADR-035: a Kaia tem corpo PRÓPRIO (arqueira de capa verde, como no retrato). Antes ela herdava
+    // as folhas da classe — o Arqueiro Esquelético do pack — que agora é o Ossian (RESERVED_HEROES).
+    assets: { atlas: "heroes/ranger_kaia" },
   },
   {
     id: "hero_maelis",
@@ -178,6 +181,38 @@ export const EXTRA_HEROES: HeroIdentityDef[] = [
     },
     assets: { atlas: "heroes/guardian_borin" },
     attributeDelta: { constitution: 2, strength: -4, wisdom: 2 },
+  },
+];
+
+/**
+ * Identidades RESERVADAS para o futuro (ADR-035): já têm nome, lore e arte, mas ainda NÃO entram no
+ * elenco — não são sorteadas na aquisição nem aparecem no códice. Para liberar uma, mova a entrada
+ * para `EXTRA_HEROES` (e defina `attributeDelta` — a CI exige poder ±8 % — e uma skill própria).
+ */
+export const RESERVED_HEROES: HeroIdentityDef[] = [
+  {
+    id: "hero_ossian",
+    classId: "ranger",
+    name: "Ossian",
+    epithet: "o Arqueiro Sem Sono",
+    lore:
+      "Ossian caiu defendendo uma ponte que já não existe e se recusou a descansar: seus ossos ainda puxam a corda, " +
+      "e as flechas ainda acham o alvo. Serve a quem lhe der uma ponte nova para guardar.",
+    personality: ["paciente", "sombrio", "leal"],
+    voiceNotes: "Quase não fala; o estalar dos ossos faz o papel de risada; um suspiro seco antes de cada disparo.",
+    rarity: "uncommon",
+    // Skill própria fica para quando o herói for liberado (só existem as 4 skills de classe até o L5).
+    signatureSkillId: "skill_volley",
+    combatStyle: "Atirador paciente — não se cansa, não erra a distância, não recua.",
+    range: "ranged",
+    statPriority: ["attack", "critChance", "attackSpeed"],
+    acquisition: {
+      origin: "event",
+      hint: "Reservado: evento especial da Torre e caixas de invocação de Arqueiro (quando liberado).",
+    },
+    // Retrato do pack (esqueleto); o corpo é o do Arqueiro Esquelético do pack (`characters/archer/*`),
+    // que a classe Arqueiro mantém como folha-padrão.
+    assets: { portrait: "portraits/skeleton" },
   },
 ];
 

@@ -65,6 +65,14 @@
       "kind": "portrait",
       "prompt": "Retratos do Rei A: Real, Guerreiro, Rainha, Sábio (2x2)",
       "refs": []
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L1",
+      "asset": "heroes/ranger_kaia",
+      "kind": "atlas",
+      "prompt": "Refação da Kaia (arqueira de capa verde, igual ao retrato): guia archer magenta + retrato + estilo Borin; folha veio quadrada → reflow de linhas",
+      "refs": []
     }
   ]
 }

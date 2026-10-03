@@ -883,3 +883,26 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 
 **Consequências:** `configVersion` inalterado nesta ADR (só dados de arte/skin); manifesto com 564 arquivos; 785 testes verdes; **pendências:** skill própria de Borin (L5), Clérigo (cura no engine), retratos do Rei B/C (≥ 10 no total), demais inimigos/arenas (Lote 2 em diante).
 
+---
+
+## ADR-035 — Correção da Kaia: corpo próprio de arqueira; o Arqueiro Esquelético vira o herói reservado Ossian
+
+**Data:** 2026-10-03 · **Status:** ✅ Aceita · **Tipo:** B (arte + dados) · **Pedido do usuário:** *"no retrato a Kaia é uma arqueira, mas na batalha aparece um Esqueleto Arqueiro. Deixar o esqueleto como outro herói para o futuro e criar uma skin para a Kaia que condiga com o retrato. Corrija só a Kaia."*
+
+**Causa.** A classe Arqueiro (`ranger`) usa, como corpo, as folhas do pack `characters/archer/*` — que são de um **esqueleto arqueiro**. A Kaia não tinha atlas próprio e herdava o corpo da classe; só o retrato (`portraits/archer`) era de uma arqueira.
+
+**O que foi feito.**
+
+| Item | Decisão |
+|---|---|
+| Arte | 1 geração (**9/10 do lote L1**, 1 reserva restante): atlas `heroes/ranger_kaia` — arqueira ruiva de trança, capa verde com gola de pelo, ombreiras de couro trançado, aljava e arco curto, **igual ao retrato**; guia de poses = `archer` (as mesmas poses/movimentos do esqueleto) |
+| Dados | `HEROES[hero_kaia].assets.atlas = "heroes/ranger_kaia"` (o retrato segue o da classe) |
+| Esqueleto | Vira a identidade **reservada** `hero_ossian` — *Ossian, o Arqueiro Sem Sono* — em `RESERVED_HEROES` (`heroes.ts`): tem nome, lore e arte (retrato `portraits/skeleton`; corpo = folhas legadas do pack, que a classe mantém), mas **fora do elenco**: não é sorteado, não aparece no códice. Para liberar: mover para `EXTRA_HEROES` + definir `attributeDelta` (poder ±8 %) e skill própria |
+| Pipeline | O gerador devolveu a folha **quadrada (1024×1024)** em vez de 4:5; esticar deformava o personagem (+25 % de altura) e o veredito saía **REFAZER**. Novo passo `tools/art/reflow.mjs`: acha as 5 linhas pelo vazio entre elas e as reposiciona **sem reamostrar**, com a base na âncora; o `ingest` aplica sozinho quando a proporção não é 4:5 (zero geração) |
+| Validação | Depois do reflow: sem FALHA — âncora 0 px, margem ok, chroma ok, movimento idle 2,8 % · walk 3,4 % · attack 7,2 % · hurt 4,6 % · death 10,2 %; silhueta em "revisar" (esperado: arqueira humana × esqueleto) — **aprovada na contact sheet** |
+| Checagem no jogo | Chromium real: Kaia anda, ataca ("Volta de Flechas") e luta com a arte nova, sem 404/erro; arena `f01_entrada` |
+
+**Alternativas rejeitadas:** (a) trocar o retrato da Kaia para o esqueleto — contraria a identidade que o usuário validou; (b) repintar/recolorir o esqueleto — o resultado não passaria por humana; (c) esticar a folha 1024×1024 para 1024×1280 — deformação, reprovada pela fidelidade; (d) liberar o Ossian já no elenco — o pedido foi "para o futuro" e ele mudaria o sorteio de Arqueiros.
+
+**Consequências:** `ranger` fica com 1 identidade no elenco (Kaia) até os próximos lotes de heróis; testes novos (reflow ×4; identidade/atlas/reservado ×3); manifesto +1 atlas. **Pendente:** skill própria e `attributeDelta` do Ossian ao liberá-lo; o corpo-padrão da classe Arqueiro continua o esqueleto (só visível para identidades sem atlas — hoje, só o Ossian).
+

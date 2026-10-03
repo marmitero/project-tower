@@ -472,6 +472,7 @@ editar `config/src/heroes.ts`.
 
 ### Fase de arte — "otimização e estilização" (ADR-032/033/034, 2026-10-03) — F0 e **LOTE 1 FEITOS (8/10 gerações; 2 reservas)**; aguardando "lote 01 aprovado"
 
+- **Correção da Kaia (ADR-035):** corpo próprio `heroes/ranger_kaia` (9/10 gerações do L1); o Arqueiro Esquelético virou o herói reservado **Ossian** (`RESERVED_HEROES`, fora do elenco); `ingest` ganhou o *reflow* de folhas quadradas. Aguardando o usuário.
 - **Lote 1 (ADR-034):** Borin, Duende de Faíscas, arena `f01_entrada`, botões/ícones GBA, login (fundo + logotipo), 4 retratos do Rei; obtenção por identidade; `CREATION_LAYOUT`/`uitheme.ts`/`gbaTheme.ts`; skins `legacy`. Contador de gerações em `assets/generated/PROVENANCE.md`.
 
 - **Estado:** Gate 0 aprovado; **Etapa F0 implementada (0 gerações usadas)**: `scripts/art.mjs` + `tools/art/*` (guide/key/normalize/validate/contact/ingest/seamless/recolor/pack/measure/provenance; aliases `npm run art:*`), formato `ita-atlas-v1` + `render/spriteSource.ts` (fallback legado), `ArenaKitDef` no ContentPack v5, `assets.atlas` (inimigo) e `HeroIdentityDef.assets`, `TextureBudget`, auditoria de `assets/generated` no `check:assets` (inclui manifesto em dia). Provado no Chromium real com um atlas sintético (descartado). Painel Admin (Fase 14) continua depois da arte.

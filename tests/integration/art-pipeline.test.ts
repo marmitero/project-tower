@@ -8,6 +8,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { ITA_ATLAS, gbaAssetIds, ICON_NAMES as CONFIG_ICONS, GBA_PREFIX } from "@tia/config";
+import { contentBands, reflowRows } from "../../tools/art/reflow.mjs";
 import { KIT_LAYOUT, sliceKit } from "../../tools/art/kit.mjs";
 import { ICON_NAMES as TOOL_ICONS, UIKIT, sliceButtons, sliceIcons } from "../../tools/art/uikit.mjs";
 import { ATLAS, BUDGET, CHROMA, HEIGHT_BY_KIND, THRESHOLDS } from "../../tools/art/spec.mjs";
@@ -411,5 +412,44 @@ describe("kit de arena, botões GBA e ícones (ADR-033, Lote 1)", () => {
     const icons = sliceIcons(syntheticSheet([200, 160, 40], [70, 70])) as Record<string, Raw>;
     expect(Object.keys(icons)).toEqual([...CONFIG_ICONS]);
     for (const i of Object.values(icons)) expect([i.w, i.h]).toEqual([64, 64]);
+  });
+});
+
+describe("reflow de folha quadrada (ADR-035)", () => {
+  /** Folha 1024×1024 com 5 faixas de conteúdo (como o gerador devolveu a Kaia), cada uma com 4 blocos. */
+  function squareSheet(): Raw {
+    const sheet = newRaw(1024, 1024) as Raw;
+    const bands: Array<[number, number]> = [[50, 227], [265, 441], [474, 649], [674, 845], [868, 1019]];
+    for (const [y0, y1] of bands) {
+      for (let c = 0; c < 4; c++) blit(sheet, newRaw(60, y1 - y0 + 1, [90, 120, 80, 255]) as Raw, c * 256 + 100, y0);
+    }
+    return sheet;
+  }
+
+  it("acha as 5 linhas pelo vazio entre elas", () => {
+    expect(contentBands(squareSheet())).toEqual([[50, 227], [265, 441], [474, 649], [674, 845], [868, 1019]]);
+  });
+
+  it("monta 1024×1280 SEM esticar: cada linha mantém a altura e a base na âncora", () => {
+    const { raw, reflowed } = reflowRows(squareSheet()) as { raw: Raw; reflowed: boolean };
+    expect(reflowed).toBe(true);
+    expect([raw.w, raw.h]).toEqual([1024, 1280]);
+    const bands = contentBands(raw) as number[][];
+    expect(bands.length).toBe(5);
+    expect(bands.map(([a, b]) => b! - a! + 1)).toEqual([178, 177, 176, 172, 152]);
+    bands.forEach(([, y1], r) => expect(y1).toBe(r * 256 + 243));
+  });
+
+  it("folha já em 4:5 passa intacta", () => {
+    const ok = newRaw(1024, 1280) as Raw;
+    const out = reflowRows(ok);
+    expect(out.reflowed).toBe(false);
+    expect(out.raw).toBe(ok);
+  });
+
+  it("número de linhas errado é erro claro (reprovar e refazer, não deformar)", () => {
+    const bad = newRaw(1024, 1024) as Raw;
+    blit(bad, newRaw(60, 100, [90, 120, 80, 255]) as Raw, 100, 100);
+    expect(() => reflowRows(bad)).toThrow(/esperava 5 linhas/);
   });
 });

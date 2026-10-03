@@ -272,6 +272,7 @@ IDs do manifesto = caminho sem extensão (mesma regra de hoje). `scripts/build-a
 | `art:icons` | **16 ícones** (folha 4×4 → 64×64 centrados, na ordem de `ICON_NAMES`) |
 | `art:portraits` | folha 2×2 de retratos do Rei → `portraits/king/<id>` (512) + `<id>_s` (256, HUD) |
 | `art:trim` / `art:backdrop` | apara/enquadra o logotipo e reduz o fundo do login (16:9) |
+| *(embutido no `ingest`)* **reflow** | `tools/art/reflow.mjs` (ADR-035): se o gerador devolver a folha fora de 4:5 (ex.: 1024×1024), reposiciona as 5 linhas sem esticar; erro claro se não achar exatamente 5 linhas |
 | `art:provenance` | `add`/`status`/`render`: **contador de gerações por lote** (recusa a 11ª) e `PROVENANCE.md` |
 
 Todos em Node (`sharp` já é dependência), testados em `tests/integration/art-pipeline.test.ts` (30 testes, incluindo kit/botões/ícones com folhas sintéticas e a igualdade pipeline × config) com fixtures **do próprio pack** — nenhuma geração foi necessária. Os números vivem em `tools/art/spec.mjs` (o renderer espelha o que precisa em `packages/config/src/atlas.ts`; um teste garante que não divergem). O `check:assets` agora audita `assets/generated` (formato, orçamentos, manifesto em dia, procedência ≤ 10 por lote).

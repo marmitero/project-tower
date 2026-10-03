@@ -11,7 +11,7 @@ import {
 import { enemies, ENEMY_ROLES } from "./enemies.js";
 import { curveErrors } from "./curves.js";
 import { skills, skillsById } from "./skills.js";
-import { EXTRA_HEROES, HERO_ROSTER, HEROES } from "./heroes.js";
+import { EXTRA_HEROES, HERO_ROSTER, HEROES, RESERVED_HEROES } from "./heroes.js";
 import { equipmentErrors } from "./equipment.js";
 import { heroAcquisitionErrors } from "./acquisition.js";
 import { botErrors, marketErrors, offlineErrors } from "./market.js";
@@ -413,6 +413,13 @@ function collectCatalogErrors(): string[] {
       !/(inimigo comum|monstro comum|drop de inimigo)/i.test(h.acquisition.hint),
       `EXTRA_HEROES.${h.id}.acquisition.hint menciona fonte proibida (§12)`,
     );
+  }
+  // Reservados (ADR-035): ficam FORA do elenco, mas precisam ser válidos para a liberação futura.
+  for (const h of RESERVED_HEROES) {
+    check(classIds.has(h.classId), `RESERVED_HEROES.${h.id}.classId inexistente: ${h.classId}`);
+    check(!HERO_ROSTER.some((r) => r.id === h.id || r.name.toLocaleLowerCase("pt-BR") === h.name.toLocaleLowerCase("pt-BR")), `RESERVED_HEROES.${h.id} repete id/nome do elenco`);
+    check(h.lore.length >= 40 && h.epithet.length > 0, `RESERVED_HEROES.${h.id}: identidade sem substância`);
+    check(!!skillsById[h.signatureSkillId], `RESERVED_HEROES.${h.id}.signatureSkillId inexistente`);
   }
   for (const h of HEROES) {
     check(classIds.has(h.classId), `HEROES.${h.id}.classId inexistente: ${h.classId}`);

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generatedFrom": "assets/sprites",
-  "count": 564,
+  "count": 565,
   "entries": {
     "characters/archer/archer_attack_sheet": "characters/archer/archer_attack_sheet.png",
     "characters/archer/archer_death_sheet": "characters/archer/archer_death_sheet.png",
@@ -465,6 +465,7 @@
     "audio/sfx/victory": "audio/sfx/victory.wav",
     "enemies/spark_imp": "enemies/spark_imp.png",
     "heroes/guardian_borin": "heroes/guardian_borin.png",
+    "heroes/ranger_kaia": "heroes/ranger_kaia.png",
     "items/boots": "items/boots.png",
     "items/box_basic": "items/box_basic.png",
     "items/box_legendary": "items/box_legendary.png",

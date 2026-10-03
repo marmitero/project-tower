@@ -88,6 +88,7 @@ export { ITA_ATLAS, ATLAS_SPRITE_KEY, spriteRecord, heroSpriteRecord, heroPortra
 export {
   HEROES,
   EXTRA_HEROES,
+  RESERVED_HEROES,
   HERO_ROSTER,
   identitiesForClass,
   pickAcquiredIdentity,

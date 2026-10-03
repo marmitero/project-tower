@@ -14,7 +14,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { config, classes, enemies, equipmentErrors, gbaAssetIds, LOGIN_ASSETS } from "@tia/config";
+import { config, classes, enemies, equipmentErrors, gbaAssetIds, LOGIN_ASSETS, HERO_ROSTER, HEROES, RESERVED_HEROES, heroSpriteRecord, heroPortraitId, identitiesForClass, pickAcquiredIdentity, ATLAS_SPRITE_KEY } from "@tia/config";
 import { REQUIRED } from "../../scripts/build-assets.mjs";
 import { requiredAssetIds } from "../../apps/game-web/src/render/assets.js";
 
@@ -142,5 +142,34 @@ describe("arte gerada de interface (ADR-033)", () => {
     const king = [...manifestIds].filter((id) => id.startsWith("portraits/king/") && !id.endsWith("_s"));
     // Lote 1 gera 4 retratos de 512 (+4 HUD); os demais chegam nos Lotes seguintes (roadmap §4.2).
     expect(king.length).toBeGreaterThanOrEqual(4);
+  });
+});
+
+describe("arte própria por identidade de herói (ADR-035 — correção da Kaia)", () => {
+  it("todo atlas/retrato declarado numa identidade (do elenco ou reservada) existe no manifesto", () => {
+    for (const h of [...HERO_ROSTER, ...RESERVED_HEROES]) {
+      if (h.assets?.atlas) expect(manifestIds.has(h.assets.atlas), `${h.id} atlas ${h.assets.atlas}`).toBe(true);
+      if (h.assets?.portrait) expect(manifestIds.has(h.assets.portrait), `${h.id} retrato ${h.assets.portrait}`).toBe(true);
+    }
+  });
+
+  it("Kaia luta com o corpo DELA (atlas próprio), não com o Arqueiro Esquelético da classe", () => {
+    const kaia = HEROES.find((h) => h.id === "hero_kaia")!;
+    expect(kaia.assets?.atlas).toBe("heroes/ranger_kaia");
+    const rec = heroSpriteRecord({ classId: "ranger", identityId: "hero_kaia" })!;
+    expect(rec[ATLAS_SPRITE_KEY]).toBe("heroes/ranger_kaia");
+    // o retrato da Kaia segue sendo a arqueira ruiva (retrato da classe)
+    expect(heroPortraitId({ classId: "ranger", identityId: "hero_kaia" })).toBe("portraits/archer");
+  });
+
+  it("o Arqueiro Esquelético está reservado como outro herói (Ossian): fora do elenco, do sorteio e do códice", () => {
+    const ossian = RESERVED_HEROES.find((h) => h.id === "hero_ossian")!;
+    expect(ossian.classId).toBe("ranger");
+    expect(HERO_ROSTER.some((h) => h.id === ossian.id)).toBe(false);
+    expect(identitiesForClass("ranger").map((h) => h.id)).toEqual(["hero_kaia"]);
+    for (let i = 0; i < 20; i++) expect(pickAcquiredIdentity("ranger", i / 20).id).toBe("hero_kaia");
+    expect(ossian.assets?.portrait).toBe("portraits/skeleton");
+    // o corpo dele é a folha legada do arqueiro esquelético, que a classe mantém
+    expect(classes.find((c) => c.id === "ranger")!.assets.sheets.idle).toContain("characters/archer/");
   });
 });

@@ -103,13 +103,13 @@ describe("arte por identidade e atlas (ADR-032)", () => {
     expect(spriteRecord({ sheets, atlas: "enemies/x" }).idle).toBe(sheets.idle);
   });
 
-  it("herói sem arte própria usa as folhas da classe (comportamento de hoje)", () => {
+  it("herói sem atlas próprio usa as folhas da classe; com atlas próprio (Kaia), o atlas dele", () => {
     for (const h of HEROES) {
       const cls = classes.find((c) => c.id === h.classId)!;
       const rec = heroSpriteRecord({ classId: h.classId, identityId: h.id })!;
       expect(rec.idle).toBe(cls.assets.sheets.idle);
-      expect(rec[ATLAS_SPRITE_KEY]).toBeUndefined();
-      expect(heroPortraitId({ classId: h.classId, identityId: h.id })).toBe(cls.assets.portrait);
+      expect(rec[ATLAS_SPRITE_KEY]).toBe(h.assets?.atlas);
+      expect(heroPortraitId({ classId: h.classId, identityId: h.id })).toBe(h.assets?.portrait ?? cls.assets.portrait);
     }
     expect(heroSpriteRecord({ classId: "inexistente" })).toBeUndefined();
   });

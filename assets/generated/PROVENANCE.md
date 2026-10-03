@@ -3,7 +3,7 @@
 Gerado por `npm run art:provenance -- render` a partir de `provenance.json` — **não editar à mão**.
 Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 
-## Lote L1 — 8/10 gerações
+## Lote L1 — 9/10 gerações
 
 | # | Asset | Tipo | Veredito | Referências | Prompt |
 |---|---|---|---|---|---|
@@ -15,4 +15,5 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 6 | `login/background` | login | — | — | Fundo da tela de login: a Torre ao entardecer, 16:9 sem texto |
 | 7 | `login/logo` | login | — | — | Logotipo IDLE TOWER ADVENTURE, pixel art sobre magenta |
 | 8 | `portraits/king/lote-a` | portrait | — | — | Retratos do Rei A: Real, Guerreiro, Rainha, Sábio (2x2) |
+| 9 | `heroes/ranger_kaia` | atlas | — | — | Refação da Kaia (arqueira de capa verde, igual ao retrato): guia archer magenta + retrato + estilo Borin; folha veio qua |
 
