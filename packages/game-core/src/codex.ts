@@ -19,8 +19,10 @@ export type CodexStatus = "owned" | "locked";
 export interface HeroCodexEntry {
   identity: HeroIdentityDef;
   status: CodexStatus;
-  /** Herói possuído correspondente (null quando bloqueado). */
+  /** Herói possuído correspondente (o primeiro; null quando bloqueado). */
   hero: Hero | null;
+  /** Quantos heróis dessa classe o jogador possui (ADR-024: os Reis podem dropar repetidos, com raridade/atributos diferentes). */
+  copies: number;
   /** Retrato do pack (`portraits/*`). */
   portraitAssetId: string;
   /** Dica de aquisição para os bloqueados (§12). */
@@ -33,12 +35,14 @@ export interface HeroCodexEntry {
  */
 export function heroCodex(owned: readonly Hero[]): HeroCodexEntry[] {
   return HEROES.map((identity) => {
-    const hero = owned.find((h) => h.classId === identity.classId) ?? null;
+    const mine = owned.filter((h) => h.classId === identity.classId);
+    const hero = mine[0] ?? null;
     const cls = classes.find((c) => c.id === identity.classId);
     return {
       identity,
       status: hero ? "owned" : "locked",
       hero,
+      copies: mine.length,
       portraitAssetId: cls?.assets.portrait ?? "",
       acquisitionHint: hero ? "" : identity.acquisition.hint,
     };

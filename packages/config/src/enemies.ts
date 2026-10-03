@@ -131,7 +131,7 @@ export function defaultEnemySeeds(): EnemySeed[] {
       attributes: attrs(30, 22, 16, 6, 8),
       assets: { sheets: charSheets("bloodskeleton") } },
     // --- swift --------------------------------------------------------
-    { id: "bat", name: "Morcego", role: "swift", damageType: "physical", statMultiplier: 1.31,
+    { id: "bat", name: "Morcego", role: "swift", damageType: "physical", statMultiplier: 1.12,
       attributes: attrs(14, 34, 10, 6, 8),
       assets: { sheets: charSheets("bat") } },
     // --- caster -------------------------------------------------------

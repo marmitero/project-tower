@@ -251,20 +251,24 @@ function tpl(
 /**
  * 18 templates (⛔ P-025): 9 armas — uma por tipo do §72 — e 9 peças dos demais
  * slots. A primeira linha de cada template é a principal.
+ *
+ * Cajado e Livro Arcano têm `dropWeight` 3 (as outras 7 armas, 1): 6 das 13 vezes a
+ * arma sorteada é mágica — metade do roster ataca com Ataque Esp., então a metade
+ * dos drops de arma serve a cada lado (aquisição balanceada entre físicos e mágicos).
  */
 export function defaultTemplates(): ItemTemplate[] {
   const W = (type: WeaponType) => ({ weaponType: type });
   return [
     // --- armas (peso 1 cada entre armas; a arma é 1 slot de 10) -----------
-    tpl("weapon_sword", "Espada", "weapon", [["attack", 2.0], ["critChance", 0.7], ["hp", 0.6], ["defense", 0.5]], "icons2/icons_swords_0", W("sword")),
-    tpl("weapon_dagger", "Adaga", "weapon", [["attack", 1.9], ["critChance", 0.9], ["attackSpeed", 0.9], ["speed", 0.6]], "icons2/icons_ranged_12", W("dagger")),
-    tpl("weapon_axe", "Machado", "weapon", [["attack", 2.2], ["hp", 0.6], ["critChance", 0.6], ["defense", 0.4]], "icons1/icons_blunt_0", W("axe")),
-    tpl("weapon_mace", "Maça", "weapon", [["attack", 2.0], ["critChance", 0.8], ["defense", 0.6], ["hp", 0.6]], "icons1/icons_blunt_3", W("mace")),
-    tpl("weapon_crossbow", "Besta", "weapon", [["attack", 1.9], ["attackSpeed", 0.9], ["critChance", 0.8], ["speed", 0.6]], "items/crossbow", W("crossbow")),
-    tpl("weapon_staff", "Cajado", "weapon", [["specialAttack", 2.0], ["specialDefense", 0.6], ["hp", 0.5], ["critChance", 0.6]], "icons1/icons_magic_wpn_0", W("staff")),
-    tpl("weapon_arcane_book", "Livro Arcano", "weapon", [["specialAttack", 1.9], ["specialDefense", 0.7], ["hp", 0.6], ["attackSpeed", 0.7]], "icons1/icons_magic_wpn_6", W("arcaneBook")),
-    tpl("weapon_wraps", "Luvas de Combate", "weapon", [["attack", 1.8], ["attackSpeed", 0.9], ["critChance", 0.7], ["defense", 0.5]], "items/wraps", W("wraps")),
-    tpl("weapon_claws", "Garras", "weapon", [["attack", 1.8], ["critChance", 0.9], ["attackSpeed", 0.8], ["hp", 0.5]], "icons2/icons_swords_10", W("claws")),
+    tpl("weapon_sword", "Espada", "weapon", [["attack", 2.4], ["critChance", 0.7], ["hp", 0.6], ["defense", 0.5]], "icons2/icons_swords_0", W("sword")),
+    tpl("weapon_dagger", "Adaga", "weapon", [["attack", 2.2], ["critChance", 0.9], ["attackSpeed", 0.9], ["speed", 0.6]], "icons2/icons_ranged_12", W("dagger")),
+    tpl("weapon_axe", "Machado", "weapon", [["attack", 2.6], ["hp", 0.6], ["critChance", 0.6], ["defense", 0.4]], "icons1/icons_blunt_0", W("axe")),
+    tpl("weapon_mace", "Maça", "weapon", [["attack", 2.4], ["critChance", 0.8], ["defense", 0.6], ["hp", 0.6]], "icons1/icons_blunt_3", W("mace")),
+    tpl("weapon_crossbow", "Besta", "weapon", [["attack", 2.2], ["attackSpeed", 0.9], ["critChance", 0.8], ["speed", 0.6]], "items/crossbow", W("crossbow")),
+    tpl("weapon_staff", "Cajado", "weapon", [["specialAttack", 2.4], ["specialDefense", 0.6], ["hp", 0.5], ["critChance", 0.6]], "icons1/icons_magic_wpn_0", { ...W("staff"), dropWeight: 3 }),
+    tpl("weapon_arcane_book", "Livro Arcano", "weapon", [["specialAttack", 2.3], ["specialDefense", 0.7], ["hp", 0.6], ["attackSpeed", 0.7]], "icons1/icons_magic_wpn_6", { ...W("arcaneBook"), dropWeight: 3 }),
+    tpl("weapon_wraps", "Luvas de Combate", "weapon", [["attack", 2.1], ["attackSpeed", 0.9], ["critChance", 0.7], ["defense", 0.5]], "items/wraps", W("wraps")),
+    tpl("weapon_claws", "Garras", "weapon", [["attack", 2.1], ["critChance", 0.9], ["attackSpeed", 0.8], ["hp", 0.5]], "icons2/icons_swords_10", W("claws")),
     // --- demais slots -----------------------------------------------------
     tpl("chest_plate", "Peitoral", "chest", [["defense", 2.0], ["hp", 0.8], ["specialDefense", 0.6], ["attack", 0.4]], "items/chest"),
     tpl("head_helm", "Elmo", "head", [["specialDefense", 1.5], ["defense", 0.8], ["hp", 0.8], ["critChance", 0.4]], "icons1/helmet"),
@@ -296,12 +300,12 @@ export function defaultRarity(): Record<Rarity, RarityDef> {
  */
 export function defaultGrades(): GradeDef[] {
   return [
-    { grade: "S", minQuality: 55 },
-    { grade: "A", minQuality: 46 },
+    { grade: "S", minQuality: 59 },
+    { grade: "A", minQuality: 49 },
     { grade: "B", minQuality: 38 },
-    { grade: "C", minQuality: 31 },
-    { grade: "D", minQuality: 25 },
-    { grade: "E", minQuality: 19 },
+    { grade: "C", minQuality: 28 },
+    { grade: "D", minQuality: 21 },
+    { grade: "E", minQuality: 15 },
     { grade: "F", minQuality: 0 },
   ];
 }

@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { config, RARITY_ORDER, type Rarity } from "@tia/config";
 import { Prng } from "@tia/engine";
-import { equipmentStats, rollEquipment, rollFragments, rollRewardBundle, sourceAllowsFragments } from "../loot.js";
+import { buildEquipment, migrateLegacyEquipment, isLegacyEquipment, pickTemplate, rollEquipment, rollEquipmentOf, rollFragments, rollRewardBundle, rollX, sourceAllowsFragments } from "../loot.js";
+import { equipmentStats, lineValue, templateById } from "../gear.js";
 import { ACCOUNT } from "./fixtures.js";
 
 const CTX = {
@@ -67,23 +68,43 @@ describe("tabela de raridade (§33)", () => {
   });
 });
 
-describe("X por atributo (§36)", () => {
-  it("cada atributo tem valor próprio — não um X único para o item", () => {
-    const items = manyDrops(5, 500);
-    const allDistinct = items.every((item) => {
-      const values = Object.values(item.xValues);
-      return new Set(values).size > 1;
-    });
-    expect(allDistinct).toBe(true);
+describe("X por atributo (§36, ⛔ P-010 → ADR-023)", () => {
+  it("cada linha tem valor próprio — não um X único para o item", () => {
+    const items = manyDrops(5, 20_000).filter((i) => Object.keys(i.xValues).length >= 3);
+    expect(items.length).toBeGreaterThan(50);
+    const distinct = items.filter((item) => new Set(Object.values(item.xValues)).size > 1).length;
+    expect(distinct / items.length).toBeGreaterThan(0.99);
+  });
+
+  it("o X é fracionário com a precisão da config (o exemplo do §36 é ×1.72)", () => {
+    for (const item of manyDrops(8, 2000)) {
+      for (const x of Object.values(item.xValues) as number[]) {
+        expect(Math.round(x * 100) / 100).toBe(x);
+      }
+    }
   });
 
   it("os X ficam dentro da faixa da config", () => {
     for (const item of manyDrops(9, 2000)) {
-      for (const value of Object.values(item.xValues)) {
+      for (const value of Object.values(item.xValues) as number[]) {
         expect(value).toBeGreaterThanOrEqual(config.loot.x.min);
         expect(value).toBeLessThanOrEqual(config.loot.x.max);
       }
     }
+  });
+
+  it("distribuição em sino: média ≈ 1,05; god roll (≥ 2,00) raro; X ≤ 0,70 em ~14%", () => {
+    const rng = new Prng(1);
+    const xs = Array.from({ length: 100_000 }, () => rollX(rng));
+    const mean = xs.reduce((a, b) => a + b, 0) / xs.length;
+    expect(mean).toBeGreaterThan(1.0);
+    expect(mean).toBeLessThan(1.1);
+    const god = xs.filter((x) => x >= 2).length / xs.length;
+    expect(god).toBeGreaterThan(0.005);
+    expect(god).toBeLessThan(0.02);
+    const low = xs.filter((x) => x < 0.7).length / xs.length;
+    expect(low).toBeGreaterThan(0.1);
+    expect(low).toBeLessThan(0.2);
   });
 
   it("o mesmo seed e contexto dão o MESMO item (determinismo §64/§86)", () => {
@@ -93,51 +114,148 @@ describe("X por atributo (§36)", () => {
   });
 
   it("itens ruins e bons coexistem (§36 — isso é desejável)", () => {
-    const items = manyDrops(21, 20_000);
-    const qualities = items.map((i) => i.quality);
-    expect(Math.min(...qualities)).toBeLessThan(60);
-    expect(Math.max(...qualities)).toBeGreaterThan(75);
+    const qualities = manyDrops(21, 20_000).map((i) => i.quality);
+    expect(Math.min(...qualities)).toBeLessThan(10);
+    expect(Math.max(...qualities)).toBeGreaterThan(55);
   });
 
-  it("a nota é independente da raridade (§35)", () => {
-    const items = manyDrops(31, 30_000);
-    const byRarity: Record<string, number[]> = {};
-    for (const item of items) (byRarity[item.rarity] ??= []).push(item.quality);
-    // Common e Uncommon devem poder ter a mesma faixa de nota: a raridade
-    // controla POTÊNCIA, a nota controla a rolagem.
-    for (const rarity of ["common", "uncommon"] as const) {
-      const qs = byRarity[rarity] ?? [];
-      if (qs.length > 100) {
-        expect(Math.max(...qs)).toBeGreaterThan(60);
-      }
-    }
+  it("a nota é independente da raridade (§35): mesma faixa de nota em raridades diferentes", () => {
+    const rng = new Prng(31);
+    const mean = (r: Rarity) => {
+      const qs = Array.from({ length: 4000 }, () => rollEquipmentOf(rng, CTX, { rarity: r }).quality);
+      return qs.reduce((a, b) => a + b, 0) / qs.length;
+    };
+    // Diferem só pelo nº de linhas (variância), não por viés de raridade.
+    expect(Math.abs(mean("common") - mean("celestial"))).toBeLessThan(3);
+  });
+
+  it("as letras seguem a tabela calibrada: S raro, F minoria", () => {
+    const items = manyDrops(77, 100_000);
+    const share = (g: string) => items.filter((i) => i.grade === g).length / items.length;
+    expect(share("S")).toBeGreaterThan(0.003);
+    expect(share("S")).toBeLessThan(0.03);
+    expect(share("F")).toBeLessThan(0.25);
+    expect(share("C") + share("D")).toBeGreaterThan(0.3);
   });
 });
 
-describe("stats do equipamento", () => {
-  it("o X é multiplicador: x=10 devolve o valor base", () => {
-    const rng = new Prng(1);
-    let item;
-    for (let i = 0; i < 5000 && !item; i++) item = rollEquipment(rng, { ...CTX, itemIndex: i });
-    expect(item).toBeDefined();
-    expect(equipmentStats(item!).hp).toBeGreaterThanOrEqual(0);
+describe("estrutura do item (ADR-023)", () => {
+  it("nº de linhas segue a raridade; a linha principal do template sempre rola", () => {
+    const rng = new Prng(3);
+    for (const rarity of RARITY_ORDER) {
+      for (let i = 0; i < 200; i++) {
+        const item = rollEquipmentOf(rng, CTX, { rarity });
+        const template = templateById(item.itemTypeId)!;
+        expect(Object.keys(item.xValues)).toHaveLength(config.equipment.rarity[rarity].statLines);
+        expect(item.xValues[template.stats[0]!.stat]).toBeDefined();
+        // só stats do pool do template
+        for (const stat of Object.keys(item.xValues)) expect(template.stats.map((s) => s.stat)).toContain(stat);
+      }
+    }
   });
 
-  it("crítico nunca é destruído pelo escalonamento por raridade", () => {
+  it("Lendário e Celestial têm característica; as demais não (§34)", () => {
+    const rng = new Prng(4);
+    for (const rarity of RARITY_ORDER) {
+      const item = rollEquipmentOf(rng, CTX, { rarity });
+      expect(!!item.featureId).toBe(config.equipment.rarity[rarity].hasFeature);
+    }
+  });
+
+  it("toda arma carrega o traço do seu tipo; as demais peças não têm traço", () => {
+    const rng = new Prng(5);
+    for (const t of config.equipment.templates) {
+      const item = rollEquipmentOf(rng, CTX, { templateId: t.id, rarity: "rare" });
+      if (t.slot === "weapon") {
+        const trait = config.equipment.weaponTraits.find((x) => x.weaponType === t.weaponType)!;
+        expect(item.traitId).toBe(trait.id);
+      } else {
+        expect(item.traitId).toBeUndefined();
+      }
+    }
+  });
+
+  it("todos os templates e slots são alcançáveis", () => {
+    const rng = new Prng(6);
+    const seen = new Set<string>();
+    for (let i = 0; i < 20_000; i++) seen.add(pickTemplate(rng).id);
+    expect(seen).toEqual(new Set(config.equipment.templates.map((t) => t.id)));
+  });
+
+  it("o nível do item é o nível da fonte (inimigo)", () => {
+    const item = rollEquipmentOf(new Prng(7), { ...CTX, sourceLevel: 1234 });
+    expect(item.level).toBe(1234);
+  });
+});
+
+describe("stats do equipamento (valor = BASE(nível) × peso × RARIDADE × X)", () => {
+  const sword = () => templateById("weapon_sword")!;
+
+  it("escala com o nível do item (R-02): nível 10× maior ⇒ stat bem maior", () => {
+    const low = rollEquipmentOf(new Prng(1), { ...CTX, sourceLevel: 50 }, { templateId: "weapon_sword", rarity: "rare" });
+    const high = { ...low, level: 5000 };
+    expect(lineValue(high, "attack")).toBeGreaterThan(lineValue(low, "attack") * 20);
+  });
+
+  it("raridade maior com os mesmos X produz stat maior, na razão do multiplicador", () => {
+    const base = rollEquipmentOf(new Prng(2), CTX, { templateId: "weapon_sword", rarity: "common" });
+    const epic = { ...base, rarity: "epic" as const };
+    const ratio = lineValue(epic, "attack") / lineValue(base, "attack");
+    expect(ratio).toBeCloseTo(config.equipment.rarity.epic.multiplier / config.equipment.rarity.common.multiplier, 1);
+  });
+
+  it("o X é multiplicador: X dobrado ⇒ stat dobrado", () => {
+    const base = rollEquipmentOf(new Prng(3), { ...CTX, sourceLevel: 2000 }, { templateId: "weapon_sword", rarity: "common" });
+    const a = { ...base, xValues: { ...base.xValues, attack: 1.0 } };
+    const b = { ...base, xValues: { ...base.xValues, attack: 2.0 } };
+    expect(lineValue(b, "attack") / lineValue(a, "attack")).toBeCloseTo(2, 2);
+  });
+
+  it("stat que o item não rolou vale 0", () => {
+    const item = rollEquipmentOf(new Prng(4), CTX, { templateId: "weapon_sword", rarity: "common" });
+    const stats = equipmentStats(item);
+    const rolled = Object.keys(item.xValues);
+    for (const [stat, value] of Object.entries(stats)) {
+      if (!rolled.includes(stat)) expect(value).toBe(0);
+    }
+    expect(sword().stats[0]!.stat).toBe("attack");
+    expect(stats.attack).toBeGreaterThan(0);
+  });
+
+  it("crítico de equipamento é pequeno: nunca estoura o teto do engine sozinho", () => {
     const items = manyDrops(77, 20_000);
     const maxCrit = Math.max(...items.map((i) => equipmentStats(i).critChance));
-    // Acima disso o item zeraria a decisão de crítico no teto do engine.
     expect(maxCrit).toBeLessThanOrEqual(0.15);
   });
 
   it("raridade maior produz poder maior, em média", () => {
-    const items = manyDrops(101, 40_000);
-    const powerOfItem = (i: (typeof items)[number]) =>
-      Object.values(equipmentStats(i)).reduce((a, b) => a + b, 0);
-    const common = items.filter((i) => i.rarity === "common").map(powerOfItem);
-    const rare = items.filter((i) => i.rarity === "rare").map(powerOfItem);
-    const avg = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
-    expect(avg(rare)).toBeGreaterThan(avg(common));
+    const rng = new Prng(101);
+    const avgPower = (r: Rarity) => {
+      const xs = Array.from({ length: 3000 }, () => Object.values(equipmentStats(rollEquipmentOf(rng, CTX, { rarity: r }))).reduce((a, b) => a + b, 0));
+      return xs.reduce((a, b) => a + b, 0) / xs.length;
+    };
+    const powers = RARITY_ORDER.map(avgPower);
+    for (let i = 1; i < powers.length; i++) expect(powers[i]!).toBeGreaterThan(powers[i - 1]!);
+  });
+});
+
+describe("migração de itens legados (config v3 → v4)", () => {
+  it("reconstrói do seed, preservando id, dono, nível, raridade, slot e origem", () => {
+    const legacy = {
+      ...rollEquipmentOf(new Prng(9), CTX, { templateId: "boots_runner", rarity: "epic" }),
+      itemTypeId: "boots.epic",
+      xValues: { hp: 12, attack: 40, specialAttack: 3, defense: 9, specialDefense: 8, critChance: 4, attackSpeed: 20, speed: 33 },
+    };
+    expect(isLegacyEquipment(legacy)).toBe(true);
+    const migrated = migrateLegacyEquipment(legacy);
+    expect(isLegacyEquipment(migrated)).toBe(false);
+    expect(migrated.id).toBe(legacy.id);
+    expect(migrated.slot).toBe("boots");
+    expect(migrated.rarity).toBe("epic");
+    expect(migrated.level).toBe(legacy.level);
+    expect(Object.keys(migrated.xValues)).toHaveLength(config.equipment.rarity.epic.statLines);
+    // determinístico
+    expect(migrateLegacyEquipment(legacy)).toEqual(migrated);
   });
 });
 

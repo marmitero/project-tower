@@ -32,10 +32,10 @@ describe("códice de heróis (§10 — deriva, nunca é salvo)", () => {
     expect(codex.filter((e) => e.status === "locked")).toHaveLength(3);
   });
 
-  it("a ordem do códice é a do catálogo (escala de raridade)", () => {
+  it("a ordem do códice é a do catálogo (adendo ADR-024: todos incomuns)", () => {
     const codex = heroCodex([]);
     expect(codex.map((e) => e.identity.id)).toEqual(HEROES.map((h) => h.id));
-    expect(codex.map((e) => e.identity.rarity)).toEqual(["common", "uncommon", "rare", "epic"]);
+    expect(codex.map((e) => e.identity.rarity)).toEqual(["uncommon", "uncommon", "uncommon", "uncommon"]);
   });
 
   it("cada entrada carrega retrato do pack", () => {
