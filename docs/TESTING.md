@@ -505,6 +505,18 @@ Meta de cobertura:
 
 ---
 
+### 11.1 Fumaça de navegador da batalha (ADR-029)
+
+`scripts/browser-smoke.mjs` abre o jogo num **Chromium real**, joga até a Torre e afirma, lendo `window.__tiaBattle.snapshot()`: a arena rolou (herói andou), uma batalha chegou à cena com sprite dos **dois** lados, e não houve 404 nem erro de console. Existe porque a suíte em jsdom **nunca renderizou o Phaser** e a tela preta da batalha passou "verde". Fora de `npm run check` (exige navegador); rodar **sempre que mexer em `apps/game-web/src/render/`**:
+
+```bash
+mkdir /tmp/br && cd /tmp/br && npm i puppeteer-core @sparticuz/chromium   # descartável, fora do repo
+NODE_PATH=/tmp/br/node_modules node scripts/browser-smoke.mjs --url http://127.0.0.1:5173/ --out /tmp/capturas
+# ou, com o Chrome/Edge instalado:  CHROME="C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" ...
+```
+
+Parte sem navegador: `tests/integration/battle-render.test.ts` (assets de temas e personagens existem no manifesto e em disco; quadros dos VFX cabem na folha real; todo tema de andar tem arena; a fonte da cena reflete o estado; mapa evento→efeito).
+
 ## 12. Referências
 
 - [`COMBAT_SYSTEM.md`](COMBAT_SYSTEM.md) §3 — invariantes

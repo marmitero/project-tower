@@ -39,7 +39,11 @@ https://github.com/marmitero/project-tower/archive/refs/heads/arena/01a0f1f1-pro
 
 Linux/macOS: `./jogar.sh` (ou `npm run play`). **Nunca** abra `index.html` direto (`file://`): não funciona.
 
-### Fase 13 — MVP Local (a mais recente)
+### Pós-Fase 13 — Batalha visível (a mais recente)
+
+- Corrigida a **tela preta** da batalha (a cena não recebia a batalha) e entregue a **arena**: cenário de ladrilhos com tema por andar e para chefes, o **herói anda** até o próximo inimigo (que entra caminhando), **efeitos** de corte/faísca/fogo/raio/cura, sombra e recuo. Causa, auditoria e decisões: [`ADR-029`](docs/DECISIONS_LOG.md). Prova visual: `scripts/browser-smoke.mjs` (veja [`docs/TESTING.md`](docs/TESTING.md)).
+
+### Fase 13 — MVP Local
 
 - **Debug Mode (§77)** — painel de testes (Coin/XP/nível, heróis, equipamento, andar, Boss, offline, teste de loot) **só em build de desenvolvimento** (`npm run play:debug`); o jogo do jogador não contém o código.
 - **Opções** — som, **baixar/carregar/apagar save** (com confirmação e cópia de segurança), “Como jogar”, créditos do pack.
@@ -65,7 +69,7 @@ Chefe é uma **atividade separada da Torre**: a **equipe inteira** (até 3 heró
 | Especificação | [`Master-Prompt.md`](Master-Prompt.md) — 125 seções, fonte de autoridade |
 | Documentação | [`docs/`](docs/README.md) — 38 documentos (+ este README e o `AI_STATE.md`) |
 | Handoff | [`AI_STATE.md`](AI_STATE.md) — **leia primeiro** |
-| Testes | 656 de lógica, interface (jsdom), jornada §118 e soak + 28 de arquitetura (`npm run check`) |
+| Testes | 674 de lógica, interface (jsdom), jornada §118 e soak + 28 de arquitetura (`npm run check`) |
 | Assets | **422 sprites** do pack Nika Studio, versionados no repositório |
 | Pendências | Nenhuma crítica aberta; decisões provisórias em [`docs/PENDING_RULES.md`](docs/PENDING_RULES.md) |
 

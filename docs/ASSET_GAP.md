@@ -56,6 +56,8 @@ Os 13 inimigos que o catálogo provisório referencia (`P-006`) existem com anim
 
 `tileset/` com 45 tiles (3 biomas, armadilhas, portas, escadas) e `tileset/environment/` com 20 props e conjuntos animados (`brazier_anim`, `water_anim`, `animated_tiles`). Suficiente para uma tela de combate com identidade visual própria por andar — o que a §22 exige.
 
+> **Atualização (ADR-029, 2026-10-03):** o cenário e os 6 VFX de combate **agora estão em uso** na batalha — `render/arenaThemes.ts` (peças de `tileset/` por tema de andar e de chefe) e `render/vfxAtlas.ts` (retângulos medidos; as folhas de VFX têm 2048×2048 com uma faixa de quadros, não grade 4×4). A folha `walk` dos personagens é usada na caminhada entre inimigos. Fica em aberto o §3.4 (animação de "Procurando" — hoje é a caminhada do herói com o cenário rolando, que cumpre a §28 sem arte nova) e `vfx_levelup` (catalogado, sem gatilho em batalha).
+
 ### 2.5 Ícones e VFX
 
 224 ícones organizados em 14 categorias (armas, escudos, ranged, magia, poções, gemas, consumíveis, scrolls, chaves, feitiços). 7 VFX: `hit`, `slash`, `fire`, `lightning`, `heal`, `levelup`, `glow_warm`.

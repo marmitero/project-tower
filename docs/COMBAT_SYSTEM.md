@@ -243,6 +243,10 @@ A **decoupling** importa: se o renderer calculasse dano, o balanceamento quebrar
 | `effect_triggered` | VFX do traço (veneno = bolhas, stun = estrelas, contracorte = brilho de escudo) |
 | `battle_won` / `battle_lost` | Banner + transição para o estado seguinte |
 
+### 6.2.1 Execução na cena (ADR-029)
+
+A cena **puxa** o estado a cada frame (`render/battleSource.ts`) em vez de receber empurrões; os eventos continuam chegando pela fila (`battleFeedbackQueue`). Eventos de ação (`attack_started`, `skill_used`) identificam quem age em **`actorId`**; os de dano, em `sourceId` — a cena lê os dois. Efeitos por tipo de dano: físico → corte + faísca; mágico → fogo; contínuo → faísca; skill mágica → raio no adversário; crítico → faísca 1,5×; morte → estouro; cura/reviver → cura. Tudo é tabela em `BattleRenderer.ts`/`vfxAtlas.ts`: o renderer não calcula dano.
+
 ### 6.3 Escala e legibilidade
 
 O combate precisa ser legível em **tela de celular**. Isso significa:

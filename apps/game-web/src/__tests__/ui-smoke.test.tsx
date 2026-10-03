@@ -174,7 +174,7 @@ describe("UI — guia, Opções e proteção do save", () => {
     await tick(10);
     // depois de escalar o herói, o guia manda entrar na Torre
     const t = text();
-    expect(t).toMatch(/Entre na Torre|slot da equipe/);
+    expect(t).toMatch(/Entre na Torre|slot da equipe|Tornar ativo/);
     expect(errors).toEqual([]);
   });
 

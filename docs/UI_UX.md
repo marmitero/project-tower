@@ -128,6 +128,13 @@ Mas:
 | Morte | Piscadas e dissolução |
 | Vitória/derrota | Banner + transição |
 
+### 3.1.1 Como a arena é montada hoje (ADR-029)
+
+- **Cenário:** parede ao fundo (paralaxe) + piso de duas fileiras, ladrilhos do pack, tema por andar (`FloorVisual.theme`) e um tema para chefes — dado em `render/arenaThemes.ts`.
+- **Movimento:** durante "Procurando..." o herói anda (folha `walk`) e o cenário rola; o inimigo **entra caminhando** e o cenário para; na vitória o corpo caído fica ~1,5 s e o herói volta a andar. `prefers-reduced-motion` desliga rolagem, entrada e investida.
+- **Efeitos:** corte + faísca (físico), explosão de fogo (mágico), raio (skill mágica), faísca grande (crítico), estouro (morte), cura subindo (cura/reviver); sombra sob cada combatente; recuo no alvo — mapa em `render/BattleRenderer.ts`, quadros medidos em `render/vfxAtlas.ts`.
+- **Sem herói na equipe** a cena mostra um aviso; nunca fica preta.
+
 ### 3.2 A animação "Procurando"
 
 O §28 é categórico: *"Não simplesmente mostrar 'Aguardando...'"*.

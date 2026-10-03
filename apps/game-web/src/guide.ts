@@ -31,7 +31,10 @@ const STEPS: Rule[] = [
   {
     id: "assign",
     when: (s) => s.data.team.activeHeroId === null,
-    text: (s) => `Coloque ${s.data.heroes[0]?.name ?? "seu campeão"} num slot da equipe e escolha quem luta.`,
+    text: (s) =>
+      s.team.length > 0
+        ? `Na tela Equipe, toque em "Tornar ativo" em ${s.team[0]!.name}: é o herói que luta na Torre.`
+        : `Coloque ${s.data.heroes[0]?.name ?? "seu campeão"} num slot da equipe e escolha quem luta.`,
     screen: "team",
     go: "Equipe",
   },
