@@ -1,6 +1,6 @@
 # Sistema de Inventário
 
-**Versão:** 0.1 · **Data:** 2026-09-30 · **Estado:** especificado, limite numérico bloqueado (P-016)
+**Versão:** 1.0 · **Data:** 2026-10-03 · **Estado:** ✅ implementado na FASE 9 (ADR-023): 300 itens não equipados, `onFull` = `autoSell`; filtros, comparação, equipar/vender/travar e venda em massa em `apps/game-web/src/InventoryScreen.tsx`. Onde o texto abaixo divergir, vale a ADR-023 e `EQUIPMENT_SYSTEM.md`.
 **Fonte:** §39–§40, §70, §71, §108 do `Master-Prompt.md`
 
 ---
@@ -281,8 +281,8 @@ Detalhe em [`PERFORMANCE.md`](PERFORMANCE.md).
 
 | ID | Pendência | Bloqueia |
 |---|---|---|
-| `P-016` | Limite de capacidade do inventário | Fase 9 |
+| ~~`P-016`~~ | ~~Limite de capacidade~~ ✅ 300 não equipados (ADR-023) | resolvida |
 | `P-032` | Itens, consumíveis e materiais | Fase 9 |
 | `P-008` | Preço de venda | Fase 10 |
-| `P-033` | Requisito de nível para equipar | Fase 9 |
+| ~~`P-033`~~ | ~~Requisito de nível~~ ✅ `ceil(0,9 × nível do item)` (ADR-023) | resolvida |
 | `P-034` | Abas do inventário por tipo | Fase 9 |

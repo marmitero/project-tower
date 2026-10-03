@@ -1,6 +1,6 @@
 # Pendências — Decisões que NÃO podem ser inventadas
 
-**Versão:** 0.4 · **Data:** 2026-10-03 · **Estado:** 67 pendências catalogadas (P-002, P-003, P-004, P-012, P-019, P-020, P-020b resolvidas)
+**Versão:** 0.4 · **Data:** 2026-10-03 · **Estado:** 67 pendências catalogadas (P-002, P-003, P-004, P-005, P-006, P-010, P-012, P-016, P-019, P-020, P-020b, P-023, P-024, P-025, P-033 resolvidas)
 **Fonte:** §73 do `Master-Prompt.md`
 
 ---
@@ -139,9 +139,11 @@ O §43 exige **fontes** e **sumidouros** claramente documentados, mas **nenhum v
 
 ---
 
-### P-010 — Faixa e granularidade do X
+### P-010 — Faixa e granularidade do X ✅ RESOLVIDA (2026-10-03)
 
 **Criticidade:** 🔴 CRÍTICA · **Bloqueia:** FASE 9
+
+> **RESOLVIDA em 2026-10-03** (ADR-023, delegação "você decide"): X **fracionário, 0,50–2,50**, 2 casas, em sino (média ≈ 1,05; ≥ 2,00 ≈ 1%), um X independente por linha. Tudo em `config.equipment.x` (ContentPack v2). O texto abaixo é o histórico.
 
 O §36 diz que o X é **gerado individualmente por atributo** e dá um exemplo com decimais (`Attack × 1.72`, `Defense × 0.93`, `Critical × 1.41`, `HP × 2.08`). **Não diz a faixa, nem se o X armazenado é inteiro ou fracionário.**
 
@@ -311,9 +313,11 @@ Nada definido. A referência define a Sentinela como imune a Atordoamento, mas i
 
 ---
 
-### P-023 — Valores dos traços de arma
+### P-023 — Valores dos traços de arma ✅ RESOLVIDA (2026-10-03)
 
 **Criticidade:** 🟡 ALTA · **Bloqueia:** FASE 9
+
+> **RESOLVIDA em 2026-10-03** (ADR-023 §8): valores da referência adotados como ponto de partida (Contracorte 20%/50% Atq, Veneno 20%/3×10%, Machado +15%, Maça +10 pp, Besta +20% vel., Área 70%, Sifão 10%, Atordoamento 15%, Golpe duplo 2×60%) como `GearEffect` de dados; tetos em `equipment.effectCaps`. Validar em playtest.
 
 O §72 define as 9 categorias de arma, mas **não define** os traços mecânicos nem seus valores.
 
@@ -323,9 +327,11 @@ Os valores da tabela em [`WEAPON_SYSTEM.md`](WEAPON_SYSTEM.md) §3 são **herdad
 
 ---
 
-### P-024 — Afinidades dos 4 heróis
+### P-024 — Afinidades dos 4 heróis ✅ RESOLVIDA (2026-10-03)
 
 **Criticidade:** 🟢 MÉDIA · **Bloqueia:** FASE 9
+
+> **RESOLVIDA em 2026-10-03** (ADR-023 §7): afinidade é **por tipo de arma da classe** (+5% no ataque principal, `equipment.affinityBonus`), nunca bloqueia equipar.
 
 Depende diretamente de `P-002`. A regra de +5% é reaproveitada da referência.
 
@@ -333,9 +339,11 @@ Depende diretamente de `P-002`. A regra de +5% é reaproveitada da referência.
 
 ---
 
-### P-025 — Templates do catálogo de equipamento
+### P-025 — Templates do catálogo de equipamento ✅ RESOLVIDA (2026-10-03)
 
 **Criticidade:** 🟢 MÉDIA · **Bloqueia:** FASE 9
+
+> **RESOLVIDA em 2026-10-03** (ADR-023 §3): 10 slots, 18 templates (9 armas + 9 peças), linhas por raridade 2/2/3/3/4/4. Novos templates entram pelo ContentPack.
 
 O §70 exige um catálogo real, mas não define quantos itens base existem.
 
@@ -399,9 +407,11 @@ O §70 lista "itens, consumíveis, materiais" no inventário, mas **nenhum é de
 
 ---
 
-### P-033 — Requisito de nível para equipar
+### P-033 — Requisito de nível para equipar ✅ RESOLVIDA (2026-10-03)
 
 **Criticidade:** 🟢 MÉDIA · **Bloqueia:** FASE 9
+
+> **RESOLVIDA em 2026-10-03** (ADR-023 §6): herói ≥ `ceil(0,9 × nível do item)` (`equipment.requirement.levelRatio`).
 
 O §70 diz que o jogador pode equipar. **Não diz** se há requisito de nível.
 
@@ -703,9 +713,11 @@ O §40 e o §41 definem a mecânica e a taxa, mas **não definem** limite de an�
 
 ## 6. Pendências de conteúdo
 
-### P-016 — Limite de capacidade do inventário
+### P-016 — Limite de capacidade do inventário ✅ RESOLVIDA (2026-10-03)
 
 **Criticidade:** 🟢 MÉDIA · **Bloqueia:** FASE 9
+
+> **RESOLVIDA em 2026-10-03** (ADR-023 §12): 300 itens **não equipados**; cheia ⇒ `inventory.onFull` (padrão `autoSell`, alternativa `discard`). Coin/XP creditados antes. Editável.
 
 O §13 diz que **heróis são ilimitados** e é **silencioso** sobre equipamentos. Um limite é necessário (UI, memória), mas o número é Tipo C.
 
@@ -774,11 +786,11 @@ Não são pendências do Master-Prompt: são consequências **medidas** das deci
 
 | Criticidade | Quantidade | IDs |
 |---|---:|---|
-| 🔴 **CRÍTICA** | **4** | `P-008`, `P-010`, `P-011`, `P-036` (P-002 resolvida 2026-10-01; P-005/P-006 resolvidas 2026-10-03) |
-| 🟡 **ALTA** | **15** | `P-001`, `P-006b`, `P-015`, `P-017`, `P-018`, `P-023`, `P-027`, `P-032`, `P-007`, `P-011a`, `P-047`, `P-053`, `P-057`, `P-058`, `P-014` |
-| 🟢 **MÉDIA** | **10** | `P-020`, `P-021`, `P-024`, `P-025`, `P-033`, `P-006c`, `P-039`, `P-040`, `P-043`, `P-016` |
+| 🔴 **CRÍTICA** | **3** | `P-008`, `P-011`, `P-036` (P-002 resolvida 2026-10-01; P-005/P-006 resolvidas 2026-10-03; P-010 resolvida 2026-10-03) |
+| 🟡 **ALTA** | **14** | `P-001`, `P-006b`, `P-015`, `P-017`, `P-018`, `P-027`, `P-032`, `P-007`, `P-011a`, `P-047`, `P-053`, `P-057`, `P-058`, `P-014` |
+| 🟢 **MÉDIA** | **6** | `P-020`, `P-021`, `P-006c`, `P-039`, `P-040`, `P-043` (P-016/P-024/P-025/P-033 resolvidas 2026-10-03) |
 | ⚪ **BAIXA** | **29** | `P-026`, `P-028`, `P-029`, `P-031`, `P-034`, `P-035`, `P-037`, `P-038`, `P-013`, `P-041`, `P-042`, `P-044`, `P-045`, `P-046`, `P-048`, `P-049`, `P-050`, `P-051`, `P-052`, `P-054`, `P-055`, `P-022`, `P-030`, `P-056`, `P-059`, `P-060`, `P-061`, `P-062`, `P-063` |
-| **TOTAL** | **64** | |
+| **TOTAL** | **64** (6 resolvidas na FASE 9 permanecem catalogadas acima) | |
 
 ---
 

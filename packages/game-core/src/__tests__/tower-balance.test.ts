@@ -8,7 +8,7 @@
  */
 import { describe, expect, it } from "vitest";
 import { classes, config, enemies } from "@tia/config";
-import { averageDuel, simulateDuel, simulateHunt, towerPacing } from "../balance.js";
+import { averageDuel, rollGearSet, simulateDuel, simulateHunt, towerPacing } from "../balance.js";
 import { floorPoolOdds, pickEnemyForFloor } from "../tower.js";
 
 const FLOORS_SAMPLE = [1, 4, 8, 10, 11, 25, 40];
@@ -197,5 +197,51 @@ describe("sorteio de inimigo do andar", () => {
   it("nunca sorteia inimigo fora do pool do andar", () => {
     const ids = new Set(config.tower.floors[0]!.pool.map((p) => p.enemyId));
     for (let s = 0; s < 500; s += 1) expect(ids.has(pickEnemyForFloor(1, s * 40503).id)).toBe(true);
+  });
+});
+
+describe("equipamento (ADR-023) — calibração medida", () => {
+  const level = 500;
+  const mean = (opts?: Parameters<typeof rollGearSet>[3]) => {
+    let lost = 0;
+    let dur = 0;
+    let n = 0;
+    for (const cls of classes) {
+      for (let i = 1; i <= 4; i += 1) {
+        const gear = opts === undefined ? undefined : rollGearSet(cls.id, level, i, opts);
+        for (const e of enemies.slice(0, 4)) {
+          const r = averageDuel({ classId: cls.id, heroLevel: level, enemyId: e.id, enemyLevel: level, gear }, 2);
+          lost += r.avgHpLostFraction;
+          dur += r.avgDurationSec;
+          n += 1;
+        }
+        if (opts === undefined) break;
+      }
+    }
+    return { lost: lost / n, dur: dur / n };
+  };
+
+  it("um conjunto médio de drops AJUDA de forma clara (menos vida perdida, luta mais curta)", () => {
+    const bare = mean();
+    const geared = mean({});
+    expect(geared.lost).toBeLessThan(bare.lost * 0.8);
+    expect(geared.dur).toBeLessThan(bare.dur * 0.95);
+  });
+
+  it("mas não torna o herói invencível: o custo médio continua > 0", () => {
+    expect(mean({}).lost).toBeGreaterThan(0.005);
+  });
+
+  it("o equipamento melhora com a raridade e com o X (conjunto Celestial/X 2,5 ≥ médio ≥ nada)", () => {
+    const bare = mean();
+    const avg = mean({});
+    const god = mean({ rarity: "celestial", x: 2.5 });
+    expect(god.lost).toBeLessThanOrEqual(avg.lost);
+    expect(avg.lost).toBeLessThan(bare.lost);
+    expect(god.dur).toBeLessThan(avg.dur);
+  });
+
+  it("o conjunto é determinístico por seed", () => {
+    expect(rollGearSet("ranger", level, 5).stats).toEqual(rollGearSet("ranger", level, 5).stats);
   });
 });

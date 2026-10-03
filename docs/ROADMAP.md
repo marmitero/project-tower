@@ -18,7 +18,7 @@ FASE 5  ✅ Equipe                   ← CONCLUÍDA (gate batido, ADR-017)
 FASE 6  ✅ Combate                  ← CONCLUÍDA (gate batido, ADR-020)
 FASE 7  ✅ Torre                    ← CONCLUÍDA (gate batido, ADR-021/022)
 FASE 8  ✅ Searching loop           ← CONCLUÍDA (gate batido, ADR-017)
-FASE 9  ⬜ Equipamentos     ⛔ P-010
+FASE 9  ✅ Equipamentos        ← CONCLUÍDA (gate batido, ADR-023/024)
 FASE 10 ⬜ Economia          ⛔ P-008, P-036
 FASE 11 ⬜ Offline           ⛔ P-011
 FASE 12 ⬜ Boss              ⛔ P-018
@@ -27,13 +27,13 @@ FASE 14 ⬜ Painel Admin      (pós-MVP — docs/ADMIN_PANEL.md, ADR-022)
 Online ⬜ → Social ⬜ → Market ⬜ → PvP ⬜ → Monetização ⬜ → Polish ⬜ → Beta ⬜ → Lançamento
 ```
 
-Implementado até aqui: especificação, documentação, fundação tipada (contratos,
+Implementado até aqui (inclui a FASE 9 — equipamento/loot/inventário, ADR-023/024): especificação, documentação, fundação tipada (contratos,
 config, engine, game-core, persistência, HUD base), FASE 3 (criação do Rei),
 FASE 4 (escolha de herói §10 + códice + XP/níveis) e FASES 5+8 (equipe/slots,
 XP dividido, loop de searching ~3s com UI), FASE 6 (combate visual, HP
 persistente) e FASE 7 (Torre de 40 andares, 11 inimigos por papel, teto de nível
 20.000). O loop idle já roda de ponta a ponta (batalha → procura → batalha) com
-XP desacelerando por andar; loot/equipamento e economia ainda **não**.
+XP desacelerando por andar; loot/equipamento/inventário/venda **sim** (Fase 9); economia final (Coin) e offline ainda **não**.
 
 ### Estimativa até o 1º MVP jogável (FASE 13) — 7 etapas
 
@@ -45,14 +45,14 @@ Estimativa de trabalho (2026-10-01), ajustável; cada etapa = um ciclo completo
 | 1 ✅ | FASE 5 + 8 | Equipe/slots (2=nv10+50k, 3=nv25+250k), XP dividido 1/n, searching ~3s, loop idle | decidido em ADR-017 (P-003/P-004/P-012/P-019/P-020b) |
 | 2 ✅ | FASE 6 | Combate visual de verdade: BattleScene animada, skills, números/feedback, SFX | decidido em ADR-020 (P-019/P-020) |
 | 3 ✅ | FASE 7 | Torre: 40 andares por faixa de nível, inimigos por papel, curvas de XP, `ContentPack` admin-ready | decidido em ADR-021/022 (P-005/P-006/P-009) |
-| 4 | FASE 9 | Loot → equipamento → raridade → X → inventário/venda | ⛔ P-010 (regra de slots/equip) |
+| 4 ✅ | FASE 9 | Loot → equipamento → raridade → X → inventário/venda; heróis adquiridos balanceados | decidido em ADR-023/024 (P-010/P-016/P-023/P-024/P-025/P-033) |
 | 5 | FASE 10 + 11 | Economia básica (Coin, custos de slot) + offline Free 2h | ⛔ **P-008/P-036/P-011** (economia) — pergunta ao usuário |
 | 6 | FASE 12 | Boss como atividade separada (só o essencial do MVP) | ⛔ P-018 |
 | 7 | FASE 13 | MVP Local: HUD final, Debug Mode, save local, pass de estabilidade/UX | — |
 
-Riscos de prazo: P-008/P-036 são decisões SUAS (bloqueiam a etapa 5); a etapa 4
-(equipamento) precisa resolver R-02 (equipamento flat não escala com o nível —
-`PENDING_RULES.md` §6b) antes de ser considerada concluída.
+Riscos de prazo: P-008/P-036 são decisões SUAS (bloqueiam a etapa 5). A etapa 4
+resolveu o R-02 (equipamento escala pelo stat de referência do nível) e o mediu
+em [`BALANCE_REPORT.md`](BALANCE_REPORT.md).
 
 ### Regra de arquitetura para as etapas 4–7: conteúdo "Admin-Ready" (AR)
 
@@ -371,7 +371,7 @@ Vitória → Recompensa → Procurando → ~3s → Novo inimigo
 
 ## 10. FASE 9 — Equipamentos
 
-> ⛔ **BLOQUEADA por `P-010`** (faixa do X) e `P-016` (limite).
+> ✅ **CONCLUÍDA em 2026-10-03** (ADR-023/024) — P-010/P-016/P-023/P-024/P-025/P-033 decididas por delegação. O gate original (`x-independence.test.ts`/`loot-distribution.test.ts`) foi coberto por `loot.test.ts`, `gear.test.ts`, `equipment-flow.test.ts` e `tower-balance.test.ts`. Venda por Coin existe com preço provisório (P-008, fechado na Fase 10).
 
 | # | Entregável | PEND |
 |---|---|---|
@@ -528,7 +528,7 @@ P-002 (4 heróis)     ─┐
                        ├─→ FASE 4 ─→ FASE 5 ─→ FASE 6 ─→ FASE 7
 P-005/P-006 (Torre)   ─┘                    (✅ resolvidas — ADR-021)
 
-P-010 (X)            ──→ FASE 9
+P-010 (X)            ──→ FASE 9 ✅ (ADR-023)
 P-008/P-036 (economia)──→ FASE 10
 P-011 (offline)       ──→ FASE 11
 P-018 (Boss)          ──→ FASE 12

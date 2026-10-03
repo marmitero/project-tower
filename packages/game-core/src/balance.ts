@@ -11,8 +11,12 @@
  *     devolve dados, nunca strings formatadas.
  */
 
-import { classes, config, enemies, evalCurve, type EnemyDef } from "@tia/config";
-import { createBattle, step, type CombatantSeed } from "@tia/engine";
+import { classes, config, enemies, evalCurve, type EnemyDef, type GearEffect, type Rarity } from "@tia/config";
+import type { CombatStats, Equipment, Hero } from "@tia/contracts";
+import { Prng, createBattle, step, type CombatantSeed } from "@tia/engine";
+import { asAccountId } from "@tia/contracts";
+import { heroFinalStats, heroGearEffects } from "./gear.js";
+import { rollEquipmentOf } from "./loot.js";
 import { heroStatsAtLevel } from "./creation.js";
 import { engineSkillsFor } from "./state.js";
 import { enemyStatsAtLevel, floorDef, floorPoolOdds, pickEnemyForFloor } from "./tower.js";
@@ -25,6 +29,43 @@ export interface DuelParams {
   /** Fração do HP com que o herói entra (1 = cheio). */
   heroHpFraction?: number;
   seed?: number;
+  /** Conjunto de equipamento (ADR-023): stats FINAIS e efeitos. Omitido = herói sem equipamento. */
+  gear?: GearSet;
+}
+
+/** Um conjunto completo de equipamento já reduzido ao que o combate usa. */
+export interface GearSet {
+  items: Equipment[];
+  /** Stats finais do herói (base + equipamento + afinidade). */
+  stats: CombatStats;
+  effects: GearEffect[];
+}
+
+/**
+ * Sorteia um conjunto completo (1 item por slot) com a MESMA tabela de raridade e o MESMO X do
+ * drop real, no nível do inimigo. `rarity` fixa a raridade (ex.: "celestial" para o teto do
+ * jogo); `x` fixa todos os X (ex.: 2,5 = "god roll"). Determinístico por `seed`.
+ */
+export function rollGearSet(classId: string, level: number, seed: number, opts: { rarity?: Rarity; x?: number } = {}): GearSet {
+  const cls = classes.find((c) => c.id === classId);
+  if (!cls) throw new Error(`classe desconhecida: ${classId}`);
+  const rng = new Prng(Math.imul(seed + 1, 2654435761) >>> 0);
+  const items: Equipment[] = [];
+  for (const slot of config.equipment.slots) {
+    const pool = config.equipment.templates.filter((t) => t.slot === slot.id);
+    const weights = pool.map((t) => t.dropWeight);
+    const template = pool[rng.weightedIndex(weights)]!;
+    const item = rollEquipmentOf(
+      rng,
+      { accountId: asAccountId("balance"), origin: "drop", source: { kind: "tower_enemy" }, sourceLevel: level, itemIndex: items.length },
+      { templateId: template.id, ...(opts.rarity ? { rarity: opts.rarity } : {}) },
+    );
+    if (opts.x !== undefined) for (const k of Object.keys(item.xValues) as (keyof typeof item.xValues)[]) item.xValues[k] = opts.x;
+    items.push(item);
+  }
+  const base = heroStatsAtLevel(cls.growth, level);
+  const stats = heroFinalStats({ stats: base, classId: classId as Hero["classId"], affinityWeapon: cls.affinityWeapon }, items);
+  return { items, stats, effects: heroGearEffects(items) };
 }
 
 export interface DuelResult {
@@ -41,7 +82,7 @@ export function simulateDuel(p: DuelParams): DuelResult {
   if (!cls) throw new Error(`classe desconhecida: ${p.classId}`);
   if (!enemy) throw new Error(`inimigo desconhecido: ${p.enemyId}`);
 
-  const heroStats = heroStatsAtLevel(cls.growth, p.heroLevel);
+  const heroStats = p.gear ? p.gear.stats : heroStatsAtLevel(cls.growth, p.heroLevel);
   const startHp = Math.max(1, Math.floor(heroStats.hp * (p.heroHpFraction ?? 1)));
   const ally: CombatantSeed = {
     id: "duel-hero",
@@ -52,6 +93,7 @@ export function simulateDuel(p: DuelParams): DuelResult {
     startHp,
     heroId: "duel-hero",
     basicAttackType: cls.damageType === "magic" ? "magic" : "physical",
+    effects: p.gear?.effects,
   };
   const foe: CombatantSeed = {
     id: "duel-enemy",
@@ -70,6 +112,7 @@ export function simulateDuel(p: DuelParams): DuelResult {
     enemySeed: [foe],
     skills: { "duel-hero": engineSkillsFor(cls.id) },
     config: config.combat,
+    gearCaps: config.equipment.effectCaps,
   });
   const limit = 30 * 60_000;
   while (battle.status === "active" && battle.elapsedMs < limit) {

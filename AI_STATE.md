@@ -1,7 +1,7 @@
 # AI_STATE — handoff vivo do Tower Idle Adventure
 
 **Última atualização:** 2026-10-03
-**Estado:** **FASE 1–8 concluídas (3 de 7 etapas até o MVP)** · próxima: **FASE 9 — Loot/Equipamento/X** (⛔ P-010) com a regra Admin-Ready
+**Estado:** **FASE 1–9 concluídas (4 de 7 etapas até o MVP)** · próxima: **FASE 10+11 — Economia + Offline** (⛔ P-008/P-036/P-011 — perguntar ao usuário) com a regra Admin-Ready
 **Preview:** servidor estático autocontido (ADR-018) — `node scripts/serve-preview.mjs` (porta 5173). Se o ambiente resetar, subir UMA linha; não depende de `node_modules`.
 **Repositório:** `marmitero/project-tower`
 **Branch desta sessão:** `arena/01a0f1f1-project-tower`
@@ -163,9 +163,9 @@ Todas em [`docs/DECISIONS_LOG.md`](docs/DECISIONS_LOG.md).
 
 ## 6. Pendências — o estado mais importante
 
-**64 pendências abertas — P-002 (2026-10-01) e P-005/P-006/P-009 (2026-10-03) RESOLVIDAS; 4 críticas restantes** (+ riscos R-01…R-05 em PENDING_RULES §6b). Nenhuma foi inventada. Detalhes em [`docs/PENDING_RULES.md`](docs/PENDING_RULES.md).
+**P-002 (2026-10-01), P-005/P-006/P-009 e P-010/P-016/P-023/P-024/P-025/P-033 (2026-10-03) RESOLVIDAS; 3 críticas restantes** (+ riscos R-01…R-05 em PENDING_RULES §6b). Nenhuma foi inventada. Detalhes em [`docs/PENDING_RULES.md`](docs/PENDING_RULES.md).
 
-### As 4 críticas restantes (P-002, P-005, P-006 resolvidas)
+### As 3 críticas restantes (P-002, P-005, P-006, P-010 resolvidas)
 
 | ID | Pendência | Bloqueia | Material de apoio |
 |---|---|---|---|
@@ -173,7 +173,7 @@ Todas em [`docs/DECISIONS_LOG.md`](docs/DECISIONS_LOG.md).
 | ~~🔴 **P-005**~~ | ~~Estrutura e curva da Torre~~ ✅ | — resolvida | 40 andares por faixa de nível, ADR-021 |
 | ~~🔴 **P-006**~~ | ~~Inimigos: stats, papéis, resistências~~ ✅ | — resolvida | 11 inimigos por papel, ADR-021 |
 | 🔴 **P-008** | Todos os valores de Coin | Fase 10 | — |
-| 🔴 **P-010** | Faixa e granularidade do X | Fase 9 | Referência usa inteiro 1–50 com fator `x/10` |
+| ~~🔴 **P-010**~~ | ~~Faixa e granularidade do X~~ ✅ | — resolvida | X fracionário 0,50–2,50, ADR-023 |
 | 🔴 **P-011** | Taxa de conversão offline → recompensa | Fase 11 | — |
 | 🔴 **P-036** | Sumidouros principais de Coin | Fase 10 | — |
 
@@ -187,10 +187,10 @@ Um valor inventado em silêncio é **pior** que um valor ausente, porque parece 
 
 ### Recomendação de prioridade
 
-~~P-002~~, ~~P-005/P-006/P-009~~ resolvidas. A próxima decisão que destrava cadeia é **P-010 (X do equipamento)**, que segura a Fase 9 — junto com o risco **R-02** (equipamento flat precisa escalar com o nível):
+~~P-002~~, ~~P-005/P-006/P-009~~ resolvidas. A próxima decisão que destrava cadeia é **P-008/P-036 (Coin)**, que segura a Fase 10 (R-02 foi endereçado e medido na Fase 9):
 
 ```text
-P-010 (X) + R-02 → Fase 9 · P-008/P-036 (Coin) → Fase 10 · P-011 (offline) → Fase 11 · P-018 → Fase 12
+~~P-010~~ → Fase 9 ✅ · P-008/P-036 (Coin) → Fase 10 · P-011 (offline) → Fase 11 · P-018 → Fase 12
 ```
 
 ---
@@ -280,8 +280,8 @@ O que as fases entregaram:
 ```text
 FASE 6  ✅ Combate              ← CONCLUÍDA (ADR-020: HP persistente, skills, feedback visual)
 FASE 7  ✅ Torre                ← CONCLUÍDA (ADR-021/022)
-FASE 9  Equipamentos           ⛔ P-010  ← PRÓXIMO PASSO (etapa 4)
-FASE 10 Economia                ⛔ P-008, P-036  (perguntar ao usuário na etapa 5)
+FASE 9  ✅ Equipamentos         ← CONCLUÍDA (ADR-023/024)
+FASE 10 Economia                ⛔ P-008, P-036  ← PRÓXIMO PASSO (etapa 5; perguntar ao usuário)
 FASE 11 Offline                 ⛔ P-011
 FASE 12 Boss                    ⛔ P-018
 FASE 13 MVP LOCAL               ← o vertical slice
@@ -434,12 +434,24 @@ editar `config/src/heroes.ts`.
 - **Futuro registrado (não implementar):** Rei anunciar personagens evoluídos no Mercado (`docs/MARKET_SYSTEM.md` §10b).
 - Testes: `tower-content`, `tower-balance`, `tower-floors`, `level-scaling`, `combat-hp`; suíte **441 verdes**.
 
-**O que fazer:** **FASE 9 — Loot/Equipamento/X** (etapa 4 de 7): pipeline de loot 5%, 10 slots, raridades, X por atributo, inventário/venda. ⛔ P-010. **Resolver R-02:** os valores base do equipamento (`EQUIP_TEMPLATES`) precisam escalar com o nível/tier do item (curvas por `CurveDef`) ou o equipamento será irrelevante a partir do Nv ~100. Seguir a **regra AR**.
+### Fase 9 — Equipamento (ADR-023/024, 2026-10-03)
 
-**Estimativa até o 1º MVP jogável (FASE 13): 7 etapas — 3 concluídas** —
-1) ✅ Fase 5+8, 2) ✅ Fase 6, 3) ✅ Fase 7, 4) Fase 9 (⛔ P-010),
+- **Modelo:** `Equipment` guarda `itemTypeId, level, rarity, xValues, quality, grade, seed, traitId, featureId`; stats **derivados** (`ref(nível) × unidade × peso × raridade × X`). X fracionário 0,50–2,50 (2 casas, sino, ≥2,0 ≈ 1%). Linhas por raridade 2/2/3/3/4/4. Notas S–F: 59/49/38/28/21/15/0. Catálogo: 10 slots, 18 templates, 9 traços de arma, 4 características — `packages/config/src/equipment.ts`.
+- **Loot/Inventário:** `packages/game-core/src/{loot,gear,inventory}.ts`; 300 itens não equipados, `onFull` = `autoSell`; venda por dados (Coin/abate × abates equivalentes × fator de nota), venda em massa com pré-visualização; equipado/travado não vende; requisito `ceil(0,9 × nível)`; afinidade +5%.
+- **Engine:** `GearEffect` (vocabulário fechado: crítico, vel., dano, perfuração, roubo vital, recarga, sifão, veneno, atordoamento, contracorte, golpe duplo, área) com tetos em `equipment.effectCaps`; `packages/engine/src/gear.ts`. **Conserto do IAS:** `intervalo = T₀/(1+IAS)`, T₀ 1000 ms (antes o IAS era ignorado).
+- **Heróis (ADR-024):** todos incomuns na seleção; `Hero.rarity/attributes/quality`; `rollHeroAcquisition` (atributos ±15%, raridade 50/30/15/4/0,9/0,1, mesma regra para toda classe); cópias no códice; o drop de Rei entra na Fase 12.
+- **ContentPack v2** (blocos `equipment`, `loot`, `inventory`, `heroAcquisition`); `configVersion` 4; migração de itens legados pelo `seed`.
+- **UI:** `InventoryScreen.tsx` (grade, filtros, comparação, equipar/vender/travar, venda em massa), toasts de drop; ícones gerados em `assets/generated/items/` (`scripts/gen-item-icons.mjs`).
+- **Balanço:** `npm run report:balance` ganhou a seção de equipamento (`rollGearSet`): nv 500, set médio reduz custo de vida por luta de ~10% para 2–5%; god roll (Celestial X 2,5) ≈ 0% — inalcançável por probabilidade. A Torre **não** foi recalibrada: o equipamento é a progressão de poder (aceito; revalidar em playtest).
+- **Cuidado:** os ícones soltos da raiz de `assets/sprites/icons1/` têm nomes que não casam com o conteúdo — usar só as folhas `icons_*_N`.
+- Testes: suíte `unit+integration+arch` ≥ 546 verdes (`gear-effects`, `hero-acquisition`, `equipment-flow`, `content-pack-v2`, `equipment`, `gear`, `loot`, `inventory`, `tower-balance`).
+
+**O que fazer:** **FASE 10+11 — Economia + Offline** (etapa 5 de 7). ⛔ **P-008 (Coin), P-036 (sumidouros), P-011 (offline)**: perguntar ao usuário. Já existe um padrão provisório (Coin/abate `floor(12·(E+3))`, preço de venda por dados, custos de slot 50k/250k) — a Fase 10 fecha ou ajusta. **Regra AR:** tudo no `ContentPack`.
+
+**Estimativa até o 1º MVP jogável (FASE 13): 7 etapas — 4 concluídas** —
+1) ✅ Fase 5+8, 2) ✅ Fase 6, 3) ✅ Fase 7, 4) ✅ Fase 9,
 5) Fase 10+11 (gate P-008/P-036/P-011), 6) Fase 12 (⛔ P-018), 7) Fase 13 (MVP Local).
-Restam **4 etapas**. Detalhe e riscos na tabela do ROADMAP.
+Restam **3 etapas**. Detalhe e riscos na tabela do ROADMAP.
 
 **O que perguntar ao usuário:** na hora certa (etapa 5), as pendências **P-008/P-036/P-011** (economia/offline). Fora isso, seguir com autoridade delegada.
 

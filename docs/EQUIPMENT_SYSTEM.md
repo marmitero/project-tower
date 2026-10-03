@@ -1,7 +1,21 @@
 # Sistema de Equipamentos
 
-**Versão:** 0.1 · **Data:** 2026-09-30 · **Estado:** especificado, números bloqueados (P-010)
+**Versão:** 1.0 · **Data:** 2026-10-03 · **Estado:** ✅ implementado na FASE 9 (ADR-023) — números provisórios de playtest, todos em `config.equipment` / ContentPack v2
 **Fonte:** §30–§41, §71, §105 do `Master-Prompt.md`
+
+> ### Estado implementado (FASE 9) — leia primeiro
+>
+> Este documento nasceu como especificação (v0.1). A FASE 9 implementou e **decidiu** os pontos que estavam bloqueados. Onde o texto abaixo diverge, **vale esta caixa e a ADR-023**:
+>
+> - **P-010 (X):** fracionário, **0,50–2,50**, 2 casas, em sino (média ≈ 1,05; ≥ 2,00 em ≈ 1%). **Não** é inteiro 1–50.
+> - **Fórmula:** `valor = referência(nível) × unidade × peso da linha × raridade × X` (não `x/10`). A referência é o stat do herói on-curve no nível do item.
+> - **Linhas:** Comum/Incomum 2, Raro/Épico 3, Lendário/Celestial 4 (a primeira linha do template sempre rola); **não** "todo item tem os 8 atributos".
+> - **Nota:** média dos X normalizada pela faixa (independe da raridade). Letras por limiar em `equipment.grades`: **S ≥ 59, A ≥ 49, B ≥ 38, C ≥ 28, D ≥ 21, E ≥ 15, F** (a tabela S ≥ 90 abaixo foi abandonada).
+> - **Item guarda** `itemTypeId, level, rarity, xValues, quality, grade, seed, traitId, featureId`; stats finais são derivados.
+> - **Catálogo:** 10 slots, 18 templates (9 armas + 9 peças), 9 traços de arma, 4 características — tudo editável (`ContentPack.equipment`).
+> - **Requisito de nível:** `ceil(0,9 × nível do item)`. **Afinidade:** +5% no ataque principal. **Venda:** por dados; equipado não vende; venda em massa com pré-visualização. **Mochila:** 300 não equipados; cheia ⇒ vende na hora.
+>
+> Código: `packages/config/src/equipment.ts`, `packages/game-core/src/{loot,gear,inventory}.ts`, `packages/engine/src/gear.ts`. UI: `apps/game-web/src/InventoryScreen.tsx`.
 
 ---
 

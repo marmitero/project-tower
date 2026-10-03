@@ -1,6 +1,6 @@
 # Sistema de Armas
 
-**Versão:** 0.1 · **Data:** 2026-09-30 · **Estado:** especificado
+**Versão:** 1.0 · **Data:** 2026-10-03 · **Estado:** ✅ implementado na FASE 9 (ADR-023). Os traços são `GearEffect` de dados (`config.equipment.weaponTraits`), executados por `packages/engine/src/gear.ts`; P-023/P-024/P-025 resolvidas. Diferenças da tabela: somas com **tetos** (`equipment.effectCaps` — crítico 40%, não 75%); Contracorte/Veneno/Atordoamento conforme a tabela; Cajado é **arma de Boss** (sem vantagem 1×1); afinidade +5% por **tipo de arma da classe**.
 **Fonte:** §37, §71, §72, §105 do `Master-Prompt.md`
 
 ---
@@ -168,7 +168,7 @@ Para cada arma, o tooltip mostra:
 
 | ID | Pendência | Bloqueia |
 |---|---|---|
-| `P-023` | Valores dos traços (chance, coeficiente, duração) | Fase 9 |
-| `P-024` | Afinidades dos 4 heróis | Fase 9 (depende de P-002) |
-| `P-025` | Quantos templates de arma por tipo no catálogo | Fase 9 |
+| ~~`P-023`~~ | ~~Valores dos traços~~ ✅ (ADR-023) | resolvida |
+| ~~`P-024`~~ | ~~Afinidades~~ ✅ (ADR-023 §7) | resolvida |
+| ~~`P-025`~~ | ~~Templates por tipo~~ ✅ 1 por tipo (9) — adicionar pelo ContentPack | resolvida |
 | `P-026` | Nível de item e progressão de arma (upgrade/fusion) | Pós-MVP |

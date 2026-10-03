@@ -130,12 +130,14 @@ Ou seja, um Celestial cai em aproximadamente **1 a cada 20.000 inimigos**. Isso 
 | ID | Regra | Fonte |
 |---|---|---|
 | `loot.rollsPerDrop` | 1 rolagem de equipamento por inimigo derrotado | ⚠️ provisório |
-| `loot.xRange.min` | Mínimo do X por atributo | ⚠️ **PENDING** P-010 |
-| `loot.xRange.max` | Máximo do X por atributo | ⚠️ **PENDING** P-010 |
+| `loot.x.min` | Mínimo do X por atributo | ✅ **0,50** (P-010, ADR-023) |
+| `loot.x.max` | Máximo do X por atributo | ✅ **2,50** |
+| `loot.x.decimals` | Casas decimais | ✅ **2** |
+| `loot.x.shape` | Forma (média de `samples` uniformes, elevada a `power`) | ✅ `{ samples: 3, power: 2 }` ⇒ média ≈ 1,05; ≥ 2,00 ≈ 1% |
 | `loot.fragments.fromCommonEnemies` | **false — PROIBIDO** | §12 (Tipo A) |
 | `loot.x.independentPerAttribute` | **true** | §36 (Tipo A) |
 
-> **P-010** — o `Master-Prompt.md` **não define a faixa do X**. A referência `tower-idle-adventure` usa inteiro 1–50 com fator `x/10`, e o exemplo do §36 (`Attack × 1.72`, `Defense × 0.93`, `Critical × 1.41`, `HP × 2.08`) é consistente com X fracionário — mas §36 não diz se o X **armazenado** é inteiro ou fracionário, só que o exemplo é decimal. Como X define diretamente o valor de todo item do jogo, é Tipo C. Ver `PENDING_RULES.md#p-010`.
+> **P-010 resolvida** (ADR-023): X fracionário 0,50–2,50, decidido por delegação e editável. O `Master-Prompt.md` não fixa a faixa; o exemplo do §36 (`Attack × 1.72`, `Defense × 0.93`, `Critical × 1.41`, `HP × 2.08`) cabe nela. Ver `PENDING_RULES.md#p-010`.
 
 ---
 
@@ -231,7 +233,7 @@ exportContentPack(config) → JSON  ──edição──→  validateContentPack
 defaultContentPack() · resetContentToDefaults()   // volta ao padrão
 ```
 
-Regra: valor de conteúdo **nunca** é constante na lógica; muda-se o JSON e o jogo muda. `configVersion` (3) invalida saves incompatíveis.
+Regra: valor de conteúdo **nunca** é constante na lógica; muda-se o JSON e o jogo muda. `configVersion` (4) invalida/migra saves incompatíveis. O `ContentPack` está em `schemaVersion` 2 (blocos `equipment`, `loot`, `inventory`, `heroAcquisition`; pack v1 é migrado).
 
 ---
 
@@ -255,13 +257,30 @@ Regra: valor de conteúdo **nunca** é constante na lógica; muda-se o JSON e o 
 
 | ID | Chave | Valor | Fonte |
 |---|---|---|---|
-| `inventory.equipment.maxItems` | Itens de equipamento | ⚠️ **PENDING** P-016 | §70 |
-| `inventory.consumable.maxPerType` | Consumíveis | ⚠️ **PENDING** P-016 | §44 |
+| `inventory.equipmentMaxItems` | Itens de equipamento **não equipados** | ✅ **300** (P-016) |
+| `inventory.onFull` | Mochila cheia | ✅ `autoSell` (alternativa `discard`) |
 | `inventory.pageSize` | Itens por página | 50 | ⚠️ provisório |
-| `inventory.defaultSort` | Ordenação padrão | `rarity_desc` | ⚠️ provisório |
-| `inventory.filters[]` | Filtros | `["tipo","raridade","slot","nivel","equipado"]` | §70 |
 
-> **P-016** — o §13 diz "personagens ilimitados", mas **não diz nada sobre o limite de equipamentos**. A referência usa 300 itens não equipados. Um limite é necessário (UI e armazenamento), mas o número é Tipo C.
+> **P-016 resolvida** (ADR-023 §12). Filtros e ordenação ficam na UI (`InventoryScreen.tsx`); consumíveis seguem pendentes (P-032).
+
+### 13.1 Equipamento (`config.equipment`, ADR-023)
+
+| Chave | Valor padrão |
+|---|---|
+| `equipment.slots[]` | 10 slots (`weapon, chest, head, legs, boots, glove, amulet, aura, wings, pet`) com `dropWeight` |
+| `equipment.templates[]` | 18 templates (9 armas + 9 peças): slot, nível/peso das linhas, `dropWeight`, `weaponType` |
+| `equipment.rarity` | linhas 2/2/3/3/4/4; multiplicador 1 / 1,2 / 1,5 / 2 / 2,5 / 3; `hasFeature` só Lendário/Celestial |
+| `equipment.grades[]` | S 59 · A 49 · B 38 · C 28 · D 21 · E 15 · F 0 (nota mínima) |
+| `equipment.unit` | 6% do stat de referência/linha (HP, ataques, defesas); `flat`: crítico +1,2 pp, IAS +0,02, velocidade +1 |
+| `equipment.requirement.levelRatio` | **0,9** |
+| `equipment.affinityBonus` | **0,05** |
+| `equipment.sell` | abates equivalentes 3/5/12/40/150/600; fator de nota 0,5–2,0 |
+| `equipment.weaponTraits[]` / `features[]` | 9 traços / 4 características, como `GearEffect` |
+| `equipment.effectCaps` | crítico 0,4 · vel. 0,6 · dano 0,6 · perfuração 0,4 · roubo vital 0,2 · recarga 0,4 |
+| `combat.baseActionIntervalMs` | **1000** (T₀; `intervalo = T₀/(1+IAS)`) |
+| `heroAcquisition.*` | `starterRarity` incomum · `rarityChance` 50/30/15/4/0,9/0,1 · `rarityStatMultiplier` 0,94…1,30 · `attributeRoll` 0,85–1,15 |
+
+Tudo isso é exportado/validado/aplicado no `ContentPack` v2 e `configVersion` é **4**.
 
 ---
 

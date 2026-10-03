@@ -51,24 +51,32 @@
 
 ## Custo de vida por papel (herói on-curve, média das 4 classes)
 
-- Gosma (tank, physical): perde 9% da vida, luta de 19.1 s
-- Gosma Gélida (tank, magic): perde 10% da vida, luta de 14.0 s
-- Goblin (dps, physical): perde 14% da vida, luta de 10.4 s
-- Orc (dps, physical): perde 13% da vida, luta de 12.4 s
-- Esqueleto Sangrento (dps, physical): perde 13% da vida, luta de 10.2 s
-- Morcego (swift, physical): perde 8% da vida, luta de 8.1 s
-- Morcego Tóxico (caster, magic): perde 13% da vida, luta de 8.3 s
-- Orc Flamejante (caster, magic): perde 12% da vida, luta de 10.1 s
-- Esqueleto (balanced, physical): perde 10% da vida, luta de 12.7 s
-- Arqueiro de Elite (elite, physical): perde 19% da vida, luta de 13.3 s
-- Goblin Sombrio (elite, magic): perde 19% da vida, luta de 12.7 s
+- Gosma (tank, physical): perde 9% da vida, luta de 17.4 s
+- Gosma Gélida (tank, magic): perde 9% da vida, luta de 12.8 s
+- Goblin (dps, physical): perde 13% da vida, luta de 9.4 s
+- Orc (dps, physical): perde 12% da vida, luta de 11.1 s
+- Esqueleto Sangrento (dps, physical): perde 13% da vida, luta de 9.3 s
+- Morcego (swift, physical): perde 7% da vida, luta de 6.0 s
+- Morcego Tóxico (caster, magic): perde 15% da vida, luta de 7.7 s
+- Orc Flamejante (caster, magic): perde 12% da vida, luta de 9.3 s
+- Esqueleto (balanced, physical): perde 10% da vida, luta de 11.5 s
+- Arqueiro de Elite (elite, physical): perde 24% da vida, luta de 12.1 s
+- Goblin Sombrio (elite, magic): perde 22% da vida, luta de 11.7 s
 
 ## Herói × classe (média sobre o roster, nível 500)
 
-- Guardião: perde 11% por luta
-- Arcanista: perde 13% por luta
-- Arqueiro: perde 14% por luta
-- Invocador Sombrio: perde 13% por luta
+- Guardião: perde 13% por luta
+- Arcanista: perde 14% por luta
+- Arqueiro: perde 13% por luta
+- Invocador Sombrio: perde 14% por luta
+
+## Equipamento: efeito de um conjunto completo (nível 500, média de 6 conjuntos sorteados × 6 inimigos)
+
+- sem equipamento: guardian 10% / 14.3 s · arcanist 11% / 9.6 s · ranger 11% / 10.4 s · shadowcaller 11% / 10.0 s
+- conjunto médio (drop real): guardian 5% / 12.5 s · arcanist 2% / 7.6 s · ranger 5% / 9.2 s · shadowcaller 2% / 7.9 s
+- tudo Comum, X 1,0: guardian 7% / 12.7 s · arcanist 2% / 7.9 s · ranger 7% / 9.4 s · shadowcaller 2% / 8.3 s
+- tudo Celestial, X 2,5 (god roll): guardian 0% / 3.6 s · arcanist 0% / 2.2 s · ranger 0% / 2.9 s · shadowcaller 0% / 2.2 s
+- Conjunto-exemplo (guardian): weapon common/B, chest uncommon/A, head common/D, legs common/D, boots common/C, glove uncommon/F, amulet legendary/D, aura common/D, wings common/F, pet uncommon/E
 
 ## Sustentabilidade idle (150 lutas seguidas, regen de PROCURANDO)
 
@@ -77,38 +85,38 @@
 - andar 1, herói 1.00× o nível-base (Nv 1): guardian aguenta · arcanist aguenta · ranger aguenta · shadowcaller aguenta
 - andar 1, herói 1.05× o nível-base (Nv 1): guardian aguenta · arcanist aguenta · ranger aguenta · shadowcaller aguenta
 - andar 1, herói 1.20× o nível-base (Nv 1): guardian aguenta · arcanist aguenta · ranger aguenta · shadowcaller aguenta
-- andar 5, herói 0.80× o nível-base (Nv 80): guardian aguenta · arcanist cai na luta 65 · ranger cai na luta 41 · shadowcaller cai na luta 62
+- andar 5, herói 0.80× o nível-base (Nv 80): guardian aguenta · arcanist cai na luta 50 · ranger aguenta · shadowcaller cai na luta 100
 - andar 5, herói 0.90× o nível-base (Nv 90): guardian aguenta · arcanist aguenta · ranger aguenta · shadowcaller aguenta
 - andar 5, herói 1.00× o nível-base (Nv 100): guardian aguenta · arcanist aguenta · ranger aguenta · shadowcaller aguenta
 - andar 5, herói 1.05× o nível-base (Nv 105): guardian aguenta · arcanist aguenta · ranger aguenta · shadowcaller aguenta
 - andar 5, herói 1.20× o nível-base (Nv 120): guardian aguenta · arcanist aguenta · ranger aguenta · shadowcaller aguenta
-- andar 10, herói 0.80× o nível-base (Nv 2000): guardian cai na luta 42 · arcanist cai na luta 30 · ranger cai na luta 18 · shadowcaller cai na luta 25
-- andar 10, herói 0.90× o nível-base (Nv 2250): guardian aguenta · arcanist aguenta · ranger cai na luta 64 · shadowcaller aguenta
+- andar 10, herói 0.80× o nível-base (Nv 2000): guardian cai na luta 35 · arcanist cai na luta 25 · ranger cai na luta 33 · shadowcaller cai na luta 35
+- andar 10, herói 0.90× o nível-base (Nv 2250): guardian aguenta · arcanist aguenta · ranger aguenta · shadowcaller aguenta
 - andar 10, herói 1.00× o nível-base (Nv 2500): guardian aguenta · arcanist aguenta · ranger aguenta · shadowcaller aguenta
 - andar 10, herói 1.05× o nível-base (Nv 2625): guardian aguenta · arcanist aguenta · ranger aguenta · shadowcaller aguenta
 - andar 10, herói 1.20× o nível-base (Nv 3000): guardian aguenta · arcanist aguenta · ranger aguenta · shadowcaller aguenta
-- andar 11, herói 0.80× o nível-base (Nv 4000): guardian cai na luta 40 · arcanist cai na luta 25 · ranger cai na luta 18 · shadowcaller cai na luta 22
-- andar 11, herói 0.90× o nível-base (Nv 4500): guardian aguenta · arcanist aguenta · ranger cai na luta 59 · shadowcaller aguenta
+- andar 11, herói 0.80× o nível-base (Nv 4000): guardian cai na luta 33 · arcanist cai na luta 22 · ranger cai na luta 30 · shadowcaller cai na luta 33
+- andar 11, herói 0.90× o nível-base (Nv 4500): guardian aguenta · arcanist cai na luta 103 · ranger aguenta · shadowcaller aguenta
 - andar 11, herói 1.00× o nível-base (Nv 5000): guardian aguenta · arcanist aguenta · ranger aguenta · shadowcaller aguenta
 - andar 11, herói 1.05× o nível-base (Nv 5250): guardian aguenta · arcanist aguenta · ranger aguenta · shadowcaller aguenta
 - andar 11, herói 1.20× o nível-base (Nv 6000): guardian aguenta · arcanist aguenta · ranger aguenta · shadowcaller aguenta
-- andar 40, herói 0.80× o nível-base (Nv 15600): guardian cai na luta 38 · arcanist cai na luta 25 · ranger cai na luta 18 · shadowcaller cai na luta 22
-- andar 40, herói 0.90× o nível-base (Nv 17550): guardian aguenta · arcanist aguenta · ranger cai na luta 59 · shadowcaller aguenta
+- andar 40, herói 0.80× o nível-base (Nv 15600): guardian cai na luta 33 · arcanist cai na luta 22 · ranger cai na luta 30 · shadowcaller cai na luta 33
+- andar 40, herói 0.90× o nível-base (Nv 17550): guardian aguenta · arcanist cai na luta 71 · ranger aguenta · shadowcaller aguenta
 - andar 40, herói 1.00× o nível-base (Nv 19500): guardian aguenta · arcanist aguenta · ranger aguenta · shadowcaller aguenta
 - andar 40, herói 1.05× o nível-base (Nv 20475): guardian aguenta · arcanist aguenta · ranger aguenta · shadowcaller aguenta
 - andar 40, herói 1.20× o nível-base (Nv 23400): guardian aguenta · arcanist aguenta · ranger aguenta · shadowcaller aguenta
 
 ## Matchups de um andar (herói no nível-base)
 
-- guardian × Gosma: 9% de vida, 24.4 s (chance 8%)
-- guardian × Goblin: 11% de vida, 12.4 s (chance 8%)
-- guardian × Morcego: 7% de vida, 9.4 s (chance 12%)
-- guardian × Esqueleto: 9% de vida, 15.4 s (chance 12%)
-- guardian × Morcego Tóxico: 11% de vida, 9.4 s (chance 8%)
-- guardian × Gosma Gélida: 9% de vida, 16.1 s (chance 12%)
-- guardian × Orc: 12% de vida, 15.4 s (chance 12%)
-- guardian × Orc Flamejante: 12% de vida, 12.4 s (chance 12%)
-- guardian × Esqueleto Sangrento: 12% de vida, 12.4 s (chance 12%)
-- guardian × Goblin Sombrio: 18% de vida, 15.1 s (chance 4%)
+- guardian × Gosma: 9% de vida, 23.4 s (chance 8%)
+- guardian × Goblin: 12% de vida, 11.8 s (chance 8%)
+- guardian × Morcego: 6% de vida, 6.8 s (chance 12%)
+- guardian × Esqueleto: 9% de vida, 14.8 s (chance 12%)
+- guardian × Morcego Tóxico: 14% de vida, 8.8 s (chance 8%)
+- guardian × Gosma Gélida: 9% de vida, 15.4 s (chance 12%)
+- guardian × Orc: 12% de vida, 14.8 s (chance 12%)
+- guardian × Orc Flamejante: 12% de vida, 11.8 s (chance 12%)
+- guardian × Esqueleto Sangrento: 12% de vida, 11.8 s (chance 12%)
+- guardian × Goblin Sombrio: 21% de vida, 14.4 s (chance 4%)
 
 Parâmetros: defesa K = 100 + 5×(nível−1); regen 5%/s em PROCURANDO; inimigos HP×2.5, Ataque×0.05.

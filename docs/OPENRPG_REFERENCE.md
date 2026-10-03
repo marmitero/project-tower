@@ -189,7 +189,8 @@ probabilidade nenhuma; só a escala de qualidade.
 | `P-022` (progressão de skills) | Roster de skills agora é dado (`skills.ts`); a PROGRESSÃO (upgrade/árvore) continua PENDENTE |
 | `P-009` (curvas de XP) | Família de curva referenciada (polinomial do `PresetCurves`) |
 | `P-001/P-025` (slots e templates) | Mapeamento de slots e estrutura template×instância documentados |
-| `P-010` (equipamento) | Modelo de modificação (gemas/encantos ↔ X) documentado para a Fase 9 |
+| `P-010` (equipamento) | ✅ Resolvida na Fase 9 (ADR-023). Do OpenRpg vieram a separação **template × instância**, o mapeamento de slots e a escada de qualidade; o X fracionário, as linhas por raridade e os `GearEffect` são extensões do projeto. A adoção da `Equipment` do OpenRpg foi **adaptada**, não copiada |
+| aquisição de heróis | ADR-024: heróis com atributos próprios (a classe é um *template*; o herói é a instância) |
 
 ## 10. Atribuição
 

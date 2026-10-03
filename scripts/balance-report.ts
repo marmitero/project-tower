@@ -9,7 +9,7 @@
  * O Painel Admin (FASE 14) vai expor esta mesma API como pré-visualização.
  */
 import { classes, config, enemies } from "@tia/config";
-import { averageDuel, floorMatchups, simulateHunt, towerPacing } from "@tia/game-core";
+import { averageDuel, floorMatchups, rollGearSet, simulateHunt, towerPacing } from "@tia/game-core";
 
 const md = process.argv.includes("--md");
 const CYCLE = 15;
@@ -49,6 +49,32 @@ title("Herói × classe (média sobre o roster, nível 500)");
 for (const c of classes) {
   const m = enemies.reduce((s, e) => s + averageDuel({ classId: c.id, heroLevel: lvl, enemyId: e.id, enemyLevel: lvl }, 4).avgHpLostFraction, 0) / enemies.length;
   line(`${md ? "- " : ""}${c.name}: perde ${pct(m)} por luta`);
+}
+
+title("Equipamento: efeito de um conjunto completo (nível 500, média de 6 conjuntos sorteados × 6 inimigos)");
+{
+  const rows: string[] = [];
+  const scenarios: Array<[string, { rarity?: "common" | "celestial"; x?: number } | null]> = [
+    ["sem equipamento", null],
+    ["conjunto médio (drop real)", {}],
+    ["tudo Comum, X 1,0", { rarity: "common", x: 1 }],
+    ["tudo Celestial, X 2,5 (god roll)", { rarity: "celestial", x: 2.5 }],
+  ];
+  for (const [label, opts] of scenarios) {
+    const per = classes.map((c) => {
+      const sets = opts === null ? [undefined] : Array.from({ length: 6 }, (_, i) => rollGearSet(c.id, lvl, i + 1, opts));
+      let lost = 0, dur = 0, n = 0;
+      for (const gear of sets) for (const e of enemies.slice(0, 6)) {
+        const r = averageDuel({ classId: c.id, heroLevel: lvl, enemyId: e.id, enemyLevel: lvl, gear }, 2);
+        lost += r.avgHpLostFraction; dur += r.avgDurationSec; n += 1;
+      }
+      return { id: c.id, lost: lost / n, dur: dur / n };
+    });
+    rows.push(`${md ? "- " : ""}${label}: ${per.map((p) => `${p.id} ${pct(p.lost)} / ${p.dur.toFixed(1)} s`).join(" · ")}`);
+  }
+  for (const r of rows) line(r);
+  const sample = rollGearSet("guardian", lvl, 3);
+  line(`${md ? "- " : ""}Conjunto-exemplo (guardian): ${sample.items.map((i) => `${i.slot} ${i.rarity}/${i.grade}`).join(", ")}`);
 }
 
 title("Sustentabilidade idle (150 lutas seguidas, regen de PROCURANDO)");

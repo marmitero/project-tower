@@ -52,7 +52,7 @@ Cada fase que cria **conteúdo** entrega: (a) tipo `*Seed` serializável, (b) es
 | Fase | Conteúdo que entra no pack | Observação |
 |---|---|---|
 | ✅ **7 — Torre** | inimigos, andares, curvas de XP/recompensa, dificuldade | ADR-021/022 |
-| **9 — Equipamento** | templates de slot, **valores base por tier** (precisam escalar com o nível — risco R-02 em `PENDING_RULES.md` §Riscos da Torre), tipos de arma e traços, raridades (pesos/multiplicadores), faixa do X, chance de drop | itens já nascem como dado |
+| ✅ **9 — Equipamento** | **`ContentPack` v2**: `equipment` (slots, templates com linhas/pesos/raridade, traços de arma como `GearEffect`, características, notas S–F, unidades por stat, tetos de efeito, requisito, afinidade, venda), `loot` (chance, tabela de raridade, forma do X), `inventory`, `heroAcquisition` (raridade/atributos de herói) | ADR-023/024; pack v1 migra sozinho (`migrateContentPack`); ver `CONFIGURATION.md` §10.1 |
 | **10 — Economia** | preço de slot, preço de venda, recompensas de Coin, custos | P-008/P-036 |
 | **12 — Boss** | `BossSeed`: id, nome, atributos, skills, fases, recompensas, **fragmentos** (§12 — só aqui), requisitos, sprites (`boss`, `slimeking`) | boss vive em lista **própria** (`bosses[]`); `floors[].pool` só aceita ids de `enemies[]` — a validação referencial já impede boss na Torre (§21/§55) |
 | **4 / 9–12 — Heróis** | `HeroIdentityDef` (identidade P-002), `HeroClassDef` (atributos, skills ativas/passivas, arma afim), `SkillDef` (coeficiente, recarga, alvo, tipo de dano) | hoje em `heroes.ts`/`catalog.ts`/`skills.ts`; migram para o pack ao serem tocados por cada fase |

@@ -197,5 +197,6 @@ export {
   towerPacing,
   floorMatchups,
   simulateHunt,
+  rollGearSet,
 } from "./balance.js";
-export type { DuelParams, DuelResult, DuelAverage, FloorPacing, FloorMatchup, HuntSimResult } from "./balance.js";
+export type { DuelParams, DuelResult, GearSet, DuelAverage, FloorPacing, FloorMatchup, HuntSimResult } from "./balance.js";
