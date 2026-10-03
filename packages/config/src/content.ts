@@ -15,7 +15,7 @@
  *     `config.xp.*`), então todo `import { enemies }` continua válido.
  *  5. Versionado (`schemaVersion`): pack antigo é migrado, nunca reinterpretado.
  *
- * Escopo atual (schema v2): inimigos, andares, recompensas, curvas de XP e dificuldade
+ * Escopo atual (schema v3 = v2 + Market, Bot/Hub e Offline — FASE 10+11, ADR-025/026): inimigos, andares, recompensas, curvas de XP e dificuldade
  * (v1) + equipamento (slots, templates, traços de arma, características, raridade, notas,
  * materiais, venda, requisito, tetos de efeito), drop (chance, tabela de raridade, forma do X),
  * mochila e aquisição de heróis (v2, FASE 9). Heróis/classes/skills/bosses entram nas fases
@@ -38,11 +38,12 @@ import { ATTRIBUTE_IDS } from "./attributes.js";
 import { defaultEquipmentConfig, equipmentErrors, type EquipmentConfig } from "./equipment.js";
 import { defaultHeroAcquisition, heroAcquisitionErrors, type HeroAcquisitionConfig } from "./acquisition.js";
 import { RARITY_ORDER } from "./rarity.js";
+import { botErrors, defaultBotConfig, defaultMarketConfig, defaultOfflineConfig, marketErrors, offlineErrors, type BotConfig, type MarketConfig, type OfflineConfig } from "./market.js";
 import type { InventoryConfig, LootConfig } from "./types.js";
 import { CHARACTER_SHEET_KEYS } from "./catalog.js";
 import { LEVEL_CAP, buildDefaultFloors, defaultTowerDifficulty, defaultTowerRewards, defaultXpCurve, type FloorDef, type TowerRewardsConfig } from "./tower.js";
 
-export const CONTENT_PACK_SCHEMA_VERSION = 2;
+export const CONTENT_PACK_SCHEMA_VERSION = 3;
 
 export interface ContentPack {
   schemaVersion: typeof CONTENT_PACK_SCHEMA_VERSION;
@@ -68,6 +69,12 @@ export interface ContentPack {
   inventory: PackInventory;
   /** v2 — aquisição de heróis (ADR-024). */
   heroAcquisition: HeroAcquisitionConfig;
+  /** v3 — Market do Rei: abas, poções, revives, caixas e preços (ADR-025). */
+  market: MarketConfig;
+  /** v3 — regras do Bot e do Hub (ADR-025). */
+  bot: BotConfig;
+  /** v3 — offline como simulação do online (ADR-026). */
+  offline: OfflineConfig;
 }
 
 export type PackLoot = Pick<LootConfig, "equipmentChance" | "rarity"> & { x: Omit<LootConfig["x"], "independentPerAttribute"> };
@@ -102,7 +109,13 @@ export function defaultContentPack(): ContentPack {
       hero: { levelCap: LEVEL_CAP, curve: defaultXpCurve() },
     },
     ...defaultV2Blocks(),
+    ...defaultV3Blocks(),
   };
+}
+
+/** Blocos novos do schema v3 com os valores de fábrica. */
+function defaultV3Blocks(): Pick<ContentPack, "market" | "bot" | "offline"> {
+  return { market: defaultMarketConfig(), bot: defaultBotConfig(), offline: defaultOfflineConfig() };
 }
 
 /** Blocos novos do schema v2 com os valores de fábrica. */
@@ -127,8 +140,8 @@ function defaultV2Blocks(): Pick<ContentPack, "equipment" | "loot" | "inventory"
 }
 
 /**
- * Migra um pack de schema antigo para o atual. v1 → v2: completa os blocos novos com o padrão
- * de fábrica (o que o jogo já usava). Devolve cópia; entrada inválida passa sem mudança
+ * Migra um pack de schema antigo para o atual. v1 → v2 → v3: completa os blocos novos com o
+ * padrão de fábrica (o que o jogo já usava). Devolve cópia; entrada inválida passa sem mudança
  * (a validação reporta).
  */
 export function migrateContentPack(input: unknown): unknown {
@@ -138,6 +151,14 @@ export function migrateContentPack(input: unknown): unknown {
     const d = defaultV2Blocks();
     for (const [k, v] of Object.entries(d)) if (pack[k] === undefined) pack[k] = v;
     pack.schemaVersion = 2;
+  }
+  // v2 → v3: Market, Bot e Offline; `heroAcquisition.fragmentsRequired` (FASE 10+11).
+  if (pack.schemaVersion === 2) {
+    const d = defaultV3Blocks();
+    for (const [k, v] of Object.entries(d)) if (pack[k] === undefined) pack[k] = v;
+    const acq = pack.heroAcquisition as Record<string, unknown> | undefined;
+    if (acq && typeof acq === "object" && acq.fragmentsRequired === undefined) acq.fragmentsRequired = defaultHeroAcquisition().fragmentsRequired;
+    pack.schemaVersion = 3;
   }
   return pack;
 }
@@ -172,6 +193,9 @@ export function exportContentPack(name = "exportado"): ContentPack {
       defaultSort: config.inventory.defaultSort,
     },
     heroAcquisition: config.heroAcquisition,
+    market: config.market,
+    bot: config.bot,
+    offline: config.offline,
   } satisfies ContentPack);
 }
 
@@ -206,6 +230,9 @@ export function validateContentPack(raw: unknown): string[] {
   // --- equipamento, drop, mochila e aquisição (v2) -----------------------------
   errors.push(...equipmentErrors(pack.equipment));
   errors.push(...heroAcquisitionErrors(pack.heroAcquisition));
+  errors.push(...marketErrors(pack.market));
+  errors.push(...botErrors(pack.bot, pack.market));
+  errors.push(...offlineErrors(pack.offline));
   const loot = pack.loot;
   if (!loot) errors.push("loot ausente");
   else {
@@ -333,6 +360,10 @@ export function applyContentPack(raw: unknown): void {
   Object.assign(config.loot.x, pack.loot.x);
   Object.assign(config.inventory, pack.inventory);
   Object.assign(config.heroAcquisition, pack.heroAcquisition);
+  // v3
+  Object.assign(config.market, pack.market);
+  Object.assign(config.bot, pack.bot);
+  Object.assign(config.offline, pack.offline);
 }
 
 /** Volta ao conteúdo de fábrica (útil em testes e no botão "restaurar padrão" do painel). */

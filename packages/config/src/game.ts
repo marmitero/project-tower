@@ -1,5 +1,6 @@
 import { defaultEquipmentConfig } from "./equipment.js";
 import { defaultHeroAcquisition } from "./acquisition.js";
+import { defaultBotConfig, defaultMarketConfig, defaultOfflineConfig } from "./market.js";
 import { buildDefaultFloors, defaultTowerDifficulty, defaultTowerRewards, defaultXpCurve, LEVEL_CAP, type TowerConfig } from "./tower.js";
 import type {
   LootConfig,
@@ -263,7 +264,7 @@ export const tower: TowerConfig = {
  * item só com a memória de outra zona hora vira lixo silenciosamente.
  */
 export const config: GameConfig = {
-  configVersion: 4,
+  configVersion: 5,
   account,
   team,
   xp,
@@ -275,6 +276,9 @@ export const config: GameConfig = {
   tower,
   equipment: defaultEquipmentConfig(),
   heroAcquisition: defaultHeroAcquisition(),
+  market: defaultMarketConfig(),
+  bot: defaultBotConfig(),
+  offline: defaultOfflineConfig(),
 };
 
 export default config;

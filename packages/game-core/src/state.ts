@@ -21,8 +21,8 @@ import type {
   SaveData,
 } from "@tia/contracts";
 import type { AccountId, EquipmentId, HeroId } from "@tia/contracts";
-import { heroById as heroIdentityById, classes, config, skills, type ClassGrowth, type EquipSlotId } from "@tia/config";
-import { RngHub, hashString, step, type Prng, type SkillDef as EngineSkillDef } from "@tia/engine";
+import { heroById as heroIdentityById, classes, config, skills, type BotSettings, type ClassGrowth, type EquipSlotId, type Rarity } from "@tia/config";
+import { RngHub, hashString, step, healCombatant, reviveCombatant, type Prng, type SkillDef as EngineSkillDef } from "@tia/engine";
 import { createKing, createTeam, createWallet, createHero, activeTeamSize, changeKingSkin, heroGrowth } from "./creation.js";
 import { createInventory } from "./inventory.js";
 import { createOfflineProgress, beginSearching, isSearchingComplete, computeOffline, commitOffline, touchActive, rollSearchingDuration } from "./hunt.js";
@@ -50,6 +50,25 @@ import {
   highestUnlockedFloor,
   TowerLockedError,
 } from "./tower.js";
+import {
+  ShopError,
+  buyShopItem,
+  consumableById,
+  effectAmount,
+  openBoxes,
+  pickPotion,
+  pickRevive,
+  itemPrice,
+  shopItemById,
+  spendOne,
+  stackCount,
+  summonFromFragments,
+  grantFragments,
+  type BoxOpening,
+  type PurchaseResult,
+} from "./shop.js";
+import { createBotSettings, normalizeBotSettings, patchBotSettings, type BotSettingsPatch } from "./bot.js";
+import { emptyReport, type OfflineReport } from "./offline.js";
 import type { PersistenceService } from "./persistence/types.js";
 import { LocalStoragePersistence } from "./persistence/local.js";
 
@@ -77,7 +96,19 @@ export interface GameEvents {
   /** Cada drop de equipamento e o que aconteceu com ele (guardado / vendido na hora / descartado). */
   onLoot?: (drops: LootNotice[]) => void;
   onStateChanged?: (state: GameState) => void;
+  /** O Bot agiu (poção, revive, Hub) — só ONLINE; no offline vira o relatório. */
+  onBotAction?: (action: BotAction) => void;
 }
+
+/** O que o Bot fez (para o toast/feedback da UI). */
+export type BotAction =
+  | { kind: "potion"; itemId: string; name: string; healed: number }
+  | { kind: "revive"; itemId: string; name: string; hp: number }
+  | { kind: "hub_enter" }
+  | { kind: "hub_return" };
+
+/** Passo máximo do tempo simulado em batalha (igual ao `MAX_STEP_MS` do loop online). */
+const SIM_STEP_MS = 250;
 
 export class GameState {
   private state: SaveData;
@@ -90,6 +121,16 @@ export class GameState {
   private battleFloor: number | null = null;
   private equipmentIndex = 0;
   private dirty = false;
+  /** Relógio VIRTUAL da simulação offline (`null` = usa o relógio real injetado). */
+  private simNow: number | null = null;
+  /** Relatório em construção durante a simulação offline. */
+  private simReport: OfflineReport | null = null;
+  /** Relatório pronto, à espera de o jogador fechar a tela "Bem-vindo de volta". */
+  private pendingReport: OfflineReport | null = null;
+  /** Bot: poções bebidas na luta atual e quando foi a última (tempo de batalha). */
+  private revivesThisBattle = 0;
+  private potionsThisBattle = 0;
+  private lastPotionAtMs = Number.NEGATIVE_INFINITY;
 
   constructor(initial: SaveData, deps: GameStateDeps, listeners: GameEvents = {}) {
     this.state = initial;
@@ -165,6 +206,8 @@ export class GameState {
       tower: { currentFloor: 1, bestFloor: 0 },
       hunt: null,
       offline: createOfflineProgress(params.now),
+      bot: createBotSettings(),
+      market: { boxesOpened: 0 },
       lastSavedAt: params.now,
     };
 
@@ -177,6 +220,14 @@ export class GameState {
       },
       overrides.listeners ?? {},
     );
+  }
+
+  /**
+   * Relógio do jogo. Na simulação offline é o relógio VIRTUAL (avança com o tempo simulado); fora
+   * dela, o relógio real injetado. TODA marca de tempo do estado de caça passa por aqui.
+   */
+  private clock(): number {
+    return this.simNow ?? this.deps.now();
   }
 
   get data(): Readonly<SaveData> {
@@ -213,7 +264,7 @@ export class GameState {
    * Nunca ao sair: um crash perderia a sessão inteira.
    */
   markActive(): void {
-    const now = this.deps.now();
+    const now = this.clock();
     touchActive(this.state.king, this.state.offline, now);
     this.dirty = true;
   }
@@ -334,7 +385,12 @@ export class GameState {
 
     this.battleFloor = floor;
     this.battle = battle;
-    this.state.hunt = { kind: "in_battle", battleId: battle.battleId, startedAt: this.deps.now() };
+    this.potionsThisBattle = 0;
+    this.revivesThisBattle = 0;
+    this.lastPotionAtMs = Number.NEGATIVE_INFINITY;
+    this.state.hunt = { kind: "in_battle", battleId: battle.battleId, startedAt: this.clock() };
+    // O Bot confere o HP já na largada (o herói pode vir de uma luta que o deixou baixo).
+    this.botAssist();
     this.touch();
     return battle;
   }
@@ -345,8 +401,10 @@ export class GameState {
    */
   advanceBattle(dtMs: number): BattleEvent[] {
     if (!this.battle) return [];
-    const events = step(this.battle, this.battle.elapsedMs + dtMs, config.combat);
-    this.listeners.onBattleEvents?.(events);
+    // Bot (ADR-025): poção ANTES de o tempo andar; revive pelo gancho do engine (a luta continua).
+    this.botAssist();
+    const events = step(this.battle, this.battle.elapsedMs + dtMs, config.combat, { onAlliesDown: (st) => this.botRevive(st) });
+    if (!this.simulating) this.listeners.onBattleEvents?.(events);
 
     if (this.battle.status !== "active") {
       this.settleBattle();
@@ -388,8 +446,10 @@ export class GameState {
     if (!won) {
       // ⛔ P-019 — a política de derrota: a caça para; recomeçar é ato do
       // jogador (`restartHunt`, que também cura — ADR-020).
-      this.state.hunt = { kind: "defeated", at: this.deps.now() };
+      this.state.hunt = { kind: "defeated", at: this.clock() };
       this.battle = null;
+      if (this.simReport) this.simReport.defeats += 1;
+      this.listeners.onBotAction?.({ kind: "hub_enter" });
       this.touch();
       return;
     }
@@ -402,15 +462,20 @@ export class GameState {
       rng: this.lootRng(`tower:${floor}:${this.battleSequence}`),
       accountId: this.state.king.accountId,
       itemIndexStart: this.equipmentIndex,
-      createdAt: this.deps.now(),
+      createdAt: this.clock(),
     });
     this.equipmentIndex += bundle.equipment.length;
 
+    if (this.simReport) {
+      this.simReport.battlesWon += 1;
+      this.simReport.kingXp += bundle.kingXp;
+      this.simReport.heroXp += bundle.heroXp;
+    }
     this.applyRewards(bundle);
     this.state.tower.bestFloor = Math.max(this.state.tower.bestFloor, floor);
     this.state.hunt = null;
     this.battle = null;
-    this.listeners.onReward?.(bundle);
+    if (!this.simulating) this.listeners.onReward?.(bundle);
     this.touch();
   }
 
@@ -440,18 +505,21 @@ export class GameState {
       const r = storeDrop(this.state.inventory, this.state.wallet, this.state.heroes, item);
       notices.push({ item, outcome: r.outcome, price: r.price });
     }
-    if (notices.length > 0) this.listeners.onLoot?.(notices);
+    if (this.simReport) {
+      this.simReport.equipmentFound += notices.length;
+      this.simReport.equipmentAutoSold += notices.filter((n) => n.outcome === "autoSold").length;
+    }
+    if (notices.length > 0 && !this.simulating) this.listeners.onLoot?.(notices);
 
     // O level-up conserva o HP perdido, mas o teto real inclui o equipamento.
     for (const hero of members) {
       hero.currentHp = Math.min(hero.currentHp, heroCombatStats(hero, this.state.inventory).hp);
     }
 
+    // §12 — fragmentos são da CONTA (por classe e raridade), não de um herói: dá para juntar
+    // fragmentos de um herói que ainda não se tem. Só Boss/evento/caixa entregam (nunca a Torre comum).
     for (const frag of bundle.fragments) {
-      const hero = this.state.heroes.find((h) => h.classId === frag.classId);
-      if (!hero) continue;
-      const key = frag.classId;
-      hero.fragments[key] = (hero.fragments[key] ?? 0) + frag.amount;
+      grantFragments(this.state.inventory, frag.classId, frag.rarity ?? "common", frag.amount, this.clock());
     }
 
     this.dirty = true;
@@ -528,7 +596,7 @@ export class GameState {
    */
   restActiveHero(): void {
     this.healActiveIfConfigured();
-    this.state.hunt = { kind: "paused", at: this.deps.now(), reason: "rest" };
+    this.state.hunt = { kind: "paused", at: this.clock(), reason: "rest" };
     this.touch();
   }
 
@@ -546,7 +614,7 @@ export class GameState {
    * O timestamp é absoluto e persistido: navegar não pausa (§29).
    */
   beginSearch(): void {
-    this.state.hunt = beginSearching(this.combatRng(`search:${this.battleSequence}`), this.deps.now());
+    this.state.hunt = beginSearching(this.combatRng(`search:${this.battleSequence}`), this.clock());
     this.touch();
   }
 
@@ -557,7 +625,7 @@ export class GameState {
   tickSearch(): BattleState | null {
     const hunt = this.state.hunt;
     if (!hunt || hunt.kind !== "searching") return null;
-    if (!isSearchingComplete(hunt, this.deps.now())) return null;
+    if (!isSearchingComplete(hunt, this.clock())) return null;
     this.regenDuringSearch(hunt.durationMs);
     return this.startTower();
   }
@@ -581,40 +649,314 @@ export class GameState {
   searchingRemainingMs(): number {
     const hunt = this.state.hunt;
     if (!hunt || hunt.kind !== "searching") return 0;
-    return Math.max(0, hunt.startedAt + hunt.durationMs - this.deps.now());
+    return Math.max(0, hunt.startedAt + hunt.durationMs - this.clock());
   }
 
   get offlinePreview() {
-    return computeOffline(this.state.offline, this.deps.now(), this.isVip);
+    return computeOffline(this.state.offline, this.clock(), this.isVip);
+  }
+
+  /** True durante a simulação offline (a UI/renderer não recebem eventos passo a passo). */
+  get simulating(): boolean {
+    return this.simNow !== null;
   }
 
   /**
-   * §47 — calcula a recompensa offline e a credita.
-   * ⛔ P-011 (taxa de conversão) e P-011a (derrota durante offline) não
-   * estão definidos; o comportamento aqui é conservador: credita o que o teto
-   * permite, sem simular derrotas.
+   * ADR-026 — o offline é a SIMULAÇÃO do próprio jogo pelo tempo creditado (2 h Free / 8 h VIP,
+   * por ausência): batalha → recompensa → procurando → batalha, com o Bot usando poções, revives
+   * e o Hub. Mesmo código do online; só o relógio é virtual. Se o herói cai sem revive, recupera
+   * no Hub e volta ao MESMO andar (`currentFloor` nunca é tocado).
    */
   claimOffline(): { rawDurationMs: number; creditedDurationMs: number; wasCapped: boolean; capMs: number; plan: "free" | "vip" } {
+    if (this.simulating) throw new Error("claimOffline reentrante.");
     const now = this.deps.now();
     const result = computeOffline(this.state.offline, now, this.isVip);
-    if (result.creditedDurationMs > 0) {
-      // ⛔ P-011 provisório: conversão simples, sem taxa de decaimento.
-      const cycles = Math.floor(result.creditedDurationMs / 60_000);
-      if (cycles > 0) {
-        this.applyRewards({
-          id: `offline:${now}`,
-          kingXp: BigInt(cycles * 20),
-          heroXp: BigInt(cycles * 50),
-          coins: BigInt(cycles * 15),
-          equipment: [],
-          fragments: [],
-        });
+    const hero = this.state.team.activeHeroId ? this.heroById(this.state.team.activeHeroId) : undefined;
+
+    if (result.creditedDurationMs >= config.offline.minAwayMs && hero) {
+      const start = this.state.offline.lastActiveAt;
+      const end = start + result.creditedDurationMs;
+      const report = emptyReport(result);
+      report.floor = this.currentFloor;
+      report.kingLevelBefore = this.state.king.level;
+      report.heroLevelBefore = hero.level;
+      const coinsBefore = this.state.wallet.coins;
+      this.simNow = start;
+      this.simReport = report;
+      try {
+        this.runSimulation(start, end, report);
+      } finally {
+        // O relógio real volta; o que dependia do virtual é deslocado pela diferença (ausência
+        // maior que o teto: o relógio virtual parou em `end`, o real está adiante).
+        const virtualEnd = this.simNow ?? end;
+        this.simNow = null;
+        this.simReport = null;
+        this.shiftHuntClock(now - virtualEnd);
+        report.coins = this.state.wallet.coins - coinsBefore;
+        report.kingLevelAfter = this.state.king.level;
+        report.heroLevelAfter = this.heroById(hero.id)?.level ?? hero.level;
       }
+      this.pendingReport = report;
     }
-    const total = this.state.offline.accumulatedMs + result.creditedDurationMs;
-    commitOffline(this.state.offline, Math.min(total, result.capMs), now);
+
+    commitOffline(this.state.offline, 0, now);
+    this.state.king.lastActiveAt = now;
     this.touch();
     return result;
+  }
+
+  /** O laço da simulação. Avança `simNow` de `start` até `end` ou até algo exigir o jogador. */
+  private runSimulation(start: number, end: number, report: OfflineReport): void {
+    let steps = 0;
+    const maxSteps = config.offline.maxSimulatedSteps;
+    while ((this.simNow ?? end) < end) {
+      if (steps++ >= maxSteps) {
+        report.stoppedEarly = "safety";
+        break;
+      }
+      if (!this.state.team.activeHeroId || !this.heroById(this.state.team.activeHeroId)) {
+        report.stoppedEarly = "no_hero";
+        break;
+      }
+      const now = this.simNow ?? end;
+      if (this.battle) {
+        const dt = Math.min(SIM_STEP_MS, end - now);
+        this.simNow = now + dt;
+        this.advanceBattle(dt);
+        continue;
+      }
+      const hunt = this.state.hunt;
+      if (!hunt) {
+        this.beginSearch();
+        continue;
+      }
+      if (hunt.kind === "searching" || (hunt.kind === "defeated" && this.state.bot.autoReturnFromHub)) {
+        const readyAt = hunt.kind === "searching" ? hunt.startedAt + hunt.durationMs : hunt.at + config.bot.hubRecoveryMs;
+        if (readyAt > end) {
+          this.simNow = end;
+          break;
+        }
+        this.simNow = Math.max(now, readyAt);
+        this.advanceIdle(0);
+        continue;
+      }
+      if (hunt.kind === "defeated") {
+        report.stoppedEarly = "defeated";
+        break;
+      }
+      if (hunt.kind === "in_battle") {
+        // Luta órfã (não é salva): recomeça pelo PROCURANDO.
+        this.state.hunt = null;
+        continue;
+      }
+      report.stoppedEarly = "paused";
+      break;
+    }
+    report.simulatedMs = Math.max(0, Math.min(end, this.simNow ?? end) - start);
+  }
+
+  /** Move os carimbos do estado de caça para o relógio real depois de a simulação acabar. */
+  private shiftHuntClock(deltaMs: number): void {
+    const h = this.state.hunt;
+    if (!h || deltaMs === 0) return;
+    if (h.kind === "searching" || h.kind === "in_battle") h.startedAt += deltaMs;
+    else if (h.kind === "defeated" || h.kind === "paused") h.at += deltaMs;
+  }
+
+  /** Relatório do último retorno, até o jogador fechar o "Bem-vindo de volta". */
+  get offlineReport(): OfflineReport | null {
+    return this.pendingReport;
+  }
+
+  dismissOfflineReport(): void {
+    this.pendingReport = null;
+    this.touch();
+  }
+
+  // -------------------------------------------------------------------------
+  // Loop de caça (um único ponto de entrada para o online e a simulação)
+  // -------------------------------------------------------------------------
+
+  /**
+   * Avança UM passo do jogo fora de batalha ativa: luta, busca, Hub ou nova busca. É o que o loop
+   * do navegador chama a cada frame e o que a simulação offline chama nas viradas de estado.
+   */
+  advanceIdle(dtMs: number): void {
+    if (this.battle) {
+      this.advanceBattle(dtMs);
+      return;
+    }
+    const hunt = this.state.hunt;
+    if (!hunt) {
+      if (this.state.team.activeHeroId) this.beginSearch();
+      return;
+    }
+    switch (hunt.kind) {
+      case "searching":
+        this.tickSearch();
+        return;
+      case "defeated":
+        this.tickHub();
+        return;
+      case "in_battle":
+        // Sem luta em memória (recarregou a página): recomeça pelo PROCURANDO.
+        this.state.hunt = null;
+        return;
+      default:
+        return;
+    }
+  }
+
+  /** Quanto falta (ms) para sair do Hub; 0 se não está nele ou se o Bot não volta sozinho. */
+  hubRemainingMs(): number {
+    const hunt = this.state.hunt;
+    if (!hunt || hunt.kind !== "defeated" || !this.state.bot.autoReturnFromHub) return 0;
+    return Math.max(0, hunt.at + config.bot.hubRecoveryMs - this.clock());
+  }
+
+  /**
+   * Hub (ADR-025): herói caído sem revive recupera lá; passado `hubRecoveryMs` toda a equipe volta
+   * com o HP cheio e a caçada retoma pelo PROCURANDO — no mesmo andar (o andar vem do save).
+   */
+  tickHub(): boolean {
+    const hunt = this.state.hunt;
+    if (!hunt || hunt.kind !== "defeated" || !this.state.bot.autoReturnFromHub) return false;
+    if (this.clock() < hunt.at + config.bot.hubRecoveryMs) return false;
+    for (const hero of this.state.heroes) hero.currentHp = heroCombatStats(hero, this.state.inventory).hp;
+    this.state.hunt = null;
+    if (this.simReport) this.simReport.hubTrips += 1;
+    this.listeners.onBotAction?.({ kind: "hub_return" });
+    this.touch();
+    return true;
+  }
+
+  // -------------------------------------------------------------------------
+  // Bot (ADR-025)
+  // -------------------------------------------------------------------------
+
+  private noteUse(itemId: string): void {
+    if (this.simReport) this.simReport.itemsUsed[itemId] = (this.simReport.itemsUsed[itemId] ?? 0) + 1;
+  }
+
+  /** Auto-poção: roda ANTES de cada passo da batalha (online e offline). */
+  private botAssist(): void {
+    const battle = this.battle;
+    const opt = this.state.bot.autoPotion;
+    if (!battle || battle.status !== "active" || !opt.enabled) return;
+    if (this.potionsThisBattle >= config.bot.maxPotionsPerBattle) return;
+    if (battle.elapsedMs - this.lastPotionAtMs < config.bot.potionCooldownMs) return;
+    const ally = battle.allies[0];
+    if (!ally || ally.isDefeated || ally.hp <= 0 || ally.maxHp <= 0) return;
+    if ((ally.hp / ally.maxHp) * 100 >= opt.hpBelowPct) return;
+    const item = pickPotion(this.state.inventory, opt.itemId, ally.maxHp - ally.hp, ally.maxHp);
+    if (!item || !spendOne(this.state.inventory, item.id)) return;
+    const healed = healCombatant(battle, ally.id, effectAmount(item.effect, ally.maxHp));
+    this.potionsThisBattle += 1;
+    this.lastPotionAtMs = battle.elapsedMs;
+    this.noteUse(item.id);
+    if (!this.simulating) this.listeners.onBotAction?.({ kind: "potion", itemId: item.id, name: item.name, healed });
+  }
+
+  /** Gancho do engine: o herói caiu e a luta acabaria — o revive o traz de volta à MESMA luta. */
+  private botRevive(st: BattleState): boolean {
+    const opt = this.state.bot.autoRevive;
+    if (!opt.enabled || this.revivesThisBattle >= config.bot.maxRevivesPerBattle) return false;
+    const ally = st.allies[0];
+    if (!ally || !ally.isDefeated) return false;
+    const item = pickRevive(this.state.inventory, opt.itemId, ally.maxHp);
+    if (!item || !spendOne(this.state.inventory, item.id)) return false;
+    const hp = effectAmount(item.effect, ally.maxHp);
+    if (!reviveCombatant(st, ally.id, hp)) return false;
+    this.revivesThisBattle += 1;
+    this.noteUse(item.id);
+    if (!this.simulating) this.listeners.onBotAction?.({ kind: "revive", itemId: item.id, name: item.name, hp });
+    return true;
+  }
+
+  /** Altera as opções do Bot (parcial). Valores fora da faixa são corrigidos, nunca lançam. */
+  setBot(patch: BotSettingsPatch): BotSettings {
+    this.state.bot = patchBotSettings(this.state.bot, patch);
+    this.touch();
+    return this.state.bot;
+  }
+
+  get bot(): Readonly<BotSettings> {
+    return this.state.bot;
+  }
+
+  // -------------------------------------------------------------------------
+  // Market (ADR-025)
+  // -------------------------------------------------------------------------
+
+  /** Compra pagando Coin. Lança `ShopError` (nível, saldo, pilha cheia...) sem alterar nada. */
+  buyItem(itemId: string, quantity = 1): PurchaseResult {
+    const r = buyShopItem(this.state.inventory, this.state.wallet, this.state.king, itemId, quantity, this.clock());
+    this.touch();
+    return r;
+  }
+
+  /** Abre caixas da mochila. O sorteio usa o contador persistido: recarregar o jogo não repete. */
+  openBox(boxId: string, quantity = 1): BoxOpening {
+    const base = this.state.market.boxesOpened;
+    const opening = openBoxes({
+      inv: this.state.inventory,
+      heroes: this.state.heroes,
+      boxId,
+      quantity,
+      rngFor: (i) => this.lootRng(`box:${base + i}`),
+      now: this.clock(),
+    });
+    this.state.market.boxesOpened = base + quantity;
+    this.touch();
+    return opening;
+  }
+
+  /** Invoca um herói com fragmentos juntados (§12). */
+  summonHero(classId: string, rarity: Rarity): Hero {
+    const hero = summonFromFragments({
+      inv: this.state.inventory,
+      heroes: this.state.heroes,
+      classId,
+      rarity,
+      rng: this.lootRng(`summon:${this.state.market.boxesOpened}:${this.state.heroes.length}`),
+      now: this.clock(),
+    });
+    this.state.market.boxesOpened += 1;
+    this.touch();
+    return hero;
+  }
+
+  /**
+   * Uso manual de poção/revive fora do Bot: cura o herói informado (fora de batalha). Em batalha
+   * ativa quem bebe é o Bot — o jogador configura o limite, como no resto do idle.
+   */
+  useConsumable(itemId: string, heroId: HeroId): number {
+    const item = consumableById(itemId);
+    if (!item) throw new ShopError("unknown_item", `Item desconhecido: ${itemId}`);
+    const hero = this.heroById(heroId);
+    if (!hero) throw new Error(`Herói ${heroId} não encontrado.`);
+    if (this.battle && this.battle.status === "active") throw new ShopError("not_openable", "Em batalha, o Bot usa os itens.");
+    const max = heroCombatStats(hero, this.state.inventory).hp;
+    const isRevive = item.effect.kind === "revivePct";
+    if (isRevive ? hero.currentHp > 0 : hero.currentHp <= 0 || hero.currentHp >= max) {
+      throw new ShopError("bad_quantity", isRevive ? "O herói não está caído." : "O herói não precisa de cura.");
+    }
+    if (!spendOne(this.state.inventory, item.id)) throw new ShopError("none_owned", `Você não tem ${item.name}.`);
+    const before = hero.currentHp;
+    hero.currentHp = Math.min(max, before + effectAmount(item.effect, max));
+    this.touch();
+    return hero.currentHp - before;
+  }
+
+  /** Preço atual (nível do Rei) de um item do Market, para a UI. */
+  marketPrice(itemId: string): bigint {
+    const item = shopItemById(itemId);
+    if (!item) throw new ShopError("unknown_item", `Item desconhecido: ${itemId}`);
+    return itemPrice(item, this.state.king.level);
+  }
+
+  ownedCount(itemId: string): number {
+    return stackCount(this.state.inventory, itemId);
   }
 
   /**
@@ -643,7 +985,8 @@ export class GameState {
   private touch(): void {
     this.state.revision += 1;
     this.dirty = true;
-    this.listeners.onStateChanged?.(this);
+    // Na simulação offline a UI não deve re-renderizar a cada passo: um único aviso no fim.
+    if (!this.simulating) this.listeners.onStateChanged?.(this);
   }
 
   get isDirty(): boolean {
@@ -689,6 +1032,12 @@ export class GameState {
     state.equipmentIndex = save.inventory.equipment.length;
     // O andar salvo pode não existir mais (conteúdo editado): nunca quebra o load.
     save.tower.currentFloor = clampFloor(save.tower.currentFloor);
+    // Saves sem as opções novas (ou editados à mão) caem no padrão da config.
+    save.bot = normalizeBotSettings(save.bot);
+    save.market = { boxesOpened: Math.max(0, Math.floor(save.market?.boxesOpened ?? 0)) };
+    // Recarregar no meio de uma luta não restaura a luta (ela não é salva): a caçada recomeça
+    // pelo PROCURANDO, com o HP que o herói tinha. Sem isso o loop ficaria esperando uma luta que não existe.
+    if (save.hunt?.kind === "in_battle") save.hunt = null;
     return state;
   }
 }

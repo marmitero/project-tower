@@ -198,13 +198,53 @@ function emit(state: BattleState, event: EmittedEvent): void {
   } as BattleEvent);
 }
 
+/** Ganchos opcionais do `step` — quem chama (game-core) injeta política; o engine segue puro. */
+export interface StepHooks {
+  /**
+   * Chamado quando TODOS os aliados caíram e a luta acabaria. Devolva `true` se reviveu alguém
+   * (via `reviveCombatant`) e a luta deve continuar.
+   */
+  onAlliesDown?: (state: BattleState) => boolean;
+}
+
+/**
+ * Cura um combatente vivo (poção). Limitada ao HP faltante; emite `heal_dealt` (fonte = o próprio
+ * alvo) e `character_damaged` (barra de vida). Devolve o HP efetivamente curado.
+ */
+export function healCombatant(state: BattleState, targetId: string, amount: number): number {
+  const target = findCombatant(state, targetId);
+  if (!target || target.isDefeated || target.hp <= 0 || state.status !== "active") return 0;
+  const healed = Math.max(0, Math.min(Math.floor(amount), target.maxHp - target.hp));
+  if (healed <= 0) return 0;
+  target.hp += healed;
+  emit(state, { type: "heal_dealt", sourceId: target.id, targetId: target.id, amount: healed });
+  emit(state, target.side === "enemy"
+    ? { type: "enemy_damaged", targetId: target.id, currentHp: target.hp, maxHp: target.maxHp }
+    : { type: "character_damaged", targetId: target.id, currentHp: target.hp, maxHp: target.maxHp });
+  return healed;
+}
+
+/**
+ * Revive um combatente caído com `hp` de vida (poção de reviver). Ele volta a agir meio segundo
+ * depois (não pode revidar no mesmo tick). Só vale com a luta ativa.
+ */
+export function reviveCombatant(state: BattleState, targetId: string, hp: number): boolean {
+  const target = findCombatant(state, targetId);
+  if (!target || !target.isDefeated || state.status !== "active") return false;
+  target.isDefeated = false;
+  target.hp = Math.max(1, Math.min(target.maxHp, Math.floor(hp)));
+  target.nextActionAtMs = state.elapsedMs + 5 * TICK_MS;
+  emit(state, { type: "character_revived", targetId: target.id, currentHp: target.hp, maxHp: target.maxHp });
+  return true;
+}
+
 /**
  * Avança a batalha até `untilMs` de tempo simulado ou até terminar.
  * Retorna os eventos acumulados (limpa `state.events`).
  *
  * O passo é fixo (TICK_MS) para que a simulação seja reproduzível bit a bit.
  */
-export function step(state: BattleState, untilMs: number, config: CombatConfig): BattleEvent[] {
+export function step(state: BattleState, untilMs: number, config: CombatConfig, hooks?: StepHooks): BattleEvent[] {
   if (state.status !== "active") {
     const evts = state.events.slice();
     state.events = [];
@@ -258,6 +298,9 @@ export function step(state: BattleState, untilMs: number, config: CombatConfig):
     // Verifica derrota mútua (ambos caíram no mesmo tick).
     const alliesDead = state.allies.every((c) => !isAlive(c));
     const enemiesDead = state.enemies.every((c) => !isAlive(c));
+    // Gancho (ADR-025): o aliado caiu e o jogador tem um revive no Bot — a luta continua,
+    // com o inimigo no HP em que estava. O engine não sabe o que é uma poção: só pergunta.
+    if (alliesDead && !enemiesDead && hooks?.onAlliesDown?.(state)) continue;
     if (alliesDead || enemiesDead) {
       const won = enemiesDead && !alliesDead;
       state.status = "finished";

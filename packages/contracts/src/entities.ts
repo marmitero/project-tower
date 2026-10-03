@@ -6,6 +6,7 @@ import type {
   WeaponType,
   StatusId,
   BattleMode,
+  BotSettings,
 } from "@tia/config";
 import type { HeroId, EquipmentId, ClassId, BattleId } from "./ids.js";
 
@@ -109,6 +110,8 @@ export type BattleEvent = {
     }
   | { type: "critical_hit"; sourceId: string; targetId: string; amount: number }
   | { type: "heal_dealt"; sourceId: string; targetId: string; amount: number }
+  /** Poção de reviver (Bot ou manual): o combatente caído volta à luta (ADR-025). */
+  | { type: "character_revived"; targetId: string; currentHp: number; maxHp: number }
   | {
       type: "status_applied";
       targetId: string;
@@ -309,7 +312,7 @@ export interface RewardBundle {
   coins: bigint;
   equipment: Equipment[];
   /** §12 — NUNCA vem de inimigo comum da Torre. */
-  fragments: { classId: string; amount: number }[];
+  fragments: { classId: string; amount: number; rarity?: Rarity }[];
 }
 
 export interface TowerFloor {
@@ -339,5 +342,9 @@ export interface SaveData {
   tower: { currentFloor: number; bestFloor: number };
   hunt: HuntState | null;
   offline: OfflineProgress;
+  /** Opções do Bot do jogador (ADR-025). */
+  bot: BotSettings;
+  /** Contadores determinísticos do Market (ADR-025): caixas abertas, para a semente do sorteio. */
+  market: { boxesOpened: number };
   lastSavedAt: number;
 }

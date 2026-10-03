@@ -2,19 +2,21 @@
 // transparente, em `assets/generated/items/<nome>.png`.
 //
 // Uso: node scripts/gen-item-icons.mjs <pasta-com-gen_<nome>.png>
-// Os ícones que o pack Nika não traz (elmo, botas, manoplas, peitoral, calça, asas, besta, ataduras)
+// Os ícones que o pack Nika não traz (elmo, botas, manoplas, peitoral, calça, asas, besta, ataduras) e os do Market (revives e caixas)
 // foram GERADOS (IA) no estilo dos ícones do pack; as fontes grandes não são versionadas,
 // só o resultado de 64 px. Registro em `assets/SOURCES.md`.
 import sharp from "sharp";
 import { mkdir } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 
-const NAMES = { gen_helm: "helm", gen_boots: "boots", gen_glove: "glove", gen_chest: "chest", gen_legs: "legs", gen_wings: "wings", gen_crossbow: "crossbow", gen_wraps: "wraps" };
+const NAMES = { gen_helm: "helm", gen_boots: "boots", gen_glove: "glove", gen_chest: "chest", gen_legs: "legs", gen_wings: "wings", gen_crossbow: "crossbow", gen_wraps: "wraps", gen_revive1: "revive_basic", gen_revive2: "revive_improved", gen_revive3: "revive_magic", gen_box1: "box_basic", gen_box2: "box_rare", gen_box3: "box_legendary" };
 const [src = "/tmp/ic"] = process.argv.slice(2);
 const out = join(process.cwd(), "assets/generated/items");
 await mkdir(out, { recursive: true });
 
 for (const [file, name] of Object.entries(NAMES)) {
+  if (!existsSync(join(src, `${file}.png`))) continue; // só regenera o que tem fonte
   const { data, info } = await sharp(join(src, `${file}.png`)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   // chave de cor: quanto mais perto de magenta puro, mais transparente (borda suave)
   for (let i = 0; i < data.length; i += 4) {

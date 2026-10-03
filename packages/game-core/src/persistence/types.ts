@@ -11,6 +11,7 @@
 
 import type { SaveData } from "@tia/contracts";
 import { classes, config } from "@tia/config";
+import { normalizeBotSettings } from "../bot.js";
 import { isLegacyEquipment, migrateLegacyEquipment } from "../loot.js";
 
 export interface PersistenceService {
@@ -104,6 +105,16 @@ export function migrateSave(data: SaveData, toConfigVersion: number): SaveData {
             rarity: h.origin === "starter" ? config.heroAcquisition.starterRarity : h.rarity,
           };
         }),
+      };
+    }
+    // v4 → v5 (ADR-025/026): Bot, contadores do Market e offline por ausência. Opções ausentes
+    // nascem no padrão da config; o `accumulatedMs` do modelo antigo (acumulado vitalício) é zerado.
+    if (out.configVersion < 5) {
+      out = {
+        ...out,
+        bot: normalizeBotSettings((out as Partial<SaveData>).bot),
+        market: { boxesOpened: Math.max(0, Math.floor((out as Partial<SaveData>).market?.boxesOpened ?? 0)) },
+        offline: { ...out.offline, accumulatedMs: 0 },
       };
     }
     out.configVersion = toConfigVersion;

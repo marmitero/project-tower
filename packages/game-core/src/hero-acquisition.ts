@@ -28,13 +28,18 @@ export interface HeroRoll {
   quality: number;
 }
 
-/** Sorteia raridade e atributos de um herói da classe dada. */
-export function rollHeroAcquisition(rng: Prng, classId: string): HeroRoll {
+/**
+ * Sorteia raridade e atributos de um herói da classe dada. `forcedRarity` (caixas e invocação por
+ * fragmentos já decidiram a raridade) substitui o sorteio de raridade, mas o PRNG consome a mesma
+ * quantidade de números — os atributos saem idênticos com ou sem raridade forçada.
+ */
+export function rollHeroAcquisition(rng: Prng, classId: string, forcedRarity?: Rarity): HeroRoll {
   const cls = classes.find((c) => c.id === classId);
   if (!cls) throw new Error(`Classe desconhecida: ${classId}`);
   const acq = config.heroAcquisition;
 
-  const rarity = rng.weightedKey(acq.rarityChance);
+  const rolledRarity = rng.weightedKey(acq.rarityChance);
+  const rarity = forcedRarity ?? rolledRarity;
   const { min, max, samples } = acq.attributeRoll;
 
   const attributes = { ...cls.attributes };

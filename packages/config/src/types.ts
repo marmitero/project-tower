@@ -15,6 +15,7 @@ import type { CurveDef } from "./curves.js";
 import type { TowerConfig } from "./tower.js";
 import type { EquipmentConfig } from "./equipment.js";
 import type { HeroAcquisitionConfig } from "./acquisition.js";
+import type { BotConfig, MarketConfig, OfflineConfig } from "./market.js";
 
 export type Rarity =
   | "common"
@@ -309,4 +310,10 @@ export interface GameConfig {
   equipment: EquipmentConfig;
   /** Aquisição de heróis (ADR-024). */
   heroAcquisition: HeroAcquisitionConfig;
+  /** Market do Rei: poções, revives e caixas por Coin (ADR-025). */
+  market: MarketConfig;
+  /** Bot do jogador + Hub (ADR-025). */
+  bot: BotConfig;
+  /** Offline como simulação do online (ADR-026). */
+  offline: OfflineConfig;
 }

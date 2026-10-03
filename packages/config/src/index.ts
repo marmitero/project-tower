@@ -126,6 +126,27 @@ export {
   type EquipmentConfig,
 } from "./equipment.js";
 export {
+  defaultMarketConfig,
+  defaultMarketItems,
+  defaultBotConfig,
+  defaultOfflineConfig,
+  marketErrors,
+  botErrors,
+  offlineErrors,
+  priceErrors,
+  type PriceDef,
+  type ConsumableEffect,
+  type ConsumableItemDef,
+  type BoxItemDef,
+  type BoxOutcome,
+  type ShopItemDef,
+  type MarketTabDef,
+  type MarketConfig,
+  type BotSettings,
+  type BotConfig,
+  type OfflineConfig,
+} from "./market.js";
+export {
   defaultHeroAcquisition,
   heroAcquisitionErrors,
   type HeroAcquisitionConfig,

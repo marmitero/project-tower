@@ -14,6 +14,7 @@ import { skills, skillsById } from "./skills.js";
 import { HEROES } from "./heroes.js";
 import { equipmentErrors } from "./equipment.js";
 import { heroAcquisitionErrors } from "./acquisition.js";
+import { botErrors, marketErrors, offlineErrors } from "./market.js";
 import {
   ATTRIBUTE_IDS,
   growthFromAttributes,
@@ -261,6 +262,9 @@ export function validateConfig(cfg: GameConfig = config): GameConfig {
   // --- Equipamento (ADR-023) e aquisição de heróis (ADR-024) ---------------
   errors.push(...equipmentErrors(cfg.equipment));
   errors.push(...heroAcquisitionErrors(cfg.heroAcquisition));
+  errors.push(...marketErrors(cfg.market));
+  errors.push(...botErrors(cfg.bot, cfg.market));
+  errors.push(...offlineErrors(cfg.offline));
 
   errors.push(...collectCatalogErrors());
 

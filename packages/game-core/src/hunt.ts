@@ -13,7 +13,7 @@
  */
 
 import type { HuntState, OfflineProgress, OfflineSummary } from "@tia/contracts";
-import { config } from "@tia/config";
+import { config, defaultOfflineConfig } from "@tia/config";
 import { Prng } from "@tia/engine";
 
 /** Duração sorteada da animação Procurando. §27 — ~3s, faixa [min, max]. */
@@ -56,12 +56,12 @@ export function handleHeroDefeat(state: HuntState | null, teamHasSurvivors: bool
 // Offline (§47)
 // ---------------------------------------------------------------------------
 
-/** §47 — Free: 2h acumuladas. VIP: 8h. VIP desligado no MVP (§49). */
-export const OFFLINE_CAP_FREE_MS = 2 * 60 * 60 * 1000;
-export const OFFLINE_CAP_VIP_MS = 8 * 60 * 60 * 1000;
+/** §47/§48 — Free 2 h, VIP 8 h: valores de FÁBRICA (o jogo lê `config.offline`, editável). */
+export const OFFLINE_CAP_FREE_MS = defaultOfflineConfig().capFreeMs;
+export const OFFLINE_CAP_VIP_MS = defaultOfflineConfig().capVipMs;
 
 export function offlineCapMs(isVip: boolean): number {
-  return isVip && config.economy.vip.enabled ? OFFLINE_CAP_VIP_MS : OFFLINE_CAP_FREE_MS;
+  return isVip && config.economy.vip.enabled ? config.offline.capVipMs : config.offline.capFreeMs;
 }
 
 export function createOfflineProgress(now: number): OfflineProgress {
@@ -69,12 +69,15 @@ export function createOfflineProgress(now: number): OfflineProgress {
 }
 
 /**
- * Calcula o offline SEM ainda creditar.
+ * Calcula quanto tempo offline será creditado (ADR-026).
  *
- * §47 — o teto é sobre o tempo ACUMULADO, não sobre a ausência. Duas
- * sessões de 1h30 dão 3h e são creditadas até 2h. Uma sessão de 10h dá
- * 2h. A diferença importa: o jogador que joga todo dia é recompensado
- * melhor do que quem some por um fim de semana, e é isso que a regra pede.
+ * §48 — "máximo de 2 horas" (Free) / 8 horas (VIP): o teto vale POR AUSÊNCIA. Uma ausência de 10 h
+ * credita 2 h; duas ausências de 1 h30 creditam 1 h30 cada (cada retorno consome a janela e
+ * `lastActiveAt` volta para "agora"). Isso acompanha o texto do usuário: o offline é "como se
+ * tivesse ficado online por mais aquele período (2 h Free, 8 h VIP)". O modelo antigo
+ * (acumulado vitalício) foi abandonado: depois de 2 h creditadas, o jogador nunca mais ganharia nada.
+ *
+ * `accumulatedMs` permanece no save por compatibilidade e vale sempre 0 (não há mais acúmulo).
  */
 export function computeOffline(
   progress: OfflineProgress,
@@ -83,22 +86,21 @@ export function computeOffline(
 ): { rawDurationMs: number; creditedDurationMs: number; wasCapped: boolean; capMs: number; plan: "free" | "vip" } {
   const cap = offlineCapMs(isVip);
   const raw = Math.max(0, now - progress.lastActiveAt);
-  const beforeCap = progress.accumulatedMs + raw;
-  const credited = Math.min(beforeCap, cap);
+  const credited = Math.min(raw, cap);
 
   return {
     rawDurationMs: raw,
-    creditedDurationMs: Math.max(0, credited - progress.accumulatedMs),
-    wasCapped: beforeCap > cap,
+    creditedDurationMs: credited,
+    wasCapped: raw > cap,
     capMs: cap,
     plan: isVip && config.economy.vip.enabled ? "vip" : "free",
   };
 }
 
-/** Escreve o resultado de volta. Chamado SÓ depois de creditar. */
-export function commitOffline(progress: OfflineProgress, creditedTotalMs: number, now: number): void {
+/** Marca o retorno: a janela foi consumida e o relógio recomeça em `now`. Chamado SÓ depois de simular. */
+export function commitOffline(progress: OfflineProgress, _creditedTotalMs: number, now: number): void {
   progress.lastActiveAt = now;
-  progress.accumulatedMs = Math.max(0, creditedTotalMs);
+  progress.accumulatedMs = 0;
   progress.lastClaimedAt = now;
 }
 

@@ -184,7 +184,43 @@ export {
 } from "./hunt.js";
 
 export { GameState } from "./state.js";
-export type { GameStateDeps, GameEvents, LootNotice } from "./state.js";
+export type { GameStateDeps, GameEvents, LootNotice, BotAction } from "./state.js";
+
+export {
+  ShopError,
+  shopItemById,
+  shopItemsOfTab,
+  priceFor,
+  itemPrice,
+  priceReferenceLevel,
+  coinsPerKillFor,
+  stackCount,
+  fragmentKey,
+  fragmentCount,
+  grantFragments,
+  grantShopItem,
+  purchaseBlock,
+  buyShopItem,
+  effectAmount,
+  consumableById,
+  ownedPotions,
+  ownedRevives,
+  pickPotion,
+  pickRevive,
+  spendOne,
+  drawBox,
+  openBoxes,
+  createHeroOfRarity,
+  summonFromFragments,
+  fragmentSummary,
+  fragmentsRequired,
+  heroNameForClass,
+} from "./shop.js";
+export type { ShopErrorCode, PurchaseResult, BoxResult, BoxDraw, BoxOpening } from "./shop.js";
+export { createBotSettings, normalizeBotSettings, patchBotSettings } from "./bot.js";
+export type { BotSettingsPatch } from "./bot.js";
+export { emptyReport } from "./offline.js";
+export type { OfflineReport } from "./offline.js";
 
 export { LocalStoragePersistence, MemoryStorage, SAVE_PREFIX, encodeSave, decodeSave } from "./persistence/local.js";
 export type { KeyValueStorage } from "./persistence/local.js";

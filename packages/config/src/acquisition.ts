@@ -30,6 +30,12 @@ export interface HeroAcquisitionConfig {
    * como média de `samples` uniformes (sino: variação extrema é rara).
    */
   attributeRoll: { min: number; max: number; samples: number };
+  /**
+   * Fragmentos para invocar (craft/summon, §12) um herói de cada raridade. Os fragmentos são
+   * por CLASSE e por RARIDADE (`classId:rarity`) e vêm de caixas do Market, Bosses e eventos —
+   * nunca de inimigo comum da Torre.
+   */
+  fragmentsRequired: Record<Rarity, number>;
 }
 
 export function defaultHeroAcquisition(): HeroAcquisitionConfig {
@@ -38,6 +44,7 @@ export function defaultHeroAcquisition(): HeroAcquisitionConfig {
     rarityChance: { common: 0.5, uncommon: 0.3, rare: 0.15, epic: 0.04, legendary: 0.009, celestial: 0.001 },
     rarityStatMultiplier: { common: 0.94, uncommon: 1.0, rare: 1.06, epic: 1.12, legendary: 1.2, celestial: 1.3 },
     attributeRoll: { min: 0.85, max: 1.15, samples: 3 },
+    fragmentsRequired: { common: 20, uncommon: 30, rare: 40, epic: 70, legendary: 100, celestial: 250 },
   };
 }
 
@@ -62,6 +69,10 @@ export function heroAcquisitionErrors(a: unknown): string[] {
   else {
     if (!(r.min > 0 && r.min <= 1 && r.max >= 1)) errors.push("heroAcquisition.attributeRoll: min deve estar em (0, 1] e max >= 1");
     if (!Number.isInteger(r.samples) || r.samples < 1 || r.samples > 8) errors.push("heroAcquisition.attributeRoll.samples deve ser inteiro em [1, 8]");
+  }
+  for (const rar of RARITIES) {
+    const n = c.fragmentsRequired?.[rar];
+    if (!isNum(n) || !Number.isInteger(n) || n < 1) errors.push(`heroAcquisition.fragmentsRequired.${rar} deve ser inteiro >= 1`);
   }
   return errors;
 }

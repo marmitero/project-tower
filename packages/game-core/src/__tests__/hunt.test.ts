@@ -112,78 +112,43 @@ describe("offline Free — 2h acumuladas (§47)", () => {
     expect(r.wasCapped).toBe(true);
   });
 
-  it("o teto é sobre o ACUMULADO, não sobre a ausência (§47)", () => {
+  it("o teto vale POR AUSÊNCIA: cada retorno recomeça a janela (ADR-026)", () => {
     const p = createOfflineProgress(0);
 
-    // Sessão 1: 1h fora. Acumula 1h — ainda abaixo do teto.
-    let now = HOUR;
+    // Ausência 1: 1h30. Credita tudo.
+    let now = 90 * 60 * 1000;
     let r = computeOffline(p, now, false);
-    expect(r.rawDurationMs).toBe(HOUR);
-    expect(r.creditedDurationMs).toBe(HOUR);
+    expect(r.creditedDurationMs).toBe(90 * 60 * 1000);
     expect(r.wasCapped).toBe(false);
-    commitOffline(p, p.accumulatedMs + r.creditedDurationMs, now);
-    expect(p.accumulatedMs).toBe(HOUR);
+    commitOffline(p, r.creditedDurationMs, now);
+    expect(p.lastActiveAt).toBe(now);
+    expect(p.accumulatedMs).toBe(0);
 
-    // O jogador volta, joga 30min e sai. `touchActive` marca a última
-    // atividade — sem isso, os 30min online seriam contados como offline.
-    now += 30 * 60 * 1000;
-    touchActive({ lastActiveAt: 0 }, p, now);
-
-    // Sessão 2: mais 1h de ausência. Total 2h — exatamente o teto.
-    now += HOUR;
+    // Ausência 2: mais 1h30 — também credita 1h30 (não há mais "acumulado vitalício").
+    now += 90 * 60 * 1000;
     r = computeOffline(p, now, false);
-    expect(r.creditedDurationMs).toBe(HOUR);
+    expect(r.creditedDurationMs).toBe(90 * 60 * 1000);
     expect(r.wasCapped).toBe(false);
-    commitOffline(p, p.accumulatedMs + r.creditedDurationMs, now);
-    expect(p.accumulatedMs).toBe(2 * HOUR);
-
-    // Sessão 3: mais 1h. Não sobra nada no teto.
-    now += HOUR;
-    r = computeOffline(p, now, false);
-    expect(r.creditedDurationMs).toBe(0);
-    expect(r.wasCapped).toBe(true);
   });
 
-  it("a mesma ausência rende mais com o acumulado baixo (o ponto do ACUMULADO)", () => {
-    // 1h de ausência com 0h acumuladas credita 1h.
-    const clean = createOfflineProgress(0);
-    expect(computeOffline(clean, HOUR, false).creditedDurationMs).toBe(HOUR);
-
-    // A MESMA 1h de ausência com 5h já acumuladas credita ZERO.
-    const full = createOfflineProgress(0);
-    full.accumulatedMs = 5 * HOUR;
-    const r = computeOffline(full, HOUR, false);
-    expect(r.creditedDurationMs).toBe(0);
-    expect(r.wasCapped).toBe(true);
-  });
-
-  it("uma ausência ENORME depois de muitas sessões curtas rende só o que falta", () => {
-    // 6 sessões de 30min = 3h, com 30min entre elas. As 6 rendem 3h, e
-    // apenas 2h cabem: 1h de ganho é perdido.
-    const p = createOfflineProgress(0);
-    let now = 0;
-    let credited = 0;
-    for (let i = 0; i < 6; i++) {
-      now += 30 * 60 * 1000;
-      const r = computeOffline(p, now, false);
-      credited += r.creditedDurationMs;
-      commitOffline(p, p.accumulatedMs + r.creditedDurationMs, now);
-    }
-    expect(p.accumulatedMs).toBe(2 * HOUR);
-    expect(credited).toBe(2 * HOUR);
-  });
-
-  it("depois do teto, sessões adicionais não rendem", () => {
+  it("depois de uma ausência capada, a próxima volta a render (o jogo nunca 'esgota' o offline)", () => {
     const p = createOfflineProgress(0);
     const t = 10 * HOUR;
     let r = computeOffline(p, t, false);
-    commitOffline(p, p.accumulatedMs + r.creditedDurationMs, t);
-    expect(p.accumulatedMs).toBe(2 * HOUR);
+    expect(r.creditedDurationMs).toBe(2 * HOUR);
+    commitOffline(p, r.creditedDurationMs, t);
 
-    const t2 = 20 * HOUR;
-    r = computeOffline(p, t2, false);
-    expect(r.creditedDurationMs).toBe(0);
-    expect(r.wasCapped).toBe(true);
+    r = computeOffline(p, t + HOUR, false);
+    expect(r.creditedDurationMs).toBe(HOUR);
+    expect(r.wasCapped).toBe(false);
+  });
+
+  it("jogar online entre as ausências não gera crédito: `touchActive` move a âncora", () => {
+    const p = createOfflineProgress(0);
+    touchActive({ lastActiveAt: 0 }, p, 5 * HOUR); // jogou até as 5h
+    const r = computeOffline(p, 5 * HOUR + 30 * 60 * 1000, false);
+    expect(r.rawDurationMs).toBe(30 * 60 * 1000);
+    expect(r.creditedDurationMs).toBe(30 * 60 * 1000);
   });
 
   it("tempo negativo (relógio andando para trás) credita zero, não XP negativo", () => {
