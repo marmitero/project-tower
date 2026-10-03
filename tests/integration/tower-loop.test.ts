@@ -9,7 +9,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { HEROES, classes, config } from "@tia/config";
+import { HEROES, HERO_ROSTER, classes, config } from "@tia/config";
 import { GameState, createHero, heroCodex } from "@tia/game-core";
 import { MemoryStorage } from "@tia/game-core";
 import { asAccountId } from "@tia/contracts";
@@ -73,8 +73,8 @@ describe("criação de Rei e escolha de herói (§10, §19)", () => {
 
     // Os outros 3 permanecem no códice, bloqueados (§10/§12).
     const codex = heroCodex(state.data.heroes);
-    expect(codex).toHaveLength(4);
-    expect(codex.filter((c) => c.status === "locked")).toHaveLength(3);
+    expect(codex).toHaveLength(HERO_ROSTER.length);
+    expect(codex.filter((c) => c.status === "locked")).toHaveLength(HERO_ROSTER.length - 1);
   });
 
   it("as 4 identidades são de classes DISTINTAS com dano físico e mágico", () => {

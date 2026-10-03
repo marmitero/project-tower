@@ -845,13 +845,13 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 
 | Classe | Existente (Δ0) | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|---|
-| Guardião `guardian` | Aldric · Contra-ataque | **Borin, Escudeiro da Muralha** (CON+6 STR−4 DEX−2 WIS+2 CHA−2 · *Muralha*: mitigação longa) | **Cavaleiro Rubro** (STR+5 DEX+1 CON−4 WIS−2 · *Carga Rubra*: golpe forte, custa 5 % de HP) | **Monge de Ferro** (DEX+4 WIS+2 STR−2 CON−2 CHA−2 · *Chi Blast*) | **Lorde Cinzento** (STR+3 INT+2 CON−3 WIS−2 · *Dreno Sombrio*: rouba vida) |
+| Guardião `guardian` | Aldric · Contra-ataque | **Borin, Escudeiro da Muralha** (CON+2 STR−4 WIS+2 · *Muralha*: mitigação longa) — *delta ajustado por medição no Lote 1* | **Cavaleiro Rubro** (STR+5 DEX+1 CON−4 WIS−2 · *Carga Rubra*: golpe forte, custa 5 % de HP) | **Monge de Ferro** (DEX+4 WIS+2 STR−2 CON−2 CHA−2 · *Chi Blast*) | **Lorde Cinzento** (STR+3 INT+2 CON−3 WIS−2 · *Dreno Sombrio*: rouba vida) |
 | Arqueiro `ranger` | Kaia · Rajada | **Caçador Furtivo** (DEX+5 STR−2 CON−3 · *Backstab*: crítico garantido) | **Besteiro Pesado** (STR+5 DEX−4 CON+1 WIS−2 · *Focus Strike*) | **Guardiã da Floresta** (WIS+4 DEX+1 STR−3 CHA−2 · *Falcão*: multi-hit) | **Arqueiro Nômade** (DEX+2 CON+2 STR−2 CHA−2 · *Flecha do Deserto*: lentidão/veneno) |
 | Arcanista `arcanist` | Maelis · Nova | **Piromante** (INT+4 CON−3 WIS−1 · *Fire Bolt*: queima) | **Criomante** (WIS+3 INT+1 DEX−2 CON−2 · *Ice Storm*) | **Tempestuário** (DEX+4 INT+1 CON−3 WIS−2 · *Raio em cadeia*) | **Mago Ancião** (WIS+4 INT+2 CON−3 DEX−3 · *Barragem Arcana*) |
 | Invocador `shadowcaller` | Vorath · Maldição | **Necromante dos Ossos** (CON+3 INT+1 DEX−4 · *Gaiola de Ossos*) | **Bruxa do Pântano** (DEX+3 WIS+1 CON−2 INT−2 · *Poison Blade*) | **Ceifeira** (STR+4 INT−2 WIS−2 · *Colheita*: rouba vida) | **Demonólogo** (INT+4 CON−2 DEX−2 · *Fogo Infernal*) |
 | **Clérigo `cleric` (nova)** — base STR 10 · DES 10 · CON 20 · INT 14 · SAB 26 · CAR 16, dano mágico, arma `mace`, papel "Suporte / sustain" | — | **Sacerdotisa da Aurora** (Δ0 · *Cura*: cura própria + `regen`) | **Monge Curandeiro** (DEX+4 CON−2 WIS−2 · *Palma Restauradora*) | **Bispo Guerreiro** (STR+6 WIS−4 INT−2 · *Punição*: dano sagrado) | **Druida da Vida** (CON+2 WIS+2 STR−2 DEX−2 · *Florescer*: `regen` forte) |
 
-> Todos os deltas somam zero (conferido). Dependências: a **cura como efeito de skill** ainda não existe no engine (há `regen`/poção); entra junto com o lote do Clérigo (L4), com teste de engine, antes de gastar gerações nele.
+> Todos os deltas somam zero (conferido); a CI exige poder (resistência × dano) a ±8 % do modelo da classe — o delta inicial de Borin (CON+6…) dava +13 % e foi reduzido. Dependências: a **cura como efeito de skill** ainda não existe no engine (há `regen`/poção); entra junto com o lote do Clérigo (L4), com teste de engine, antes de gastar gerações nele.
 
 **Pendência registrada (não é bug):** `hero-acquisition.ts` ainda não define **qual identidade** o herói recém-obtido recebe (hoje sai só a classe) → ao chegar a arte das identidades, a obtenção por identidade (Market/caixa/summon/Chefe) é uma etapa curta própria (**F0.5**), com teste.
 

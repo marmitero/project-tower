@@ -12,7 +12,7 @@
  */
 
 import type { Hero } from "@tia/contracts";
-import { HEROES, classes, type HeroIdentityDef } from "@tia/config";
+import { HERO_ROSTER, classes, heroIdentityForClass, heroPortraitId, type HeroIdentityDef } from "@tia/config";
 
 export type CodexStatus = "owned" | "locked";
 
@@ -30,12 +30,13 @@ export interface HeroCodexEntry {
 }
 
 /**
- * O códice completo: 4 entradas (as identidades do catálogo), com o que o
- * jogador possui marcado. A ordem é a do catálogo (escala de raridade).
+ * O códice completo: uma entrada por identidade do elenco (4 iniciais + adicionais, ADR-033),
+ * com o que o jogador possui marcado. Herói sem `identityId` (save antigo ou aquisição anterior
+ * ao ADR-033) conta como a identidade INICIAL da classe. A ordem é a do catálogo (escala de raridade).
  */
 export function heroCodex(owned: readonly Hero[]): HeroCodexEntry[] {
-  return HEROES.map((identity) => {
-    const mine = owned.filter((h) => h.classId === identity.classId);
+  return HERO_ROSTER.map((identity) => {
+    const mine = owned.filter((h) => (h.identityId ? h.identityId === identity.id : heroIdentityForClass(h.classId).id === identity.id));
     const hero = mine[0] ?? null;
     const cls = classes.find((c) => c.id === identity.classId);
     return {
@@ -43,7 +44,7 @@ export function heroCodex(owned: readonly Hero[]): HeroCodexEntry[] {
       status: hero ? "owned" : "locked",
       hero,
       copies: mine.length,
-      portraitAssetId: cls?.assets.portrait ?? "",
+      portraitAssetId: heroPortraitId({ classId: identity.classId, identityId: identity.id }) ?? cls?.assets.portrait ?? "",
       acquisitionHint: hero ? "" : identity.acquisition.hint,
     };
   });

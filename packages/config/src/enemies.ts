@@ -106,7 +106,7 @@ const attrs = (
 ): CharacterAttributes => ({ strength, dexterity, constitution, intelligence, wisdom, charisma: 4 });
 
 /**
- * Roster padrão — 11 inimigos (tank 2, dps 3, swift 1, caster 2, balanced 1, elite 2).
+ * Roster padrão — 12 inimigos (tank 2, dps 3, swift 1, caster 3, balanced 1, elite 2).
  * Fábrica dos DEFAULTS: o estado vivo é `enemies` (pode ser substituído por
  * um ContentPack, ver `content.ts`).
  */
@@ -138,6 +138,11 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "toxicbat", name: "Morcego Tóxico", role: "caster", damageType: "magic", statMultiplier: 1.1,
       attributes: attrs(6, 24, 12, 28, 14),
       assets: { sheets: charSheets("toxicbat") } },
+    // ADR-033/Lote 1: o primeiro inimigo com atlas próprio (`ita-atlas-v1`). Mago do andar 1–2:
+    // multiplicador baixo (o andar 1 não pode punir quem ainda não tem equipamento).
+    { id: "spark_imp", name: "Duende de Faíscas", role: "caster", damageType: "magic", statMultiplier: 0.78,
+      attributes: attrs(6, 20, 10, 26, 12),
+      assets: { sheets: charSheets("mage"), atlas: "enemies/spark_imp" } },
     { id: "fireorc", name: "Orc Flamejante", role: "caster", damageType: "magic", statMultiplier: 0.88,
       attributes: attrs(10, 8, 22, 32, 12),
       assets: { sheets: charSheets("fireorc") } },

@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "maxPerBatch": 10,
+  "entries": [
+    {
+      "date": "2026-10-03",
+      "batch": "L1",
+      "asset": "heroes/guardian_borin",
+      "kind": "atlas",
+      "prompt": "Borin Escudeiro da Muralha, guia hero magenta + estilo orc idle",
+      "refs": []
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L1",
+      "asset": "enemies/spark_imp",
+      "kind": "atlas",
+      "prompt": "Duende de Faíscas (andar 1, M), guia mage magenta + estilo goblin",
+      "refs": []
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L1",
+      "asset": "arenas/f01_entrada",
+      "kind": "arena",
+      "prompt": "Kit de arena do andar 1 (Entrada da Torre), grade 4x4",
+      "refs": []
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L1",
+      "asset": "ui/gba/buttons",
+      "kind": "ui",
+      "prompt": "Kit de botões GBA índigo/prata, 4x4, sem texto",
+      "refs": []
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L1",
+      "asset": "ui/gba/icons",
+      "kind": "ui",
+      "prompt": "16 ícones de aba/ação estilo GBA, 4x4",
+      "refs": []
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L1",
+      "asset": "login/background",
+      "kind": "login",
+      "prompt": "Fundo da tela de login: a Torre ao entardecer, 16:9 sem texto",
+      "refs": []
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L1",
+      "asset": "login/logo",
+      "kind": "login",
+      "prompt": "Logotipo IDLE TOWER ADVENTURE, pixel art sobre magenta",
+      "refs": []
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L1",
+      "asset": "portraits/king/lote-a",
+      "kind": "portrait",
+      "prompt": "Retratos do Rei A: Real, Guerreiro, Rainha, Sábio (2x2)",
+      "refs": []
+    }
+  ]
+}

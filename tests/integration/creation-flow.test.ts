@@ -25,6 +25,7 @@ import {
   setActiveHero,
   validateNickname,
 } from "@tia/game-core";
+import { HERO_ROSTER } from "@tia/config";
 import { asAccountId } from "@tia/contracts";
 import { boot, createGame } from "../../apps/game-web/src/boot.js";
 
@@ -109,10 +110,10 @@ describe("fluxo de criação do Rei (§5, §8)", () => {
 
     // O códice deriva os 4 do catálogo: 1 recrutado, 3 bloqueados (§10).
     const codex = heroCodex(state.data.heroes);
-    expect(codex).toHaveLength(4);
+    expect(codex).toHaveLength(HERO_ROSTER.length);
     expect(codex.filter((c) => c.status === "owned")).toHaveLength(1);
     const locked = codex.filter((c) => c.status === "locked");
-    expect(locked).toHaveLength(3);
+    expect(locked).toHaveLength(HERO_ROSTER.length - 1);
     for (const entry of locked) {
       expect(entry.acquisitionHint.length, entry.identity.id).toBeGreaterThan(10);
     }

@@ -83,8 +83,8 @@ describe("variedade de inimigos por andar", () => {
     }
   });
 
-  it("o roster usa todos os papéis e só sprites existentes (11 inimigos)", () => {
-    expect(enemies).toHaveLength(11);
+  it("o roster usa todos os papéis e só sprites existentes (12 inimigos)", () => {
+    expect(enemies).toHaveLength(12);
     expect(new Set(enemies.map((e) => e.role))).toEqual(new Set(ENEMY_ROLES));
   });
 

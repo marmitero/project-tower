@@ -16,12 +16,14 @@
 
 import type { Hero, HeroOrigin } from "@tia/contracts";
 import type { AccountId, ClassId } from "@tia/contracts";
-import { ATTRIBUTE_IDS, classes, config, type CharacterAttributes, type Rarity } from "@tia/config";
+import { ATTRIBUTE_IDS, classes, config, heroById, pickAcquiredIdentity, type CharacterAttributes, type Rarity } from "@tia/config";
 import type { Prng } from "@tia/engine";
 import { createHero } from "./creation.js";
 
 export interface HeroRoll {
   classId: string;
+  /** Identidade sorteada (arte e atributos próprios — ADR-033). Decidida pela qualidade, sem gastar PRNG. */
+  identityId?: string;
   rarity: Rarity;
   attributes: CharacterAttributes;
   /** 0–100: posição média da rolagem dos atributos na faixa [min, max]. */
@@ -42,16 +44,27 @@ export function rollHeroAcquisition(rng: Prng, classId: string, forcedRarity?: R
   const rarity = forcedRarity ?? rolledRarity;
   const { min, max, samples } = acq.attributeRoll;
 
-  const attributes = { ...cls.attributes };
-  let uSum = 0;
-  for (const id of ATTRIBUTE_IDS) {
+  // A identidade é escolhida DEPOIS da rolagem (a partir da qualidade): o PRNG consome o mesmo
+  // número de valores de sempre e as rolagens existentes continuam idênticas. Já o delta de
+  // atributos da identidade entra como base da faixa [min, max] — por isso o cálculo abaixo usa
+  // `baseline` e a escolha usa a qualidade de uma passada sem delta.
+  const rolled = ATTRIBUTE_IDS.map(() => {
     let u = 0;
     for (let i = 0; i < samples; i += 1) u += rng.next();
-    u /= samples;
+    return u / samples;
+  });
+  const quality0 = (rolled.reduce((a, b) => a + b, 0) / rolled.length) * 100;
+  const identity = pickAcquiredIdentity(classId, quality0 / 100);
+  const baseline = { ...cls.attributes };
+  for (const [id, delta] of Object.entries(identity.attributeDelta ?? {})) baseline[id as keyof CharacterAttributes] += delta;
+  const attributes = { ...cls.attributes };
+  let uSum = 0;
+  ATTRIBUTE_IDS.forEach((id, i) => {
+    const u = rolled[i]!;
     uSum += u;
-    attributes[id] = Math.max(1, Math.round(cls.attributes[id] * (min + (max - min) * u)));
-  }
-  return { classId, rarity, attributes, quality: (uSum / ATTRIBUTE_IDS.length) * 100 };
+    attributes[id] = Math.max(1, Math.round(baseline[id] * (min + (max - min) * u)));
+  });
+  return { classId, identityId: identity.id, rarity, attributes, quality: (uSum / ATTRIBUTE_IDS.length) * 100 };
 }
 
 /** Cria o herói adquirido a partir de uma rolagem (mesmo `createHero` do inicial). */
@@ -63,10 +76,12 @@ export function createAcquiredHero(params: {
   now: number;
   index: number;
 }): Hero {
+  const identity = params.roll.identityId ? heroById[params.roll.identityId] : undefined;
   return createHero({
     accountId: params.accountId,
     classId: params.roll.classId as ClassId,
-    name: params.name,
+    ...(identity ? { identityId: identity.id } : {}),
+    name: identity?.name ?? params.name,
     rarity: params.roll.rarity,
     attributes: params.roll.attributes,
     quality: params.roll.quality,

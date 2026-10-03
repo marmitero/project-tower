@@ -87,6 +87,10 @@ export {
 export { ITA_ATLAS, ATLAS_SPRITE_KEY, spriteRecord, heroSpriteRecord, heroPortraitId } from "./atlas.js";
 export {
   HEROES,
+  EXTRA_HEROES,
+  HERO_ROSTER,
+  identitiesForClass,
+  pickAcquiredIdentity,
   heroById,
   heroIdentityForClass,
   type HeroIdentityDef,

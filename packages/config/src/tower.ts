@@ -127,7 +127,8 @@ function themeForFloor(index: number): string {
  * Plano de aparição dos inimigos por andar (usado SÓ para gerar o pool padrão;
  * depois disso a verdade é `FloorDef.pool`). `toFloor` ausente = até o último.
  *
- * Todo andar tem tank + dps + veloz desde o 1; mago entra no 3; elites no 9+.
+ * Todo andar tem tank + dps + veloz desde o 1; o mago entra no 1 (Duende de Faíscas, andares 1–2,
+ * ADR-033) e o Morcego Tóxico assume no 3; elites no 9+.
  */
 export const DEFAULT_POOL_PLAN: ReadonlyArray<{
   enemyId: string;
@@ -140,6 +141,7 @@ export const DEFAULT_POOL_PLAN: ReadonlyArray<{
   { enemyId: "goblin", fromFloor: 1, toFloor: 8, weight: 4 },
   { enemyId: "goblin", fromFloor: 9, weight: 2 },
   { enemyId: "bat", fromFloor: 1, weight: 3 },
+  { enemyId: "spark_imp", fromFloor: 1, toFloor: 2, weight: 2 },
   { enemyId: "skeleton", fromFloor: 2, weight: 3 },
   { enemyId: "toxicbat", fromFloor: 3, weight: 2 },
   { enemyId: "frostslime", fromFloor: 4, weight: 3 },

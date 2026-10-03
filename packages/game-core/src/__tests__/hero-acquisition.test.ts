@@ -5,7 +5,7 @@
  *  - balanceado independente de classe.
  */
 import { describe, expect, it } from "vitest";
-import { ATTRIBUTE_IDS, HEROES, classes, config, RARITY_ORDER } from "@tia/config";
+import { ATTRIBUTE_IDS, HEROES, HERO_ROSTER, classes, config, heroById, RARITY_ORDER } from "@tia/config";
 import { Prng } from "@tia/engine";
 import { createAcquiredHero, rollHeroAcquisition } from "../hero-acquisition.js";
 import { growthForHero, heroStatsAtLevel } from "../creation.js";
@@ -54,9 +54,12 @@ describe("rolagem de aquisição", () => {
     for (let i = 0; i < 300; i++) {
       for (const cls of classes) {
         const roll = rollHeroAcquisition(new Prng(i * 31 + 7), cls.id);
+        // a base da faixa é o modelo da classe + o delta da identidade sorteada (ADR-033)
+        const delta = heroById[roll.identityId!]?.attributeDelta ?? {};
         for (const id of ATTRIBUTE_IDS) {
-          expect(roll.attributes[id]).toBeGreaterThanOrEqual(Math.max(1, Math.round(cls.attributes[id] * min)));
-          expect(roll.attributes[id]).toBeLessThanOrEqual(Math.round(cls.attributes[id] * max));
+          const base = cls.attributes[id] + (delta[id] ?? 0);
+          expect(roll.attributes[id]).toBeGreaterThanOrEqual(Math.max(1, Math.round(base * min)));
+          expect(roll.attributes[id]).toBeLessThanOrEqual(Math.round(base * max));
         }
         expect(roll.quality).toBeGreaterThanOrEqual(0);
         expect(roll.quality).toBeLessThanOrEqual(100);
@@ -109,7 +112,10 @@ describe("rolagem de aquisição", () => {
       for (let i = 0; i < N; i++) {
         const roll = rollHeroAcquisition(rng, clsId);
         const s = heroStatsAtLevel(growthForHero(roll.attributes, rarity), level);
-        const base = heroStatsAtLevel(growthForHero(cls.attributes, "uncommon"), level);
+        const delta = heroById[roll.identityId!]?.attributeDelta ?? {};
+        const baseAttrs = { ...cls.attributes };
+        for (const id of ATTRIBUTE_IDS) baseAttrs[id] += delta[id] ?? 0;
+        const base = heroStatsAtLevel(growthForHero(baseAttrs, "uncommon"), level);
         // razão ao herói incomum da MESMA classe: remove a diferença estrutural entre classes
         total += (s.hp + s.attack + s.specialAttack + s.defense + s.specialDefense) / (base.hp + base.attack + base.specialAttack + base.defense + base.specialDefense);
       }
@@ -120,6 +126,37 @@ describe("rolagem de aquisição", () => {
       const expected = config.heroAcquisition.rarityStatMultiplier[rarity];
       for (const r of ratios) expect(Math.abs(r / expected - 1)).toBeLessThan(0.05);
     }
+  });
+
+  it("cada variação (identidade) tem poder (resistência × dano) parecido com o modelo da classe (±8%) — diferença é ESTILO, não força", () => {
+    const power = (attrs: typeof classes[number]["attributes"]) => {
+      const s = heroStatsAtLevel(growthForHero(attrs, "uncommon"), 500);
+      // poder = resistência × dano: um tanque troca ataque por vida/defesa sem ficar mais forte
+      return s.hp * (s.defense + s.specialDefense) * (s.attack + s.specialAttack);
+    };
+    for (const identity of HERO_ROSTER) {
+      const cls = classes.find((c) => c.id === identity.classId)!;
+      const varied = { ...cls.attributes };
+      for (const id of ATTRIBUTE_IDS) varied[id] += identity.attributeDelta?.[id] ?? 0;
+      expect(Math.abs(power(varied) / power(cls.attributes) - 1), identity.id).toBeLessThan(0.08);
+    }
+  });
+
+  it("a identidade do herói adquirido é sorteada sem gastar PRNG e dá arte/nome próprios", () => {
+    const a = new Prng(5);
+    const b = new Prng(5);
+    rollHeroAcquisition(a, "guardian");
+    // mesma quantidade de números consumidos que a rolagem antiga: raridade + 6 atributos × samples
+    b.weightedKey(config.heroAcquisition.rarityChance);
+    for (let i = 0; i < 6 * config.heroAcquisition.attributeRoll.samples; i++) b.next();
+    expect(a.next()).toBe(b.next());
+    const seen = new Set<string>();
+    for (let i = 0; i < 200; i++) seen.add(rollHeroAcquisition(new Prng(i + 1), "guardian").identityId!);
+    expect([...seen].sort()).toEqual(["hero_aldric", "hero_borin"]);
+    const roll = { ...rollHeroAcquisition(new Prng(1), "guardian"), identityId: "hero_borin" };
+    const hero = createAcquiredHero({ accountId: "acc" as never, name: "qualquer", roll, origin: "market", now: 0, index: 1 });
+    expect(hero.name).toBe("Borin");
+    expect(hero.identityId).toBe("hero_borin");
   });
 
   it("raridade maior ⇒ stats maiores (multiplicador monotônico)", () => {

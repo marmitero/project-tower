@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { HEROES } from "@tia/config";
+import { HERO_ROSTER } from "@tia/config";
 import { heroCodex } from "../codex.js";
 import { createHero } from "../creation.js";
 import { asAccountId, asClassId } from "@tia/contracts";
@@ -12,9 +12,9 @@ function owned(classId: string, name: string, rarity: Hero["rarity"]): Hero {
 }
 
 describe("códice de heróis (§10 — deriva, nunca é salvo)", () => {
-  it("com save vazio, os 4 aparecem bloqueados com dica de aquisição", () => {
+  it("com save vazio, todas as identidades do elenco aparecem bloqueadas com dica de aquisição", () => {
     const codex = heroCodex([]);
-    expect(codex).toHaveLength(HEROES.length);
+    expect(codex).toHaveLength(HERO_ROSTER.length);
     for (const entry of codex) {
       expect(entry.status).toBe("locked");
       expect(entry.hero).toBeNull();
@@ -29,13 +29,24 @@ describe("códice de heróis (§10 — deriva, nunca é salvo)", () => {
     expect(kaia.status).toBe("owned");
     expect(kaia.hero).toBe(mine);
     expect(kaia.acquisitionHint).toBe("");
-    expect(codex.filter((e) => e.status === "locked")).toHaveLength(3);
+    expect(codex.filter((e) => e.status === "locked")).toHaveLength(HERO_ROSTER.length - 1);
   });
 
   it("a ordem do códice é a do catálogo (adendo ADR-024: todos incomuns)", () => {
     const codex = heroCodex([]);
-    expect(codex.map((e) => e.identity.id)).toEqual(HEROES.map((h) => h.id));
-    expect(codex.map((e) => e.identity.rarity)).toEqual(["uncommon", "uncommon", "uncommon", "uncommon"]);
+    expect(codex.map((e) => e.identity.id)).toEqual(HERO_ROSTER.map((h) => h.id));
+    expect(codex.every((e) => e.identity.rarity === "uncommon")).toBe(true);
+  });
+
+  it("ADR-033: o códice separa as variações da mesma classe pela identidade (sem identidade = a inicial)", () => {
+    const borin = { ...owned("guardian", "Borin", "rare"), identityId: "hero_borin" };
+    const codex = heroCodex([borin]);
+    expect(codex.find((e) => e.identity.id === "hero_borin")!.status).toBe("owned");
+    expect(codex.find((e) => e.identity.id === "hero_aldric")!.status).toBe("locked");
+    const legacy = owned("guardian", "Aldric", "rare"); // sem identityId (save antigo)
+    const old = heroCodex([legacy]);
+    expect(old.find((e) => e.identity.id === "hero_aldric")!.status).toBe("owned");
+    expect(old.find((e) => e.identity.id === "hero_borin")!.status).toBe("locked");
   });
 
   it("cada entrada carrega retrato do pack", () => {

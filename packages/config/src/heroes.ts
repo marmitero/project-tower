@@ -18,6 +18,7 @@
  */
 
 import type { Rarity, StatId } from "./types.js";
+import type { AttributeId } from "./attributes.js";
 
 /** De onde o herói pode vir DEPOIS da escolha inicial (§10). */
 export type AcquisitionOrigin = "starter" | "boss" | "event" | "summon" | "market";
@@ -60,6 +61,11 @@ export interface HeroIdentityDef {
    * a arte da classe (`catalog.ts`). É o que permite 5 heróis visualmente distintos por classe.
    */
   assets?: { portrait?: string; atlas?: string };
+  /**
+   * Identidade mecânica da variação (ADR-033): delta de atributos sobre o modelo da classe, de
+   * soma zero e |Δ| ≤ 6 (validado). Aplicado na rolagem de aquisição; ausente = o modelo da classe.
+   */
+  attributeDelta?: Partial<Record<AttributeId, number>>;
 }
 
 export const HEROES: HeroIdentityDef[] = [
@@ -145,8 +151,41 @@ export const HEROES: HeroIdentityDef[] = [
   },
 ];
 
+/**
+ * Identidades ADICIONAIS (ADR-033): as variações obtidas pelo jogo (Mercado, caixas, summons,
+ * Chefes). NÃO são oferecidas na criação (`HEROES` = só os 4 iniciais do §10). Cada lote de arte
+ * acrescenta aqui as que ganharam atlas próprio.
+ */
+export const EXTRA_HEROES: HeroIdentityDef[] = [
+  {
+    id: "hero_borin",
+    classId: "guardian",
+    name: "Borin",
+    epithet: "o Escudeiro da Muralha",
+    lore:
+      "Borin carregava o escudo de um cavaleiro até o dia em que o cavaleiro caiu e o escudo ficou. " +
+      "Desde então ele não recua um passo: onde Borin pisa, a muralha passa a existir.",
+    personality: ["teimoso", "leal", "bonachão"],
+    voiceNotes: "Voz rouca e calorosa; resmunga piadas entre os golpes; ri alto quando o escudo aguenta.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_counter",
+    combatStyle: "Muralha viva — aguenta mais, bate menos; vence quem desiste primeiro.",
+    range: "melee",
+    statPriority: ["hp", "defense", "specialDefense"],
+    acquisition: {
+      origin: "market",
+      hint: "Mercado comum, caixas e invocações de Guardião.",
+    },
+    assets: { atlas: "heroes/guardian_borin" },
+    attributeDelta: { constitution: 2, strength: -4, wisdom: 2 },
+  },
+];
+
+/** Elenco completo (iniciais + adicionais) — o que o códice e a aquisição enxergam. */
+export const HERO_ROSTER: HeroIdentityDef[] = [...HEROES, ...EXTRA_HEROES];
+
 export const heroById: Readonly<Record<string, HeroIdentityDef>> = Object.freeze(
-  Object.fromEntries(HEROES.map((h) => [h.id, h])),
+  Object.fromEntries(HERO_ROSTER.map((h) => [h.id, h])),
 );
 
 /** Identidade pela classe (MVP: 1 herói por classe). Lança se não houver. */
@@ -154,4 +193,19 @@ export function heroIdentityForClass(classId: string): HeroIdentityDef {
   const hero = HEROES.find((h) => h.classId === classId);
   if (!hero) throw new Error(`Sem identidade de herói para a classe: ${classId}`);
   return hero;
+}
+
+/** Todas as identidades de uma classe (a inicial primeiro). */
+export function identitiesForClass(classId: string): HeroIdentityDef[] {
+  return HERO_ROSTER.filter((h) => h.classId === classId);
+}
+
+/**
+ * Qual identidade um herói ADQUIRIDO recebe. Determinístico e SEM consumir o PRNG da rolagem (as
+ * rolagens existentes ficam idênticas): `u` ∈ [0,1) vem da qualidade já rolada.
+ */
+export function pickAcquiredIdentity(classId: string, u: number): HeroIdentityDef {
+  const pool = identitiesForClass(classId);
+  if (pool.length === 0) throw new Error(`Sem identidade de herói para a classe: ${classId}`);
+  return pool[Math.min(pool.length - 1, Math.floor(u * pool.length))]!;
 }

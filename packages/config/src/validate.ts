@@ -11,7 +11,7 @@ import {
 import { enemies, ENEMY_ROLES } from "./enemies.js";
 import { curveErrors } from "./curves.js";
 import { skills, skillsById } from "./skills.js";
-import { HEROES } from "./heroes.js";
+import { EXTRA_HEROES, HERO_ROSTER, HEROES } from "./heroes.js";
 import { equipmentErrors } from "./equipment.js";
 import { heroAcquisitionErrors } from "./acquisition.js";
 import { botErrors, marketErrors, offlineErrors } from "./market.js";
@@ -395,6 +395,25 @@ function collectCatalogErrors(): string[] {
     new Set(HEROES.map((h) => h.classId)).size === HEROES.length,
     "HEROES[].classId duplicado (MVP: 1 herói por classe)",
   );
+  // Identidades adicionais (ADR-033): ids/nomes únicos no elenco, não-iniciais, delta de soma zero.
+  check(new Set(HERO_ROSTER.map((h) => h.id)).size === HERO_ROSTER.length, "HERO_ROSTER[].id duplicado");
+  check(
+    new Set(HERO_ROSTER.map((h) => h.name.toLocaleLowerCase("pt-BR"))).size === HERO_ROSTER.length,
+    "HERO_ROSTER[].name duplicado (§6 — nomes distintos)",
+  );
+  for (const h of EXTRA_HEROES) {
+    check(classIds.has(h.classId), `EXTRA_HEROES.${h.id}.classId inexistente: ${h.classId}`);
+    check(h.acquisition.origin !== "starter", `EXTRA_HEROES.${h.id} não pode ser inicial (§10: só os 4)`);
+    check(h.lore.length >= 40 && h.epithet.length > 0 && h.combatStyle.length > 0, `EXTRA_HEROES.${h.id}: identidade sem substância`);
+    const deltas = Object.values(h.attributeDelta ?? {});
+    check(deltas.reduce((a, b) => a + b, 0) === 0, `EXTRA_HEROES.${h.id}.attributeDelta deve somar zero`);
+    check(deltas.every((d) => Math.abs(d) <= 6), `EXTRA_HEROES.${h.id}.attributeDelta fora de ±6`);
+    check(!!skillsById[h.signatureSkillId], `EXTRA_HEROES.${h.id}.signatureSkillId inexistente`);
+    check(
+      !/(inimigo comum|monstro comum|drop de inimigo)/i.test(h.acquisition.hint),
+      `EXTRA_HEROES.${h.id}.acquisition.hint menciona fonte proibida (§12)`,
+    );
+  }
   for (const h of HEROES) {
     check(classIds.has(h.classId), `HEROES.${h.id}.classId inexistente: ${h.classId}`);
     const cls = classes.find((c) => c.id === h.classId);
