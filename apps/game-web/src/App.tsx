@@ -274,7 +274,7 @@ export function App() {
               <div className="tia-overlay" role="region" aria-label={SCREENS.find((x) => x.id === screen)?.label}>
                 <header className="tia-overlay__head">
                   <h2>{SCREENS.find((x) => x.id === screen)?.label}</h2>
-                  <ActionButton label="Fechar" variant="secondary" onClick={() => setScreen(null)} />
+                  <ActionButton label="Fechar" icon="close" variant="secondary" onClick={() => setScreen(null)} />
                 </header>
                 <main className="tia-main">
                   {screen === "king" && <KingScreen state={state} onChangeSkin={changeSkin} />}

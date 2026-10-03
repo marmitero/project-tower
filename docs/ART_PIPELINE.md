@@ -267,11 +267,18 @@ IDs do manifesto = caminho sem extensão (mesma regra de hoje). `scripts/build-a
 | `art:contact` | contact sheet guia × candidato (5 animações × 4 quadros, fundo xadrez) |
 | `art:ingest` | **o atalho do lote**: chave → normaliza → valida → empacota → grava `<id>.png` + `<id>.atlas.json` + contact sheet em `assets/_review/` (ignorado pelo Git) |
 | `art:measure` | mede o pixel de arte de uma imagem |
+| `art:kit` | **kit de arena** (folha 4×4 → 16 ladrilhos 64×64: 5 paredes, tocha, banner, portão, 4 pisos, 4 adereços; mede emenda em X e luminância do piso) |
+| `art:buttons` | **kit de botões GBA** (folha 4×4 → índigo/prata × 4 estados + redondo/toggle/aba; rubi, esmeralda e âmbar saem por *recolor* do índigo = 0 geração; sombra magenta removida por tom rosado) |
+| `art:icons` | **16 ícones** (folha 4×4 → 64×64 centrados, na ordem de `ICON_NAMES`) |
+| `art:portraits` | folha 2×2 de retratos do Rei → `portraits/king/<id>` (512) + `<id>_s` (256, HUD) |
+| `art:trim` / `art:backdrop` | apara/enquadra o logotipo e reduz o fundo do login (16:9) |
 | `art:provenance` | `add`/`status`/`render`: **contador de gerações por lote** (recusa a 11ª) e `PROVENANCE.md` |
 
-Todos em Node (`sharp` já é dependência), testados em `tests/integration/art-pipeline.test.ts` (25 testes) com fixtures **do próprio pack** — nenhuma geração foi necessária. Os números vivem em `tools/art/spec.mjs` (o renderer espelha o que precisa em `packages/config/src/atlas.ts`; um teste garante que não divergem). O `check:assets` agora audita `assets/generated` (formato, orçamentos, manifesto em dia, procedência ≤ 10 por lote).
+Todos em Node (`sharp` já é dependência), testados em `tests/integration/art-pipeline.test.ts` (30 testes, incluindo kit/botões/ícones com folhas sintéticas e a igualdade pipeline × config) com fixtures **do próprio pack** — nenhuma geração foi necessária. Os números vivem em `tools/art/spec.mjs` (o renderer espelha o que precisa em `packages/config/src/atlas.ts`; um teste garante que não divergem). O `check:assets` agora audita `assets/generated` (formato, orçamentos, manifesto em dia, procedência ≤ 10 por lote).
 
 **Fluxo de um lote (as-built):** `npm run art:guide -- <arquétipo>` → gerar com a imagem `.magenta.png` + prompt do §4.2 → salvar o bruto em `assets/_incoming/L1/` → `npm run art:ingest -- <bruto> --id enemies/<id> --kind humanoid` → olhar a contact sheet → `npm run art:provenance -- add --batch L1 --asset <id> --kind atlas --prompt "…"` → ligar `assets.atlas` no config → `npm run assets:build` → `npm run check`.
+
+**Kit de interface — as-built (Lote 1).** Os nomes do que o pipeline produz (`UIKIT`, `ICON_NAMES`, `KIT_LAYOUT`) são **iguais** aos de `packages/config/src/uitheme.ts` (`gbaAssetIds()`, `BUTTON_COLOURS`, `ICON_NAMES`) — um teste garante. No jogo: `apps/game-web/src/gbaTheme.ts` transforma o manifesto em variáveis CSS (`--gba-<cor>-<estado>`, `--gba-icon-<nome>`) e liga a classe `tia-gba` **só se o kit estiver completo** (senão, visual anterior). `ActionButton` ganhou `variant` `confirm`/`warning` e `icon` (→ `data-icon`). Layout do login em `CREATION_LAYOUT` (foco do fundo, sombra, largura do logotipo/cartão, **zona reservada ao Google** `[data-auth-slot="google"]`, altura fixa 52 px). Tinta do texto dos botões: claro com sombra de 1 px nos estados escuros; escuro no `pressed` claro e no `disabled` (medido no pixel central de cada peça).
 
 ---
 

@@ -25,6 +25,7 @@ export function HuntControls({ state }: { state: GameState }) {
   return (
     <div className="tia-controls">
       <ActionButton
+        icon="enter"
         label={
           hunt?.kind === "defeated"
             ? state.bot.autoReturnFromHub
@@ -44,6 +45,7 @@ export function HuntControls({ state }: { state: GameState }) {
       />
       {hunt?.kind !== "defeated" && (
         <ActionButton
+          icon="rest"
           label="Descansar (recuperar HP)"
           variant="secondary"
           disabled={!activeId || busy || hunt?.kind === "searching" || hpRatio >= 1}

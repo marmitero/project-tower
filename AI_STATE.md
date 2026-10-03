@@ -470,13 +470,15 @@ editar `config/src/heroes.ts`.
 - Testes: `engine/boss-battle` (16), `game-core/boss` (33), `config/boss-content` (12), assets dos chefes (integração), migração de save v5→v6. Suíte completa verde.
 - **Cuidados:** a tentativa é consumida ao ENTRAR; `GameState.clock()` em toda marca de tempo; recalibrar chefes se mexer em IAS/equipamento/XP (`npm run report:balance -- --md`).
 
-### Fase de arte — "otimização e estilização" (ADR-032/033, 2026-10-03) — F0 FEITA, aguardando "go" do Lote 1
+### Fase de arte — "otimização e estilização" (ADR-032/033/034, 2026-10-03) — F0 e **LOTE 1 FEITOS (8/10 gerações; 2 reservas)**; aguardando "lote 01 aprovado"
+
+- **Lote 1 (ADR-034):** Borin, Duende de Faíscas, arena `f01_entrada`, botões/ícones GBA, login (fundo + logotipo), 4 retratos do Rei; obtenção por identidade; `CREATION_LAYOUT`/`uitheme.ts`/`gbaTheme.ts`; skins `legacy`. Contador de gerações em `assets/generated/PROVENANCE.md`.
 
 - **Estado:** Gate 0 aprovado; **Etapa F0 implementada (0 gerações usadas)**: `scripts/art.mjs` + `tools/art/*` (guide/key/normalize/validate/contact/ingest/seamless/recolor/pack/measure/provenance; aliases `npm run art:*`), formato `ita-atlas-v1` + `render/spriteSource.ts` (fallback legado), `ArenaKitDef` no ContentPack v5, `assets.atlas` (inimigo) e `HeroIdentityDef.assets`, `TextureBudget`, auditoria de `assets/generated` no `check:assets` (inclui manifesto em dia). Provado no Chromium real com um atlas sintético (descartado). Painel Admin (Fase 14) continua depois da arte.
 - **Regra do usuário:** ≤ **10 gerações por sessão**; ao fim do lote parar, explicar, aplicar no jogo, listar o próximo passo e **esperar confirmação**. Sprites com fundo magenta `#FF00FF`; poses/movimentação iguais às do pack.
-- **Próximo:** **Lote 1** (8 gerações + 2 reservas; docs/STYLIZATION_ROADMAP.md §9): pilotos de calibragem (andar 1) — só após "go". Fluxo: `docs/ART_PIPELINE.md` §13.
+- **Próximo:** **Lote 2** (docs/STYLIZATION_ROADMAP.md §9) — só após o usuário aprovar o Lote 1 ("lote 01 aprovado"); as 2 gerações reservas do L1 servem para refações. Fluxo: `docs/ART_PIPELINE.md` §13.
 - **Medido (muda o plano original):** pack com sombreado suave (31–620 cores significativas) → paleta de 64 cores só no empacotamento; `sharp` ignora `colours` → quantizador próprio; pixel ≈ 3 px; guia de validação = arquétipo dado ao gerador.
-- **Pendências registradas (ADR-033):** cura como efeito de skill (engine) antes do Clérigo; obtenção por IDENTIDADE (`hero-acquisition.ts` ainda só sorteia classe) — etapa F0.5 curta; campos de arena landmark/iluminação/ambiente reservados.
+- **Pendências registradas (ADR-033):** cura como efeito de skill (engine) antes do Clérigo; ~~obtenção por IDENTIDADE~~ (feita no L1); campos de arena landmark/iluminação/ambiente reservados.
 - **Cuidados:** nunca gravar rascunhos em `assets/generated/` (vai ao manifesto) — usar `assets/_incoming|_review` (gitignored); depois de `ingest` rodar `npm run assets:build` e commitar o `manifest.json`; UI gerada sem texto; contador de gerações no `provenance.json`.
 
 ### Pós-Fase 13 — HUB em 3 colunas, painel de dados e curva de XP (ADR-031, 2026-10-03)

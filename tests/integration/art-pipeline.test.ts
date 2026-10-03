@@ -7,7 +7,9 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync, statSync } from "node:fs
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { ITA_ATLAS } from "@tia/config";
+import { ITA_ATLAS, gbaAssetIds, ICON_NAMES as CONFIG_ICONS, GBA_PREFIX } from "@tia/config";
+import { KIT_LAYOUT, sliceKit } from "../../tools/art/kit.mjs";
+import { ICON_NAMES as TOOL_ICONS, UIKIT, sliceButtons, sliceIcons } from "../../tools/art/uikit.mjs";
 import { ATLAS, BUDGET, CHROMA, HEIGHT_BY_KIND, THRESHOLDS } from "../../tools/art/spec.mjs";
 import { bbox, blit, centroid, countColours, crop, newRaw, readRaw, resizeNearest, writePng } from "../../tools/art/image.mjs";
 import { atlasMeta, baselineFor, buildGuide, guideOnMagenta, normalizeAtlas, sliceGrid, targetHeightFor } from "../../tools/art/atlas.mjs";
@@ -346,5 +348,68 @@ describe("auditoria da arte gerada", () => {
   it("o repositório de verdade passa na auditoria", async () => {
     const { problems } = await auditGenerated(resolve(import.meta.dirname, "../../assets/generated"));
     expect(problems).toEqual([]);
+  });
+});
+
+/** Folha 512×512 (células de 128) sobre magenta, com um bloco colorido no centro de cada célula. */
+function syntheticSheet(block: [number, number, number], size: [number, number] = [76, 60]): Raw {
+  const sheet = newRaw(512, 512, [255, 0, 255, 255]) as Raw;
+  for (let c = 0; c < 16; c++) {
+    const b = newRaw(size[0], size[1], [block[0], block[1], block[2], 255]) as Raw;
+    blit(sheet, b, (c % 4) * 128 + ((128 - size[0]) >> 1), Math.floor(c / 4) * 128 + ((128 - size[1]) >> 1));
+  }
+  return sheet;
+}
+
+describe("kit de arena, botões GBA e ícones (ADR-033, Lote 1)", () => {
+  it("KIT_LAYOUT tem 16 nomes únicos: 5 paredes, tocha, banner, portão, 4 pisos, 4 adereços", () => {
+    expect(KIT_LAYOUT.length).toBe(16);
+    expect(new Set(KIT_LAYOUT).size).toBe(16);
+    expect(KIT_LAYOUT.filter((n: string) => n.startsWith("wall_")).length).toBe(5);
+    expect(KIT_LAYOUT.filter((n: string) => n.startsWith("floor_")).length).toBe(4);
+    expect(KIT_LAYOUT.filter((n: string) => n.startsWith("prop_")).length).toBe(4);
+  });
+
+  it("sliceKit devolve todos os ladrilhos no tamanho da arena; piso/parede opacos, adereço com alfa", () => {
+    const sheet = syntheticSheet([90, 80, 70], [100, 100]);
+    const { tiles } = sliceKit(sheet);
+    expect(Object.keys(tiles).sort()).toEqual([...KIT_LAYOUT].sort());
+    for (const name of KIT_LAYOUT) {
+      const t = tiles[name] as Raw;
+      expect(t.w).toBe(t.h);
+      const alphas = new Set<number>();
+      for (let i = 3; i < t.data.length; i += 4) alphas.add(t.data[i]!);
+      if (name.startsWith("prop_")) expect(alphas.has(0), name).toBe(true);
+      else expect([...alphas], name).toEqual([255]);
+    }
+  });
+
+  it("sliceButtons: as peças do pipeline são EXATAMENTE as do config (a UI nunca pede arte que o pipeline não faz)", () => {
+    const pieces = sliceButtons(syntheticSheet([50, 50, 150]));
+    const fromTool = Object.keys(pieces).sort();
+    const fromConfig = gbaAssetIds()
+      .map((id) => id.slice(GBA_PREFIX.length))
+      .filter((n) => !n.startsWith("icon_"))
+      .sort();
+    expect(fromTool).toEqual(fromConfig);
+    expect(Object.keys(UIKIT.extras).sort()).toEqual(["amber", "emerald", "ruby"]);
+  });
+
+  it("estados de um mesmo botão têm a MESMA caixa; cores extras vêm do recolor (matiz diferente do índigo)", () => {
+    const pieces = sliceButtons(syntheticSheet([50, 50, 150])) as Record<string, Raw>;
+    for (const colour of ["indigo", "silver", "ruby", "emerald", "amber"]) {
+      const boxes = ["normal", "hover", "pressed", "disabled"].map((s) => `${pieces[`${colour}_${s}`]!.w}x${pieces[`${colour}_${s}`]!.h}`);
+      expect(new Set(boxes).size, colour).toBe(1);
+    }
+    const hue = (n: string) => dominantHue(pieces[n]!);
+    expect(Math.abs(hue("ruby_normal") - hue("indigo_normal"))).toBeGreaterThan(60);
+    expect(Math.abs(hue("emerald_normal") - hue("ruby_normal"))).toBeGreaterThan(60);
+  });
+
+  it("os ícones do pipeline e do config são os mesmos 16, na mesma ordem; cada um sai 64×64", () => {
+    expect([...TOOL_ICONS]).toEqual([...CONFIG_ICONS]);
+    const icons = sliceIcons(syntheticSheet([200, 160, 40], [70, 70])) as Record<string, Raw>;
+    expect(Object.keys(icons)).toEqual([...CONFIG_ICONS]);
+    for (const i of Object.values(icons)) expect([i.w, i.h]).toEqual([64, 64]);
   });
 });

@@ -859,3 +859,27 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 
 **Consequências:** `configVersion` 8 mantido; ContentPack **schema 5**; save v6 (arenas não entram no save); `check:assets` passa a falhar se a arte gerada não estiver no manifesto (`npm run assets:build`); o Lote 1 só começa com o "go" do usuário.
 
+---
+
+## ADR-034 — Lote 1 da arte: kit de interface GBA, login com fundo próprio, retratos do Rei e primeiros pilotos
+
+**Data:** 2026-10-03 · **Status:** ✅ Aceita · **Tipo:** B/C (arte + dados + UI; sem mudança de regra de combate) · **Pedido:** "Comece o Lote 1".
+
+**O que entrou (8 de 10 gerações; 2 reservas intactas).** Herói piloto **Borin** (Guardião 2), inimigo piloto **Duende de Faíscas** (andar 1), **kit de arena `f01_entrada`** (andar 1 deixa de usar `masmorra`), **botões GBA** (índigo/prata gerados; rubi/esmeralda/âmbar por recolor), **16 ícones**, **fundo do login**, **logotipo "Idle Tower Adventure"** e **4 retratos do Rei** (Real, Guerreiro, Rainha, Sábio).
+
+**Decisões.**
+
+| Tema | Decisão | Por quê |
+|---|---|---|
+| Calibragem (Gate A/B) | **Opção A** (1 geração por personagem) mantida | A fidelidade passou nos limiares medidos |
+| Obtenção por identidade | Herói adquirido recebe **identidade** determinística pela qualidade rolada (guardian: u<0,5 Aldric, senão Borin), **sem PRNG extra**; nome = nome da identidade | Pilotos precisam aparecer no jogo; save antigo segue válido |
+| Poder por identidade | CI exige hp×(def+spdef)×(atk+satk) a **±8 %** do modelo da classe; Borin = CON+2 STR−4 WIS+2 (+6,5 %) | A soma bruta superestima tanques; os primeiros deltas deram +11/+13,5 % |
+| Skins do Rei | 4 novas (`portraits/king/*`, com `hudAssetId`) à frente; `royal`/`paladin` ficam `legacy: true` (saves antigos continuam exibindo-os; criação e troca só mostram as novas); o HUD usa `king.portraitAssetId` | Não quebrar saves; HUD leve (256) e perfil nítido (512) |
+| Botões | Variáveis CSS a partir do manifesto + classe `tia-gba` condicional; `border-image` 6 → 12 px; foco = `outline` (o gerador desenhou anéis de foco inconsistentes → descartados) | Arte não pode quebrar a interface se faltar; acessibilidade de foco |
+| Login | `CreationShell` + `CREATION_LAYOUT` (dado); **zona do Google reservada** (vazia, altura fixa) abaixo do cartão; o cartão usa só a moldura de pedra sobre painel escuro (o miolo texturizado tirava a legibilidade) | O botão futuro entra sem mover nada |
+| Preload/Required | `requiredAssetIds()` e `REQUIRED` (build-assets) exigem retratos, login e todo o kit GBA; teste confere as duas listas contra o config e o manifesto | Aviso de "asset faltando" honesto |
+
+**Alternativas rejeitadas:** (a) manter o miolo da moldura 9-slice no cartão do login — texto ilegível sobre a textura; (b) texto escuro nos botões prata — o miolo `normal` é escuro (84,90,114), contraste ruim; (c) gerar as 3 cores extras de botão — recolor mede igual e custa 0 geração; (d) apagar as skins antigas — quebraria saves.
+
+**Consequências:** `configVersion` inalterado nesta ADR (só dados de arte/skin); manifesto com 564 arquivos; 785 testes verdes; **pendências:** skill própria de Borin (L5), Clérigo (cura no engine), retratos do Rei B/C (≥ 10 no total), demais inimigos/arenas (Lote 2 em diante).
+

@@ -45,6 +45,12 @@
     "art:pack": "node scripts/art.mjs pack",
     "art:measure": "node scripts/art.mjs measure",
     "art:provenance": "node scripts/art.mjs provenance",
+    "art:kit": "node scripts/art.mjs kit",
+    "art:buttons": "node scripts/art.mjs buttons",
+    "art:icons": "node scripts/art.mjs icons",
+    "art:portraits": "node scripts/art.mjs portraits",
+    "art:trim": "node scripts/art.mjs trim",
+    "art:backdrop": "node scripts/art.mjs backdrop",
     "play": "node scripts/play.mjs",
     "play:debug": "npm run build:debug -w @tia/game-web && node scripts/play.mjs --debug"
   },

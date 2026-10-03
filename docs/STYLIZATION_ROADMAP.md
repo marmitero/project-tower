@@ -1,6 +1,6 @@
 # Roadmap — Otimização e estilização
 
-**Versão:** 0.2 · **Data:** 2026-10-03 · **Estado:** ✅ Gate 0 aprovado · **F0 implementada** (ADR-033) — nenhuma arte gerada ainda (o Lote 1 aguarda o "go")
+**Versão:** 0.2 · **Data:** 2026-10-03 · **Estado:** ✅ Gate 0 aprovado · **F0 implementada** (ADR-033) · **Lote 1 aplicado** (ADR-034: 8/10 gerações, 2 reservas) — aguarda "lote 01 aprovado"
 **Decisão:** [ADR-032](DECISIONS_LOG.md) · **Documento técnico irmão:** [`ART_PIPELINE.md`](ART_PIPELINE.md) (especificação medida dos sprites, prompts, chroma key, validação, integração)
 **Fonte do pedido:** mensagem do usuário de 2026-10-03 ("otimização e estilização") · **Regras superiores:** `Master-Prompt.md` §10, §22, §23, §59–§62, §105
 

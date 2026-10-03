@@ -1162,7 +1162,7 @@ body {
 .tia-gba .tia-chat__btn,
 .tia-gba .tia-gamebox__toggle {
   --b-n: var(--gba-silver-normal); --b-h: var(--gba-silver-hover); --b-p: var(--gba-silver-pressed); --b-d: var(--gba-silver-disabled);
-  --b-ink: #1a1a33; --b-shadow: none;
+  --b-ink: #f4f4ff; --b-shadow: 1px 1px 0 #10102a; --b-ink-p: #1a1a33; --b-shadow-p: none;
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -1188,19 +1188,20 @@ body {
 .tia-gba .tia-gamebox__toggle:hover { border-image: var(--b-h) 6 fill / 12px / 0 stretch; }
 .tia-gba .tia-btn:active:not(:disabled),
 .tia-gba .tia-chat__btn:active:not(:disabled),
-.tia-gba .tia-chat__btn[aria-pressed="true"] { border-image: var(--b-p) 6 fill / 12px / 0 stretch; transform: translateY(1px); }
+.tia-gba .tia-chat__btn[aria-pressed="true"] { border-image: var(--b-p) 6 fill / 12px / 0 stretch; transform: translateY(1px); color: var(--b-ink-p); text-shadow: var(--b-shadow-p); }
+.tia-gba .tia-btn:active:not(:disabled), .tia-gba .tia-chat__btn:active:not(:disabled) { color: var(--b-ink-p); text-shadow: var(--b-shadow-p); }
 .tia-gba .tia-btn:disabled,
-.tia-gba .tia-chat__btn:disabled { border-image: var(--b-d) 6 fill / 12px / 0 stretch; color: #6b6b88; text-shadow: none; opacity: 1; }
+.tia-gba .tia-chat__btn:disabled { border-image: var(--b-d) 6 fill / 12px / 0 stretch; color: #26263d; text-shadow: none; opacity: 1; }
 .tia-gba .tia-btn:focus-visible,
 .tia-gba .tia-chat__btn:focus-visible { outline: 2px solid #fff; outline-offset: 1px; box-shadow: 0 0 0 4px #1a1a33; }
 
-.tia-gba .tia-btn--primary { --b-n: var(--gba-indigo-normal); --b-h: var(--gba-indigo-hover); --b-p: var(--gba-indigo-pressed); --b-d: var(--gba-indigo-disabled); --b-ink: #f4f4ff; --b-shadow: 1px 1px 0 #10102a; background: none; }
-.tia-gba .tia-btn--danger { --b-n: var(--gba-ruby-normal); --b-h: var(--gba-ruby-hover); --b-p: var(--gba-ruby-pressed); --b-d: var(--gba-ruby-disabled); --b-ink: #fff; --b-shadow: 1px 1px 0 #3a0a14; }
-.tia-gba .tia-btn--confirm { --b-n: var(--gba-emerald-normal); --b-h: var(--gba-emerald-hover); --b-p: var(--gba-emerald-pressed); --b-d: var(--gba-emerald-disabled); --b-ink: #fff; --b-shadow: 1px 1px 0 #0d3320; }
-.tia-gba .tia-btn--warning { --b-n: var(--gba-amber-normal); --b-h: var(--gba-amber-hover); --b-p: var(--gba-amber-pressed); --b-d: var(--gba-amber-disabled); --b-ink: #2a1a00; }
+.tia-gba .tia-btn--primary { --b-n: var(--gba-indigo-normal); --b-h: var(--gba-indigo-hover); --b-p: var(--gba-indigo-pressed); --b-d: var(--gba-indigo-disabled); --b-ink-p: #f4f4ff; --b-shadow-p: 1px 1px 0 #10102a; background: none; }
+.tia-gba .tia-btn--danger { --b-n: var(--gba-ruby-normal); --b-h: var(--gba-ruby-hover); --b-p: var(--gba-ruby-pressed); --b-d: var(--gba-ruby-disabled); --b-ink-p: #f4f4ff; --b-shadow-p: 1px 1px 0 #3a0a14; }
+.tia-gba .tia-btn--confirm { --b-n: var(--gba-emerald-normal); --b-h: var(--gba-emerald-hover); --b-p: var(--gba-emerald-pressed); --b-d: var(--gba-emerald-disabled); }
+.tia-gba .tia-btn--warning { --b-n: var(--gba-amber-normal); --b-h: var(--gba-amber-hover); --b-p: var(--gba-amber-pressed); --b-d: var(--gba-amber-disabled); }
 .tia-gba .tia-chat__btn { min-height: 28px; font-size: 11px; border-width: 8px; border-image-width: 8px; border-image: var(--b-n) 6 fill / 8px / 0 stretch; }
 .tia-gba .tia-chat__btn:hover:not(:disabled) { border-image: var(--b-h) 6 fill / 8px / 0 stretch; }
-.tia-gba .tia-chat__btn:active:not(:disabled), .tia-gba .tia-chat__btn[aria-pressed="true"] { border-image: var(--b-p) 6 fill / 8px / 0 stretch; color: #1a1a33; }
+.tia-gba .tia-chat__btn:active:not(:disabled), .tia-gba .tia-chat__btn[aria-pressed="true"] { border-image: var(--b-p) 6 fill / 8px / 0 stretch; }
 .tia-gba .tia-chat__btn:disabled { border-image: var(--b-d) 6 fill / 8px / 0 stretch; }
 .tia-gba .tia-gamebox__toggle { min-height: 36px; font-size: 12px; }
 
@@ -1234,3 +1235,17 @@ body {
   /* Navegação em telas estreitas: botões mais compactos. */
   .tia-gba .tia-nav .tia-btn { padding-inline: 0; font-size: 12px; }
 }
+
+/* Login: o cartão usa só a MOLDURA de pedra (sem o miolo texturizado) sobre painel escuro — texto legível. */
+.tia-login .tia-creation__card.tia-frame-9 {
+  border-image: var(--asset-frame-9, none) 24 / 18px / 0 stretch;
+  background: rgba(21, 19, 33, 0.94);
+  background-clip: padding-box;
+  padding: 14px 18px 18px;
+  gap: 10px;
+}
+.tia-login .tia-creation { padding-top: 12px; padding-bottom: 8px; }
+.tia-login .tia-creation__skin-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.tia-login .tia-creation__skin { min-width: 0; padding: 6px 4px; }
+.tia-login .tia-creation__skin-art { width: 100%; max-width: 84px; height: auto; aspect-ratio: 1; }
+.tia-login .tia-creation__skin-name { font-size: 12px; text-align: center; }
