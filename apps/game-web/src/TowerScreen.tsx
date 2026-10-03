@@ -13,6 +13,7 @@ import {
   allFloors,
   floorDef,
   floorPoolOdds,
+  heroCombatStats,
   killsToNextKingLevel,
   towerRewardsForEnemyLevel,
 } from "@tia/game-core";
@@ -25,7 +26,9 @@ export function TowerScreen({ state, searching }: { state: GameState; searching:
   const remainingMs = state.searchingRemainingMs();
   const activeId = state.data.team.activeHeroId;
   const hero = state.data.heroes.find((h) => h.id === activeId) ?? null;
-  const hpRatio = hero && hero.stats.hp > 0 ? hero.currentHp / hero.stats.hp : 1;
+  // O máximo real inclui o equipamento (ADR-023): `hero.stats.hp` é só o HP-base.
+  const heroMaxHp = hero ? heroCombatStats(hero, state.data.inventory).hp : 0;
+  const hpRatio = hero && heroMaxHp > 0 ? hero.currentHp / heroMaxHp : 1;
   const act = (fn: () => void) => () => {
     try {
       fn();
@@ -96,7 +99,7 @@ export function TowerScreen({ state, searching }: { state: GameState; searching:
       {hero && (
         <StatPill
           label="HP do herói"
-          value={`${formatCompact(Math.max(0, hero.currentHp))}/${formatCompact(hero.stats.hp)}`}
+          value={`${formatCompact(Math.max(0, hero.currentHp))}/${formatCompact(heroMaxHp)}`}
           tone={hpRatio <= 0.3 ? "bad" : hpRatio < 1 ? "neutral" : "good"}
         />
       )}

@@ -21,7 +21,7 @@
  */
 
 import { GameState, LocalStoragePersistence, LOCAL_ACCOUNT } from "@tia/game-core";
-import type { PersistenceService } from "@tia/game-core";
+import type { LootNotice, PersistenceService } from "@tia/game-core";
 import { asAccountId, type BattleEvent, type SaveData } from "@tia/contracts";
 
 const SAVE_INTERVAL_MS = 15_000;
@@ -37,6 +37,8 @@ export interface BootOptions {
   seed?: number;
   onStateChanged?: (state: GameState) => void;
   onBattleEvents?: (events: BattleEvent[]) => void;
+  /** Cada drop de equipamento e o destino dele (ADR-023). */
+  onLoot?: (drops: LootNotice[]) => void;
 }
 
 /**
@@ -71,6 +73,7 @@ export async function boot(options: BootOptions = {}): Promise<{ state: GameStat
   const listeners = {
     onStateChanged: options.onStateChanged,
     onBattleEvents: options.onBattleEvents,
+    onLoot: options.onLoot,
   };
 
   if (save) return { state: GameState.hydrate(save, deps, listeners), recovered };
@@ -106,6 +109,7 @@ export async function createGame(
       listeners: {
         onStateChanged: options.onStateChanged,
         onBattleEvents: options.onBattleEvents,
+        onLoot: options.onLoot,
       },
     },
   );

@@ -6,7 +6,7 @@
  * estaria no lugar errado: em `game-core`, testável sem navegador.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ActionButton, MissingAssetsWarning, Panel, ProgressBar, StatPill } from "@tia/ui";
 import { classes, config } from "@tia/config";
 import {
@@ -15,17 +15,20 @@ import {
   kingProgress,
   heroProgress,
   heroPower,
+  heroCombatStats,
   searchingProgress,
   slotRequirement,
   teamHeroes,
 } from "@tia/game-core";
 import type { HeroId } from "@tia/contracts";
+import type { LootNotice } from "@tia/game-core";
 import { boot, createGame, startLoop, type LoopHandle } from "./boot.js";
 import { loadAssetManifest, assetUrl, type AssetManifest } from "./render/assets.js";
 import { BattleCanvas } from "./render/BattleCanvas.js";
 import { battleFeedbackQueue } from "./render/BattleRenderer.js";
 import { CreationScreen, type CreationResult } from "./CreationScreen.js";
 import { TowerScreen } from "./TowerScreen.js";
+import { InventoryScreen, LootToasts } from "./InventoryScreen.js";
 
 type Screen = "king" | "heroes" | "tower" | "team" | "inventory";
 
@@ -44,6 +47,19 @@ export function App() {
   const [now, setNow] = useState(() => Date.now());
   const [manifest, setManifest] = useState<AssetManifest | null>(null);
   const loopRef = useRef<LoopHandle | null>(null);
+  const [loot, setLoot] = useState<{ id: number; notice: LootNotice; at: number }[]>([]);
+  const [message, setMessage] = useState<string | null>(null);
+  const lootSeq = useRef(0);
+
+  /** Drops recentes (ADR-023): ficam ~8 s na tela; no máx. 4. */
+  const pushLoot = useCallback((drops: LootNotice[]) => {
+    const at = Date.now();
+    setLoot((prev) => [...prev, ...drops.map((notice) => ({ id: (lootSeq.current += 1), notice, at }))].slice(-4));
+  }, []);
+  const showMessage = useCallback((text: string) => {
+    setMessage(text);
+    window.setTimeout(() => setMessage((m) => (m === text ? null : m)), 5000);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -55,6 +71,7 @@ export function App() {
         },
         // §64 — os eventos da batalha viram apresentação (BattleScene drena).
         onBattleEvents: (events) => battleFeedbackQueue.push(events),
+        onLoot: pushLoot,
       });
       if (cancelled) return;
 
@@ -96,6 +113,7 @@ export function App() {
         heroId: result.heroId,
         onStateChanged: (s) => setState(s),
         onBattleEvents: (events) => battleFeedbackQueue.push(events),
+        onLoot: pushLoot,
       });
       setState(gameState);
       gameState.markActive();
@@ -163,9 +181,16 @@ export function App() {
         {screen === "king" && <KingScreen state={state} onChangeSkin={changeSkin} />}
         {screen === "heroes" && <HeroesScreen state={state} onAssign={assign} />}
         {screen === "team" && <TeamScreen state={state} onAssign={assign} />}
-        {screen === "inventory" && <InventoryScreen state={state} />}
+        {screen === "inventory" && <InventoryScreen state={state} notify={showMessage} />}
         {screen === "tower" && <TowerScreen state={state} searching={searching} />}
       </main>
+
+      <LootToasts notices={loot.filter((l) => now - l.at < 8000)} />
+      {message && (
+        <p className="tia-flash" role="alert">
+          {message}
+        </p>
+      )}
 
       <nav className="tia-nav" aria-label="Navegação principal">
         {SCREENS.map((s) => (
@@ -304,6 +329,7 @@ function HeroesScreen({
             <div className="tia-hero__head">
               {portrait && <img className="tia-hero__portrait" src={portrait} alt="" />}
               <strong>{hero.name}</strong>
+              <span className={`tia-rarity tia-rarity--${hero.rarity}`}>{config.equipment.rarity[hero.rarity].label}</span>
               <span>
                 {cls?.name ?? hero.classId}
                 {cls ? ` · ${cls.role}` : ""}
@@ -347,7 +373,7 @@ function HeroesScreen({
             <strong>{entry.identity.name}</strong>
             <span className="tia-codex__epithet">{entry.identity.epithet}</span>
             {entry.status === "owned" ? (
-              <StatPill label="Status" value="Recrutado" tone="good" />
+              <StatPill label="Status" value={entry.copies > 1 ? `Recrutado ×${entry.copies}` : "Recrutado"} tone="good" />
             ) : (
               <span className="tia-codex__hint">{entry.acquisitionHint}</span>
             )}
@@ -479,50 +505,6 @@ function TeamScreen({
             </div>
           ))}
         </div>
-      )}
-    </Panel>
-  );
-}
-
-function InventoryScreen({ state }: { state: GameState }) {
-  const items = state.data.inventory.equipment;
-  const sorted = useMemo(() => {
-    const order = config.inventory.defaultSort;
-    return [...items].sort((a, b) => (order === "qualityDesc" ? b.quality - a.quality : a.rarity.localeCompare(b.rarity)));
-  }, [items]);
-
-  return (
-    <Panel title={`Inventário (${items.length}/${config.inventory.equipmentMaxItems})`}>
-      {sorted.length === 0 ? (
-        <p className="tia-muted">Nenhum equipamento. 5% dos inimigos deixam drop (§32).</p>
-      ) : (
-        <ul className="tia-items">
-          {sorted.map((item) => (
-            <li key={item.id} className="tia-item">
-              <span className={`tia-rarity tia-rarity--${item.rarity}`}>{item.rarity}</span>
-              <span className="tia-item__slot">{item.slot}</span>
-              <span className="tia-item__grade">Nota {item.grade} ({item.quality.toFixed(1)})</span>
-              <span className="tia-item__xs">
-                {Object.entries(item.xValues)
-                  .filter(([, x]) => x > 0)
-                  .slice(0, 3)
-                  .map(([stat, x]) => `${stat} ×${(x / 10).toFixed(2)}`)
-                  .join(" · ")}
-              </span>
-              <ActionButton
-                label="Vender"
-                variant="secondary"
-                onClick={() => {
-                  try {
-                    state.sell(item.id);
-                  } catch (error) {
-                    console.warn("[ui]", error);
-                  }
-                }}
-              />
-            </li>
-          ))}
-        </ul>
       )}
     </Panel>
   );

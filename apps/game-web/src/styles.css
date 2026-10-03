@@ -765,3 +765,83 @@ body {
 .tia-floor__roles { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
 .tia-floor__state { flex: 0 0 auto; font-size: 12px; color: var(--muted); }
 .tia-floor--current .tia-floor__state { color: var(--good); }
+
+/* ------------------------------------------------ Equipamento (FASE 9) */
+
+.tia-itemicon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: #0b0a12;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+}
+.tia-itemicon img { width: 40px; height: 40px; image-rendering: pixelated; object-fit: contain; }
+
+.tia-itemhead { display: flex; gap: 10px; align-items: center; min-width: 0; }
+.tia-itemhead__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tia-itemhead__text .tia-rarity { text-transform: none; font-size: 14px; }
+.tia-itemhead__text .tia-muted { font-size: 12px; }
+
+.tia-item--card { flex-direction: column; align-items: stretch; gap: 6px; }
+.tia-item__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.tia-itemlines { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; }
+.tia-itemlines li { display: inline-flex; gap: 6px; align-items: baseline; }
+.tia-itemfx { font-size: 12px; color: var(--muted); }
+.tia-itemfx p { margin: 2px 0; }
+.tia-delta { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 0; font-size: 12px; }
+.tia-delta--up { color: var(--good); }
+.tia-delta--down { color: var(--bad); }
+
+.tia-herotabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.tia-statgrid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.tia-slotgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
+.tia-eqslot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px;
+  background: #0f0e18;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.tia-eqslot--empty { opacity: 0.7; border-style: dashed; }
+.tia-eqslot__name { text-transform: uppercase; font-size: 11px; color: var(--muted); letter-spacing: 0.04em; }
+
+.tia-filters { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; font-size: 13px; }
+.tia-filters select, .tia-filters input {
+  background: #0f0e18; color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 6px 8px; min-height: 36px;
+}
+.tia-filters input { width: 72px; }
+
+.tia-toasts {
+  position: fixed;
+  left: 8px;
+  right: 8px;
+  bottom: calc(var(--touch) + 24px);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+}
+.tia-toast {
+  display: flex; gap: 8px; align-items: center;
+  background: rgba(15, 14, 24, 0.95);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  max-width: 560px;
+  margin: 0 auto;
+}
+.tia-toast .tia-rarity { text-transform: none; font-size: 13px; }
+.tia-flash {
+  position: fixed; left: 8px; right: 8px; bottom: calc(var(--touch) + 70px); z-index: 21;
+  margin: 0 auto; max-width: 560px; padding: 8px 12px; border-radius: 8px;
+  background: #3b1c27; border: 1px solid var(--bad); color: var(--text); font-size: 13px;
+}

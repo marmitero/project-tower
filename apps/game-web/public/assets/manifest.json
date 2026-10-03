@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generatedFrom": "assets/sprites",
-  "count": 480,
+  "count": 488,
   "entries": {
     "characters/archer/archer_attack_sheet": "characters/archer/archer_attack_sheet.png",
     "characters/archer/archer_death_sheet": "characters/archer/archer_death_sheet.png",
@@ -447,6 +447,14 @@
     "audio/sfx/searching": "audio/sfx/searching.wav",
     "audio/sfx/skill": "audio/sfx/skill.wav",
     "audio/sfx/victory": "audio/sfx/victory.wav",
+    "items/boots": "items/boots.png",
+    "items/chest": "items/chest.png",
+    "items/crossbow": "items/crossbow.png",
+    "items/glove": "items/glove.png",
+    "items/helm": "items/helm.png",
+    "items/legs": "items/legs.png",
+    "items/wings": "items/wings.png",
+    "items/wraps": "items/wraps.png",
     "portraits/archer": "portraits/archer.png",
     "portraits/mage": "portraits/mage.png",
     "portraits/necromancer": "portraits/necromancer.png",

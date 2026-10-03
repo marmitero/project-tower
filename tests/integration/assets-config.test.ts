@@ -14,7 +14,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { config, classes, enemies } from "@tia/config";
+import { config, classes, enemies, equipmentErrors } from "@tia/config";
 import { requiredAssetIds } from "../../apps/game-web/src/render/assets.js";
 
 const MANIFEST_PATH = resolve(
@@ -43,6 +43,9 @@ function configAssetIds(): { label: string; id: string }[] {
       out.push({ label: `enemies.${e.id}.sheets.${key}`, id });
     }
   }
+  for (const t of config.equipment.templates) {
+    out.push({ label: `equipment.templates.${t.id}.icon`, id: t.iconAssetId });
+  }
   out.push({ label: "account.king.portrait", id: config.account.king.portraitAssetId });
   for (const skin of config.account.king.skins) {
     out.push({ label: `account.king.skins.${skin.id}`, id: skin.assetId });
@@ -62,6 +65,29 @@ describe("todo assetId da config existe no manifesto", () => {
   it("o catálogo referencia arte suficiente para não ficar vazio", () => {
     //4 heróis × (1 retrato + 6 folhas) + inimigos com folhas + Rei.
     expect(configAssetIds().length).toBeGreaterThan(50);
+  });
+});
+
+describe("equipamento (ADR-023)", () => {
+  it("todo ícone de template existe no manifesto e a validação do catálogo concorda", () => {
+    expect(equipmentErrors(config.equipment, manifestIds)).toEqual([]);
+  });
+
+  it("os ícones gerados de equipamento são PNG 64×64 com transparência (sem fundo magenta)", async () => {
+    const sharp = (await import("sharp")).default;
+    for (const id of ["helm", "chest", "legs", "boots", "glove", "wings", "crossbow", "wraps"]) {
+      const file = resolve(import.meta.dirname, `../../assets/generated/items/${id}.png`);
+      const { data, info } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+      expect([info.width, info.height]).toEqual([64, 64]);
+      let transparent = 0;
+      let magenta = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        if (data[i + 3]! < 10) transparent += 1;
+        else if (data[i]! > 200 && data[i + 1]! < 60 && data[i + 2]! > 200) magenta += 1;
+      }
+      expect(transparent, `${id}: sem fundo transparente`).toBeGreaterThan(300);
+      expect(magenta, `${id}: sobrou magenta opaco`).toBe(0);
+    }
   });
 });
 
