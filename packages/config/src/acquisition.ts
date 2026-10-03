@@ -37,7 +37,7 @@ export function defaultHeroAcquisition(): HeroAcquisitionConfig {
     starterRarity: "uncommon",
     rarityChance: { common: 0.5, uncommon: 0.3, rare: 0.15, epic: 0.04, legendary: 0.009, celestial: 0.001 },
     rarityStatMultiplier: { common: 0.94, uncommon: 1.0, rare: 1.06, epic: 1.12, legendary: 1.2, celestial: 1.3 },
-    attributeRoll: { min: 0.9, max: 1.1, samples: 3 },
+    attributeRoll: { min: 0.85, max: 1.15, samples: 3 },
   };
 }
 

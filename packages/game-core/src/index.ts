@@ -184,7 +184,7 @@ export {
 } from "./hunt.js";
 
 export { GameState } from "./state.js";
-export type { GameStateDeps, GameEvents } from "./state.js";
+export type { GameStateDeps, GameEvents, LootNotice } from "./state.js";
 
 export { LocalStoragePersistence, MemoryStorage, SAVE_PREFIX, encodeSave, decodeSave } from "./persistence/local.js";
 export type { KeyValueStorage } from "./persistence/local.js";
