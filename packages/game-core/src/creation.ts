@@ -133,6 +133,8 @@ export function createHero(params: CreateHeroParams): Hero {
     // ⛔ P-015 — escala de estrelas provisória.
     stars: 1,
     stats,
+    // ADR-020 — herói nasce com HP cheio; vencer não cura depois disso.
+    currentHp: stats.hp,
     // ⛔ P-024 — afinidade de arma provisória, por classe.
     affinityWeapon: cls.affinityWeapon,
     equipped: {},

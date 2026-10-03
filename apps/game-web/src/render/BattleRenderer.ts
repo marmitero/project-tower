@@ -1,99 +1,145 @@
 /**
- * Battle Renderer.
+ * BattleRenderer — plano de apresentação dos eventos (§6, §60, §64).
  *
- * §64 — "o renderer apenas apresenta os eventos." Este arquivo NÃO calcula
- * dano, NÃO decide alvo, NÃO sorteia nada. Ele recebe `BattleEvent[]` e
- * transforma cada um em feedback visual.
- *
- * §62 — o produto final não pode ser quadrados, círculos ou emojis. Este
- * renderer usa sprites do pipeline de assets; enquanto eles não existem
- * em disco, ele desenha NOTHING e registra um aviso explícito, em vez de
- * fingir que um retângulo colorido é o jogo.
+ * Este módulo é PURO: dada uma fila de eventos, decide o que a cena deve
+ * mostrar/tocar. Nada aqui fala com React, Phaser ou áudio — a execução é
+ * da `BattleScene` (visual) e de `sfx.ts` (som). Alterar o "como a batalha
+ * se parece" é alterar `planBatch`, sem tocar em engine ou game-core.
  */
-
 import type { BattleEvent } from "@tia/contracts";
-import { loadAssetManifest, type AssetManifest } from "./assets.js";
 
-export interface RenderTarget {
-  drawSprite(assetId: string, x: number, y: number, frame: string): void;
-  drawText(text: string, x: number, y: number, color: string): void;
-  flash(targetId: string, color: string, durationMs: number): void;
-  shake(intensity: number, durationMs: number): void;
-  playSound(soundId: string): void;
-  layout(mode: "tower" | "boss"): void;
+/** O que um único evento pede da cena. */
+export interface FeedbackPlan {
+  /** Id de áudio do manifesto (`audio/sfx/...`). */
+  sfx?: string;
+  /** O atacante avança rumo ao alvo (ataque). */
+  lunge?: boolean;
+  /** Tremor de tela. */
+  shakeMs?: number;
+  shakeIntensity?: number;
+  /** Preenchimento branco no alvo (impacto). */
+  flash?: boolean;
+  /** Número flutuante no alvo. */
+  number?: { text: string; kind: "crit" | "damage" | "mitigated" | "heal" };
+  /** Animação de morte + fade do combatente. */
+  death?: boolean;
+  /** Nome da skill acima do usuário. */
+  skillName?: boolean;
+  /** Banner central de fim de batalha. */
+  banner?: "won" | "lost";
 }
 
-/** Mapeia eventos → assets de feedback. §66 lista os eventos canônicos. */
-const FEEDBACK: Record<string, { sound?: string; shake?: number; flash?: string }> = {
-  battle_started: { sound: "sfx_battle_start" },
-  attack_started: { sound: "sfx_swing" },
-  skill_used: { sound: "sfx_skill" },
-  damage_dealt: { sound: "sfx_hit" },
-  critical_hit: { sound: "sfx_crit", shake: 6, flash: "#ffd166" },
-  enemy_damaged: { flash: "#ff6b6b" },
-  character_damaged: { flash: "#ff4757" },
-  enemy_defeated: { sound: "sfx_defeat_enemy", shake: 3 },
-  character_defeated: { sound: "sfx_defeat_ally", shake: 4 },
-  heal_dealt: { flash: "#7bed9f" },
-  status_applied: { flash: "#a55eea" },
-  status_removed: {},
-  effect_triggered: { sound: "sfx_effect" },
-  battle_won: { sound: "sfx_victory" },
-  battle_lost: { sound: "sfx_defeat" },
-  battle_finished: {},
-  damage_mitigated: {},
-  turn_started: {},
+export interface PlannedFeedback {
+  event: BattleEvent;
+  plan: FeedbackPlan;
+}
+
+/**
+ * Fila de entrada: o `App` empurra (`onBattleEvents`), a `BattleScene`
+ * drena em cada frame. Limitada para nunca crescer sem freio se o Phaser
+ * estiver em aba oculta (§63).
+ */
+const MAX_QUEUE = 512;
+const queue: BattleEvent[] = [];
+
+export const battleFeedbackQueue = {
+  push(events: readonly BattleEvent[]): void {
+    for (const e of events) {
+      queue.push(e);
+      if (queue.length > MAX_QUEUE) queue.shift();
+    }
+  },
+  drain(): BattleEvent[] {
+    return queue.splice(0, queue.length);
+  },
+  clear(): void {
+    queue.length = 0;
+  },
 };
 
-export class BattleRenderer {
-  private manifest: AssetManifest | null = null;
-  /** Assets ausentes já avisados — evita 200 warnings por segundo. */
-  private readonly warned = new Set<string>();
+const SFX_HITS = ["audio/sfx/hit_01", "audio/sfx/hit_02", "audio/sfx/hit_03"];
 
-  constructor(private readonly target: RenderTarget) {}
+/** Plano de um evento isolado (sem o contexto do lote). */
+function planOne(event: BattleEvent): FeedbackPlan {
+  switch (event.type) {
+    case "attack_started":
+      return { lunge: true };
+    case "skill_used":
+      return { skillName: true, sfx: "audio/sfx/skill" };
+    case "damage_dealt":
+      return {
+        flash: true,
+        number: { text: String(event.amount), kind: "damage" },
+        sfx: SFX_HITS[Math.abs(hash(event.targetId + event.amount)) % SFX_HITS.length],
+        shakeMs: 90,
+        shakeIntensity: 0.0025,
+      };
+    case "damage_mitigated":
+      return {
+        number: {
+          text: `-${event.mitigatedPercent}%`,
+          kind: "mitigated",
+        },
+      };
+    case "critical_hit":
+      // O número em si vem do `damage_dealt` pareado (planBatch); aqui o
+      // que importa é o DESTAQUE: som, flash e tremor maiores (§6.2 —
+      // crítico é distinto sem depender de cor: som + tamanho + tremor).
+      return {
+        sfx: "audio/sfx/critical",
+        flash: true,
+        shakeMs: 220,
+        shakeIntensity: 0.006,
+      };
+    case "heal_dealt":
+      return {
+        number: { text: String(event.amount), kind: "heal" },
+        sfx: "audio/sfx/heal",
+      };
+    case "enemy_defeated":
+      return { death: true, sfx: "audio/sfx/death_enemy" };
+    case "character_defeated":
+      return { death: true, sfx: "audio/sfx/death_hero" };
+    case "battle_won":
+      return { banner: "won", sfx: "audio/sfx/victory" };
+    case "battle_lost":
+      return { banner: "lost", sfx: "audio/sfx/defeat" };
+    default:
+      // turn_started, battle_started/finished, status_*: só sincronizam
+      // estado (barras), sem apresentação própria.
+      return {};
+  }
+}
 
-  async load(): Promise<void> {
-    this.manifest = await loadAssetManifest();
-    if (this.manifest.missing.length > 0) {
-      // §62 — a ausência de arte é um BLOQUEIO de entrega, não um detalhe.
-      // Falhar alto aqui é o que impede que um build com placeholders seja
-      // publicado como se fosse o produto.
-      console.warn(
-        `[renderer] ${this.manifest.missing.length} assets ausentes. ` +
-          "O jogo NÃO pode ser entregue assim (§62 — sem quadrados, círculos ou emojis).",
-      );
+/**
+ * Plano de um LOTE (§6.1 — timeline). Resolve o pareamento
+ * `critical_hit` ↔ `damage_dealt` (o engine emite `damage_dealt` e depois
+ * `critical_hit` para o mesmo golpe): o dano vira número de CRÍTICO (maior)
+ * e o evento `critical_hit` não gera número duplicado.
+ */
+export function planBatch(events: readonly BattleEvent[]): PlannedFeedback[] {
+  const crits = new Set<string>();
+  for (const e of events) {
+    if (e.type === "critical_hit") {
+      crits.add(`${e.sourceId}|${e.targetId}|${e.amount}`);
     }
   }
-
-  layout(mode: "tower" | "boss"): void {
-    this.target.layout(mode);
-  }
-
-  /**
-   * Reproduz os eventos. Retorna quantos foram efetivamente desenhados,
-   * para o HUD reportar "assets ausentes" em vez de fingir sucesso.
-   */
-  present(events: readonly BattleEvent[]): number {
-    let drawn = 0;
-    for (const event of events) {
-      const feedback = FEEDBACK[event.type] ?? {};
-      if (feedback.shake) this.target.shake(feedback.shake, 180);
-      if (feedback.flash) this.target.flash(event.type, feedback.flash, 160);
-      if (feedback.sound) this.play(feedback.sound);
-      drawn += 1;
+  return events.map((event) => {
+    const plan = planOne(event);
+    if (event.type === "damage_dealt") {
+      const key = `${event.sourceId}|${event.targetId}|${event.amount}`;
+      if (crits.has(key) && plan.number) {
+        plan.number.kind = "crit";
+      }
     }
-    return drawn;
-  }
+    return { event, plan };
+  });
+}
 
-  private play(soundId: string): void {
-    if (!this.hasAsset(`sfx/${soundId}`)) return;
-    this.target.playSound(soundId);
+function hash(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i += 1) {
+    h = (h * 31 + s.charCodeAt(i)) | 0;
   }
-
-  private hasAsset(id: string): boolean {
-    if (this.warned.has(id)) return false;
-    if (this.manifest && this.manifest.entries[id] !== undefined) return true;
-    this.warned.add(id);
-    return false;
-  }
+  return h;
 }

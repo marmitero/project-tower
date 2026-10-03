@@ -51,6 +51,11 @@ export interface Combatant {
   nextActionAtMs: number;
   statuses: StatusEffect[];
   isDefeated: boolean;
+  /**
+   * Dicas de apresentação (asset ids por folha: idle/attack/hurt/death…).
+   * O engine só repassa — quem usa é o renderer (§64).
+   */
+  sprites?: Record<string, string>;
   /** Só para o lado aliado. */
   heroId?: HeroId;
   /** Só para o lado inimigo. */
@@ -160,6 +165,13 @@ export interface Hero {
   level: number;
   /** §45 — pool de XP DO HERÓI. */
   xp: bigint;
+  /**
+   * HP atual do herói — persiste entre batalhas da mesma caçada
+   * (ADR-020, § P-019): vencer NÃO cura; a tensão do andar depende disso.
+   * Recuperação é um ato do jogador (recomeçar a caçada / descansar).
+   * `0` = herói caído. Migração de saves antigos: preenche com o HP máximo.
+   */
+  currentHp: number;
   stars: number; // ⛔ P-015 provisório
   stats: CombatStats;
   affinityWeapon: WeaponType | null; // ⛔ P-024 provisório

@@ -264,17 +264,33 @@ O inimigo de `TowerBattle` enfrenta **um único herói** — não há escolha de
 
 > **P-018** — comportamento de IA de Boss (fases, prioridades, mecânicas) é conteúdo de design, não regra. O §23 lista as estruturas possíveis (Arena, Dungeon, World, Guilda, Evento) sem definir comportamento. Ver [`BOSS_SYSTEM.md`](BOSS_SYSTEM.md).
 
-### 7.2 Sobreviventes entre batalhas
+### 7.2 Sobreviventes entre batalhas ✅ (⛔ P-019 fechada — ADR-020)
 
-Decisão técnica importante para a continuidade do loop:
+Política vigente (ADR-020, 2026-10-03):
 
-- **HP persiste** entre as batalhas 1×1 da Torre.
+- **HP persiste** entre as batalhas 1×1 da mesma caçada (`Hero.currentHp`, ADR-020):
+  a batalha nasce com o HP atual do herói (`startHp`), nunca com o máximo.
+- **Vitória mantém** o HP restante; **derrota zera** (`currentHp = 0`, herói caído)
+  e encerra a caçada (`hunt = "defeated"` — ADR-017).
+- **A chain automática NÃO cura**: a próxima batalha continua do HP do fim da
+  anterior. É a tensão do andar: o jogador decide se continua ou recua.
 - **Cooldowns ficam prontos** ao iniciar a próxima batalha.
 - **Buffs/debuffs/DoT expiram** no fim da batalha.
 
-O motivo é de experiência: o jogador vê sua equipe *sofrer* ao longo do andar e decide quando parar para curar ou trocar de herói. Se o HP fosse restaurado a cada vitória, o combate seria umCaderno de Victory sem tensão.
+Recuperação é **ato do jogador**, nunca automática:
 
-> **P-019** — a persistência de HP entre batalhas é uma decisão técnica herdada do repositório de referência, **não** uma regra do `Master-Prompt.md`. O MP é silencioso sobre HP entre batalhas. Confirmar; alterar isso muda a tensão do loop.
+| Ato | API | Efeito |
+|---|---|---|
+| Recomeçar a caçada (após derrota) | `GameState.restartHunt()` | cura o herói ativo e entra na Torre |
+| Descansar | `GameState.restActiveHero()` | cura e pausa (`hunt = {kind:"paused", reason:"rest"}`) — o loop não reativa sozinho |
+| Retomar | `GameState.beginSearch()` | volta ao searching normal |
+
+A cura é governada por **`config.combat.healOnHuntRestart`** (default `true`;
+`false` = modo duro, sem cura — arquitetura editável). Saves v1 são migrados
+para v2 com `currentHp = stats.hp` (o save antigo não tinha o campo).
+
+> **P-019** — RESOLVIDA (ADR-020). Herdado da referência e ratificado: o MP é
+> silencioso sobre HP entre batalhas; a tensão do loop depende desta política.
 
 ---
 

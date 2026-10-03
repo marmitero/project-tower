@@ -211,6 +211,8 @@ export interface CombatConfig {
   iasCapMin: number;
   iasCapMax: number;
   minDamage: number;
+  /** ADR-020 (⛔ P-019) — recomeçar a caçada cura o herói? */
+  healOnHuntRestart: boolean;
 }
 
 // ---------------------------------------------------------------------------

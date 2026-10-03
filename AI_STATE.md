@@ -1,7 +1,7 @@
 # AI_STATE — handoff vivo do Tower Idle Adventure
 
-**Última atualização:** 2026-10-01
-**Estado:** **FASE 1–5 e 8 concluídas** · FASE 6 (Combate) é a próxima
+**Última atualização:** 2026-10-03
+**Estado:** **FASE 1–6 e 8 concluídas** · FASE 7 (Torre) é a próxima — ⛔ pergunta ao usuário P-005/P-006
 **Preview:** servidor estático autocontido (ADR-018) — `node scripts/serve-preview.mjs` (porta 5173). Se o ambiente resetar, subir UMA linha; não depende de `node_modules`.
 **Repositório:** `marmitero/project-tower`
 **Branch desta sessão:** `arena/01a0f1f1-project-tower`
@@ -280,8 +280,8 @@ O que as fases entregaram:
 ### Depois da Fase 5+8
 
 ```text
-FASE 6  Combate                 ← PRÓXIMO PASSO (herda P-019: HP entre batalhas)
-FASE 7  Torre                  ⛔ P-005, P-006  (perguntar ao usuário na etapa 3)
+FASE 6  ✅ Combate              ← CONCLUÍDA (ADR-020: HP persistente, skills, feedback visual)
+FASE 7  Torre                  ⛔ P-005, P-006  ← PRÓXIMO PASSO (perguntar ao usuário na etapa 3)
 FASE 9  Equipamentos           ⛔ P-010
 FASE 10 Economia                ⛔ P-008, P-036  (perguntar ao usuário na etapa 5)
 FASE 11 Offline                 ⛔ P-011
@@ -403,16 +403,32 @@ editar `config/src/heroes.ts`.
 
 **Assets (2026-10-01):** as três lacunas vermelhas do inventário foram fechadas — UI em PT-BR (33 peças sem texto extraídas da `ui_kit`; barras decompostas em trilho+fills+caps para compor em runtime com números em PT-BR), áudio (22 SFX procedurais gerados por `scripts/gen-audio.mjs`, incluindo a escada de raridade do §108) e retratos dos 4 heróis (3 gerados no estilo do pack). Pipeline: 480 entradas no manifesto, `check:assets` e `check:assets:strict` verdes. Detalhes em `docs/ASSET_GAP.md` §3.
 
-**O que fazer:** **FASE 6 — Combate** (etapa 2 de 7 até o MVP jogável, tabela
-em [`docs/ROADMAP.md`](docs/ROADMAP.md) §1): BattleCanvas nas batalhas reais,
-ataques/skills visíveis, dano/morte/vitória/derrota com feedback. **Decisão
-herdada:** HP persistente entre batalhas (o que P-019 deixou em aberto) —
-decidir e registrar nesta fase.
+### Fase 6 — Combate (ADR-020, 2026-10-03)
 
-**Estimativa até o 1º MVP jogável (FASE 13): 7 etapas — 1 concluída** —
-1) ✅ Fase 5+8, 2) Fase 6, 3) Fase 7 (gate P-005/P-006), 4) Fase 9,
+- **HP persistente (P-019 fechada):** `Hero.currentHp`; a batalha nasce com o HP atual
+  (`CombatantSeed.startHp`); vitória mantém, derrota zera, a chain NÃO cura.
+  Recuperação é ato do jogador: `GameState.restartHunt()` / `restActiveHero()` (pausa
+  `hunt={kind:"paused",reason:"rest"}`), governados por `config.combat.healOnHuntRestart`.
+  `configVersion` 1→2 + migração do save (`currentHp = stats.hp`).
+- **Skills (P-020 ratificada):** `engineSkillsFor(classId)` → skills ativas da classe, por
+  cooldown, ordem do catálogo; `attack_started.skillId` identifica a skill.
+- **Apresentação:** `GameEvents.onBattleEvents` → `battleFeedbackQueue` → `BattleScene.update()`
+  executa `planBatch` (`render/BattleRenderer.ts`): lunge, número flutuante (crítico maior),
+  flash, shake, morte com fade, banner VITÓRIA!/DERROTA, nome da skill, SFX (`render/sfx.ts`).
+  `prefers-reduced-motion` respeitado. **Para mudar "como a batalha se parece": só `BattleRenderer.ts`.**
+- **Sprites:** sheets Nika 1024×1024, grade 4×4 de 256px, rows down/up/left/right; aliado olha à direita (row 3), inimigo à esquerda (row 2).
+- Testes: `combat-hp.test.ts` (engine 6 + game-core 8). Suíte: **364 verdes**.
+- **Limites conhecidos (herdados para a Fase 7+):** inimigos não têm skills; efeitos de status
+  (stun/veneno) ainda não têm ícone; sem música. As 4 folhas de combate (idle/attack/hurt/death)
+  carregam juntas por combatente e cada animação usa a sua própria folha.
+
+**O que fazer:** **FASE 7 — Torre** (etapa 3 de 7): estrutura de andares, curva de dificuldade,
+inimigos distintos. ⛔ **Perguntar P-005/P-006 ao usuário ANTES de codar.**
+
+**Estimativa até o 1º MVP jogável (FASE 13): 7 etapas — 2 concluídas** —
+1) ✅ Fase 5+8, 2) ✅ Fase 6, 3) Fase 7 (gate P-005/P-006), 4) Fase 9,
 5) Fase 10+11 (gate P-008/P-036/P-011), 6) Fase 12, 7) Fase 13 (MVP Local).
-Restam **6 etapas**. Detalhe e riscos na tabela do ROADMAP.
+Restam **5 etapas**. Detalhe e riscos na tabela do ROADMAP.
 
 **O que perguntar ao usuário:** na hora certa (etapas 3 e 5), as pendências
 **P-005/P-006** (curva de andares + inimigos da Torre) e **P-008/P-036/P-011**

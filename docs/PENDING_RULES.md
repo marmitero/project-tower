@@ -1,6 +1,6 @@
 # Pendências — Decisões que NÃO podem ser inventadas
 
-**Versão:** 0.3 · **Data:** 2026-10-01 · **Estado:** 67 pendências catalogadas (P-002, P-003, P-004, P-012, P-019, P-020b resolvidas)
+**Versão:** 0.4 · **Data:** 2026-10-03 · **Estado:** 67 pendências catalogadas (P-002, P-003, P-004, P-012, P-019, P-020, P-020b resolvidas)
 **Fonte:** §73 do `Master-Prompt.md`
 
 ---
@@ -244,33 +244,34 @@ O §23 lista as estruturas possíveis e o §24 define o combate de equipe. **Nen
 
 ---
 
-### P-019 — Política de derrota e HP entre batalhas ✅ RESOLVIDA EM PARTE (2026-10-01)
+### P-019 — Política de derrota e HP entre batalhas ✅ RESOLVIDA (2026-10-03)
 
-**Criticidade:** 🟡 ALTA · **Bloqueia:** FASE 8
+**Criticidade:** 🟡 ALTA · **Bloqueia:** — (fechada)
 
-> **RESOLVIDA em 2026-10-01 por delegação do usuário** (ADR-017): derrota
-> encerra a caçada (`hunt = "defeated"`), sem recompensa, **sem auto-restart** —
-> recomeçar é ato explícito do jogador. **HP persistente entre batalhas**
-> permanece em aberto: o modelo atual zera por batalha; decidir junto do
-> modelo de dano na FASE 6 (Combate).
-
-O §26 define o loop e o §56 diz que o combate é automático, mas **não diz** o que acontece quando o herói cai: o loop continua com outro? o caído fica fora até curar? quanto tempo?
-
-Decisão técnica já adotada (herdada da referência, ADR-001): **HP persiste entre batalhas 1×1**, cooldowns reiniciam, buffs expiram. Isso cria a tensão de ver a equipe sofrer ao longo do andar.
-
-**Decisão precisa de:** confirmar ou alterar essa política.
+> **RESOLVIDA em 2026-10-01** (ADR-017): derrota encerra a caçada
+> (`hunt = "defeated"`), sem recompensa, **sem auto-restart** — recomeçar é ato
+> explícito do jogador.
+>
+> **RESOLVIDA EM PLENITUDE em 2026-10-03** (ADR-020): **HP persiste entre
+> batalhas** (`Hero.currentHp`). Vitória mantém o HP restante; derrota zera; a
+> chain automática **não cura**. Recuperação é ato do jogador: `restartHunt()`
+> (após derrota) e `restActiveHero()` (descanso, pausa a caçada), ambas sob
+> `config.combat.healOnHuntRestart`. Cooldowns reiniciam e status expiram por
+> batalha. Ver `COMBAT_SYSTEM.md` §7.2.
 
 ---
 
-### P-020 — Prioridade de skills
+### P-020 — Prioridade de skills ✅ DEFAULT RATIFICADO (2026-10-03)
 
-**Criticidade:** 🟢 MÉDIA · **Bloqueia:** FASE 6
+**Criticidade:** 🟢 MÉDIA · **Bloqueia:** — (ratificada)
 
-O §56 diz que o combate é automático, mas **não diz** se o jogador pode reordenar a prioridade das skills ou se ela é fixa por slot.
+O §56 diz que o combate é automático, mas **não diz** se o jogador pode
+reordenar a prioridade das skills ou se ela é fixa por slot.
 
-Default provisório: ordem fixa por slot, herdado da referência.
-
-**Decisão precisa de:** prioridade fixa ou configurável.
+> **RATIFICADA em 2026-10-03** (ADR-020): **ordem fixa pelo catálogo** — a
+> primeira skill ativa pronta dispara (cooldown manda). Reordenar o catálogo
+> (`config/skills.ts`) altera a prioridade; uma config explícita de fila é
+> ajuste de dados, sem mudar o engine.
 
 ---
 

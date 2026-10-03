@@ -20,8 +20,8 @@ import type {
   SaveData,
 } from "@tia/contracts";
 import type { AccountId, HeroId } from "@tia/contracts";
-import { heroById as heroIdentityById, classes, config, type ClassGrowth } from "@tia/config";
-import { RngHub, hashString, step, type Prng } from "@tia/engine";
+import { heroById as heroIdentityById, classes, config, skills, type ClassGrowth } from "@tia/config";
+import { RngHub, hashString, step, type Prng, type SkillDef as EngineSkillDef } from "@tia/engine";
 import { createKing, createTeam, createWallet, createHero, activeTeamSize, changeKingSkin } from "./creation.js";
 import { createInventory } from "./inventory.js";
 import { createOfflineProgress, beginSearching, isSearchingComplete, computeOffline, commitOffline, touchActive, rollSearchingDuration } from "./hunt.js";
@@ -259,15 +259,24 @@ export class GameState {
     const floor = this.state.tower.currentFloor;
     this.battleSequence += 1;
     const seed = hashString(`${this.state.king.accountId}:${floor}:${this.battleSequence}`) >>> 0;
+    const heroStats = heroCombatStats(hero, this.state.inventory);
 
     // §17/§79 — a assinatura recebe UM herói. A equipe inteira não entra.
     const battle = startTowerBattle({
       king: this.state.king,
       hero,
-      heroStats: heroCombatStats(hero, this.state.inventory),
+      heroStats,
       floor,
       seed,
       sequence: this.battleSequence,
+      // ADR-020 (⛔ P-019) — HP persiste entre batalhas: a batalha começa
+      // com o HP atual do herói, não com o máximo. É isso que faz o andar
+      // ter tensão. Recuperação é ato do jogador (restartHunt/restActiveHero).
+      heroStartHp: hero.currentHp,
+      heroSkills: engineSkillsFor(hero.classId),
+      heroSprites: classes.find((c) => c.id === hero.classId)?.assets.sheets as unknown as
+        | Record<string, string>
+        | undefined,
     });
 
     this.battle = battle;
@@ -313,9 +322,18 @@ export class GameState {
     if (!battle) return;
     const won = battle.status === "finished" && battle.enemies.every((e) => e.isDefeated);
 
+    // ADR-020 — o HP restante VOLTA para o herói nos dois desfechos:
+    // vitória mantém o que sobrou (a tensão do próximo combate), derrota
+    // zera (herói caído). Sem isto, "HP persistente" seria decorativo.
+    const ally = battle.allies[0];
+    const hero = ally?.heroId ? this.heroById(ally.heroId) : null;
+    if (hero && ally) {
+      hero.currentHp = won ? Math.max(0, ally.hp) : 0;
+    }
+
     if (!won) {
-      // ⛔ P-019 — a política de derrota (HP entre batalhas, herói caído) não
-      // está definida. A caça para; nada é inventado sobre recuperação.
+      // ⛔ P-019 — a política de derrota: a caça para; recomeçar é ato do
+      // jogador (`restartHunt`, que também cura — ADR-020).
       this.state.hunt = { kind: "defeated", at: this.deps.now() };
       this.battle = null;
       this.touch();
@@ -389,6 +407,37 @@ export class GameState {
   // -------------------------------------------------------------------------
   // Caça e offline
   // -------------------------------------------------------------------------
+
+  /**
+   * Recomeça a caçada após derrota (ou de um descanso): cura o herói ativo
+   * quando `combat.healOnHuntRestart` está ligado (ADR-020) e entra na
+   * Torre. Nunca é chamado pelo loop — é um ato do jogador (⛔ P-019).
+   */
+  restartHunt(): BattleState {
+    this.healActiveIfConfigured();
+    return this.startTower();
+  }
+
+  /**
+   * "Descansar": o herói ativo recupera HP (quando configurado) e a caçada
+   * entra em `paused` — o loop automático NÃO retoma sozinho. É a alavanca
+   * de "parar para curar" (COMBAT_SYSTEM §7.2); voltar é `beginSearch()` ou
+   * `restartHunt()`.
+   */
+  restActiveHero(): void {
+    this.healActiveIfConfigured();
+    this.state.hunt = { kind: "paused", at: this.deps.now(), reason: "rest" };
+    this.touch();
+  }
+
+  private healActiveIfConfigured(): void {
+    const activeId = requireActiveHero(this.state.team);
+    const hero = this.heroById(activeId);
+    if (!hero) throw new Error(`Herói ativo ${activeId} não encontrado no roster.`);
+    if (config.combat.healOnHuntRestart) {
+      hero.currentHp = heroCombatStats(hero, this.state.inventory).hp;
+    }
+  }
 
   /**
    * Entra no estado "PROCURANDO..." (§27, ADR-007).
@@ -522,6 +571,27 @@ export class GameState {
     state.equipmentIndex = save.inventory.equipment.length;
     return state;
   }
+}
+
+/**
+ * Skills ATIVAS do herói, mapeadas para o formato do engine (§56 — as
+ * skills disparam sozinhas, por cooldown). A filtragem é por classe:
+ * `catalog.activeSkillId` (a skill assinada P-002) e qualquer outra ativa
+ * da mesma classe entram na batalha. Passivas/`damageType: "none"` ficam
+ * para a Fase 9+ (efeitos de traço/armas).
+ */
+function engineSkillsFor(classId: string): EngineSkillDef[] {
+  return skills
+    .filter((s) => s.kind === "active" && s.classId === classId && s.coefficient !== null)
+    .map((s) => ({
+      id: s.id,
+      targeting: s.targeting === "all_enemies" ? "all_enemies" : s.targeting === "self" ? "self" : "single",
+      damageType: s.damageType === "magic" ? "magic" : "physical",
+      coefficient: s.coefficient ?? 1,
+      hitCount: s.hitCount ?? 1,
+      cooldownMs: s.cooldownMs,
+      enabled: true,
+    }));
 }
 
 export { firstAssigned, rollSearchingDuration, enemyLevelForFloor };

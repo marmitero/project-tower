@@ -69,7 +69,16 @@ export function assertSaveShape(data: unknown): asserts data is SaveData {
 export function migrateSave(data: SaveData, toConfigVersion: number): SaveData {
   let out: SaveData = { ...data };
   if (out.configVersion < toConfigVersion) {
-    // Hooks futuros de migração entram aqui, um por versão.
+    // v1 → v2 (ADR-020): `Hero.currentHp` passa a existir. Saves antigos
+    // nascem com HP cheio — o campo ausente não pode matar herói por engano.
+    if (out.configVersion < 2) {
+      out = {
+        ...out,
+        heroes: out.heroes.map((h) =>
+          typeof h.currentHp === "number" ? h : { ...h, currentHp: h.stats.hp },
+        ),
+      };
+    }
     out.configVersion = toConfigVersion;
   }
   return out;

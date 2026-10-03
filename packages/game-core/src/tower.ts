@@ -16,7 +16,7 @@
 
 import type { CombatStats, Hero, King, RewardBundle, TowerFloor } from "@tia/contracts";
 import { config, enemies as ENEMY_DEFS, type EnemyDef } from "@tia/config";
-import type { CombatantSeed } from "@tia/engine";
+import type { CombatantSeed, SkillDef as EngineSkillDef } from "@tia/engine";
 import { createBattle, type BattleState } from "@tia/engine";
 import { newBattleId } from "./ids.js";
 import { rollRewardBundle, type LootSource } from "./loot.js";
@@ -104,6 +104,12 @@ export interface StartTowerBattleParams {
   floor: number;
   seed: number;
   sequence: number;
+  /** HP inicial da batalha (ADR-020 — HP persiste entre batalhas). */
+  heroStartHp?: number;
+  /** Skills do herói, já mapeadas para o engine (§56 — disparam sozinhas). */
+  heroSkills?: EngineSkillDef[];
+  /** Folhas de animação do herói e do inimigo (dicas de apresentação, §64). */
+  heroSprites?: Record<string, string>;
 }
 
 /**
@@ -132,7 +138,9 @@ export function startTowerBattle(params: StartTowerBattleParams): BattleState {
     side: "ally",
     level: hero.level,
     stats: heroStats,
+    startHp: params.heroStartHp,
     heroId: hero.id,
+    sprites: params.heroSprites,
   };
 
   const enemySeed: CombatantSeed = {
@@ -142,6 +150,7 @@ export function startTowerBattle(params: StartTowerBattleParams): BattleState {
     level: info.enemyLevel,
     stats: enemyStatsAtLevel(def, info.enemyLevel),
     enemyId: def.id,
+    sprites: def.assets.sheets as unknown as Record<string, string>,
   };
 
   return createBattle({
@@ -150,6 +159,7 @@ export function startTowerBattle(params: StartTowerBattleParams): BattleState {
     seed,
     allySeed: [allySeed],
     enemySeed: [enemySeed],
+    skills: params.heroSkills ? { [hero.id]: params.heroSkills } : {},
     config: config.combat,
   });
 }

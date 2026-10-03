@@ -527,3 +527,20 @@ do repo de origem (só o OpenRpg como referência técnica, quando necessário).
 - `marmitero/tower-idle-adventure` deixa de ser dependência operacional;
   a proveniência do pack e os créditos continuam documentados em
   `assets/SOURCES.md` e `assets/ATTRIBUTION.md`.
+
+### ADR-020 — HP persistente entre batalhas (P-019), skills na batalha e apresentação de combate (FASE 6)
+
+**Data:** 2026-10-03 · **Status:** ✅ Aceita · **Tipo:** C (regra de gameplay — decidida por delegação, padrão ADR-017) + B (técnica)
+**Contexto:** FASE 6 (Combate). `ROADMAP.md` §7 + `COMBAT_SYSTEM.md` §5–§7 + §60/§66/§68. ⛔ P-019 (HP entre batalhas) e P-020 (prioridade de skills) precisavam de decisão.
+
+1. **HP persistente entre batalhas (⛔ P-019 — FECHADA).** O herói ganha `currentHp` (contratos, ADR-020; migrado em saves v1→v2 com `currentHp = stats.hp`). A batalha nasce com o HP atual (`CombatantSeed.startHp`, clampado em [0, maxHp]). **Vitória mantém** o HP restante; **derrota zera** e encerra a caçada (ADR-017); **a chain automática NÃO cura** — a tensão do andar. Recuperação é ato do jogador: `restartHunt()` (após derrota: cura + entra na Torre) e `restActiveHero()` (cura + `hunt = {kind:"paused", reason:"rest"}` — o loop nunca reativa sozinho). A cura é `config.combat.healOnHuntRestart` (default `true`; `false` = modo duro). Cooldowns reiniciam e status expiram por batalha (`COMBAT_SYSTEM.md` §7.2).
+
+2. **Skills na batalha (P-020 — ordem fixa ratificada).** O herói luta com as skills `kind: "active"` da classe (`engineSkillsFor`), que disparam sozinhas por cooldown (§56) — prioridade = ordem do catálogo (a primeira pronta dispara); reordenar `config/skills.ts` altera a fila sem tocar no engine. `attack_started.skillId` identifica a skill. Inimigos da Torre usam só ataque básico (sem skills no `EnemyDef`).
+
+3. **Apresentação (§60/§64/§66).** Pipeline puramente reativo: `GameEvents.onBattleEvents` → fila `battleFeedbackQueue` → `BattleScene.update()` drena e executa `planBatch` (`BattleRenderer.ts`): lunge no `attack_started`, número de dano + flash + tremor leve por hit, **crítico** distinto sem depender de cor (número maior + flash + shake + `audio/sfx/critical`), nome da skill no uso, morte com fade, banner VITÓRIA!/DERROTA, SFX por evento (22 WAVs, `render/sfx.ts`). `prefers-reduced-motion` corta shake/lunge e mantém números/banner (§68).
+
+4. **Sprites (identidade Nika, ADR-019).** Sheets 1024×1024 em grade 4×4 de 256px, rows = down/up/left/right (`README_IMPORT.txt`). Aliado olha para a direita (row 3), inimigo para a esquerda (row 2); uma folha por animação (idle 7fps loop, attack/hurt 12fps, death 8fps), as 4 carregadas juntas; escala do sprite derivada do tamanho real do canvas (§63). Assets de apresentação no campo `Combatant.sprites` (herói: sheets da classe; inimigo: `def.assets.sheets`).
+
+**Alternativas rejeitadas:** (a) curar ao fim de cada vitória — mata a tensão do andar (o motivo do P-019 existir); (b) estado `HuntState` novo para descanso — a variante `paused` existente já cobre; (c) React lendo eventos por polling — o renderer é Phaser, o React só monta o canvas; (d) números de dano gerados no engine — §64: engine emite, renderer apresenta.
+
+**Consequências:** regras todas em config/dados (`healOnHuntRestart`, skills, sheets); `BattleRenderer.ts` é o único lugar que muda "como a batalha se parece"; saves ganham migração v1→v2; testes `combat-hp.test.ts` (engine + game-core) cobrem vitória/derrota/chain/descanso. **Risco:** o desfecho da batalha depende da seed (derivada do accountId) — os testes fixam vitória/derrota por configuração de andar, não por sorte.

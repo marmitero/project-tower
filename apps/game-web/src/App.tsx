@@ -23,6 +23,7 @@ import type { HeroId } from "@tia/contracts";
 import { boot, createGame, startLoop, type LoopHandle } from "./boot.js";
 import { loadAssetManifest, assetUrl, type AssetManifest } from "./render/assets.js";
 import { BattleCanvas } from "./render/BattleCanvas.js";
+import { battleFeedbackQueue } from "./render/BattleRenderer.js";
 import { CreationScreen, type CreationResult } from "./CreationScreen.js";
 
 type Screen = "king" | "heroes" | "tower" | "team" | "inventory";
@@ -51,6 +52,8 @@ export function App() {
         onStateChanged: (s) => {
           if (!cancelled) setState(s);
         },
+        // §64 — os eventos da batalha viram apresentação (BattleScene drena).
+        onBattleEvents: (events) => battleFeedbackQueue.push(events),
       });
       if (cancelled) return;
 
@@ -91,6 +94,7 @@ export function App() {
         skinId: result.skinId,
         heroId: result.heroId,
         onStateChanged: (s) => setState(s),
+        onBattleEvents: (events) => battleFeedbackQueue.push(events),
       });
       setState(gameState);
       gameState.markActive();
@@ -528,6 +532,16 @@ function TowerScreen({ state, searching }: { state: GameState; searching: number
   const info = state.floorInfo(floor);
   const hunt = state.data.hunt;
   const remainingMs = state.searchingRemainingMs();
+  const activeId = state.data.team.activeHeroId;
+  const hero = state.data.heroes.find((h) => h.id === activeId) ?? null;
+  const hpRatio = hero && hero.stats.hp > 0 ? hero.currentHp / hero.stats.hp : 1;
+  const act = (fn: () => void) => () => {
+    try {
+      fn();
+    } catch (error) {
+      console.warn("[ui]", error);
+    }
+  };
 
   return (
     <Panel title={`Torre — Andar ${floor}`}>
@@ -544,10 +558,27 @@ function TowerScreen({ state, searching }: { state: GameState; searching: number
               ? "Procurando…"
               : hunt?.kind === "defeated"
                 ? "Derrota"
-                : "Pronto"
+                : hunt?.kind === "paused"
+                  ? "Descansando"
+                  : "Pronto"
         }
-        tone={hunt?.kind === "defeated" ? "bad" : state.activeBattle ? "good" : "neutral"}
+        tone={
+          hunt?.kind === "defeated"
+            ? "bad"
+            : state.activeBattle
+              ? "good"
+              : hunt?.kind === "paused"
+                ? "good"
+                : "neutral"
+        }
       />
+      {hero && (
+        <StatPill
+          label="HP do herói"
+          value={`${Math.max(0, hero.currentHp)}/${hero.stats.hp}`}
+          tone={hpRatio <= 0.3 ? "bad" : hpRatio < 1 ? "neutral" : "good"}
+        />
+      )}
 
       {hunt?.kind === "searching" && (
         <div className="tia-searching" aria-live="polite">
@@ -562,7 +593,15 @@ function TowerScreen({ state, searching }: { state: GameState; searching: number
       {hunt?.kind === "defeated" && (
         <p className="tia-note tia-note--bad">
           O herói caiu e a caçada terminou — nenhuma recompensa foi perdida, mas nada foi
-          creditado (§26). Recomeçar é uma sua decisão.
+          creditado (§26). Recomeçar é uma sua decisão (o herói recupera o HP ao reiniciar,
+          se a cura estiver configurada — ADR-020).
+        </p>
+      )}
+
+      {hunt?.kind === "paused" && (
+        <p className="tia-note">
+          A caçada está em pausa para descanso: o herói recuperou o HP e o loop automático
+          ficou parado por sua conta. Retome quando quiser (§7.2).
         </p>
       )}
 
@@ -582,15 +621,30 @@ function TowerScreen({ state, searching }: { state: GameState; searching: number
                 ? "Procurando…"
                 : "Entrar na Torre"
         }
-        disabled={!state.data.team.activeHeroId || state.activeBattle !== null || hunt?.kind === "searching"}
-        onClick={() => {
-          try {
-            state.startTower();
-          } catch (error) {
-            console.warn("[ui]", error);
-          }
-        }}
+        disabled={!activeId || state.activeBattle !== null || hunt?.kind === "searching"}
+        onClick={act(() => {
+          if (hunt?.kind === "defeated") state.restartHunt();
+          else state.startTower();
+        })}
       />
+
+      {hunt?.kind !== "defeated" && (
+        <ActionButton
+          label="Descansar (recuperar HP)"
+          variant="secondary"
+          disabled={!activeId || state.activeBattle !== null || hunt?.kind === "searching" || hpRatio >= 1}
+          onClick={act(() => state.restActiveHero())}
+        />
+      )}
+
+      {hunt?.kind === "paused" && (
+        <ActionButton
+          label="Retomar a caçada"
+          variant="secondary"
+          disabled={state.activeBattle !== null}
+          onClick={act(() => state.beginSearch())}
+        />
+      )}
     </Panel>
   );
 }

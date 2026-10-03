@@ -61,10 +61,18 @@ export interface CombatantSeed {
   side: "ally" | "enemy";
   level: number;
   stats: CombatStats;
+  /**
+   * HP inicial da batalha (ADR-020 — HP persiste entre batalhas). Quando
+   * ausente, começa no máximo (`stats.hp`). `maxHp` continua sendo o
+   * máximo verdadeiro — startHp nunca aumenta o teto.
+   */
+  startHp?: number;
   heroId?: string;
   enemyId?: string;
   /**(statMods, targetId) que persistem durante a batalha. */
   statuses?: StatusEffect[];
+  /** Dicas de apresentação (asset ids) — o engine só repassa (§64). */
+  sprites?: Record<string, string>;
 }
 
 interface InternalCombatant extends Combatant {
@@ -73,20 +81,23 @@ interface InternalCombatant extends Combatant {
 }
 
 function makeCombatant(seed: CombatantSeed, skills: SkillDef[]): InternalCombatant {
+  const hp = Math.max(0, Math.min(seed.startHp ?? seed.stats.hp, seed.stats.hp));
   return {
     id: seed.id,
     side: seed.side,
     name: seed.name,
     level: seed.level,
     stats: seed.stats,
-    hp: seed.stats.hp,
+    hp,
     maxHp: seed.stats.hp,
     attackSpeed: seed.stats.attackSpeed,
     speed: seed.stats.speed,
     critChance: seed.stats.critChance,
     nextActionAtMs: 0,
     statuses: seed.statuses ?? [],
-    isDefeated: false,
+    sprites: seed.sprites,
+    // startHp pode nascer caído (clamp do ADR-020): o reflexo é imediato.
+    isDefeated: hp <= 0,
     heroId: seed.heroId ? (asHeroId(seed.heroId) as HeroId) : undefined,
     enemyId: seed.enemyId,
     skills,
@@ -270,7 +281,7 @@ function performAction(actor: InternalCombatant, state: BattleState, config: Com
         // produz `damage_dealt`. `P-022` ainda não define o catálogo de
         // efeitos; o engine aceita, mas não fabrica dano para elas.
         if (used.damageType !== "none") {
-          dealDamage(actor, target, used.coefficient, used.damageType, state, config, rng, "skill");
+          dealDamage(actor, target, used.coefficient, used.damageType, state, config, rng, "skill", used.id);
         }
       }
     }
@@ -298,11 +309,12 @@ function dealDamage(
   config: CombatConfig,
   rng: Prng,
   source: "basic" | "skill",
+  skillId?: string,
 ): void {
   const offensive = damageType === "magic" ? actor.stats.specialAttack : actor.stats.attack;
   const targetDefense = damageType === "magic" ? target.stats.specialDefense : target.stats.defense;
 
-  emit(state, { type: "attack_started", actorId: actor.id, skillId: source === "skill" ? undefined : undefined });
+  emit(state, { type: "attack_started", actorId: actor.id, skillId: source === "skill" ? skillId : undefined });
 
   const { finalDamage, beforeMitigation, mitigatedPercent } = computeDamage({
     offensivePower: offensive,

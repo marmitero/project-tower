@@ -116,6 +116,11 @@ export async function loadAssetManifest(baseUrl = ""): Promise<AssetManifest> {
   return cache;
 }
 
+/** Manifesto já carregado (ou vazio, se `loadAssetManifest` ainda não rodou). */
+export function getManifest(): AssetManifest {
+  return cache ?? { version: 0, entries: {}, missing: [], orphaned: [] };
+}
+
 /** URL de um asset pelo ID, ou `null` se o ID não existir. */
 export function assetUrl(id: string, baseUrl = ""): string | null {
   const path = cache?.entries[id];

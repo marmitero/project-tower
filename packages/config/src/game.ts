@@ -163,6 +163,11 @@ export const combat: CombatConfig = {
   iasCapMin: -0.5,
   iasCapMax: 1.0,
   minDamage: 1,
+
+  // ADR-020 (⛔ P-019) — HP persiste entre batalhas da mesma caçada;
+  // recomeçar a caçada (após derrota, ou botão "Descansar") cura 100%.
+  // Trocar para `false` reabre a política de recuperação sem tocar em código.
+  healOnHuntRestart: true,
 };
 
 // ---------------------------------------------------------------------------
@@ -237,7 +242,7 @@ import type { GameConfig } from "./types.js";
  * item só com a memória de outra zona hora vira lixo silenciosamente.
  */
 export const config: GameConfig = {
-  configVersion: 1,
+  configVersion: 2,
   account,
   team,
   xp,

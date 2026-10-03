@@ -15,7 +15,7 @@ FASE 2  ✅ Fundação
 FASE 3  ✅ Rei                      ← CONCLUÍDA (gate batido)
 FASE 4  ✅ Personagens              ← CONCLUÍDA (gate batido, ADR-016)
 FASE 5  ✅ Equipe                   ← CONCLUÍDA (gate batido, ADR-017)
-FASE 6  ⬜ Combate                  ← PRÓXIMO PASSO
+FASE 6  ✅ Combate                  ← CONCLUÍDA (gate batido, ADR-020)
 FASE 7  ⬜ Torre            ⛔ P-005, P-006
 FASE 8  ✅ Searching loop           ← CONCLUÍDA (gate batido, ADR-017)
 FASE 9  ⬜ Equipamentos     ⛔ P-010
@@ -40,7 +40,7 @@ Estimativa de trabalho (2026-10-01), ajustável; cada etapa = um ciclo completo
 | Etapa | Fases | O que entra | Gate de decisão |
 |---|---|---|---|
 | 1 ✅ | FASE 5 + 8 | Equipe/slots (2=nv10+50k, 3=nv25+250k), XP dividido 1/n, searching ~3s, loop idle | decidido em ADR-017 (P-003/P-004/P-012/P-019/P-020b) |
-| 2 | FASE 6 | Combate visual de verdade: BattleCanvas nas batalhas reais, skills, números/feedback | decidir HP entre batalhas (herança P-019) |
+| 2 ✅ | FASE 6 | Combate visual de verdade: BattleScene animada, skills, números/feedback, SFX | decidido em ADR-020 (P-019/P-020) |
 | 3 | FASE 7 | Torre de ponta a ponta (andares, seleção, vitória/derrota) | ⛔ **P-005/P-006** (curva de andar) — pergunta ao usuário |
 | 4 | FASE 9 | Loot → equipamento → raridade → X → inventário/venda | ⛔ P-010 (regra de slots/equip) |
 | 5 | FASE 10 + 11 | Economia básica (Coin, custos de slot) + offline Free 2h | ⛔ **P-008/P-036/P-011** (economia) — pergunta ao usuário |
@@ -285,20 +285,22 @@ Slots 1/2/3, desbloqueio por nível + Coin, seleção de herói ativo.
 
 ---
 
-## 7. FASE 6 — Combate
+## 7. FASE 6 — Combate ✅ CONCLUÍDA (2026-10-03, ADR-020)
 
 1×1 na Torre, Battle Engine, ataques, skills, dano, morte, vitória, derrota, feedback visual.
 
-| # | Entregável |
-|---|---|
-| 1 | `TowerBattle` 1×1 com a arena Phaser |
-| 2 | Fórmulas de dano, crítico, IAS, alvo |
-| 3 | Feedback visual de cada evento (§60) |
-| 4 | Animação de ataque, dano, crítico, morte |
-| 5 | Inimigo com IA de alvo |
-| 6 | **Escala e legibilidade em tela pequena** (§68) |
+| # | Entregável | Estado |
+|---|---|---|
+| 1 | `TowerBattle` 1×1 com a arena Phaser | ✅ `BattleScene` reescrita (spritesheets Nika, animações) |
+| 2 | Fórmulas de dano, crítico, IAS, alvo | ✅ engine (SIMULATE_TURNS.md), skills da classe com cooldown |
+| 3 | Feedback visual de cada evento (§60) | ✅ fila + `planBatch` (`BattleRenderer`), números/lunge/flash/banner |
+| 4 | Animação de ataque, dano, crítico, morte | ✅ attack/hurt/death + crítico (flash+shake+tamanho) |
+| 5 | Inimigo com IA de alvo | ✅ 1×1 = alvo único (§7.1); BossBattle é a Fase 12 |
+| 6 | **Escala e legibilidade em tela pequena** (§68) | ✅ números escalados por importância, `prefers-reduced-motion` |
 
-**Gate:** `INV-01` passando; a batalha é **visualmente percebida** (§60).
+**Gate:** `INV-01` passando; a batalha é **visualmente percebida** (§60). Bônus:
+HP persistente entre batalhas (⛔ P-019 fechada — ADR-020), SFX por evento
+(22 WAVs), botões Descansar/Recomeçar/Retomar.
 
 ---
 
