@@ -43,6 +43,9 @@ export const BOSS_ARENA_KIT_ID = "boss";
 /** Kits de fábrica (peças do pack Nika). Os kits gerados por andar (Onda 1) entram aqui. */
 export function defaultArenaKits(): ArenaKitDef[] {
   const f01 = (n: string) => `arenas/f01_entrada/${n}`;
+  const f02 = (n: string) => `arenas/f02_porao/${n}`;
+  const f03 = (n: string) => `arenas/f03_ossadas/${n}`;
+  const f04 = (n: string) => `arenas/f04_catacumbas/${n}`;
   return [
     {
       // Lote 1 (ADR-033): primeiro kit GERADO — a Entrada da Torre (andar 1). Pedra azul-acinzentada,
@@ -63,6 +66,63 @@ export function defaultArenaKits(): ArenaKitDef[] {
         { assetId: f01("prop_1"), weight: 3 },
         { assetId: f01("prop_2"), weight: 2 },
         { assetId: f01("prop_3"), weight: 2 },
+      ],
+      tint: 0xffffff,
+    },
+    {
+      // Lote 2 (ADR-036): pedra escura molhada, musgo, poças, ralos e lanternas verde-pálido. `banner` = correntes com musgo; `gate` = túnel de esgoto com grade.
+      id: "f02_porao",
+      name: "Porão Úmido",
+      wall: [
+        f02("wall_0"), f02("wall_1"), f02("wall_2"), f02("wall_0"), f02("wall_4"), f02("wall_1"),
+        f02("banner"), f02("wall_2"), f02("wall_3"), f02("wall_0"), f02("wall_4"), f02("gate"),
+      ],
+      torch: f02("torch"),
+      torchEvery: 4,
+      floor: [f02("floor_0"), f02("floor_1"), f02("floor_2"), f02("floor_3"), f02("floor_1")],
+      props: [
+        { assetId: f02("prop_0"), weight: 3 },
+        { assetId: f02("prop_1"), weight: 3 },
+        { assetId: f02("prop_2"), weight: 2 },
+        { assetId: f02("prop_3"), weight: 2 },
+      ],
+      tint: 0xffffff,
+    },
+    {
+      // Lote 2: pedra ocre cor de osso, nichos de crânios, velas e areia. `banner` = nicho de crânios; `gate` = passagem emoldurada de ossos. Piso escurecido por ganho 0,78 no pipeline (luminância).
+      id: "f03_ossadas",
+      name: "Galeria das Ossadas",
+      wall: [
+        f03("wall_0"), f03("wall_1"), f03("wall_2"), f03("wall_0"), f03("wall_4"), f03("wall_1"),
+        f03("banner"), f03("wall_2"), f03("wall_3"), f03("wall_0"), f03("wall_4"), f03("gate"),
+      ],
+      torch: f03("torch"),
+      torchEvery: 4,
+      floor: [f03("floor_0"), f03("floor_1"), f03("floor_2"), f03("floor_3"), f03("floor_0")],
+      props: [
+        { assetId: f03("prop_0"), weight: 3 },
+        { assetId: f03("prop_1"), weight: 2 },
+        { assetId: f03("prop_2"), weight: 3 },
+        { assetId: f03("prop_3"), weight: 2 },
+      ],
+      tint: 0xffffff,
+    },
+    {
+      // Lote 2: pedra cinza-violeta, sarcófagos selados, tocha de chama roxa, tapeçaria com olho dourado, porta de cripta. Piso bem escuro (luminância 0,12–0,19): a laje central (floor_0) aparece menos.
+      id: "f04_catacumbas",
+      name: "Catacumbas Antigas",
+      wall: [
+        f04("wall_0"), f04("wall_1"), f04("wall_2"), f04("wall_0"), f04("wall_4"), f04("wall_1"),
+        f04("banner"), f04("wall_2"), f04("wall_3"), f04("wall_0"), f04("wall_4"), f04("gate"),
+      ],
+      torch: f04("torch"),
+      torchEvery: 5,
+      floor: [f04("floor_1"), f04("floor_2"), f04("floor_3"), f04("floor_1"), f04("floor_0"), f04("floor_2")],
+      props: [
+        { assetId: f04("prop_0"), weight: 3 },
+        { assetId: f04("prop_1"), weight: 2 },
+        { assetId: f04("prop_2"), weight: 2 },
+        { assetId: f04("prop_3"), weight: 2 },
       ],
       tint: 0xffffff,
     },

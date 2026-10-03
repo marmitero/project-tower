@@ -48,6 +48,16 @@ export const account: AccountConfig = {
       { id: "rei_guerreiro", name: "Rei Guerreiro", assetId: "portraits/king/rei_guerreiro", hudAssetId: "portraits/king/rei_guerreiro_s", unlock: { kind: "default" } },
       { id: "rainha", name: "Rainha", assetId: "portraits/king/rainha", hudAssetId: "portraits/king/rainha_s", unlock: { kind: "default" } },
       { id: "rei_sabio", name: "Rei Sábio", assetId: "portraits/king/rei_sabio", hudAssetId: "portraits/king/rei_sabio_s", unlock: { kind: "default" } },
+      // Lote 2 (ADR-036): +8 retratos, liberados por nível do Rei (recompensa de progressão — edite `kingLevel`
+      // ou troque por `{ kind: "default" }` para liberar já). O Rei só chega ao Nv 14 em ≈ 4 h de jogo ativo.
+      { id: "rei_sombrio", name: "Rei Sombrio", assetId: "portraits/king/rei_sombrio", hudAssetId: "portraits/king/rei_sombrio_s", unlock: { kind: "kingLevel", kingLevel: 3 } },
+      { id: "rei_gelo", name: "Rei do Gelo", assetId: "portraits/king/rei_gelo", hudAssetId: "portraits/king/rei_gelo_s", unlock: { kind: "kingLevel", kingLevel: 5 } },
+      { id: "rei_sol", name: "Rei Sol", assetId: "portraits/king/rei_sol", hudAssetId: "portraits/king/rei_sol_s", unlock: { kind: "kingLevel", kingLevel: 8 } },
+      { id: "rei_cacador", name: "Rei Caçador", assetId: "portraits/king/rei_cacador", hudAssetId: "portraits/king/rei_cacador_s", unlock: { kind: "kingLevel", kingLevel: 10 } },
+      { id: "rei_arcano", name: "Rei Arcano", assetId: "portraits/king/rei_arcano", hudAssetId: "portraits/king/rei_arcano_s", unlock: { kind: "kingLevel", kingLevel: 15 } },
+      { id: "rei_rubro", name: "Rei Rubro", assetId: "portraits/king/rei_rubro", hudAssetId: "portraits/king/rei_rubro_s", unlock: { kind: "kingLevel", kingLevel: 20 } },
+      { id: "rei_esmeralda", name: "Rei Esmeralda", assetId: "portraits/king/rei_esmeralda", hudAssetId: "portraits/king/rei_esmeralda_s", unlock: { kind: "kingLevel", kingLevel: 30 } },
+      { id: "rei_anciao", name: "Rei Ancião", assetId: "portraits/king/rei_anciao", hudAssetId: "portraits/king/rei_anciao_s", unlock: { kind: "kingLevel", kingLevel: 50 } },
       { id: "royal", name: "Real", assetId: "hero_skins/royal", legacy: true, unlock: { kind: "default" } },
       { id: "paladin", name: "Paladino", assetId: "hero_skins/paladin", legacy: true, unlock: { kind: "default" } },
     ],

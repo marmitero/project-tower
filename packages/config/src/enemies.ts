@@ -106,7 +106,7 @@ const attrs = (
 ): CharacterAttributes => ({ strength, dexterity, constitution, intelligence, wisdom, charisma: 4 });
 
 /**
- * Roster padrão — 12 inimigos (tank 2, dps 3, swift 1, caster 3, balanced 1, elite 2).
+ * Roster padrão — 15 inimigos (tank 3, dps 4, swift 1, caster 3, balanced 1, elite 3).
  * Fábrica dos DEFAULTS: o estado vivo é `enemies` (pode ser substituído por
  * um ContentPack, ver `content.ts`).
  */
@@ -120,10 +120,18 @@ export function defaultEnemySeeds(): EnemySeed[] {
       // Resiste a magia (Defesa Esp. alta): a escolha do herói mágico importa.
       attributes: attrs(10, 6, 30, 14, 32),
       assets: { sheets: charSheets("frostslime") } },
+    // Lote 2 (ADR-036): tanque do andar 2 (Porão Úmido) — atlas próprio.
+    { id: "mud_toad", name: "Sapo-Lodo Gigante", role: "tank", damageType: "physical", statMultiplier: 1.04,
+      attributes: attrs(20, 4, 36, 4, 16),
+      assets: { sheets: charSheets("slime"), atlas: "enemies/mud_toad" } },
     // --- dps ----------------------------------------------------------
     { id: "goblin", name: "Goblin", role: "dps", damageType: "physical", statMultiplier: 1.23,
       attributes: attrs(28, 20, 14, 6, 8),
       assets: { portrait: "portraits/goblin", sheets: charSheets("goblin") } },
+    // Lote 2: dano do andar 2 — o brutamontes do esgoto (corpo de goblin como fallback visual).
+    { id: "sewer_rat", name: "Rato de Esgoto Bruto", role: "dps", damageType: "physical", statMultiplier: 1.12,
+      attributes: attrs(32, 16, 16, 4, 8),
+      assets: { sheets: charSheets("goblin"), atlas: "enemies/sewer_rat" } },
     { id: "orc", name: "Orc", role: "dps", damageType: "physical", statMultiplier: 1.01,
       attributes: attrs(34, 10, 22, 4, 10),
       assets: { portrait: "portraits/orc", sheets: charSheets("orc") } },
@@ -151,6 +159,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
       attributes: attrs(24, 14, 24, 8, 14),
       assets: { portrait: "portraits/skeleton", sheets: charSheets("skeleton") } },
     // --- elite (raros; multiplicador de força) --------------------------
+    // Lote 2: Elite RARO do andar 1 (fecha os 5 papéis do andar).
+    { id: "goblin_captain", name: "Goblin Capitão", role: "elite", damageType: "physical", statMultiplier: 1.2,
+      attributes: attrs(30, 22, 22, 8, 12),
+      assets: { sheets: charSheets("orc"), atlas: "enemies/goblin_captain" } },
     { id: "elitearcher", name: "Arqueiro de Elite", role: "elite", damageType: "physical", statMultiplier: 1.26,
       attributes: attrs(26, 32, 18, 8, 12),
       assets: { sheets: charSheets("elitearcher") } },

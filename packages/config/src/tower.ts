@@ -115,8 +115,11 @@ function tintForFloor(index: number): number | null {
 }
 
 function themeForFloor(index: number): string {
-  if (index === 1) return "f01_entrada"; // kit próprio (Lote 1); os andares 2–4 seguem na masmorra até o seu lote
-  if (index <= 4) return "masmorra";
+  // Kits próprios gerados por andar (Lotes 1–2, ADR-033/036); os demais seguem nos grupos antigos.
+  if (index === 1) return "f01_entrada";
+  if (index === 2) return "f02_porao";
+  if (index === 3) return "f03_ossadas";
+  if (index === 4) return "f04_catacumbas";
   if (index <= 8) return "gelo e sombra";
   if (index <= 12) return "sangue e brasa";
   if (index <= 20) return "pináculo arcano";
@@ -128,8 +131,9 @@ function themeForFloor(index: number): string {
  * Plano de aparição dos inimigos por andar (usado SÓ para gerar o pool padrão;
  * depois disso a verdade é `FloorDef.pool`). `toFloor` ausente = até o último.
  *
- * Todo andar tem tank + dps + veloz desde o 1; o mago entra no 1 (Duende de Faíscas, andares 1–2,
- * ADR-033) e o Morcego Tóxico assume no 3; elites no 9+.
+ * Todo andar tem tank + dps + veloz + mago desde o 1. Andares 1–2 já seguem a tabela de 5 papéis do
+ * roadmap (ADR-033/036); do 3 em diante valem os inimigos de antes até o lote de cada andar. O Elite
+ * do andar 1 (Goblin Capitão) é raro (peso 1); os demais elites entram no 9+.
  */
 export const DEFAULT_POOL_PLAN: ReadonlyArray<{
   enemyId: string;
@@ -137,14 +141,22 @@ export const DEFAULT_POOL_PLAN: ReadonlyArray<{
   toFloor?: number;
   weight: number;
 }> = [
-  { enemyId: "slime", fromFloor: 1, toFloor: 6, weight: 4 },
-  { enemyId: "slime", fromFloor: 7, weight: 2 },
-  { enemyId: "goblin", fromFloor: 1, toFloor: 8, weight: 4 },
-  { enemyId: "goblin", fromFloor: 9, weight: 2 },
+  // Andar 1 — Entrada da Torre (Lotes 1–2): Gosma T · Goblin D · Morcego V · Duende de Faíscas M · Goblin Capitão E (raro).
+  { enemyId: "slime", fromFloor: 1, toFloor: 1, weight: 4 },
+  { enemyId: "goblin", fromFloor: 1, toFloor: 1, weight: 4 },
   { enemyId: "bat", fromFloor: 1, weight: 3 },
-  { enemyId: "spark_imp", fromFloor: 1, toFloor: 2, weight: 2 },
-  { enemyId: "skeleton", fromFloor: 2, weight: 3 },
-  { enemyId: "toxicbat", fromFloor: 3, weight: 2 },
+  { enemyId: "spark_imp", fromFloor: 1, toFloor: 1, weight: 2 },
+  { enemyId: "goblin_captain", fromFloor: 1, toFloor: 1, weight: 1 },
+  // Andar 2 — Porão Úmido (Lote 2): Sapo-Lodo T · Rato de Esgoto D · Morcego V (até a Enguia, Lote 3) · Morcego Tóxico M.
+  { enemyId: "mud_toad", fromFloor: 2, toFloor: 2, weight: 4 },
+  { enemyId: "sewer_rat", fromFloor: 2, toFloor: 2, weight: 4 },
+  { enemyId: "toxicbat", fromFloor: 2, weight: 2 },
+  // Andares 3+ — ainda com os inimigos de antes; trocam por andar a cada lote (docs/STYLIZATION_ROADMAP.md §3.1).
+  { enemyId: "slime", fromFloor: 3, toFloor: 6, weight: 4 },
+  { enemyId: "slime", fromFloor: 7, weight: 2 },
+  { enemyId: "goblin", fromFloor: 3, toFloor: 8, weight: 4 },
+  { enemyId: "goblin", fromFloor: 9, weight: 2 },
+  { enemyId: "skeleton", fromFloor: 3, weight: 3 },
   { enemyId: "frostslime", fromFloor: 4, weight: 3 },
   { enemyId: "orc", fromFloor: 5, weight: 3 },
   { enemyId: "fireorc", fromFloor: 6, weight: 3 },

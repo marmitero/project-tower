@@ -71,7 +71,7 @@ describe("andares — regra do usuário (2026-10-03)", () => {
 });
 
 describe("variedade de inimigos por andar", () => {
-  it("todo andar tem tanque, dano e veloz; mago a partir do 3; elite a partir do 9", () => {
+  it("todo andar tem tanque, dano e veloz; mago a partir do 3; elite a partir do 9 (exceto o Capitão no 1)", () => {
     for (const f of floors()) {
       const roles = new Set(f.pool.map((p) => roleOf(p.enemyId)));
       expect(roles.has("tank"), `andar ${f.index} tank`).toBe(true);
@@ -79,12 +79,13 @@ describe("variedade de inimigos por andar", () => {
       expect(roles.has("swift"), `andar ${f.index} swift`).toBe(true);
       if (f.index >= 3) expect(roles.has("caster"), `andar ${f.index} caster`).toBe(true);
       if (f.index >= 9) expect(roles.has("elite"), `andar ${f.index} elite`).toBe(true);
-      if (f.index < 9) expect(roles.has("elite"), `andar ${f.index} sem elite`).toBe(false);
+      // Exceção de design (§3.1): o andar 1 tem o Goblin Capitão como elite raro. Andares 2–8 não têm elite.
+      if (f.index >= 2 && f.index < 9) expect(roles.has("elite"), `andar ${f.index} sem elite`).toBe(false);
     }
   });
 
-  it("o roster usa todos os papéis e só sprites existentes (12 inimigos)", () => {
-    expect(enemies).toHaveLength(12);
+  it("o roster usa todos os papéis e só sprites existentes (15 inimigos)", () => {
+    expect(enemies).toHaveLength(15);
     expect(new Set(enemies.map((e) => e.role))).toEqual(new Set(ENEMY_ROLES));
   });
 

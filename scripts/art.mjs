@@ -134,7 +134,7 @@ async function main() {
     case "kit": {
       const id = need(opt.id, "--id");
       const outDir = resolve(opt.out ?? join(ROOT, "assets/generated"), "arenas", id);
-      const { tiles, report, wallStrip, floorStrip } = sliceKit(await readRaw(need(args[0], "<folha-4x4>")), { seamless: opt.seamless === "true" });
+      const { tiles, report, wallStrip, floorStrip } = sliceKit(await readRaw(need(args[0], "<folha-4x4>")), { seamless: opt.seamless === "true", floorGain: opt["floor-gain"] ? Number(opt["floor-gain"]) : 1 });
       let total = 0;
       for (const [name, tile] of Object.entries(tiles)) total += await packPng(tile, join(outDir, `${name}.png`));
       await writePng(wallStrip, join(ROOT, "assets/_review", "arenas", `${id}.walls.png`));

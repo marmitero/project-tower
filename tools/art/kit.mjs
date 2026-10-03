@@ -19,7 +19,7 @@ export const KIT_LAYOUT = Object.freeze([
 ]);
 
 /** @returns {{tiles: Record<string, {w:number,h:number,data:Uint8Array}>, report: object}} */
-export function sliceKit(sheet, { seamless = false } = {}) {
+export function sliceKit(sheet, { seamless = false, floorGain = 1 } = {}) {
   const cell = sheet.w / 4;
   const tiles = {};
   KIT_LAYOUT.forEach((name, i) => {
@@ -31,6 +31,11 @@ export function sliceKit(sheet, { seamless = false } = {}) {
       // ladrilhos de parede/piso são opacos: descarta qualquer alfa residual do reamostrador
       for (let p = 3; p < tile.data.length; p += 4) tile.data[p] = 255;
       if (seamless) tile = makeSeamlessX(tile);
+      // piso claro demais apaga o contraste com o sprite (luminância 25–55 %): ganho multiplicativo
+      // determinístico, só no piso (ADR-036) — zero geração
+      if (name.startsWith("floor_") && floorGain !== 1) {
+        for (let p = 0; p < tile.data.length; p += 4) for (let c = 0; c < 3; c += 1) tile.data[p + c] = Math.min(255, Math.round(tile.data[p + c] * floorGain));
+      }
     }
     tiles[name] = tile;
   });

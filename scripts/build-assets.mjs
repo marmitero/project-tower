@@ -171,7 +171,7 @@ const REQUIRED = [
   // Arte gerada (ADR-033): retratos do Rei (512 + HUD), login e kit de botões GBA. Espelham
   // `config.account.king.skins` (não-legacy), `LOGIN_ASSETS` e `gbaAssetIds()` — o teste
   // `assets-config` falha se as listas divergirem.
-  ...["rei_real", "rei_guerreiro", "rainha", "rei_sabio"].flatMap((k) => [`portraits/king/${k}`, `portraits/king/${k}_s`]),
+  ...["rei_real", "rei_guerreiro", "rainha", "rei_sabio", "rei_sombrio", "rei_gelo", "rei_sol", "rei_cacador", "rei_arcano", "rei_rubro", "rei_esmeralda", "rei_anciao"].flatMap((k) => [`portraits/king/${k}`, `portraits/king/${k}_s`]),
   "login/background",
   "login/logo",
   ...["indigo", "silver", "ruby", "emerald", "amber"].flatMap((c) => ["normal", "hover", "pressed", "disabled"].map((st) => `ui/gba/${c}_${st}`)),

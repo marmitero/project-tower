@@ -1249,3 +1249,41 @@ body {
 .tia-login .tia-creation__skin { min-width: 0; padding: 6px 4px; }
 .tia-login .tia-creation__skin-art { width: 100%; max-width: 84px; height: auto; aspect-ratio: 1; }
 .tia-login .tia-creation__skin-name { font-size: 12px; text-align: center; }
+
+/* Escolha de aparência do Rei (ADR-036): grade de retratos; bloqueadas ficam apagadas, com o nível. */
+.tia-skin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
+.tia-skin-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 4px;
+  color: var(--text);
+  background: var(--bg-2);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+}
+.tia-skin-tile:hover:not(:disabled) { border-color: var(--accent); }
+.tia-skin-tile--on { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent); }
+.tia-skin-tile__art { width: 80px; height: 80px; object-fit: cover; image-rendering: pixelated; border-radius: 4px; }
+.tia-skin-tile--locked { cursor: not-allowed; }
+.tia-skin-tile--locked .tia-skin-tile__art { filter: grayscale(1) brightness(0.45); }
+.tia-skin-tile--locked .tia-skin-tile__name { color: var(--muted); }
+.tia-skin-tile__lock {
+  position: absolute;
+  top: 34px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(10, 8, 20, 0.85);
+  border: 1px solid var(--warn);
+  border-radius: 10px;
+}
+.tia-skin-tile:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }

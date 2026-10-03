@@ -12,6 +12,7 @@ import { classes, config } from "@tia/config";
 import {
   GameState,
   heroCodex,
+  isSkinUnlocked,
   kingProgress,
   heroProgress,
   heroPower,
@@ -406,16 +407,26 @@ function KingScreen({ state, onChangeSkin }: { state: GameState; onChangeSkin: (
           </p>
           <fieldset className="tia-king__skins">
             <legend>Aparência</legend>
-            <div className="tia-king__skin-row">
-              {skins.map((skin) => (
-                <ActionButton
-                  key={skin.id}
-                  label={skin.name}
-                  variant={skin.id === king.skinId ? "primary" : "secondary"}
-                  hint={`Vestir ${skin.name}`}
-                  onClick={() => onChangeSkin(skin.id)}
-                />
-              ))}
+            <div className="tia-king__skin-row tia-skin-grid">
+              {skins.map((skin) => {
+                const unlocked = isSkinUnlocked(skin, king.level);
+                const need = skin.unlock.kind === "kingLevel" ? skin.unlock.kingLevel : 0;
+                return (
+                  <button
+                    key={skin.id}
+                    type="button"
+                    className={`tia-skin-tile${skin.id === king.skinId ? " tia-skin-tile--on" : ""}${unlocked ? "" : " tia-skin-tile--locked"}`}
+                    aria-pressed={skin.id === king.skinId}
+                    disabled={!unlocked}
+                    title={unlocked ? `Vestir ${skin.name}` : `${skin.name}: libera no Nível ${need} do Rei`}
+                    onClick={() => onChangeSkin(skin.id)}
+                  >
+                    <img src={assetUrl(skin.hudAssetId ?? skin.assetId) ?? undefined} alt="" className="tia-skin-tile__art" />
+                    <span className="tia-skin-tile__name">{skin.name}</span>
+                    {!unlocked && <span className="tia-skin-tile__lock">Nv {need}</span>}
+                  </button>
+                );
+              })}
             </div>
           </fieldset>
         </div>
