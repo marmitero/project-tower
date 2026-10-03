@@ -23,6 +23,7 @@ import type {
 import type { AccountId, EquipmentId, HeroId } from "@tia/contracts";
 import { heroById as heroIdentityById, classes, config, skills, type BotSettings, type ClassGrowth, type EquipSlotId, type Rarity } from "@tia/config";
 import { RngHub, hashString, step, healCombatant, reviveCombatant, type Prng, type SkillDef as EngineSkillDef } from "@tia/engine";
+import type { DebugContext } from "./debug.js";
 import { createKing, createTeam, createWallet, createHero, activeTeamSize, changeKingSkin, heroGrowth } from "./creation.js";
 import { createInventory } from "./inventory.js";
 import { createOfflineProgress, beginSearching, isSearchingComplete, computeOffline, commitOffline, touchActive, rollSearchingDuration } from "./hunt.js";
@@ -266,6 +267,21 @@ export class GameState {
 
   get data(): Readonly<SaveData> {
     return this.state;
+  }
+
+  /**
+   * @internal Debug Mode (§77/§93): acesso controlado ao estado para as ferramentas de
+   * desenvolvimento (`debug.ts`). Nenhuma tela do jogo usa isto; o painel só existe quando
+   * `VITE_DEBUG_MODE=true` (ver `apps/game-web/src/debug-flag.ts`).
+   */
+  debugContext(): DebugContext {
+    return {
+      save: this.state,
+      now: () => this.clock(),
+      rng: (key) => this.lootRng(key),
+      nextItemIndex: () => this.equipmentIndex++,
+      touch: () => this.touch(),
+    };
   }
 
   /** Relógio do jogo agora (para a UI contar recargas e tempo de luta). */

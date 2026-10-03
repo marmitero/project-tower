@@ -56,7 +56,7 @@ export function CreationScreen({ onSubmit }: { onSubmit: (result: CreationResult
           <h1 className="tia-creation__title">Convocação do Campeão</h1>
           <p className="tia-creation__lead">
             Quatro campeões juraram lealdade ao Reino — mas só <strong>um</strong> parte ao seu
-            lado agora (§10). Os outros aguardam ser encontrados pelo mundo.
+            lado agora. Os outros aguardam ser encontrados pelo mundo.
           </p>
 
           <fieldset className="tia-creation__skins">
@@ -122,7 +122,7 @@ export function CreationScreen({ onSubmit }: { onSubmit: (result: CreationResult
         <h1 className="tia-creation__title">Coroe o seu Rei</h1>
         <p className="tia-creation__lead">
           O Rei é você: a conta, o Reino e os seus campeões. Escolha um nome e uma aparência —
-          heróis são súditos, e é por eles que você luta (§8).
+          heróis são súditos, e é por eles que você luta.
         </p>
 
         <label className="tia-creation__label" htmlFor="tia-nickname">

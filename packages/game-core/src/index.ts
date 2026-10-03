@@ -261,3 +261,5 @@ export {
   rollGearSet,
 } from "./balance.js";
 export type { BossFightParams, BossFightResult, BossFightAverage, DuelParams, DuelResult, GearSet, DuelAverage, FloorPacing, FloorMatchup, HuntSimResult } from "./balance.js";
+export { createDebugTools, DEBUG_UNAVAILABLE } from "./debug.js";
+export type { DebugContext, DebugTools, LootTestReport } from "./debug.js";

@@ -283,7 +283,7 @@ export function InventoryScreen({ state, notify }: { state: GameState; notify: (
 
         {shown.length === 0 ? (
           <p className="tia-muted">
-            Nenhum equipamento{slot !== "all" ? " neste slot" : ""}. {(config.loot.equipmentChance * 100).toFixed(0)}% dos inimigos deixam drop (§32).
+            Nenhum equipamento{slot !== "all" ? " neste slot" : ""}. {(config.loot.equipmentChance * 100).toFixed(0)}% dos inimigos deixam drop.
           </p>
         ) : (
           <ul className="tia-items">

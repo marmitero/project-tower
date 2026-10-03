@@ -107,7 +107,7 @@ function BossCard({ state, def, canChallenge, why }: { state: GameState; def: Bo
         <strong>Recompensas por vitória</strong>
         <span className="tia-note">
           +{formatCompact(base.coins)} Coin · +{formatCompact(base.kingXp)} XP do Rei · +{formatCompact(base.heroXp)} XP de herói (dividido) ·{" "}
-          {def.rewards.equipment.rolls > 0 ? `${def.rewards.equipment.rolls} equipamento(s) garantido(s) (${rarityLabel(def.rewards.equipment.minRarity)} ou melhor)` : "sem equipamento"}
+          {def.rewards.equipment.rolls > 0 ? `${def.rewards.equipment.rolls} ${def.rewards.equipment.rolls === 1 ? "equipamento garantido" : "equipamentos garantidos"} (${rarityLabel(def.rewards.equipment.minRarity)} ou melhor)` : "sem equipamento"}
         </span>
         <ul className="tia-boss__frags">
           {def.rewards.fragments.map((f, i) => (

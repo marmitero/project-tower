@@ -6,7 +6,7 @@
  * estaria no lugar errado: em `game-core`, testável sem navegador.
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import { ActionButton, MissingAssetsWarning, Panel, ProgressBar, StatPill } from "@tia/ui";
 import { classes, config } from "@tia/config";
 import {
@@ -32,6 +32,10 @@ import { InventoryScreen, LootToasts } from "./InventoryScreen.js";
 import { MarketScreen } from "./MarketScreen.js";
 import { BossScreen, BossResultModal } from "./BossScreen.js";
 import { OfflineReportModal } from "./OfflineReportModal.js";
+import { DEBUG_ENABLED } from "./debug-flag.js";
+
+/** Debug Mode: só existe no bundle quando `VITE_DEBUG_MODE=true` (ver `debug-flag.ts`). */
+const DebugPanel = DEBUG_ENABLED ? lazy(() => import("./DebugPanel.js")) : null;
 
 type Screen = "king" | "heroes" | "tower" | "team" | "inventory" | "market" | "boss";
 
@@ -92,7 +96,7 @@ export function App() {
       });
       if (cancelled) return;
 
-      // Sem save não existe Rei (§5): `state: null` mostra a criação.
+      // Sem save não existe Rei: `state: null` mostra a criação.
       if (gameState) {
         setState(gameState);
         // ADR-026 — voltar ao jogo SIMULA o tempo fora (até 2 h Free) antes de o loop começar;
@@ -123,7 +127,7 @@ export function App() {
     };
   }, []);
 
-  /** Intenção de criação do Rei (§5). A regra mora em `createGame`. */
+  /** Intenção de criação do Rei. A regra mora em `createGame`. */
   const create = useCallback((result: CreationResult) => {
     void (async () => {
       const gameState = await createGame({
@@ -225,6 +229,12 @@ export function App() {
         </p>
       )}
 
+      {DebugPanel && (
+        <Suspense fallback={null}>
+          <DebugPanel state={state} />
+        </Suspense>
+      )}
+
       <nav className="tia-nav" aria-label="Navegação principal">
         {SCREENS.map((s) => (
           <ActionButton
@@ -305,7 +315,7 @@ function KingScreen({ state, onChangeSkin }: { state: GameState; onChangeSkin: (
         <div className="tia-king__facts">
           <p>
             <strong>{king.displayName}</strong> é a meta-personagem da sua conta. O Rei não entra no
-            combate: sua função é a conta, os slots e a progressão do Reino (§8, §46).
+            combate: sua função é a conta, os slots e a progressão do Reino.
           </p>
           <ProgressBar
             label={`Nível ${king.level}`}
@@ -351,8 +361,8 @@ function HeroesScreen({
   return (
     <Panel title={`Heróis (${roster.length})`}>
       <p className="tia-note">
-        Heróis são ilimitados (§13). Todo herói tem XP próprio, separado do Rei (§45).
-        Você começou com 1 campeão; os outros são obtidos pelo mundo (§10).
+        Heróis são ilimitados. Todo herói tem XP próprio, separado do Rei.
+        Você começou com 1 campeão; os outros são obtidos pelo mundo.
       </p>
       {roster.map((hero) => {
         const assigned = state.data.team.members.indexOf(hero.id);
@@ -393,7 +403,7 @@ function HeroesScreen({
       <h2 className="tia-codex__title">Códice de campeões</h2>
       <p className="tia-note">
         Os campeões ainda não recrutados aguardam ser encontrados — cada um com sua própria
-        história e raridade (§109).
+        história e raridade.
       </p>
       <div className="tia-codex">
         {codex.map((entry) => (
@@ -433,9 +443,9 @@ function TeamScreen({
   return (
     <Panel title="Equipe">
       <p className="tia-note">
-        A equipe é gerenciamento e progressão. Na Torre, apenas 1 herói luta por vez (§17/§79); no Boss,
-        a equipe inteira ataca junto (§24/§80). O XP de herói é dividido entre os membros da equipe:
-        quanto mais heróis, mais lento cada um evolui (§20).
+        A equipe é gerenciamento e progressão. Na Torre, apenas 1 herói luta por vez; no Boss,
+        a equipe inteira ataca junto. O XP de herói é dividido entre os membros da equipe:
+        quanto mais heróis, mais lento cada um evolui.
       </p>
       <div className="tia-slots">
         {([0, 1, 2] as const).map((index) => {
@@ -463,7 +473,7 @@ function TeamScreen({
                         <ActionButton
                           label={team.activeHeroId === hero.id ? "Ativo" : "Tornar ativo"}
                           variant={team.activeHeroId === hero.id ? "primary" : "secondary"}
-                          hint="Escolhe quem luta na Torre (§19)"
+                          hint="Escolhe quem luta na Torre"
                           onClick={() => {
                             try {
                               state.selectActiveHero(hero.id);
@@ -523,7 +533,7 @@ function TeamScreen({
       {unassigned.length > 0 && (
         <div className="tia-pool">
           <strong>Disponíveis</strong>
-          <p className="tia-muted">Escolha em qual slot cada herói entra (§19 — nada entra sozinho).</p>
+          <p className="tia-muted">Escolha em qual slot cada herói entra — nada entra sozinho.</p>
           {unassigned.map((h) => (
             <div className="tia-pool__row" key={h.id}>
               <span className="tia-pool__name">{h.name}</span>

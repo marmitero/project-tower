@@ -107,7 +107,7 @@ export function MissingAssetsWarning({ ids }: { ids: readonly string[] }) {
     <div className="tia-warn" role="alert">
       <strong>Assets de arte ausentes.</strong>
       <span>
-        O produto final não pode ser entregue assim (§62: sem quadrados, círculos ou emojis).
+        O produto final não pode ser entregue assim (sem quadrados, círculos ou emojis).
         Faltam: {ids.join(", ")}
       </span>
     </div>

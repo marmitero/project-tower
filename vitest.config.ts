@@ -28,6 +28,15 @@ export default defineConfig({
         },
       },
       {
+        // Fumaça de UI: monta o App real (React) em jsdom, com o canvas do Phaser trocado por um
+        // stub, e percorre todas as telas. Pega exceção de render que typecheck não vê.
+        test: {
+          name: "ui",
+          include: ["apps/*/src/**/*.test.tsx"],
+          environment: "jsdom",
+        },
+      },
+      {
         test: {
           name: "integration",
           include: ["tests/integration/**/*.test.ts"],

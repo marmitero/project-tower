@@ -882,3 +882,15 @@ body {
 .tia-boss__fragbox .tia-boss__frag { font-size: 15px; }
 .tia-boss__win { color: #ffd873; }
 .tia-boss__lose { color: #ff6e6e; }
+
+/* ---------------------------------------------------------------- Debug Mode (§77 — só desenvolvimento) */
+.tia-debug__toggle { position: fixed; left: 8px; bottom: calc(var(--touch) + 64px); z-index: 60; padding: 4px 10px; border-radius: 6px; border: 1px dashed var(--warn); background: #2a2210; color: var(--warn); font-size: 11px; font-weight: 700; letter-spacing: 1px; cursor: pointer; }
+.tia-debug { position: fixed; inset: 8px 8px calc(var(--touch) + 64px) 8px; z-index: 70; overflow: auto; max-width: 760px; margin: 0 auto; border: 2px dashed var(--warn); border-radius: 10px; background: var(--bg); box-shadow: 0 8px 40px #000c; }
+.tia-debug__group { margin: 8px 0; border: 1px solid var(--border); border-radius: 8px; padding: 8px; }
+.tia-debug__group legend { color: var(--warn); font-size: 12px; padding: 0 6px; }
+.tia-debug__row { display: flex; gap: 6px; flex-wrap: wrap; align-items: flex-end; margin-top: 6px; }
+.tia-debug__field { display: flex; flex-direction: column; gap: 2px; font-size: 11px; color: var(--muted); }
+.tia-debug__field input, .tia-debug__field select { background: var(--bg-2); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 6px; min-width: 110px; }
+.tia-debug__off { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
+.tia-debug__off li { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.tia-debug__log { margin: 8px 0 0; padding-left: 18px; font-size: 12px; color: var(--good); max-height: 120px; overflow: auto; }

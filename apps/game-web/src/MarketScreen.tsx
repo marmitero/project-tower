@@ -27,6 +27,8 @@ const rarityLabel = (r: ShopItemDef["rarity"]) => config.equipment.rarity[r].lab
 
 function describeEffect(item: ShopItemDef, maxHp: number): string | null {
   if (item.kind !== "consumable") return null;
+  // Sem herói ativo não há vida máxima para calcular o efeito.
+  if (maxHp <= 0 && item.effect.kind !== "healFlat") return item.effect.kind === "revivePct" ? `Revive o herói com ${Math.round(item.effect.pct * 100)}% da vida` : `Cura ${Math.round(item.effect.pct * 100)}% da vida máxima`;
   const amount = effectAmount(item.effect, maxHp);
   if (item.effect.kind === "revivePct") return `Revive com ${formatInt(amount)} de vida (herói ativo)`;
   return `+${formatInt(amount)} de vida (herói ativo)`;

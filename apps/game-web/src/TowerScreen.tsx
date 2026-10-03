@@ -118,28 +118,28 @@ export function TowerScreen({ state, searching }: { state: GameState; searching:
       {hunt?.kind === "defeated" && state.bot.autoReturnFromHub && (
         <p className="tia-note tia-note--bad" aria-live="polite">
           O herói caiu e está se recuperando no Hub: volta em {Math.ceil(state.hubRemainingMs() / 1000)} s e retoma o andar{" "}
-          {floor}. Nenhuma recompensa foi perdida (§26).
+          {floor}. Nenhuma recompensa foi perdida.
         </p>
       )}
 
       {hunt?.kind === "defeated" && !state.bot.autoReturnFromHub && (
         <p className="tia-note tia-note--bad">
           O herói caiu e a caçada terminou — nenhuma recompensa foi perdida, mas nada foi
-          creditado (§26). Recomeçar é uma sua decisão (o herói recupera o HP ao reiniciar,
-          se a cura estiver configurada — ADR-020).
+          creditado. Recomeçar é decisão sua (o herói recupera o HP ao reiniciar,
+          se a cura estiver configurada).
         </p>
       )}
 
       {hunt?.kind === "paused" && (
         <p className="tia-note">
           A caçada está em pausa para descanso: o herói recuperou o HP e o loop automático
-          ficou parado por sua conta. Retome quando quiser (§7.2).
+          ficou parado por sua conta. Retome quando quiser.
         </p>
       )}
 
       {!state.data.team.activeHeroId && (
         <p className="tia-muted">
-          Escolha um herói ativo. A Torre não escolhe por você (§19).
+          Escolha um herói ativo. A Torre não escolhe por você.
         </p>
       )}
 
