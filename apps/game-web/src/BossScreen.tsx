@@ -147,7 +147,7 @@ function BossCard({ state, def, canChallenge, why }: { state: GameState; def: Bo
 }
 
 /** A luta de chefe em curso: HP do chefe, fase, cronômetro e a equipe. */
-function LiveFight({ state }: { state: GameState }) {
+export function LiveFight({ state }: { state: GameState }) {
   const battle = state.activeBattle;
   if (!battle || battle.mode !== "boss") return null;
   const boss = battle.enemies[0];

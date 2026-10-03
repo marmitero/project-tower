@@ -9,9 +9,13 @@ export interface Settings {
   sfxEnabled: boolean;
   /** 0 a 1. */
   sfxVolume: number;
+  /** Painel de dados da caçada (sob o jogo) aberto? (ADR-031) */
+  statsOpen: boolean;
+  /** Chat lateral aberto? (ADR-031) */
+  chatOpen: boolean;
 }
 
-export const DEFAULT_SETTINGS: Readonly<Settings> = { sfxEnabled: true, sfxVolume: 0.4 };
+export const DEFAULT_SETTINGS: Readonly<Settings> = { sfxEnabled: true, sfxVolume: 0.4, statsOpen: true, chatOpen: true };
 export const SETTINGS_KEY = "tia:settings";
 
 type Store = Pick<Storage, "getItem" | "setItem">;
@@ -27,7 +31,13 @@ function defaultStore(): Store | null {
 export function sanitizeSettings(raw: unknown): Settings {
   const r = (raw && typeof raw === "object" ? raw : {}) as Partial<Record<keyof Settings, unknown>>;
   const vol = typeof r.sfxVolume === "number" && Number.isFinite(r.sfxVolume) ? Math.min(1, Math.max(0, r.sfxVolume)) : DEFAULT_SETTINGS.sfxVolume;
-  return { sfxEnabled: typeof r.sfxEnabled === "boolean" ? r.sfxEnabled : DEFAULT_SETTINGS.sfxEnabled, sfxVolume: vol };
+  const flag = (v: unknown, fallback: boolean) => (typeof v === "boolean" ? v : fallback);
+  return {
+    sfxEnabled: flag(r.sfxEnabled, DEFAULT_SETTINGS.sfxEnabled),
+    sfxVolume: vol,
+    statsOpen: flag(r.statsOpen, DEFAULT_SETTINGS.statsOpen),
+    chatOpen: flag(r.chatOpen, DEFAULT_SETTINGS.chatOpen),
+  };
 }
 
 let current: Settings | null = null;

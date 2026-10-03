@@ -184,6 +184,8 @@ export {
 } from "./hunt.js";
 
 export { GameState } from "./state.js";
+export { HuntLedger } from "./ledger.js";
+export type { LedgerDelta, LedgerRates } from "./ledger.js";
 export type { GameStateDeps, GameEvents, LootNotice, BotAction, BossResult } from "./state.js";
 export {
   BossBlockedError,

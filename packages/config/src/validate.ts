@@ -452,6 +452,8 @@ function collectCatalogErrors(): string[] {
     check(config.xp[who].levelCap >= 1, `xp.${who}.levelCap inválido`);
     errors.push(...curveErrors(`xp.${who}.curve`, config.xp[who].curve));
   }
+  check(config.hud.ledgerWindowMs >= 10_000, "hud.ledgerWindowMs deve ser >= 10000");
+  check(config.hud.ledgerWarmupMs >= 0 && config.hud.ledgerWarmupMs <= config.hud.ledgerWindowMs, "hud.ledgerWarmupMs deve estar em [0, ledgerWindowMs]");
   check(config.combat.defenseConstantPerLevel >= 0, "combat.defenseConstantPerLevel não pode ser negativo");
   check(
     config.combat.regenOnSearchingPctPerSec >= 0 && config.combat.regenOnSearchingPctPerSec <= 1,

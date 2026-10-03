@@ -70,6 +70,7 @@ import {
 } from "./shop.js";
 import { createBotSettings, normalizeBotSettings, patchBotSettings, type BotSettingsPatch } from "./bot.js";
 import { emptyReport, type OfflineReport } from "./offline.js";
+import { HuntLedger, type LedgerRates } from "./ledger.js";
 import {
   BossBlockedError,
   bossAvailability,
@@ -166,11 +167,15 @@ export class GameState {
   /** Último resultado de chefe, até o jogador fechar a tela de resultado. */
   private pendingBossResult: BossResult | null = null;
 
+  /** Livro-caixa da sessão (ADR-031): alimenta XP/h, Coin/h e Custo/h do painel de dados. */
+  readonly ledger = new HuntLedger();
+
   constructor(initial: SaveData, deps: GameStateDeps, listeners: GameEvents = {}) {
     this.state = initial;
     this.deps = deps;
     this.rngHub = new RngHub(deps.masterSeed);
     this.listeners = listeners;
+    this.ledger.start(this.clock());
   }
 
   // -------------------------------------------------------------------------
@@ -291,6 +296,16 @@ export class GameState {
 
   get revision(): number {
     return this.state.revision;
+  }
+
+  /** Taxas por hora da caçada (XP, Coin, Custo, Lucro) na janela móvel de `config.hud`. */
+  ledgerRates(): LedgerRates {
+    return this.ledger.rates(this.clock());
+  }
+
+  /** Zera a medição de XP/h, Coin/h e Custo/h (botão "Zerar" do painel de dados). */
+  resetLedger(): void {
+    this.ledger.start(this.clock());
   }
 
   get activeBattle(): BattleState | null {
@@ -532,7 +547,14 @@ export class GameState {
       this.simReport.kingXp += bundle.kingXp;
       this.simReport.heroXp += bundle.heroXp;
     }
-    this.applyRewards(bundle);
+    const { autoSoldCoins } = this.applyRewards(bundle);
+    if (!this.simulating) {
+      this.ledger.record(this.clock(), {
+        kingXp: Number(bundle.kingXp),
+        heroXp: Number(bundle.heroXp),
+        coins: Number(bundle.coins) + Number(autoSoldCoins),
+      });
+    }
     this.state.tower.bestFloor = Math.max(this.state.tower.bestFloor, floor);
     this.state.hunt = null;
     this.battle = null;
@@ -548,7 +570,7 @@ export class GameState {
    * pode impedir a Coin de ser creditada — o jogador não pode perder
    * recompensa por um limite de UI (⛔ P-016 é provisório).
    */
-  applyRewards(bundle: RewardBundle): void {
+  applyRewards(bundle: RewardBundle): { autoSoldCoins: bigint } {
     this.state.wallet.coins += bundle.coins;
     grantKingXp(this.state.king, bundle.kingXp);
 
@@ -584,6 +606,7 @@ export class GameState {
     }
 
     this.dirty = true;
+    return { autoSoldCoins: notices.reduce((sum, n) => (n.outcome === "autoSold" ? sum + n.price : sum), 0n) };
   }
 
   // -------------------------------------------------------------------------
@@ -896,7 +919,16 @@ export class GameState {
   // Bot (ADR-025)
   // -------------------------------------------------------------------------
 
+  /** ADR-031 — o item gasto vira CUSTO da caçada, no preço de mercado atual (só online). */
+  private noteCost(itemId: string): void {
+    if (this.simulating) return;
+    const item = shopItemById(itemId);
+    if (!item) return;
+    this.ledger.record(this.clock(), { cost: Number(itemPrice(item, this.state.king.level)) });
+  }
+
   private noteUse(itemId: string): void {
+    this.noteCost(itemId);
     if (this.simReport) this.simReport.itemsUsed[itemId] = (this.simReport.itemsUsed[itemId] ?? 0) + 1;
   }
 
@@ -1192,6 +1224,7 @@ export class GameState {
       throw new ShopError("bad_quantity", isRevive ? "O herói não está caído." : "O herói não precisa de cura.");
     }
     if (!spendOne(this.state.inventory, item.id)) throw new ShopError("none_owned", `Você não tem ${item.name}.`);
+    this.noteCost(item.id);
     const before = hero.currentHp;
     hero.currentHp = Math.min(max, before + effectAmount(item.effect, max));
     this.touch();

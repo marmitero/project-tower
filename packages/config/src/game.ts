@@ -8,6 +8,7 @@ import type {
   XpConfig,
   TeamConfig,
   SearchingConfig,
+  HudConfig,
   CombatConfig,
   EconomyConfig,
   InventoryConfig,
@@ -143,6 +144,9 @@ export const loot: LootConfig = defaultLoot();
 // §27/§28/§29 — Estado Procurando
 // ---------------------------------------------------------------------------
 
+/** ADR-031 — janela de 10 min para XP/h, Coin/h e Custo/h; "medindo…" no primeiro minuto. */
+export const hud: HudConfig = { ledgerWindowMs: 10 * 60_000, ledgerWarmupMs: 60_000 };
+
 export const searching: SearchingConfig = {
   // §27 — "aproximadamente 3 segundos". Exemplos do MP: 2.7s / 3.0s / 3.2s.
   minMs: 2_700,
@@ -270,6 +274,7 @@ export const config: GameConfig = {
   team,
   xp,
   loot,
+  hud,
   searching,
   combat,
   economy,

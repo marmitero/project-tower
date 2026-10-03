@@ -16,7 +16,6 @@ import {
   heroProgress,
   heroPower,
   heroCombatStats,
-  searchingProgress,
   slotRequirement,
   teamHeroes,
 } from "@tia/game-core";
@@ -34,6 +33,10 @@ import { MarketScreen } from "./MarketScreen.js";
 import { BossScreen, BossResultModal } from "./BossScreen.js";
 import { SettingsScreen } from "./SettingsScreen.js";
 import { nextStep } from "./guide.js";
+import { HuntPanel, HuntToggle } from "./HuntPanel.js";
+import { TeamPanel } from "./TeamPanel.js";
+import { ChatPanel } from "./ChatPanel.js";
+import { getSettings, updateSettings } from "./settings.js";
 import { OfflineReportModal } from "./OfflineReportModal.js";
 import { DEBUG_ENABLED } from "./debug-flag.js";
 
@@ -56,7 +59,10 @@ const SCREENS: { id: Screen; label: string }[] = [
 export function App() {
   const [state, setState] = useState<GameState | null>(null);
   const [ready, setReady] = useState(false);
-  const [screen, setScreen] = useState<Screen>("king");
+  /** `null` = nenhuma tela aberta: a arena fica livre (ADR-031). */
+  const [screen, setScreen] = useState<Screen | null>(null);
+  const [statsOpen, setStatsOpen] = useState(() => getSettings().statsOpen);
+  const [chatOpen, setChatOpen] = useState(() => getSettings().chatOpen && !window.matchMedia?.("(max-width: 959px)").matches);
   const [now, setNow] = useState(() => Date.now());
   const [manifest, setManifest] = useState<AssetManifest | null>(null);
   const loopRef = useRef<LoopHandle | null>(null);
@@ -218,37 +224,73 @@ export function App() {
   const hunt = data.hunt;
   // `useMemo` não serve: o estado é mutado no lugar e o guia lê dados que mudam sem trocar a referência.
   const guide = nextStep(state);
-  const searching = hunt?.kind === "searching" ? searchingProgress(hunt, now) : 0;
+
+  const fighting = state.activeBossId !== null;
+  const open = (id: Screen) => setScreen((cur) => (cur === id ? null : id));
+  const toggleStats = () =>
+    setStatsOpen((v) => {
+      updateSettings({ statsOpen: !v });
+      return !v;
+    });
+  const toggleChat = () =>
+    setChatOpen((v) => {
+      updateSettings({ chatOpen: !v });
+      return !v;
+    });
 
   return (
-    <div className="tia-app">
+    <div className="tia-app tia-app--game">
+      <nav className="tia-nav" aria-label="Navegação principal">
+        {SCREENS.map((s) => (
+          <ActionButton key={s.id} label={s.label} variant={screen === s.id ? "primary" : "secondary"} onClick={() => open(s.id)} />
+        ))}
+      </nav>
+
       <Hud state={state} />
 
       {manifest && manifest.missing.length > 0 && <MissingAssetsWarning ids={manifest.missing} />}
 
-      <BattleCanvas source={battleSource} />
+      {guide && screen !== "options" && (
+        <aside className="tia-guide" aria-label="Próximo passo">
+          <p className="tia-guide__text">
+            <span className="tia-guide__tag">Próximo passo</span>
+            {guide.text}
+          </p>
+          {screen !== guide.screen && <ActionButton label={`Ir para ${guide.go}`} variant="secondary" onClick={() => setScreen(guide.screen)} />}
+        </aside>
+      )}
 
-      <main className="tia-main">
-        {guide && screen !== "options" && (
-          <aside className="tia-guide" aria-label="Próximo passo">
-            <p className="tia-guide__text">
-              <span className="tia-guide__tag">Próximo passo</span>
-              {guide.text}
-            </p>
-            {screen !== guide.screen && (
-              <ActionButton label={`Ir para ${guide.go}`} variant="secondary" onClick={() => setScreen(guide.screen)} />
+      <div className={`tia-stage${chatOpen ? "" : " tia-stage--nochat"}`}>
+        <TeamPanel state={state} onManage={() => setScreen("team")} />
+
+        <section className="tia-center" aria-label="Jogo">
+          <div className="tia-gamebox">
+            <BattleCanvas source={battleSource} />
+            {!fighting && <HuntToggle open={statsOpen} onToggle={toggleStats} />}
+            {screen && !fighting && (
+              <div className="tia-overlay" role="region" aria-label={SCREENS.find((x) => x.id === screen)?.label}>
+                <header className="tia-overlay__head">
+                  <h2>{SCREENS.find((x) => x.id === screen)?.label}</h2>
+                  <ActionButton label="Fechar" variant="secondary" onClick={() => setScreen(null)} />
+                </header>
+                <main className="tia-main">
+                  {screen === "king" && <KingScreen state={state} onChangeSkin={changeSkin} />}
+                  {screen === "heroes" && <HeroesScreen state={state} onAssign={assign} />}
+                  {screen === "team" && <TeamScreen state={state} onAssign={assign} />}
+                  {screen === "inventory" && <InventoryScreen state={state} notify={showMessage} />}
+                  {screen === "market" && <MarketScreen state={state} notify={showMessage} />}
+                  {screen === "tower" && <TowerScreen state={state} />}
+                  {screen === "boss" && <BossScreen state={state} />}
+                  {screen === "options" && <SettingsScreen state={state} notify={showMessage} onBeforeReplace={stopLoop} />}
+                </main>
+              </div>
             )}
-          </aside>
-        )}
-        {screen === "king" && <KingScreen state={state} onChangeSkin={changeSkin} />}
-        {screen === "heroes" && <HeroesScreen state={state} onAssign={assign} />}
-        {screen === "team" && <TeamScreen state={state} onAssign={assign} />}
-        {screen === "inventory" && <InventoryScreen state={state} notify={showMessage} />}
-        {screen === "market" && <MarketScreen state={state} notify={showMessage} />}
-        {screen === "tower" && <TowerScreen state={state} searching={searching} />}
-        {screen === "boss" && <BossScreen state={state} />}
-        {screen === "options" && <SettingsScreen state={state} notify={showMessage} onBeforeReplace={stopLoop} />}
-      </main>
+          </div>
+          {(statsOpen || fighting) && <HuntPanel state={state} now={now} />}
+        </section>
+
+        <ChatPanel selfName={data.king.nickname} open={chatOpen} onToggle={toggleChat} />
+      </div>
 
       {state.bossResult && (
         <BossResultModal
@@ -256,7 +298,7 @@ export function App() {
           onClose={() => {
             // Fim da atividade: o jogador volta ao Reino, não à Torre (ADR-027).
             state.dismissBossResult();
-            setScreen("king");
+            setScreen(null);
           }}
         />
       )}
@@ -273,17 +315,6 @@ export function App() {
           <DebugPanel state={state} />
         </Suspense>
       )}
-
-      <nav className="tia-nav" aria-label="Navegação principal">
-        {SCREENS.map((s) => (
-          <ActionButton
-            key={s.id}
-            label={s.label}
-            variant={screen === s.id ? "primary" : "secondary"}
-            onClick={() => setScreen(s.id)}
-          />
-        ))}
-      </nav>
     </div>
   );
 }

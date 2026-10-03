@@ -183,27 +183,27 @@ export function buildDefaultFloors(): FloorDef[] {
 
 /**
  * Curvas de recompensa (ADR-021) — calibradas por `towerPacing()`
- * (`docs/TOWER_SYSTEM.md` §7; ciclo luta+procura ≈15 s): ≈1.360 h de jogo ativo do Nv 1 ao 20.000.
- * Recompensa por abate cresce com o nível do inimigo; o XP necessário cresce
- * mais rápido que a recompensa, e é isso que desacelera a progressão.
+ * (`docs/TOWER_SYSTEM.md` §7; ciclo luta+procura+premiação ≈25 s). ADR-031: Nv 1→100 ≈ 24 h de jogo
+ * ativo; Nv 1.000 ≈ 130 h; Nv 20.000 ≈ 770 h. A recompensa por abate cresce com o nível do inimigo
+ * (expoente 0,98 ≈ linear); o XP necessário cresce com expoente 0,644 (curva "reduzida").
  */
 export function defaultTowerRewards(): TowerRewardsConfig {
   return {
-    kingXp: { kind: "power", base: 50, exponent: 0.95, offset: 3 },
-    heroXp: { kind: "power", base: 50, exponent: 0.95, offset: 3 },
+    kingXp: { kind: "power", base: 50, exponent: 0.98, offset: 3 },
+    heroXp: { kind: "power", base: 50, exponent: 0.98, offset: 3 },
     // ⛔ P-008 provisório: linear no nível do inimigo (o preço de slot 50k/250k é provisório).
     coins: { kind: "power", base: 12, exponent: 1, offset: 3 },
   };
 }
 
 /**
- * Curva de XP padrão (P-009/ADR-021): XP para sair do nível N =
- * floor(20 × (N + 30)^1,35). Offset 30 suaviza o início (andar 1 ≈ 30 min);
- * expoente > 1 faz cada nível custar mais que o anterior. Rei e herói usam a
- * mesma curva (pools continuam separados).
+ * Curva de XP padrão (P-009/ADR-021, refeita no ADR-031): XP para sair do nível N =
+ * floor(4300 × N^0,644). Base alta + expoente baixo = o início é lento (≈ 24 h até o Nv 100) e a curva
+ * "achata" depois (o jogo todo fecha em ≈ 770 h em vez de ≈ 1.360 h). Rei e herói usam a mesma curva
+ * (pools continuam separados).
  */
 export function defaultXpCurve(): CurveDef {
-  return { kind: "power", base: 14, exponent: 1.35, offset: 30 };
+  return { kind: "power", base: 4300, exponent: 0.644, offset: 0 };
 }
 
 /** Multiplicadores globais de dificuldade — calibrados por `balance.ts` (ver ADR-021). */

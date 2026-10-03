@@ -296,8 +296,17 @@ export interface InventoryConfig {
 // Configuração completa
 // ---------------------------------------------------------------------------
 
+/** Painel de dados da caçada (ADR-031): janela das taxas por hora (XP/h, Coin/h, Custo/h). */
+export interface HudConfig {
+  /** Janela móvel (ms) usada para calcular as taxas por hora. */
+  ledgerWindowMs: number;
+  /** Antes disto (ms desde o início da contagem) a UI avisa "medindo…" em vez de mostrar a taxa. */
+  ledgerWarmupMs: number;
+}
+
 export interface GameConfig {
   configVersion: number;
+  hud: HudConfig;
   account: AccountConfig;
   team: TeamConfig;
   xp: XpConfig;

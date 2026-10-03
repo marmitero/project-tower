@@ -26,7 +26,7 @@ describe("settings", () => {
   it("updateSettings grava e notifica; sem storage só vale na sessão", () => {
     const store = memStore();
     const next = updateSettings({ sfxEnabled: false, sfxVolume: 0.8 }, store);
-    expect(next).toEqual({ sfxEnabled: false, sfxVolume: 0.8 });
+    expect(next).toEqual({ ...DEFAULT_SETTINGS, sfxEnabled: false, sfxVolume: 0.8 });
     expect(JSON.parse(store.m.get(SETTINGS_KEY) as string)).toEqual(next);
     expect(updateSettings({ sfxVolume: 0.2 }, null).sfxVolume).toBe(0.2);
   });
