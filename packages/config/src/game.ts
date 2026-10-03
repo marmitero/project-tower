@@ -269,7 +269,7 @@ export const tower: TowerConfig = {
  * item só com a memória de outra zona hora vira lixo silenciosamente.
  */
 export const config: GameConfig = {
-  configVersion: 7,
+  configVersion: 8,
   account,
   team,
   xp,

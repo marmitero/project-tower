@@ -775,3 +775,31 @@ do repo de origem (só o OpenRpg como referência técnica, quando necessário).
 **Alternativas rejeitadas:** (a) só dobrar T₀ — as lutas ficariam ≈ 30 s e o desgaste cairia pela metade (menos golpes do inimigo); (b) tirar a regen por completo — faria o 1º minuto de jogo inviável sem poção; (c) IAS de item por nível *linear* — o nível 500 já seria rápido demais; a curva em potência 0,35 segura o meio do jogo; (d) deixar os chefes herdarem a Torre — acoplamento invisível.
 
 **Consequências:** `combat.baseActionIntervalMs`, `attributes.ts`, `equipment.ts` (`attackSpeedLevelCurve`, unidade), `gear.ts` (`attackSpeedLevelFactor`), `tower.ts` (dificuldade, curva de XP), `boss.ts`/`game-core/boss.ts` (`towerReference`), `configVersion` 7; testes `game-core/combat-pace` (novo), `tower-balance` (sustentabilidade reescrita: sem poção cai; Celestial aguenta), `engine/formula`, `engine/heal-revive`; `docs/BALANCE_REPORT.md` regenerado. **Pendente do usuário:** jogar e dizer se o desgaste está duro/leve (alavancas: `enemyAttackMultiplier`, `regenOnSearchingPctPerSec`, `bot.defaults.autoPotion.hpBelowPct`) e se o ataque de 2 s agrada (`baseActionIntervalMs`).
+
+### ADR-031 — HUB em 3 colunas, painel de dados com XP/h·Coin/h·Custo/h e curva de XP com Nv 1→100 ≈ 24 h (pós-FASE 13)
+
+**Data:** 2026-10-03 · **Status:** ✅ Aceita · **Tipo:** B/C (balanceamento + UI; tudo em config) · **Pedido:** *navegação no topo; jogo no centro; equipe à esquerda; chat global (simulado) à direita; sem rolar a página; o painel grande sob o jogo vira um painel pequeno ocultável por botão no canto do jogo, com XP/h, Coin/h e Custo/h; reduzir a curva de XP: Nv 1→100 ≈ 24 h (não 24 h a cada 100 níveis), de modo que um herói Nv 1000 já seja valioso.*
+
+**Decisão — layout.**
+
+1. **Navegação (8 abas) no topo**, acima da barra de XP do Rei. O palco é uma grade `equipe | jogo | chat` com `100dvh`; o canvas Phaser preenche a caixa do jogo (modo RESIZE).
+2. **Telas abrem como overlay sobre o jogo** (com "Fechar"; a aba ativa fecha), para a página não rolar: rolagem só dentro do overlay. Estado inicial: nenhuma tela aberta (arena livre). Em luta de chefe o overlay se retira e o painel mostra a luta.
+3. **Painel de dados** (`HuntPanel`) compacto sob o jogo, ocultável por botão no canto da arena (`statsOpen` em `tia:settings`). `TowerScreen` perdeu os dados duplicados (ficam inimigos do andar, controles — extraídos para `HuntControls` —, Bot e lista de andares).
+4. **Equipe à esquerda** (`TeamPanel`; cards são `div`s, "Gerenciar" abre a tela). **Chat à direita**, recolhível (`chatOpen`).
+5. **Chat simulado atrás de `ChatTransport`** (`chat.ts`): `docs/CHAT_SYSTEM.md` §2 proíbe chat falso como solução final; aqui é uma **exceção declarada e temporária** — a UI mostra "simulado — offline", os "jogadores" são fixos, o histórico nasce com um aviso do sistema, a validação (140 caracteres, 1 mensagem/2 s, sem caracteres de controle) é provisória (P-043) e o texto é sempre renderizado como texto. O chat real entra trocando `createChatTransport`.
+6. **Telas estreitas:** coluna única; chat em faixa inferior; overlay em tela cheia.
+
+**Decisão — taxas por hora.** `HuntLedger` (`packages/game-core/src/ledger.ts`) recebe do `GameState`: XP do Rei, XP de herói e Coin (recompensa + venda automática de drop) a cada luta vencida, e **custo** a cada consumível usado (Bot ou manual; preço de mercado do momento = `itemPrice(item, nível do Rei)`). Janela móvel `config.hud.ledgerWindowMs` (10 min), aquecimento `ledgerWarmupMs` (60 s; divisor mínimo de 1 min para não exibir "milhões/h"). Não vai para o save (medida da sessão); simulação offline não registra. "Zerar medição" reinicia.
+
+**Decisão — curva de XP (`packages/config/src/tower.ts`).**
+
+| | Antes (ADR-030) | Agora |
+|---|---|---|
+| XP para sair do nível N (Rei e herói) | `14·(N+30)^1,35` | **`4300·N^0,644`** (potência pura, offset 0) |
+| XP por abate (Rei e herói) | `50·(E+3)^0,95` | `50·(E+3)^0,98` |
+
+Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por ajuste dos 3 parâmetros às âncoras do pedido. Tempo acumulado do Rei: **Nv 10 3,8 h · Nv 25 8,2 h · Nv 50 14,1 h · Nv 100 23,8 h · Nv 250 50 h · Nv 500 80 h · Nv 1.000 127 h · Nv 2.500 222 h · Nv 5.000 362 h · Nv 10.000 ≈ 520 h · Nv 20.000 759 h** (era ≈ 1.363 h; Nv 100 era ≈ 2,4–3,5 h). Interpretação adotada de "reduzir a curva": **achatar o crescimento de longo prazo** (total −44 %) e deixar o início MAIS LENTO (Nv 1→100 em 24 h); o tempo acumulado sempre cresce, mas o tempo por 100 níveis cai conforme o Rei avança (efeito inevitável de "24 h para os primeiros 100 e não a cada 100"). Se o jogador quiser o Nv 100 mais cedo ou o Nv 1.000 mais tarde, a alavanca é a base/expoente (3 números). Consequência prevista: slots 2 e 3 abrem em ≈ 3,8 h e ≈ 8,2 h.
+
+**Alternativas rejeitadas:** (a) manter o painel grande com "ocultar" — não resolve a rolagem; (b) chat só com uma caixa vazia — não valida a UX nem o contador de não lidas; (c) o `HuntLedger` gravado no save — taxa de sessão não é progresso e inflaria o save; (d) curva por trechos (tabela) — o tipo `CurveDef` só tem potência; ficou como upgrade futuro anotado em `TOWER_SYSTEM.md` §7.1.
+
+**Consequências:** `GameConfig.hud` (+ validação), `configVersion` **8** (saves antigos migram sem reescrita; o XP em curso dentro do nível é preservado), `GameState.ledgerRates()/resetLedger()`, novos `HuntPanel`, `HuntControls`, `TeamPanel`, `ChatPanel`, `chat.ts`; `App` reorganizado; testes: `ledger.test.ts`, `chat.test.ts`, 5 de layout no `ui-smoke`, `tower-balance` reescrito (âncoras 24 h/127 h/759 h), `browser-smoke` agora afirma o layout (nav acima da barra de XP, jogo entre equipe e chat, dados sob o jogo, página sem rolagem em 1366×768). Pendente: `hud` ainda não faz parte do ContentPack (editável só em `game.ts`); entra com o Painel ADM.

@@ -85,6 +85,12 @@ Você deve ver a tela **“Coroe o seu Rei”**. Se viu, está tudo certo: o CSS
 - **Nova versão do jogo:** baixe um zip novo e extraia em **outra** pasta. O save continua (está no navegador, não na pasta).
   Antes, por segurança, baixe a cópia do save.
 
+### Recomeçar do zero (resetar o save)
+
+1. **Pelo jogo (recomendado):** aba **Opções → Seu progresso → Apagar progresso e recomeçar → “Sim, apagar tudo”**. O jogo guarda uma cópia de segurança (dá para voltar com **Restaurar a cópia anterior**), recarrega e abre a criação do Rei. O som e a visibilidade dos painéis (preferências) são mantidos.
+2. **Manual (sem backup):** com o jogo aberto aperte **F12 → Console** e rode `localStorage.removeItem("tia:save:local")`, depois **F5**. Para limpar TUDO do jogo (save, cópia e preferências): `localStorage.clear()`.
+3. **Por navegador:** o save é por endereço (`http://localhost:5173`; outra porta = outro save). Limpar “dados de sites” desse endereço também zera.
+
 ## 7. Se algo der errado
 
 | O que aconteceu | O que fazer |

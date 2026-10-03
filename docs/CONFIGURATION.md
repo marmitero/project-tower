@@ -252,7 +252,7 @@ Tudo é validado (`marketErrors`, `botErrors`, `offlineErrors`) com o caminho do
 | ID | Chave | Valor | Fonte |
 |---|---|---|---|
 | `xp.king.levelCap` | Teto nível do Rei | ✅ **20.000** (P-009, ADR-021) | §46 |
-| `xp.king.requiredPerLevel` | Curva | ✅ `floor(14·(N+30)^1,35)` (ADR-030; era 20·) | §46 |
+| `xp.king.requiredPerLevel` | Curva | ✅ `floor(4300·N^0,644)` (ADR-031; era 14·(N+30)^1,35) | §46 |
 | `xp.hero.levelCap` | Teto nível do herói | ✅ **20.000** | §9 |
 | `xp.hero.requiredPerLevel` | Curva | ✅ idêntica à do Rei (pools separados) | §9 |
 | `xp.separatePools` | Rei e herói independentes | **true** | §45 (Tipo A) |

@@ -25,6 +25,7 @@ FASE 12 ✅ Boss              ← CONCLUÍDA (ADR-027; chefes 100% dado, número
 FASE 13 ✅ MVP LOCAL        ← CONCLUÍDA (ADR-028; MVP local jogável — `docs/MVP_ACCEPTANCE.md`)
   ↳ pós-13 ✅ Batalha visível: arena, caminhada, VFX, correção da tela preta (ADR-029)
   ↳ pós-13 ✅ Rebalanceamento: ataque ≈ 2 s, desgaste/poções, IAS por nível de item (ADR-030)
+  ↳ pós-13 ✅ HUB em 3 colunas, painel de dados (XP/h·Coin/h·Custo/h), chat simulado, curva de XP Nv100 ≈ 24 h (ADR-031)
 FASE 14 ⬜ Painel Admin      (pós-MVP — docs/ADMIN_PANEL.md, ADR-022)
 Online ⬜ → Social ⬜ → Market ⬜ → PvP ⬜ → Monetização ⬜ → Polish ⬜ → Beta ⬜ → Lançamento
 ```

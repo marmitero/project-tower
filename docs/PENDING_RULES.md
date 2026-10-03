@@ -516,11 +516,11 @@ na banca do pack, fora do catálogo.
 **Criticidade:** 🟡 ALTA · **Bloqueava:** FASE 3/4
 
 > **RESOLVIDA em 2026-10-03** (ADR-021): **teto 20.000** (Rei e heróis);
-> XP necessário `floor(14·(N+30)^1,35)` (Rei e herói; pools separados; era `20·` até o ADR-030);
-> XP por abate `floor(50·(E+3)^0,95)`, E = nível do inimigo. Curvas são **dado**
-> (`CurveDef`), editáveis sem código. Ritmo medido: **≈ 1.360 h** de jogo ativo
-> até o Nv 20.000 (andar 1 ≈ 30 min; andar 10 ≈ 168 h; andares 11–40 ≈ 27–44 h
-> cada). Slots 2 (Rei Nv 10) e 3 (Rei Nv 25) abrem em ≈ 54 min e ≈ 1,4 h
+> XP necessário `floor(4300·N^0,644)` (Rei e herói; pools separados; ADR-031 — Nv 1→100 ≈ 24 h);
+> XP por abate `floor(50·(E+3)^0,98)`, E = nível do inimigo. Curvas são **dado**
+> (`CurveDef`), editáveis sem código. Ritmo medido (ADR-031): **≈ 760 h** de jogo ativo
+> até o Nv 20.000 (Nv 100 ≈ 24 h; Nv 1.000 ≈ 127 h; andar 10 ≈ 139 h; pináculos ≈ 11–18 h
+> cada). Slots 2 (Rei Nv 10) e 3 (Rei Nv 25) abrem em ≈ 3,8 h e ≈ 8,2 h
 > (sem contar a Coin: ver P-003). Ver `TOWER_SYSTEM.md` §7 e `BALANCE_REPORT.md`.
 
 O §45 separa XP do Rei e do herói, mas não definia as curvas.
@@ -604,6 +604,8 @@ O §7 exige arquitetura para provedores futuros, mas não diz quais.
 O §50 exige "limite de caracteres" e "rate limit", mas **não dá os números**.
 
 **Decisão precisa de:** caracteres máximos, mensagens por janela, burst.
+
+> **Provisório no cliente (ADR-031):** o chat SIMULADO usa 140 caracteres e 1 mensagem a cada 2 s (`apps/game-web/src/chat.ts`, `CHAT_LIMITS`). É só para a UX; o valor real é do servidor.
 
 ---
 

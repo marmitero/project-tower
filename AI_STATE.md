@@ -428,7 +428,7 @@ editar `config/src/heroes.ts`.
 ### Fase 7 — Torre (ADR-021/022, 2026-10-03)
 
 - **Andares:** `config.tower.floors` (40, `FloorDef`): faixas 1–10, 10–25, 25–50, 50–100, 100–250, 250–500, 500–1000, 1000–1500, 1500–2500, 2500–5000 e **1 andar por 500 níveis até 20.000**. **Nível do inimigo = nível-base da faixa**; gate = nível do Rei (`TowerLockedError`, `highestUnlockedFloor`). Seleção manual na `TowerScreen`.
-- **Teto 20.000** (Rei e heróis). XP necessário `floor(20·(N+30)^1,35)`; XP/abate `floor(50·(E+3)^0,95)`; Coin/abate `floor(12·(E+3))` (⛔ P-008 provisória). **≈ 1.362 h** até o teto; andar 10 ≈ 168 h (gargalo, R-03).
+- **Teto 20.000** (Rei e heróis). XP necessário `floor(4300·N^0,644)` e XP/abate `floor(50·(E+3)^0,98)` (ADR-031; era 20·(N+30)^1,35); Coin/abate `floor(12·(E+3))` (⛔ P-008 provisória). **≈ 759 h** até o teto; Nv 100 ≈ 24 h; andar 10 ≈ 139 h (gargalo, R-03).
 - **Inimigos:** 11 (`packages/config/src/enemies.ts`), 6 atributos + papel (tank/dps/swift/caster/balanced/elite) + dano físico/mágico; pool por andar com sorteio determinístico. `boss`/`slimeking` reservados à Fase 12.
 - **Engine:** defesa `K = 100 + 5×(nível−1)`; regen 5%/s em PROCURANDO; `attack = FOR×1,0 + DES×0,3`; Arqueiro FOR 24/DES 24. Calibração global `tower.enemyHpMultiplier 2,5 / enemyAttackMultiplier 0,05`. `configVersion` 3.
 - **Admin-Ready (ADR-022):** `exportContentPack`/`validateContentPack`/`applyContentPack`/`defaultContentPack`/`resetContentToDefaults` em `packages/config/src/content.ts`. **Regra para as Fases 9–12:** todo conteúdo novo = dado serializável + validável + dentro do `ContentPack` + teste de round-trip. Painel = FASE 14 (`docs/ADMIN_PANEL.md`), **não implementar antes do MVP**.
@@ -467,6 +467,14 @@ editar `config/src/heroes.ts`.
 - **Calibração por tamanho de equipe** (`BALANCE_REPORT.md`, seção "Chefes da Arena"): chefe 1 vence com 1 herói; chefe 2 com 2; chefes 3–8 exigem 3 heróis no nível do chefe. Nível do chefe ≈ nível do Rei exigido × f(n) (f = 1 / 0,74 / 0,63).
 - Testes: `engine/boss-battle` (16), `game-core/boss` (33), `config/boss-content` (12), assets dos chefes (integração), migração de save v5→v6. Suíte completa verde.
 - **Cuidados:** a tentativa é consumida ao ENTRAR; `GameState.clock()` em toda marca de tempo; recalibrar chefes se mexer em IAS/equipamento/XP (`npm run report:balance -- --md`).
+
+### Pós-Fase 13 — HUB em 3 colunas, painel de dados e curva de XP (ADR-031, 2026-10-03)
+
+- **Pedido:** nav no topo, jogo no centro, equipe à esquerda, chat (simulado) à direita, sem rolar a página; painel de dados pequeno e ocultável sob o jogo com XP/h·Coin/h·Custo/h; curva de XP com Nv 1→100 ≈ 24 h.
+- **Agora:** `App.tsx` = `nav` + `Hud` + faixa do guia + `.tia-stage` (`TeamPanel` | `.tia-gamebox` com `BattleCanvas`, overlay das telas e `HuntToggle` + `HuntPanel` | `ChatPanel`). `screen` começa `null`; aba ativa fecha. Preferências `statsOpen`/`chatOpen` em `tia:settings`. `HuntLedger` (`game-core/ledger.ts`, janela `config.hud`) alimentado por `settleBattle` e `noteCost` (consumíveis). `chat.ts` = `ChatTransport` + simulado (exceção temporária ao "chat falso" do `CHAT_SYSTEM.md`).
+- **Curva:** `xpToLeave = 4300·N^0,644`; XP/abate `50·(E+3)^0,98`. Nv 100 ≈ 23,8 h · Nv 1.000 ≈ 127 h · Nv 20.000 ≈ 759 h. `configVersion` 8.
+- **Testes:** `ledger.test.ts`, `chat.test.ts`, bloco de layout no `ui-smoke`, `tower-balance` (âncoras), `browser-smoke` (layout em 1366×768).
+- **Cuidados:** botões de slot da coluna esquerda NÃO podem se chamar "Slot N" (colidem com a Equipe); `HuntPanel` lê `state.ledgerRates()` a cada tick; o guia aponta "Tornar ativo" (existe no painel e na tela Equipe); `hud` ainda fora do ContentPack.
 
 ### Pós-Fase 13 — Rebalanceamento: ritmo e desafio do combate (ADR-030, 2026-10-03)
 

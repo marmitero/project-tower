@@ -42,7 +42,7 @@ try {
 
 const executablePath = process.env.CHROME ?? (await chromium.default.executablePath());
 const launchArgs = chromium ? [...chromium.default.args, "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"] : [];
-const browser = await puppeteer.launch({ executablePath, args: launchArgs, headless: "shell", defaultViewport: { width: 1000, height: 900 } });
+const browser = await puppeteer.launch({ executablePath, args: launchArgs, headless: "shell", defaultViewport: { width: 1366, height: 768 } });
 const page = await browser.newPage();
 const problems = [];
 page.on("pageerror", (e) => problems.push(`pageerror: ${e.message}`));
@@ -60,10 +60,40 @@ const click = (t) =>
 
 await page.goto(URL_, { waitUntil: "networkidle0" });
 await page.type("input", "Dom_Teste");
-for (const step of ["Escolher campeão", "Convocar", "Equipe", "Slot 1", "Tornar ativo", "Torre"]) {
+for (const step of ["Escolher campeão", "Convocar", "Equipe", "Slot 1", "Tornar ativo", "Torre", "Fechar"]) {
   if (!(await click(step))) problems.push(`botão ausente: ${step}`);
   await sleep(250);
 }
+
+// Layout do HUB (ADR-031): tudo cabe na tela, o jogo fica ENTRE a equipe e o chat, a nav fica no topo.
+const layout = await page.evaluate(() => {
+  const r = (sel) => document.querySelector(sel)?.getBoundingClientRect() ?? null;
+  const box = (b) => b && { x: Math.round(b.x), y: Math.round(b.y), w: Math.round(b.width), h: Math.round(b.height) };
+  return {
+    scrollH: document.documentElement.scrollHeight,
+    innerH: window.innerHeight,
+    scrollW: document.documentElement.scrollWidth,
+    innerW: window.innerWidth,
+    nav: box(r(".tia-nav")),
+    hud: box(r(".tia-hud")),
+    team: box(r(".tia-teampanel")),
+    game: box(r(".tia-gamebox")),
+    chat: box(r(".tia-chat")),
+    hunt: box(r(".tia-hunt")),
+  };
+});
+console.log("layout:", JSON.stringify(layout));
+const L = layout;
+if (!L.nav || !L.hud || !L.team || !L.game || !L.chat || !L.hunt) problems.push("layout: faltam blocos do HUB");
+else {
+  if (L.nav.y > L.hud.y) problems.push("layout: a navegação não está acima da barra de XP");
+  if (!(L.team.x + L.team.w <= L.game.x + 1 && L.game.x + L.game.w <= L.chat.x + 1)) problems.push("layout: o jogo não está entre a equipe e o chat");
+  if (L.hunt.y < L.game.y + L.game.h - 1) problems.push("layout: o painel de dados não está sob o jogo");
+  if (L.scrollH > L.innerH + 4) problems.push(`layout: a página rola na vertical (${L.scrollH} > ${L.innerH})`);
+  if (L.scrollW > L.innerW + 4) problems.push("layout: a página rola na horizontal");
+  if (L.game.h < 250) problems.push(`layout: o jogo ficou pequeno (${L.game.h}px de altura)`);
+}
+await page.screenshot({ path: join(OUT, "layout.png") });
 
 const seen = { walked: false, fought: false, bothSprites: false, maxDistance: 0, themes: new Set() };
 for (let i = 0; i < 40; i += 1) {

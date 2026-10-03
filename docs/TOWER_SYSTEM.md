@@ -266,34 +266,34 @@ Equipamento     ──→  poder de combate, com Nota e Poder independentes (§3
 
 | Curva | Fórmula | Parâmetros padrão |
 |---|---|---|
-| XP necessário (Rei e herói) para sair do nível N | `floor(base × (N + offset)^expoente)` | base 20 · offset 30 · expoente **1,35** |
-| XP por abate (Rei e herói-total, em função do nível do inimigo E) | `floor(base × (E + offset)^expoente)` | base 50 · offset 3 · expoente 0,95 |
+| XP necessário (Rei e herói) para sair do nível N | `floor(base × (N + offset)^expoente)` | **potência pura**: base **4300** · offset 0 · expoente **0,644** (ADR-031; era 20·(N+30)^1,35, depois 14·…) |
+| XP por abate (Rei e herói-total, em função do nível do inimigo E) | `floor(base × (E + offset)^expoente)` | base 50 · offset 3 · expoente **0,98** (ADR-031; era 0,95) |
 | Coin por abate (⛔ P-008 provisória) | idem | base 12 · offset 3 · expoente 1,0 |
 
-O expoente da necessidade (1,35) é maior que o da recompensa (0,95): **cada nível custa mais abates que o anterior** — a "curva que desacelera". Dentro de um andar a recompensa por abate é constante (inimigos de nível fixo), então o ritmo piora a cada nível até o jogador mudar de andar.
+**Desenho da curva (ADR-031, pedido do usuário):** Nv 1→100 ≈ **24 h** — e **não** 24 h a cada 100 níveis. Depois disso o tempo ACUMULADO continua crescendo (mais devagar por nível): Nv 1.000 ≈ 127 h, Nv 20.000 ≈ 759 h. Como o expoente da necessidade (0,644) é menor que o da recompensa (0,98), o tempo gasto **por 100 níveis cai** conforme o Rei avança (≈ 42 h/100 níveis no andar 1, ≈ 17 h/100 no andar 5, ≈ 5,6 h/100 no andar 10) — é a consequência do "achatar a curva". O tempo por ANDAR não é monotônico: depende da largura da faixa (o andar 10, com 2.500 níveis, é o gargalo; os pináculos de 500 níveis levam 17,6 h → 10,9 h). Dentro de um andar a recompensa por abate é constante (inimigos de nível fixo): o ritmo piora a cada nível até o jogador mudar de andar. Só existe `CurveDef` do tipo potência — uma tabela/curva por trechos seria um upgrade do tipo `CurveDef` (editável pelo Painel ADM no futuro).
 
-### 7.2 Ritmo esperado (ciclo luta + procura ≈ 15 s)
+### 7.2 Ritmo esperado (ciclo luta + procura ≈ 25 s)
 
 | Andar | Faixa | Abates | Tempo | Acumulado |
 |---:|---|---:|---:|---:|
-| 1 | 1–10 | 118 | 30 min | 30 min |
-| 2 | 10–25 | 96 | 24 min | 54 min |
-| 3 | 25–50 | 124 | 31 min | 1,4 h |
-| 4 | 50–100 | 246 | 1,0 h | 2,4 h |
-| 5 | 100–250 | 978 | 4,1 h | 6,5 h |
-| 6 | 250–500 | 1.737 | 7,2 h | 14 h |
-| 7 | 500–1000 | 4.386 | 18 h | 32 h |
-| 8 | 1000–1500 | 4.422 | 18 h | 50 h |
-| 9 | 1500–2500 | 11.247 | 47 h | 97 h |
-| **10** | **2500–5000** | **40.249** | **168 h** | 265 h |
-| 11 | 5000–5500 | 6.492 | 27 h | 292 h |
-| 20 | 9500–10000 | 8.110 | 34 h | 571 h |
-| 30 | 14500–15000 | 9.478 | 40 h | 941 h |
-| 40 | 19500–20000 | 10.601 | 44 h | **1.362 h** |
+| 1 | 1–10 | 543 | 3,8 h | 3,8 h |
+| 2 | 10–25 | 644 | 4,5 h | 8,2 h |
+| 3 | 25–50 | 837 | 5,8 h | 14,1 h |
+| 4 | 50–100 | 1.405 | 9,8 h | **23,8 h (Nv 100)** |
+| 5 | 100–250 | 3.790 | 26,3 h | 50 h |
+| 6 | 250–500 | 4.294 | 29,8 h | 80 h |
+| 7 | 500–1000 | 6.846 | 47,5 h | **127 h (Nv 1.000)** |
+| 8 | 1000–1500 | 4.851 | 33,7 h | 161 h |
+| 9 | 1500–2500 | 8.828 | 61,3 h | 222 h |
+| **10** | **2500–5000** | **20.032** | **139 h** | 362 h |
+| 11 | 5000–5500 | 2.535 | 17,6 h | 379 h |
+| 20 | 9500–10000 | 2.014 | 14,0 h | 517 h |
+| 30 | 14500–15000 | 1.738 | 12,1 h | 646 h |
+| 40 | 19500–20000 | 1.569 | 10,9 h | **759 h** |
 
-≈ **1.360 h de jogo ativo** (≈ 340 dias a 4 h/dia); o offline (Free 2 h / VIP 8 h) acelera. Tabela completa e gerada: [`BALANCE_REPORT.md`](BALANCE_REPORT.md) (`npm run report:balance`).
+≈ **760 h de jogo ativo** (≈ 190 dias a 4 h/dia); o offline (Free 2 h / VIP 8 h) acelera. Tabela completa e gerada: [`BALANCE_REPORT.md`](BALANCE_REPORT.md) (`npm run report:balance`).
 
-> **O andar 10 é o gargalo** (168 h): 2.500 níveis a percorrer com inimigos que rendem o XP de nível 2.500. É consequência direta da regra "inimigo = nível-base" aplicada a uma faixa larga. Alavancas sem código: estreitar a faixa, subir `enemyLevel` do andar 10, ou subir a recompensa. Anotado para revisão com dados reais de jogo.
+> **O andar 10 é o gargalo** (139 h): 2.500 níveis a percorrer com inimigos que rendem o XP de nível 2.500. É consequência direta da regra "inimigo = nível-base" aplicada a uma faixa larga. Alavancas sem código: estreitar a faixa, subir `enemyLevel` do andar 10, ou subir a recompensa. Anotado para revisão com dados reais de jogo.
 
 ### 7.3 Um herói só vale se acompanhar o andar
 

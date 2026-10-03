@@ -72,6 +72,32 @@ O §59 é explícito sobre a prioridade visual:
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
+### 2.0 O layout atual do HUB (ADR-031) ✅
+
+```text
+┌────────────────────────────────────────────────────────────────────────────┐
+│ [Rei] [Heróis] [Equipe] [Inventário] [Market] [Torre] [Arena] [Opções]      │  ← navegação NO TOPO
+│ (retrato) Nome · Nv    ▰▰▰▰▰▰▰▱ barra de XP do Rei      Caçada · Coin · 💎  │
+│ Próximo passo: … [Ir para …]                                (faixa fina)   │
+├───────────────┬──────────────────────────────────────────┬─────────────────┤
+│ EQUIPE        │                JOGO (Phaser)             │ CHAT GLOBAL     │
+│ ┌ Slot 1 ───┐ │   ┌──────────────────────────────────┐  │ (simulado)      │
+│ │ Aldric Nv │ │   │ arena / telas abrem SOBRE ela     │  │ mensagens…      │
+│ │ XP · HP   │ │   │                  [Ocultar dados ▾]│  │ [escrever…]     │
+│ └───────────┘ │   └──────────────────────────────────┘  │                 │
+│ Slot 2 🔒     │   ┌ DADOS DA CAÇADA (painel pequeno) ─┐  │ [Silenciar]     │
+│ Slot 3 🔒     │   │ HP · Status · Andar · XP/h · Coin/h│  │ [Recolher]      │
+│ [Gerenciar]   │   └───────────────────────────────────┘  │                 │
+└───────────────┴──────────────────────────────────────────┴─────────────────┘
+```
+
+- **Cabe numa tela** (`100dvh`, sem rolar a página): o que rola é o conteúdo da tela aberta, por dentro do overlay. O jogo ocupa o centro e é o elemento dominante.
+- **Telas = overlay sobre o jogo** (`.tia-overlay`, título + "Fechar"; clicar de novo na aba também fecha; abre sem nada aberto). A caçada continua rodando por baixo (§4.1) e o painel de dados fica visível sob o overlay. Durante uma luta de chefe o overlay se retira e o painel mostra a luta (HP do chefe, tempo, equipe, "Desistir").
+- **Painel de dados** (`HuntPanel`): HP do herói ativo, Status, Andar, Melhor andar, faixa do Rei, nível dos inimigos, XP/abate, Coin/abate, abates ≈ para o próximo nível do Rei, **XP/h (Rei e herói), Coin/h, Custo/h e Lucro/h**. Botão "Ocultar dados ▾ / Dados ▴" no canto do jogo; a preferência persiste (`tia:settings`, fora do save). As taxas vêm do `HuntLedger` (`game-core/ledger.ts`): janela móvel de 10 min (`config.hud.ledgerWindowMs`), "medindo…" no primeiro minuto (`ledgerWarmupMs`), botão "Zerar medição". **Custo** = poções e demais consumíveis (Bot ou manual) pelo preço de mercado do momento; o reviver conta como consumível. É medida da sessão (não vai para o save).
+- **Equipe** (`TeamPanel`): 3 slots com herói, classe, nível, XP, HP, "Ativo"/"Tornar ativo"; slots bloqueados mostram o requisito; "Gerenciar" abre a tela Equipe.
+- **Chat** (`ChatPanel`): recolhível (contador de não lidas), Silenciar, limite de caracteres visível, texto sempre como TEXTO, rola sozinho só se o jogador já estava no fim; nunca sobrepõe a arena. Transporte SIMULADO atrás de `ChatTransport` (`chat.ts`) — ver `CHAT_SYSTEM.md`.
+- **Telas estreitas (< 960 px):** coluna única (jogo → dados → equipe → chat em faixa inferior fixa); as telas abrem em tela cheia.
+
 ### 2.1 O que a HUD deve comunicar
 
 O §69 define a lista obrigatória, e o princípio é explícito:

@@ -6,48 +6,48 @@
 
 | Andar | Nome | Faixa do Rei | Inimigos | Abates | Tempo | Acumulado |
 |---:|---|---|---:|---:|---:|---:|
-| 1 | Entrada da Torre | 1–10 | nv 1 | 83 | 35 min | 35 min |
-| 2 | Porão Úmido | 10–25 | nv 10 | 67 | 28 min | 1.0 h |
-| 3 | Galeria das Ossadas | 25–50 | nv 25 | 87 | 36 min | 1.6 h |
-| 4 | Catacumbas Antigas | 50–100 | nv 50 | 173 | 1.2 h | 2.8 h |
-| 5 | Salão dos Ecos | 100–250 | nv 100 | 685 | 4.8 h | 7.6 h |
-| 6 | Fornalha Esquecida | 250–500 | nv 250 | 1216 | 8.4 h | 16.0 h |
-| 7 | Jardim Gélido | 500–1000 | nv 500 | 3070 | 21.3 h | 37.4 h |
-| 8 | Ninho das Sombras | 1000–1500 | nv 1000 | 3096 | 21.5 h | 58.9 h |
-| 9 | Corredor Sangrento | 1500–2500 | nv 1500 | 7873 | 54.7 h | 114 h |
-| 10 | Câmara dos Mil Passos | 2500–5000 | nv 2500 | 28174 | 196 h | 309 h |
-| 11 | Pináculo 1 | 5000–5500 | nv 5000 | 4544 | 31.6 h | 341 h |
-| 12 | Pináculo 2 | 5500–6000 | nv 5500 | 4691 | 32.6 h | 373 h |
-| 13 | Pináculo 3 | 6000–6500 | nv 6000 | 4830 | 33.5 h | 407 h |
-| 14 | Pináculo 4 | 6500–7000 | nv 6500 | 4965 | 34.5 h | 441 h |
-| 15 | Pináculo 5 | 7000–7500 | nv 7000 | 5094 | 35.4 h | 477 h |
-| 16 | Pináculo 6 | 7500–8000 | nv 7500 | 5218 | 36.2 h | 513 h |
-| 17 | Pináculo 7 | 8000–8500 | nv 8000 | 5338 | 37.1 h | 550 h |
-| 18 | Pináculo 8 | 8500–9000 | nv 8500 | 5455 | 37.9 h | 588 h |
-| 19 | Pináculo 9 | 9000–9500 | nv 9000 | 5568 | 38.7 h | 627 h |
-| 20 | Pináculo 10 | 9500–10000 | nv 9500 | 5677 | 39.4 h | 666 h |
-| 21 | Pináculo 11 | 10000–10500 | nv 10000 | 5784 | 40.2 h | 706 h |
-| 22 | Pináculo 12 | 10500–11000 | nv 10500 | 5888 | 40.9 h | 747 h |
-| 23 | Pináculo 13 | 11000–11500 | nv 11000 | 5989 | 41.6 h | 789 h |
-| 24 | Pináculo 14 | 11500–12000 | nv 11500 | 6087 | 42.3 h | 831 h |
-| 25 | Pináculo 15 | 12000–12500 | nv 12000 | 6184 | 42.9 h | 874 h |
-| 26 | Pináculo 16 | 12500–13000 | nv 12500 | 6278 | 43.6 h | 917 h |
-| 27 | Pináculo 17 | 13000–13500 | nv 13000 | 6370 | 44.2 h | 962 h |
-| 28 | Pináculo 18 | 13500–14000 | nv 13500 | 6460 | 44.9 h | 1007 h |
-| 29 | Pináculo 19 | 14000–14500 | nv 14000 | 6548 | 45.5 h | 1052 h |
-| 30 | Pináculo 20 | 14500–15000 | nv 14500 | 6635 | 46.1 h | 1098 h |
-| 31 | Pináculo 21 | 15000–15500 | nv 15000 | 6720 | 46.7 h | 1145 h |
-| 32 | Pináculo 22 | 15500–16000 | nv 15500 | 6803 | 47.2 h | 1192 h |
-| 33 | Pináculo 23 | 16000–16500 | nv 16000 | 6885 | 47.8 h | 1240 h |
-| 34 | Pináculo 24 | 16500–17000 | nv 16500 | 6965 | 48.4 h | 1288 h |
-| 35 | Pináculo 25 | 17000–17500 | nv 17000 | 7044 | 48.9 h | 1337 h |
-| 36 | Pináculo 26 | 17500–18000 | nv 17500 | 7122 | 49.5 h | 1387 h |
-| 37 | Pináculo 27 | 18000–18500 | nv 18000 | 7198 | 50.0 h | 1437 h |
-| 38 | Pináculo 28 | 18500–19000 | nv 18500 | 7274 | 50.5 h | 1487 h |
-| 39 | Pináculo 29 | 19000–19500 | nv 19000 | 7348 | 51.0 h | 1538 h |
-| 40 | Pináculo 30 | 19500–20000 | nv 19500 | 7421 | 51.5 h | 1590 h |
+| 1 | Entrada da Torre | 1–10 | nv 1 | 543 | 3.8 h | 3.8 h |
+| 2 | Porão Úmido | 10–25 | nv 10 | 644 | 4.5 h | 8.2 h |
+| 3 | Galeria das Ossadas | 25–50 | nv 25 | 837 | 5.8 h | 14.1 h |
+| 4 | Catacumbas Antigas | 50–100 | nv 50 | 1405 | 9.8 h | 23.8 h |
+| 5 | Salão dos Ecos | 100–250 | nv 100 | 3790 | 26.3 h | 50.1 h |
+| 6 | Fornalha Esquecida | 250–500 | nv 250 | 4294 | 29.8 h | 80.0 h |
+| 7 | Jardim Gélido | 500–1000 | nv 500 | 6846 | 47.5 h | 127 h |
+| 8 | Ninho das Sombras | 1000–1500 | nv 1000 | 4851 | 33.7 h | 161 h |
+| 9 | Corredor Sangrento | 1500–2500 | nv 1500 | 8828 | 61.3 h | 222 h |
+| 10 | Câmara dos Mil Passos | 2500–5000 | nv 2500 | 20032 | 139 h | 362 h |
+| 11 | Pináculo 1 | 5000–5500 | nv 5000 | 2535 | 17.6 h | 379 h |
+| 12 | Pináculo 2 | 5500–6000 | nv 5500 | 2449 | 17.0 h | 396 h |
+| 13 | Pináculo 3 | 6000–6500 | nv 6000 | 2373 | 16.5 h | 413 h |
+| 14 | Pináculo 4 | 6500–7000 | nv 6500 | 2305 | 16.0 h | 429 h |
+| 15 | Pináculo 5 | 7000–7500 | nv 7000 | 2245 | 15.6 h | 444 h |
+| 16 | Pináculo 6 | 7500–8000 | nv 7500 | 2190 | 15.2 h | 459 h |
+| 17 | Pináculo 7 | 8000–8500 | nv 8000 | 2141 | 14.9 h | 474 h |
+| 18 | Pináculo 8 | 8500–9000 | nv 8500 | 2095 | 14.5 h | 489 h |
+| 19 | Pináculo 9 | 9000–9500 | nv 9000 | 2053 | 14.3 h | 503 h |
+| 20 | Pináculo 10 | 9500–10000 | nv 9500 | 2014 | 14.0 h | 517 h |
+| 21 | Pináculo 11 | 10000–10500 | nv 10000 | 1978 | 13.7 h | 531 h |
+| 22 | Pináculo 12 | 10500–11000 | nv 10500 | 1945 | 13.5 h | 544 h |
+| 23 | Pináculo 13 | 11000–11500 | nv 11000 | 1913 | 13.3 h | 558 h |
+| 24 | Pináculo 14 | 11500–12000 | nv 11500 | 1884 | 13.1 h | 571 h |
+| 25 | Pináculo 15 | 12000–12500 | nv 12000 | 1856 | 12.9 h | 584 h |
+| 26 | Pináculo 16 | 12500–13000 | nv 12500 | 1830 | 12.7 h | 596 h |
+| 27 | Pináculo 17 | 13000–13500 | nv 13000 | 1805 | 12.5 h | 609 h |
+| 28 | Pináculo 18 | 13500–14000 | nv 13500 | 1782 | 12.4 h | 621 h |
+| 29 | Pináculo 19 | 14000–14500 | nv 14000 | 1759 | 12.2 h | 633 h |
+| 30 | Pináculo 20 | 14500–15000 | nv 14500 | 1738 | 12.1 h | 646 h |
+| 31 | Pináculo 21 | 15000–15500 | nv 15000 | 1718 | 11.9 h | 657 h |
+| 32 | Pináculo 22 | 15500–16000 | nv 15500 | 1698 | 11.8 h | 669 h |
+| 33 | Pináculo 23 | 16000–16500 | nv 16000 | 1680 | 11.7 h | 681 h |
+| 34 | Pináculo 24 | 16500–17000 | nv 16500 | 1662 | 11.5 h | 692 h |
+| 35 | Pináculo 25 | 17000–17500 | nv 17000 | 1645 | 11.4 h | 704 h |
+| 36 | Pináculo 26 | 17500–18000 | nv 17500 | 1629 | 11.3 h | 715 h |
+| 37 | Pináculo 27 | 18000–18500 | nv 18000 | 1613 | 11.2 h | 726 h |
+| 38 | Pináculo 28 | 18500–19000 | nv 18500 | 1598 | 11.1 h | 738 h |
+| 39 | Pináculo 29 | 19000–19500 | nv 19000 | 1583 | 11.0 h | 749 h |
+| 40 | Pináculo 30 | 19500–20000 | nv 19500 | 1569 | 10.9 h | 759 h |
 
-**Total:** 1590 h de jogo ativo (≈ 397 dias a 4 h/dia).
+**Total:** 759 h de jogo ativo (≈ 190 dias a 4 h/dia).
 
 ## Custo de vida por papel (herói on-curve, média das 4 classes)
 
@@ -145,20 +145,20 @@
 
 | Herói inicial | 1º drop de equipamento | Rei nv 5 | Rei nv 10 (abre Slot 2, andar 2 e a Arena) | Rei nv 25 (abre Slot 3) | Rei nv 50 | Rei após 4 h | Coin após 4 h | Mochila após 4 h |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Aldric | 25 min | 18 min | 31 min | 59 min | 1.9 h | nv 97 | 129.696 | 136 |
-| Kaia | 19 min | 12 min | 24 min | 50 min | 1.6 h | nv 106 | 153.600 | 156 |
-| Maelis | 19 min | 14 min | 25 min | 50 min | 1.6 h | nv 104 | 148.608 | 152 |
-| Vorath | 21 min | 15 min | 27 min | 52 min | 1.6 h | nv 103 | 146.352 | 150 |
+| Aldric | 32 min | 1.2 h | 2.9 h | — | — | nv 13 | 43.824 | 44 |
+| Kaia | 25 min | 1.0 h | 2.6 h | — | — | nv 15 | 53.136 | 52 |
+| Maelis | 25 min | 1.1 h | 2.6 h | — | — | nv 14 | 51.504 | 50 |
+| Vorath | 28 min | 1.1 h | 2.7 h | — | — | nv 14 | 48.912 | 51 |
 
 ## Desgaste e poções (jogo real, 30 min no andar 1: sem poção × compra poções com o Coin)
 
-- sem poção · Aldric: 90 lutas · 6 derrota(s) · menor HP 0%
-- sem poção · Kaia: 125 lutas · 7 derrota(s) · menor HP 0%
-- sem poção · Maelis: 111 lutas · 8 derrota(s) · menor HP 0%
-- sem poção · Vorath: 119 lutas · 8 derrota(s) · menor HP 1%
-- com compra · Aldric: 130 lutas · 0 derrota(s) · menor HP 38% · 24 poções usadas (0.18/luta)
-- com compra · Kaia: 179 lutas · 0 derrota(s) · menor HP 37% · 20 poções usadas (0.11/luta)
-- com compra · Maelis: 178 lutas · 0 derrota(s) · menor HP 37% · 22 poções usadas (0.12/luta)
-- com compra · Vorath: 188 lutas · 0 derrota(s) · menor HP 37% · 25 poções usadas (0.13/luta)
+- sem poção · Aldric: 61 lutas · 9 derrota(s) · menor HP 0%
+- sem poção · Kaia: 76 lutas · 11 derrota(s) · menor HP 1%
+- sem poção · Maelis: 70 lutas · 12 derrota(s) · menor HP 1%
+- sem poção · Vorath: 70 lutas · 12 derrota(s) · menor HP 1%
+- com compra · Aldric: 88 lutas · 0 derrota(s) · menor HP 38% · 38 poções usadas (0.43/luta)
+- com compra · Kaia: 123 lutas · 0 derrota(s) · menor HP 36% · 41 poções usadas (0.33/luta)
+- com compra · Maelis: 117 lutas · 0 derrota(s) · menor HP 36% · 41 poções usadas (0.35/luta)
+- com compra · Vorath: 125 lutas · 0 derrota(s) · menor HP 35% · 47 poções usadas (0.38/luta)
 
 Parâmetros: defesa K = 100 + 5×(nível−1); regen 1%/s em PROCURANDO; inimigos HP×2, Ataque×0.18.

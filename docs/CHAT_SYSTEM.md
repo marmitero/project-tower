@@ -18,6 +18,8 @@ Este não é um item de backlog. É requisito do MVP online e uma das coisas que
 ## 2. A regra que separa um chat de uma lista de mensagens
 
 > **Não criar um chat falso que apenas adiciona mensagens no frontend.** (§51)
+>
+> **Exceção explícita e temporária (ADR-031, pedido do usuário):** até a Fase Online o painel "Chat global" usa um transporte **simulado** (`apps/game-web/src/chat.ts`) atrás da interface `ChatTransport`. Ele se declara na tela ("simulado — offline"), não finge ser multiplayer e NÃO é o chat final: a identidade, o horário e o limite de taxa reais virão do servidor, e trocar o simulado pelo real é trocar `createChatTransport` — a UI não muda. O teste da §2.1 continua valendo para o chat real.
 
 O fluxo obrigatório:
 
