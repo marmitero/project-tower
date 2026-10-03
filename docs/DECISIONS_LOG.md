@@ -806,7 +806,7 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 
 ### ADR-032 — Fase "otimização e estilização": roadmap por lotes de 10 gerações e pipeline de arte (pós-FASE 13)
 
-**Data:** 2026-10-03 · **Status:** 🟡 Proposta (planejamento; **nenhuma imagem gerada**; aguarda o Gate 0 do usuário) · **Tipo:** B/C (arte + dados; sem mudança de regra de jogo) · **Pedido:** *roadmap só da etapa "otimização e estilização": arena própria por andar; 5 inimigos por andar com sprite sheet e movimentação fiéis; 5 heróis por classe (≥ 25); ≥ 10 retratos do Rei; botões do HUB estilo videogame antigo; tela de login com fundo próprio e espaço para o Google; **no máximo 10 gerações de imagem por sessão**, parando a cada lote; fundo magenta sólido; documentação própria antes de aplicar; Painel Admin depois.*
+**Data:** 2026-10-03 · **Status:** ✅ Aceita (Gate 0 aprovado em 2026-10-03; F0 implementada — ver ADR-033; **nenhuma imagem gerada ainda**) · **Tipo:** B/C (arte + dados; sem mudança de regra de jogo) · **Pedido:** *roadmap só da etapa "otimização e estilização": arena própria por andar; 5 inimigos por andar com sprite sheet e movimentação fiéis; 5 heróis por classe (≥ 25); ≥ 10 retratos do Rei; botões do HUB estilo videogame antigo; tela de login com fundo próprio e espaço para o Google; **no máximo 10 gerações de imagem por sessão**, parando a cada lote; fundo magenta sólido; documentação própria antes de aplicar; Painel Admin depois.*
 
 **Decisão.**
 
@@ -822,3 +822,40 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 **Alternativas rejeitadas:** (a) gerar os 40 andares × 5 inimigos literalmente já — ≈ 142 gerações só de Onda 3, sem priorizar o que o jogador vê primeiro; (b) uma geração por animação — multiplicaria os lotes por 5; (c) recolor como "inimigo novo" nos andares 1–10 — contraria "estética única"; (d) manter a classe como dona do sprite — impede 5 heróis distintos por classe; (e) arte via OpenRpg — é framework C#, sem arte.
 
 **Consequências (a implementar após o Gate 0, Etapa F0):** scripts `art:*`, `ita-atlas-v1` + leitura no renderer, `ArenaKit` no config, `EnemySeed.assets`/`HeroIdentityDef.assets`, orçamentos nos checks, ADR-033; `configVersion` sobe quando o config mudar. **Pendente do usuário (Gate 0):** D1 (escopo por ondas), D3 (Clérigo como 5ª classe), nomes/conceitos do roadmap §3.1 e §4.3 e o "go" para F0 + Lote 1.
+
+### ADR-033 — Etapa F0: fundação da fase de arte, elenco de 25 heróis e calibragens medidas (2026-10-03)
+
+**Data:** 2026-10-03 · **Status:** ✅ Aceita (F0 implementada; 0 gerações usadas) · **Tipo:** B/C (infra de arte + dados; sem mudança de regra de jogo) · **Decisor:** delegado ao agente ("tome as decisões e relate") sobre o Gate 0 aprovado.
+
+**O que a F0 entregou.** (1) `scripts/art.mjs` + `tools/art/*` (guia, chave, normalização, validação, contact sheet, `ingest`, seamless, recolor, pack, measure, provenance) com 25 testes; (2) formato `ita-atlas-v1` (1024×1280, 4×5, voltado à direita; inimigo vira por `flipX`) lido pelo renderer (`render/spriteSource.ts`), com **fallback** para as folhas legadas; (3) `ArenaKitDef` no **ContentPack v5** (migração v4→v5) — a arena é dado; (4) `EnemySeed.assets.atlas?` e `HeroIdentityDef.assets?`; (5) `TextureBudget` (96 MB; descarta o que não está em uso) e auditoria no `check:assets` (formato, orçamentos, **manifesto em dia**, ≤ 10 gerações por lote); (6) prova de ponta a ponta no **Chromium real**: um atlas sintético (goblin do pack recolorido, descartado depois) foi baixado, validado e desenhado na batalha virado para o herói.
+
+**Decisões medidas (todas em `tools/art/spec.mjs`, editáveis).**
+
+| Tema | Decisão | Por quê (medido no pack) |
+|---|---|---|
+| Paleta | O limite de "≤ 64 cores" do plano **caiu**: verificação passa a ≤ 700 cores significativas; as **64 cores só no empacotamento** (`quantize.mjs`) | O pack tem sombreado suave: 433–619 cores significativas (~50–83 mil exatas); só o Arcanista tem 31. Exigir 64 reprovaria o próprio pack |
+| Quantização | Quantizador próprio (corte mediano, sem dithering) | O `sharp` ignora `colours` (pedido 64 → 256). Erro médio 3/255; PNG 623 KB → 116 KB (−81 %) |
+| Movimento | Erro médio das séries (largura, altura, x do centroide e da base ÷ altura) ≤ 12 % (revisão ≤ 20 %), não correlação | `idle` é quase plano → correlação indefinida |
+| Silhueta | IoU ≥ 0,45/0,55; teste de chroma exige > 0,85 contra o guia | A erosão de 1 px da franja rosada custa ~6–10 % de IoU |
+| Pixel | `snap` desligado; pixel ≈ 3 px (gosma 4) | Sem grade exata (suavização) |
+| Guia | O guia de validação = o arquétipo dado ao gerador (`--kind`) | Guia errado reprova `death`/silhueta de verdade |
+| Arena | Kit reduzido ao que o renderer usa (parede, tocha, piso, props, tint); landmark/iluminação/ambiente **reservados**, não criados | Sem placeholders no contrato |
+
+**Elenco de 25 heróis (nomes finais; editáveis em `heroes.ts`).** Cada variação = **delta de atributos de soma zero (|Δ| ≤ 6)** sobre o modelo da classe + **skill assinatura própria** (+ afinidade de arma da classe). Teste de CI proposto: nenhum par da mesma classe repete `(atributos, skill)`. Os 4 iniciais são os do §10 (Aldric/Kaia/Maelis/Vorath, Δ0); **o jogador começa com 1 deles**, os outros 21 vêm do jogo.
+
+| Classe | Existente (Δ0) | 2 | 3 | 4 | 5 |
+|---|---|---|---|---|---|
+| Guardião `guardian` | Aldric · Contra-ataque | **Borin, Escudeiro da Muralha** (CON+6 STR−4 DEX−2 WIS+2 CHA−2 · *Muralha*: mitigação longa) | **Cavaleiro Rubro** (STR+5 DEX+1 CON−4 WIS−2 · *Carga Rubra*: golpe forte, custa 5 % de HP) | **Monge de Ferro** (DEX+4 WIS+2 STR−2 CON−2 CHA−2 · *Chi Blast*) | **Lorde Cinzento** (STR+3 INT+2 CON−3 WIS−2 · *Dreno Sombrio*: rouba vida) |
+| Arqueiro `ranger` | Kaia · Rajada | **Caçador Furtivo** (DEX+5 STR−2 CON−3 · *Backstab*: crítico garantido) | **Besteiro Pesado** (STR+5 DEX−4 CON+1 WIS−2 · *Focus Strike*) | **Guardiã da Floresta** (WIS+4 DEX+1 STR−3 CHA−2 · *Falcão*: multi-hit) | **Arqueiro Nômade** (DEX+2 CON+2 STR−2 CHA−2 · *Flecha do Deserto*: lentidão/veneno) |
+| Arcanista `arcanist` | Maelis · Nova | **Piromante** (INT+4 CON−3 WIS−1 · *Fire Bolt*: queima) | **Criomante** (WIS+3 INT+1 DEX−2 CON−2 · *Ice Storm*) | **Tempestuário** (DEX+4 INT+1 CON−3 WIS−2 · *Raio em cadeia*) | **Mago Ancião** (WIS+4 INT+2 CON−3 DEX−3 · *Barragem Arcana*) |
+| Invocador `shadowcaller` | Vorath · Maldição | **Necromante dos Ossos** (CON+3 INT+1 DEX−4 · *Gaiola de Ossos*) | **Bruxa do Pântano** (DEX+3 WIS+1 CON−2 INT−2 · *Poison Blade*) | **Ceifeira** (STR+4 INT−2 WIS−2 · *Colheita*: rouba vida) | **Demonólogo** (INT+4 CON−2 DEX−2 · *Fogo Infernal*) |
+| **Clérigo `cleric` (nova)** — base STR 10 · DES 10 · CON 20 · INT 14 · SAB 26 · CAR 16, dano mágico, arma `mace`, papel "Suporte / sustain" | — | **Sacerdotisa da Aurora** (Δ0 · *Cura*: cura própria + `regen`) | **Monge Curandeiro** (DEX+4 CON−2 WIS−2 · *Palma Restauradora*) | **Bispo Guerreiro** (STR+6 WIS−4 INT−2 · *Punição*: dano sagrado) | **Druida da Vida** (CON+2 WIS+2 STR−2 DEX−2 · *Florescer*: `regen` forte) |
+
+> Todos os deltas somam zero (conferido). Dependências: a **cura como efeito de skill** ainda não existe no engine (há `regen`/poção); entra junto com o lote do Clérigo (L4), com teste de engine, antes de gastar gerações nele.
+
+**Pendência registrada (não é bug):** `hero-acquisition.ts` ainda não define **qual identidade** o herói recém-obtido recebe (hoje sai só a classe) → ao chegar a arte das identidades, a obtenção por identidade (Market/caixa/summon/Chefe) é uma etapa curta própria (**F0.5**), com teste.
+
+**Alternativas rejeitadas:** (a) paleta de 64 cores como critério de aprovação — reprova o pack; (b) confiar no `sharp` para quantizar — não quantiza; (c) correlação como métrica de movimento; (d) criar já os campos de iluminação/ambiente da arena — contrato com campo sem leitor.
+
+**Consequências:** `configVersion` 8 mantido; ContentPack **schema 5**; save v6 (arenas não entram no save); `check:assets` passa a falhar se a arte gerada não estiver no manifesto (`npm run assets:build`); o Lote 1 só começa com o "go" do usuário.
+

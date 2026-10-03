@@ -1,6 +1,6 @@
 # AI_STATE — handoff vivo do Tower Idle Adventure
 
-**Última atualização:** 2026-10-03 (planejamento da fase de arte "otimização e estilização" — ADR-032; nenhuma imagem gerada)
+**Última atualização:** 2026-10-03 (Etapa F0 da fase de arte — fundação sem gerações: ADR-032/033; 0 imagens geradas)
 **Estado:** **FASE 1–13 concluídas — MVP LOCAL JOGÁVEL (7 de 7 etapas)** (ADR-028). Próximo: **FASE 14 — Painel Admin** (pós-MVP, regra Admin-Ready) e a **Fase Online**. Como jogar no Windows: [`docs/PLAY_LOCAL.md`](docs/PLAY_LOCAL.md) (`JOGAR.bat`).
 **Preview:** servidor estático autocontido (ADR-018) — `node scripts/serve-preview.mjs` (porta 5173). Se o ambiente resetar, subir UMA linha; não depende de `node_modules`.
 **Repositório:** `marmitero/project-tower`
@@ -470,13 +470,14 @@ editar `config/src/heroes.ts`.
 - Testes: `engine/boss-battle` (16), `game-core/boss` (33), `config/boss-content` (12), assets dos chefes (integração), migração de save v5→v6. Suíte completa verde.
 - **Cuidados:** a tentativa é consumida ao ENTRAR; `GameState.clock()` em toda marca de tempo; recalibrar chefes se mexer em IAS/equipamento/XP (`npm run report:balance -- --md`).
 
-### Fase de arte — "otimização e estilização" (ADR-032, 2026-10-03) — PLANEJADA
+### Fase de arte — "otimização e estilização" (ADR-032/033, 2026-10-03) — F0 FEITA, aguardando "go" do Lote 1
 
-- **Estado:** só documentação (`docs/STYLIZATION_ROADMAP.md`, `docs/ART_PIPELINE.md`, ADR-032). **0 imagens geradas, 0 código alterado.** Painel Admin (Fase 14) vem depois.
-- **Regra do usuário:** ≤ **10 gerações de imagem por sessão**; ao fim do lote parar, explicar, aplicar no jogo, listar o próximo passo e **esperar "lote NN aprovado"**. Sprites com fundo magenta `#FF00FF`; poses/movimentação iguais às do pack.
-- **Plano:** Onda 1 = andares 1–10 (50 inimigos, 10 arenas) + UI GBA + login (zona reservada ao Google) + 12 retratos do Rei + 25 heróis (5ª classe Clérigo) ≈ 83 gerações ≈ 11–13 lotes; Etapa F0 (0 gerações: scripts `art:*`, `ita-atlas-v1`, `ArenaKit`, carga por andar, ADR-033) antes do Lote 1.
-- **Gate 0 pendente:** D1 (escopo por ondas), D3 (Clérigo), nomes/conceitos (roadmap §3.1/§4.3), "go" para F0 + Lote 1.
-- **Cuidados:** NÃO gerar nada antes do Gate 0; contador de gerações no `PROVENANCE.md`; `art:validate` decide fidelidade (limiares a calibrar no Lote 1); UI gerada sem texto.
+- **Estado:** Gate 0 aprovado; **Etapa F0 implementada (0 gerações usadas)**: `scripts/art.mjs` + `tools/art/*` (guide/key/normalize/validate/contact/ingest/seamless/recolor/pack/measure/provenance; aliases `npm run art:*`), formato `ita-atlas-v1` + `render/spriteSource.ts` (fallback legado), `ArenaKitDef` no ContentPack v5, `assets.atlas` (inimigo) e `HeroIdentityDef.assets`, `TextureBudget`, auditoria de `assets/generated` no `check:assets` (inclui manifesto em dia). Provado no Chromium real com um atlas sintético (descartado). Painel Admin (Fase 14) continua depois da arte.
+- **Regra do usuário:** ≤ **10 gerações por sessão**; ao fim do lote parar, explicar, aplicar no jogo, listar o próximo passo e **esperar confirmação**. Sprites com fundo magenta `#FF00FF`; poses/movimentação iguais às do pack.
+- **Próximo:** **Lote 1** (8 gerações + 2 reservas; docs/STYLIZATION_ROADMAP.md §9): pilotos de calibragem (andar 1) — só após "go". Fluxo: `docs/ART_PIPELINE.md` §13.
+- **Medido (muda o plano original):** pack com sombreado suave (31–620 cores significativas) → paleta de 64 cores só no empacotamento; `sharp` ignora `colours` → quantizador próprio; pixel ≈ 3 px; guia de validação = arquétipo dado ao gerador.
+- **Pendências registradas (ADR-033):** cura como efeito de skill (engine) antes do Clérigo; obtenção por IDENTIDADE (`hero-acquisition.ts` ainda só sorteia classe) — etapa F0.5 curta; campos de arena landmark/iluminação/ambiente reservados.
+- **Cuidados:** nunca gravar rascunhos em `assets/generated/` (vai ao manifesto) — usar `assets/_incoming|_review` (gitignored); depois de `ingest` rodar `npm run assets:build` e commitar o `manifest.json`; UI gerada sem texto; contador de gerações no `provenance.json`.
 
 ### Pós-Fase 13 — HUB em 3 colunas, painel de dados e curva de XP (ADR-031, 2026-10-03)
 

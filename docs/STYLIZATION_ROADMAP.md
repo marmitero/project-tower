@@ -1,6 +1,6 @@
 # Roadmap — Otimização e estilização
 
-**Versão:** 0.1 · **Data:** 2026-10-03 · **Estado:** ✅ PLANEJADO — nenhuma arte foi gerada nem aplicada ainda (aguarda o Gate 0)
+**Versão:** 0.2 · **Data:** 2026-10-03 · **Estado:** ✅ Gate 0 aprovado · **F0 implementada** (ADR-033) — nenhuma arte gerada ainda (o Lote 1 aguarda o "go")
 **Decisão:** [ADR-032](DECISIONS_LOG.md) · **Documento técnico irmão:** [`ART_PIPELINE.md`](ART_PIPELINE.md) (especificação medida dos sprites, prompts, chroma key, validação, integração)
 **Fonte do pedido:** mensagem do usuário de 2026-10-03 ("otimização e estilização") · **Regras superiores:** `Master-Prompt.md` §10, §22, §23, §59–§62, §105
 
@@ -200,7 +200,7 @@ Trabalho de otimização que **não** gasta geração (Etapa F0, §8): empacotad
 | Etapa | Conteúdo | Gerações |
 |---|---|---:|
 | **Gate 0** | O usuário aprova este roadmap e responde às decisões da §10 | 0 |
-| **F0 — Fundação** | `ART_PIPELINE`: scripts `art:atlas` (monta atlas-guia), `art:key` (chroma + despill), `art:normalize` (âncora/escala), `art:seamless`, `art:recolor`, `art:validate` (fidelidade de movimento), `art:contact` (contact sheet), `art:pack` (atlas + paleta); formato `ita-atlas-v1` + leitura no renderer (esquerda por espelhamento); carga por andar; orçamentos no `check:assets`/`check:preview`; testes. **ADR-033 (5ª classe e 25 identidades).** | 0 |
+| **F0 — Fundação** ✅ **FEITA (2026-10-03, ADR-033; `art:atlas` virou `art:guide`, + `art:ingest`)** | `ART_PIPELINE`: scripts `art:atlas` (monta atlas-guia), `art:key` (chroma + despill), `art:normalize` (âncora/escala), `art:seamless`, `art:recolor`, `art:validate` (fidelidade de movimento), `art:contact` (contact sheet), `art:pack` (atlas + paleta); formato `ita-atlas-v1` + leitura no renderer (esquerda por espelhamento); carga por andar; orçamentos no `check:assets`/`check:preview`; testes. **ADR-033 (5ª classe e 25 identidades).** | 0 |
 | **Lotes 1–11/13** | Onda 1 (§9) | 83 + reservas |
 | **Gate 1** | Fim da Onda 1: o usuário decide as Ondas 2 e 3 | 0 |
 | **Onda 2** | Pináculos em famílias (§3.3) | 38 + reservas |

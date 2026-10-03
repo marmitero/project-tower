@@ -19,7 +19,7 @@
  */
 
 import { readdir, readFile, stat } from "node:fs/promises";
-import { statSync } from "node:fs";
+import { existsSync, statSync } from "node:fs";
 import { join, relative, extname, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { REQUIRED, IMAGE_EXT, AUDIO_EXT } from "./build-assets.mjs";
@@ -138,6 +138,20 @@ async function main() {
     console.error("[assets] FALHA — IDs obrigatórios ausentes (§62):");
     for (const id of missing) console.error(`  - ${id}`);
     process.exit(1);
+  }
+
+  // O manifesto versionado (`apps/game-web/public/assets/manifest.json`) precisa listar TODA arte
+  // gerada: arte nova sem `npm run assets:build` ficaria invisível para o jogo (ADR-032).
+  try {
+    const manifest = JSON.parse(await readFile(join(ROOT, "apps", "game-web", "public", "assets", "manifest.json"), "utf8"));
+    const notListed = [...ids].filter((id) => !(id in manifest.entries) && existsSync(join(ROOT, "assets", "generated", `${id}.png`)));
+    if (notListed.length > 0) {
+      console.error("[assets] FALHA — arte gerada fora do manifesto (rode `npm run assets:build` e commite o manifest.json):");
+      for (const id of notListed) console.error(`  - ${id}`);
+      process.exit(1);
+    }
+  } catch (error) {
+    if (error?.code !== "ENOENT") throw error;
   }
 
   // Relatório de extração de UI: nenhuma peça rejeitada pode ter sido

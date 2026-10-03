@@ -1,6 +1,6 @@
 # Pipeline de arte — otimização e estilização
 
-**Versão:** 0.1 · **Data:** 2026-10-03 · **Estado:** ✅ ESPECIFICADO (nada gerado, nenhum script criado ainda — a Etapa F0 os cria)
+**Versão:** 0.2 · **Data:** 2026-10-03 · **Estado:** ✅ **F0 IMPLEMENTADA** (ferramentas, formato e renderer prontos e testados; **0 imagens geradas** — o Lote 1 é o primeiro). As seções marcam **[medido]** (fato do pack) e **[as-built]** (como ficou no código)
 **Roadmap:** [`STYLIZATION_ROADMAP.md`](STYLIZATION_ROADMAP.md) · **Decisão:** [ADR-032](DECISIONS_LOG.md) · **Base:** [`ART_GUIDELINES.md`](ART_GUIDELINES.md), [`ASSET_INVENTORY.md`](ASSET_INVENTORY.md), [`ASSET_GAP.md`](ASSET_GAP.md), [`OPENRPG_REFERENCE.md`](OPENRPG_REFERENCE.md)
 
 > Tudo aqui foi **medido nos arquivos reais** do repositório (`assets/sprites/characters/*`, `render/BattleScene.ts`, `render/Arena*.ts`), não presumido. Onde um número é **proposta** (a calibrar no Lote 1), está marcado **(calibrar)**.
@@ -11,9 +11,9 @@
 
 | Atributo | Valor observado |
 |---|---|
-| Técnica | Pixel art com contorno escuro de 1 "pixel de arte", sombreamento em **3–4 tons** por material, brilho especular nos metais e na gosma, luz vinda do **alto-esquerda** |
+| Técnica | Pixel art com contorno escuro de 1 "pixel de arte", brilho especular nos metais e na gosma, luz vinda do **alto-esquerda**. **[medido]** O pack **não é pixel art exata**: há suavização (≈ 430–620 "cores significativas" por personagem, ~50 mil cores reais no Guardião e no Esqueleto; só o Arcanista tem paleta enxuta de 31). Daí a regra: **miramos o look, não a paleta** — a paleta de 64 cores é aplicada só no empacotamento (§6.4) |
 | Vista | Top-down 3/4 (corpo inteiro, cabeça grande ≈ 1/4–1/3 do corpo); nas lutas só as vistas **esquerda/direita** são usadas |
-| Escala do pixel | Pixel de arte ≈ 3–4 px reais no quadro de 256 px (**calibrar** por autocorrelação no F0; o normalizador "cola" na grade medida) |
+| Escala do pixel | **[medido]** moda dos intervalos entre bordas de cor: **3 px** (Guardião, Orc, Arcanista) e **4 px** (Gosma) — `art measure`. A colagem à grade (`--snap 3`) existe mas fica **desligada** até o Lote 1 provar que ajuda |
 | Paleta | Escura e saturada de fantasia sombria; cada criatura tem 1 cor dominante + 1 de acento + contorno quase preto da mesma matiz (o contorno da gosma é verde-escuro, não preto) |
 | Legibilidade | Silhueta distinguível a 96 px; sprite sempre mais claro/saturado que o piso da arena |
 | Fundo | Transparente (alfa) nos entregáveis; **magenta `#FF00FF` sólido nas gerações** |
@@ -147,13 +147,13 @@ Cada atlas novo é comparado com o **atlas-guia** que o originou:
 | Quadros | 20 quadros não vazios | todos |
 | Âncora | desvio da base dos pés vs 243 | ≤ 3 px (≤ 6 px na `death`) |
 | Escala | altura do `idle` vs alvo da §2.3 | ± 8 % |
-| Perfil de movimento | correlação do centroide x/y por quadro com o guia, por animação | ≥ 0,70 |
+| Perfil de movimento | **[as-built]** erro médio absoluto das 4 séries por quadro — largura, altura, deslocamento x do centroide e da base, tudo ÷ altura do idle — contra o guia (a correlação foi trocada: séries quase planas, como o `idle`, não têm correlação definida) | ≤ 12 % (revisão ≤ 20 %) |
 | Silhueta | IoU da máscara (alinhada pela âncora, escala normalizada) com o guia | `attack`/`hurt`/`death` ≥ 0,45; `idle`/`walk` ≥ 0,55 |
 | Borda | pixels opacos na margem de 4 px | 0 |
 | Chroma | resíduo e franja (§5) | dentro do limite |
-| Paleta | nº de cores significativas por entidade | ≤ 64 |
+| Paleta | nº de cores significativas (passos de 16 níveis) — **[medido]** o pack varia de 31 a 620 | ≤ 700 (só reprova pintura/foto); a paleta de 64 cores é o empacotamento |
 
-Resultado: **APROVADO** · **REVISÃO VISUAL** (um limiar abaixo) · **REFAZER**. A decisão final é sempre visual (contact sheet com o guia ao lado e um GIF/tira de cada animação no relatório). Os limiares saem do **Lote 1** (3 pilotos) e ficam no config do script.
+**[as-built]** `npm run art:validate`/`art:ingest`: cada teste sai `ok`/`revisar`/`FALHA`; o veredito é **APROVADO** · **REVISÃO VISUAL** (algum `revisar`) · **REFAZER** (alguma `FALHA`). **Cuidado:** o guia tem de ser o MESMO que foi dado ao gerador — validar contra outro arquétipo (ex.: orc contra o Guardião) cai em REVISÃO porque a pose da morte/ataque difere de verdade (testado). A decisão final é sempre visual (contact sheet com o guia ao lado e um GIF/tira de cada animação no relatório). Os limiares saem do **Lote 1** (3 pilotos) e ficam no config do script.
 
 ### 6.3 Arena (`art:seamless`)
 
@@ -164,7 +164,7 @@ Resultado: **APROVADO** · **REVISÃO VISUAL** (um limiar abaixo) · **REFAZER**
 
 ### 6.4 Otimização (`art:pack`)
 
-- **PNG de paleta** (`sharp … palette: true`, ≤ 64 cores por atlas, sem dithering): ordem de **−60 % a −80 %** de bytes sobre RGBA — pixel art quantiza quase sem perda.
+- **PNG de paleta** **[as-built]**: quantizador próprio por corte mediano (`tools/art/quantize.mjs`), **64 cores, sem dithering**, alfa binário. Não usamos a opção `colours` do `sharp`: medida em 2026-10-03, pediu 64 e saiu 256. **[medido]** no Guardião: erro médio 3/255 por canal, **623 KB → 116 KB (−81 %)**; no Esqueleto 571 → 115 KB.
 - **Atlas compacto** (§3): 1280×1024 por personagem em vez de 6 × 1024².
 - **Carga por andar** (`Arena`/`BattleScene` + `boot`): ao entrar num andar carrega `ArenaKit` + 5 inimigos; ao sair, `textures.remove` das do andar anterior (exceto herói ativo e os do próximo andar já pré-carregado). Orçamento de memória: **≤ 24 MB por andar**.
 - **Orçamento em CI:** `check:assets` falha se um atlas/kit sair da especificação, se houver asset órfão ou se um arquivo passar de **400 KB** (atlas) / **250 KB** (kit); `check:preview` ganha limite total de bytes do bundle.
@@ -176,24 +176,23 @@ Mapeia as **rampas de matiz** do atlas para outra rampa (rotação de matiz + aj
 
 ---
 
-## 7. Arena: contrato de dados (admin-ready)
+## 7. Arena: contrato de dados (admin-ready) — **[as-built]**
 
-Hoje o tema da arena é uma tabela em código (`render/arenaThemes.ts`, `ARENA_THEMES`) ligada ao andar por `FloorVisual.theme`. Com um tema **por andar**, a tabela vira **dado do config** (`ArenaKit`, serializável no `ContentPack` do Painel ADM):
+A tabela deixou de ser código (`ARENA_THEMES` no render) e virou **dado do config**: `ArenaKitDef` em `packages/config/src/arenas.ts`, parte do **ContentPack v5** (`pack.arenas`), validada por `arenaKitErrors` (ids únicos, ≥ 1 parede e ≥ 1 piso, pesos > 0, `tint`, `torchEvery` ≥ 1, kits `masmorra` e `boss` obrigatórios, todo `FloorVisual.theme` com kit, ids contra o manifesto). `render/arenaThemes.ts` é só uma visão desses kits. Campos **reservados** (iluminação, ambiente, marco) entram como opcionais aditivos quando o renderer os implementar:
 
 ```ts
-interface ArenaKit {
-  id: string;                    // "f02_porao_umido"
-  wall: string[]; fixture: { assetId: string; every: number }[];   // IDs do manifesto
+// já existe (as-built):
+interface ArenaKitDef {
+  id: string; name: string;                // "f02_porao_umido"
+  wall: string[]; torch: string | null; torchEvery: number;   // IDs do manifesto
   floor: string[]; props: { assetId: string; weight: number }[];
-  landmark?: { assetId: string; chance: number };
-  tint: number;                  // 0xRRGGBB (já existe)
-  lighting?: { vignette: number; color: number };
-  ambient?: { kind: "dust" | "embers" | "snow" | "spores" | "drips" | "none"; density: number };
-  // geometria (altura da parede, fileiras, parallax) continua em ARENA_LAYOUT — não é arte
+  tint: number;                            // 0xRRGGBB
 }
+// reservado (ainda NÃO existe): landmark, lighting {vignette,color}, ambient {kind,density}
+// geometria (altura da parede, fileiras, parallax) continua em ARENA_LAYOUT — não é arte
 ```
 
-`FloorVisual.theme` aponta para o `ArenaKit.id` do andar; tema desconhecido continua caindo no padrão (`masmorra`). Validação (`validateConfig`): todo andar tem kit; todo `assetId` existe no manifesto; kit tem ≥ 3 paredes e ≥ 3 pisos.
+`FloorVisual.theme` aponta para o `ArenaKitDef.id` do andar; tema desconhecido continua caindo no padrão (`masmorra`). Os 7 kits de fábrica (peças do pack) seguem valendo; os kits gerados por andar entram na Onda 1.
 
 ---
 
@@ -201,9 +200,9 @@ interface ArenaKit {
 
 | Dado | Mudança |
 |---|---|
-| `EnemySeed.assets?` | `{ atlas: "enemies/f05_cantor_de_ecos" }` — o inimigo deixa de depender só de `charSheets(id)`; ausente ⇒ legado |
+| `EnemySeed.assets.atlas?` **[as-built]** | `{ sheets: charSheets("goblin"), atlas: "enemies/f05_cantor_de_ecos" }` — `atlas` tem prioridade; **`sheets` vira o fallback visual** (o arquétipo do guia) se o PNG não carregar; validado no ContentPack |
 | `FloorDef.pool` | 5 entradas (T/D/V/M/E) por andar; `DEFAULT_POOL_PLAN` reescrito (**uma passada de balanceamento**: `report:balance`) |
-| `HeroIdentityDef.assets?` | `{ portrait, atlas }` — o sprite passa a ser da **identidade** (hoje é da classe) |
+| `HeroIdentityDef.assets?` **[as-built]** | `{ portrait?, atlas? }` — o renderer lê a **identidade** primeiro, depois a classe (`heroSpriteRecord`, `heroPortraitId`); os 4 iniciais seguem pela classe |
 | `classes` | 5ª classe `cleric` (ADR-033) |
 | Teste de CI | nenhum par de heróis da mesma classe com `(atributos, skill assinatura)` iguais; todo herói/inimigo tem atlas e retrato válidos |
 
@@ -254,20 +253,25 @@ IDs do manifesto = caminho sem extensão (mesma regra de hoje). `scripts/build-a
 
 ---
 
-## 13. Scripts da Etapa F0 (a criar)
+## 13. Scripts da Etapa F0 — **[as-built]** (`scripts/art.mjs` + `tools/art/*`)
 
 | Script | Função |
 |---|---|
-| `art:atlas` | monta o atlas-guia 4×5 a partir de um personagem do pack |
+| `art:guide` | monta o atlas-guia 4×5 (+ versão sobre magenta, a que vai ao gerador) a partir de um personagem do pack |
 | `art:key` | chroma key + despill + limpeza |
 | `art:normalize` | fatia, escala única, âncora, grade de pixel → `ita-atlas-v1` |
 | `art:validate` | testes de fidelidade (§6.2) + chroma + paleta; gera JSON e contact sheet |
 | `art:seamless` | ladrilhos que emendam + tira de teste (§6.3) |
 | `art:recolor` | rampas de matiz (§6.5) |
-| `art:pack` | PNG de paleta, orçamentos, manifesto, `PROVENANCE.md` |
-| `art:contact` | contact sheet lado a lado com o pack e GIFs/tiras das animações |
+| `art:pack` | quantiza (64 cores) e grava PNG indexado; confere o orçamento de bytes |
+| `art:contact` | contact sheet guia × candidato (5 animações × 4 quadros, fundo xadrez) |
+| `art:ingest` | **o atalho do lote**: chave → normaliza → valida → empacota → grava `<id>.png` + `<id>.atlas.json` + contact sheet em `assets/_review/` (ignorado pelo Git) |
+| `art:measure` | mede o pixel de arte de uma imagem |
+| `art:provenance` | `add`/`status`/`render`: **contador de gerações por lote** (recusa a 11ª) e `PROVENANCE.md` |
 
-Todos em Node (`sharp` já é dependência), testados em `tests/art/*` com fixtures **do próprio pack** (nenhuma geração é necessária para testar o pipeline).
+Todos em Node (`sharp` já é dependência), testados em `tests/integration/art-pipeline.test.ts` (25 testes) com fixtures **do próprio pack** — nenhuma geração foi necessária. Os números vivem em `tools/art/spec.mjs` (o renderer espelha o que precisa em `packages/config/src/atlas.ts`; um teste garante que não divergem). O `check:assets` agora audita `assets/generated` (formato, orçamentos, manifesto em dia, procedência ≤ 10 por lote).
+
+**Fluxo de um lote (as-built):** `npm run art:guide -- <arquétipo>` → gerar com a imagem `.magenta.png` + prompt do §4.2 → salvar o bruto em `assets/_incoming/L1/` → `npm run art:ingest -- <bruto> --id enemies/<id> --kind humanoid` → olhar a contact sheet → `npm run art:provenance -- add --batch L1 --asset <id> --kind atlas --prompt "…"` → ligar `assets.atlas` no config → `npm run assets:build` → `npm run check`.
 
 ---
 
