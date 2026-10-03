@@ -9,75 +9,147 @@
  * tem `bossId: null` tipado como literal — não como `string | null`, que
  * permitiria a reintrodução por descuido.
  *
- * ⛔ P-005 — a estrutura e a curva da Torre não estão definidas. O que está
- * aqui é uma estrutura mínima: índice, nome, nível do inimigo e um ritmo de
- * XP/Coin linear. Os NUMEROS são provisórios e estão marcados.
+ * P-005/P-006/P-009 (ADR-021) — andares, inimigos e curvas vêm da config
+ * (`config.tower`), que é dado puro editável (ADR-022). Nada neste arquivo
+ * conhece um andar específico: tudo é lido de `FloorDef`.
  */
 
 import type { CombatStats, Hero, King, RewardBundle, TowerFloor } from "@tia/contracts";
-import { config, enemies as ENEMY_DEFS, type EnemyDef } from "@tia/config";
+import { config, enemies as ENEMY_DEFS, evalCurve, type EnemyDef, type FloorDef } from "@tia/config";
 import type { CombatantSeed, SkillDef as EngineSkillDef } from "@tia/engine";
-import { createBattle, type BattleState } from "@tia/engine";
+import { createBattle, Prng, type BattleState } from "@tia/engine";
 import { newBattleId } from "./ids.js";
 import { rollRewardBundle, type LootSource } from "./loot.js";
-import type { Prng } from "@tia/engine";
 
 /** Andar inicial. */
 export const FIRST_FLOOR = 1;
 
+/** Quantidade de andares definidos na config (editável via ContentPack). */
+export function floorCount(): number {
+  return config.tower.floors.length;
+}
+
+/** Normaliza qualquer número para um andar que existe (1..N). */
+export function clampFloor(floor: number): number {
+  const n = Number.isFinite(floor) ? Math.floor(floor) : FIRST_FLOOR;
+  return Math.min(floorCount(), Math.max(FIRST_FLOOR, n));
+}
+
 export function floorIndexOf(currentFloor: number): number {
-  return Math.max(FIRST_FLOOR, Math.floor(currentFloor));
+  return clampFloor(currentFloor);
 }
 
-/** Inimigo que aparece no andar. ⛔ P-006 provisório. */
-export function enemyForFloor(floor: number): EnemyDef {
-  const candidates = ENEMY_DEFS.filter((e) => floor >= e.minFloor && floor <= e.maxFloor);
-  if (candidates.length > 0) return candidates[0]!;
-  // Fora de faixa: usa o de maior `maxFloor` e escala por nível.
-  const highest = ENEMY_DEFS.reduce((a, b) => (b.maxFloor > a.maxFloor ? b : a));
-  return highest;
+/** Definição (dado puro) de um andar. Andar inexistente cai no mais próximo. */
+export function floorDef(floor: number): FloorDef {
+  return config.tower.floors[clampFloor(floor) - 1]!;
 }
 
+/** Todos os andares, na ordem. */
+export function allFloors(): readonly FloorDef[] {
+  return config.tower.floors;
+}
+
+/** Maior andar liberado para um nível de Rei (§46). Sempre >= 1. */
+export function highestUnlockedFloor(kingLevel: number): number {
+  let best = FIRST_FLOOR;
+  for (const f of config.tower.floors) {
+    if (kingLevel >= f.requiredKingLevel) best = f.index;
+  }
+  return best;
+}
+
+export function isFloorUnlocked(floor: number, kingLevel: number): boolean {
+  return kingLevel >= floorDef(floor).requiredKingLevel;
+}
+
+/** Chance (0..1) de cada inimigo do pool do andar. */
+export function floorPoolOdds(floor: number): Array<{ enemy: EnemyDef; weight: number; chance: number }> {
+  const def = floorDef(floor);
+  const total = def.pool.reduce((s, p) => s + p.weight, 0);
+  const out: Array<{ enemy: EnemyDef; weight: number; chance: number }> = [];
+  for (const entry of def.pool) {
+    const enemy = ENEMY_DEFS.find((e) => e.id === entry.enemyId);
+    if (!enemy) continue; // o pack é validado; defensivo contra edição manual da config
+    out.push({ enemy, weight: entry.weight, chance: total > 0 ? entry.weight / total : 0 });
+  }
+  return out;
+}
+
+/**
+ * Sorteia o inimigo do andar (P-006). Determinístico: mesma seed → mesmo
+ * inimigo. `forcedEnemyId` existe para testes e para o Debug Mode.
+ */
+export function pickEnemyForFloor(floor: number, seed: number, forcedEnemyId?: string): EnemyDef {
+  if (forcedEnemyId) {
+    const forced = ENEMY_DEFS.find((e) => e.id === forcedEnemyId);
+    if (forced) return forced;
+  }
+  const odds = floorPoolOdds(floor);
+  if (odds.length === 0) return ENEMY_DEFS[0]!;
+  const total = odds.reduce((s, o) => s + o.weight, 0);
+  let roll = new Prng((seed ^ 0x51ed270b) >>> 0).next() * total;
+  for (const o of odds) {
+    roll -= o.weight;
+    if (roll < 0) return o.enemy;
+  }
+  return odds[odds.length - 1]!.enemy;
+}
+
+/**
+ * Stats de um inimigo em certo nível — a MESMA estrutura linear dos heróis
+ * (`heroStatsAtLevel`), mais o multiplicador global de dificuldade da Torre.
+ * Velocidade, crítico e IAS não escalam (como nos heróis).
+ */
 export function enemyStatsAtLevel(def: EnemyDef, level: number) {
   const n = Math.max(0, level - 1);
+  const m = config.tower.enemyStatMultiplier;
+  const hpM = m * config.tower.enemyHpMultiplier;
+  const atkM = m * config.tower.enemyAttackMultiplier;
   return {
-    hp: Math.floor(def.growth.hp + def.growth.hpPerLevel * n),
-    attack: Math.floor(def.growth.attack + def.growth.attackPerLevel * n),
-    specialAttack: Math.floor(def.growth.specialAttack + def.growth.specialAttackPerLevel * n),
-    defense: Math.floor(def.growth.defense + def.growth.defensePerLevel * n),
-    specialDefense: Math.floor(def.growth.specialDefense + def.growth.specialDefensePerLevel * n),
+    hp: Math.max(1, Math.floor((def.growth.hp + def.growth.hpPerLevel * n) * hpM)),
+    attack: Math.floor((def.growth.attack + def.growth.attackPerLevel * n) * atkM),
+    specialAttack: Math.floor((def.growth.specialAttack + def.growth.specialAttackPerLevel * n) * atkM),
+    defense: Math.floor((def.growth.defense + def.growth.defensePerLevel * n) * m),
+    specialDefense: Math.floor((def.growth.specialDefense + def.growth.specialDefensePerLevel * n) * m),
     critChance: def.growth.critChance,
     attackSpeed: def.growth.attackSpeed,
     speed: def.growth.speed,
   };
 }
 
-/** Nível do inimigo por andar. ⛔ P-005 provisório. */
+/** Nível dos inimigos do andar (padrão: nível-base da faixa — regra do usuário). */
 export function enemyLevelForFloor(floor: number): number {
-  return 1 + Math.floor((floor - 1) * 1.15);
+  return floorDef(floor).enemyLevel;
 }
 
 export function describeFloor(floor: number): TowerFloor {
-  const def = enemyForFloor(floor);
+  const def = floorDef(floor);
   return {
-    index: floor,
-    name: `${def.name} — Andar ${floor}`,
+    index: def.index,
+    name: def.name,
     // §46 — o requisito é o nível do REI, o nível da conta.
-    requiredKingLevel: Math.max(1, Math.ceil(floor * 1.2)),
-    enemyLevel: enemyLevelForFloor(floor),
-    rewardBundleId: `tower:${floor}`,
+    requiredKingLevel: def.requiredKingLevel,
+    enemyLevel: def.enemyLevel,
+    minLevel: def.minLevel,
+    maxLevel: def.maxLevel,
+    rewardBundleId: `tower:${def.index}`,
     // §21/§55 — a Torre NÃO tem boss. O tipo é `null`, não `string | null`.
     bossId: null,
   };
 }
 
-/** ⛔ P-005 provisório — progressão de andares é linear. */
-export function towerRewardsForFloor(floor: number): { kingXp: number; heroXp: number; coins: number } {
+/** Recompensa por abate, em função do NÍVEL do inimigo (curvas editáveis). */
+export function towerRewardsForEnemyLevel(enemyLevel: number): { kingXp: number; heroXp: number; coins: number } {
+  const r = config.tower.rewards;
   return {
-    kingXp: Math.floor(20 * Math.pow(floor, 1.35)),
-    heroXp: Math.floor(50 * Math.pow(floor, 1.3)),
-    coins: Math.floor(15 * Math.pow(floor, 1.25)),
+    kingXp: evalCurve(r.kingXp, enemyLevel),
+    heroXp: evalCurve(r.heroXp, enemyLevel),
+    coins: evalCurve(r.coins, enemyLevel),
   };
+}
+
+export function towerRewardsForFloor(floor: number): { kingXp: number; heroXp: number; coins: number } {
+  return towerRewardsForEnemyLevel(enemyLevelForFloor(floor));
 }
 
 export class TowerLockedError extends Error {
@@ -110,6 +182,10 @@ export interface StartTowerBattleParams {
   heroSkills?: EngineSkillDef[];
   /** Folhas de animação do herói e do inimigo (dicas de apresentação, §64). */
   heroSprites?: Record<string, string>;
+  /** Tipo do ataque básico do herói (físico/mágico), vindo da classe. */
+  heroBasicAttackType?: "physical" | "magic";
+  /** Testes/Debug: força o inimigo em vez de sortear do pool. */
+  forcedEnemyId?: string;
 }
 
 /**
@@ -129,7 +205,8 @@ export function startTowerBattle(params: StartTowerBattleParams): BattleState {
   const info = describeFloor(floor);
   if (king.level < info.requiredKingLevel) throw new TowerLockedError(info.requiredKingLevel);
 
-  const def = enemyForFloor(floor);
+  const def = pickEnemyForFloor(floor, seed, params.forcedEnemyId);
+  const tint = floorDef(floor).visual.enemyTint;
   const battleId = newBattleId(king.accountId, sequence, seed);
 
   const allySeed: CombatantSeed = {
@@ -140,6 +217,7 @@ export function startTowerBattle(params: StartTowerBattleParams): BattleState {
     stats: heroStats,
     startHp: params.heroStartHp,
     heroId: hero.id,
+    basicAttackType: params.heroBasicAttackType,
     sprites: params.heroSprites,
   };
 
@@ -150,7 +228,10 @@ export function startTowerBattle(params: StartTowerBattleParams): BattleState {
     level: info.enemyLevel,
     stats: enemyStatsAtLevel(def, info.enemyLevel),
     enemyId: def.id,
+    basicAttackType: def.damageType,
     sprites: def.assets.sheets as unknown as Record<string, string>,
+    // Tintura do andar (apresentação, §64): o renderer decide como aplicar.
+    ...(tint !== null ? { tint } : {}),
   };
 
   return createBattle({
@@ -166,6 +247,8 @@ export function startTowerBattle(params: StartTowerBattleParams): BattleState {
 
 export interface ResolveTowerWinParams {
   floor: number;
+  /** Nível do inimigo derrotado; padrão = nível do andar. */
+  enemyLevel?: number;
   rng: Prng;
   accountId: string;
   itemIndexStart: number;
@@ -180,13 +263,14 @@ export interface ResolveTowerWinParams {
  * parâmetro com valor `false`.
  */
 export function resolveTowerWin(params: ResolveTowerWinParams): RewardBundle {
-  const rewards = towerRewardsForFloor(params.floor);
+  const enemyLevel = params.enemyLevel ?? enemyLevelForFloor(params.floor);
+  const rewards = towerRewardsForEnemyLevel(enemyLevel);
   return rollRewardBundle({
     rng: params.rng,
     accountId: params.accountId as never,
     itemIndexStart: params.itemIndexStart,
     source: { kind: "tower_enemy" },
-    sourceLevel: enemyLevelForFloor(params.floor),
+    sourceLevel: enemyLevel,
     kingXp: rewards.kingXp,
     heroXp: rewards.heroXp,
     coins: rewards.coins,

@@ -56,6 +56,8 @@ export interface Combatant {
    * O engine só repassa — quem usa é o renderer (§64).
    */
   sprites?: Record<string, string>;
+  /** Tintura de apresentação 0xRRGGBB (cor do andar, ADR-021). Só o renderer usa. */
+  tint?: number;
   /** Só para o lado aliado. */
   heroId?: HeroId;
   /** Só para o lado inimigo. */
@@ -300,6 +302,9 @@ export interface TowerFloor {
   /** §46 — requisito de nível do Rei, não do herói. */
   requiredKingLevel: number;
   enemyLevel: number;
+  /** Faixa de nível do Rei que o andar atende (ADR-021). */
+  minLevel: number;
+  maxLevel: number;
   rewardBundleId: string;
   /** §21/§55 — sempre null. A Torre não tem boss. */
   bossId: null;

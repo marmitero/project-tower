@@ -4,6 +4,7 @@ export {
   rollCritical,
   actionIntervalMs,
   dotDamage,
+  defenseConstantFor,
   powerOf,
   qualityGrade,
   divideXp,

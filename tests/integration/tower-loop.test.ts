@@ -205,8 +205,8 @@ describe("loop completo (§26)", () => {
     // Rei nível 1 no andar 1 seria vencível; forçamos derrota com um herói
     // muito fraco contra um andar alto.
     const d = state.data as unknown as { tower: { currentFloor: number }; king: { level: number } };
-    d.king.level = 500;
-    d.tower.currentFloor = 400;
+    d.king.level = config.xp.king.levelCap;
+    d.tower.currentFloor = config.tower.floors.length;
 
     const hero = state.data.heroes[0]!;
     state.assignHeroToSlot(hero.id, 0);

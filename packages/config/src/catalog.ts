@@ -152,7 +152,9 @@ const classSeeds: Omit<HeroClassDef, "growth">[] = [
     affinityWeapon: "crossbow",
     assets: { portrait: "portraits/archer", sheets: charSheets("archer") },
     // Identidade: velocidade e crítico (DEX alta — modificador perfurante).
-    attributes: { strength: 18, dexterity: 24, constitution: 20, intelligence: 10, wisdom: 12, charisma: 14 },
+    // ADR-021: STR 18→24, INT 10→8, SAB 12→10 — com ataque físico = FOR×1,0 + DES×0,3 o arqueiro
+    // ficava ~40% abaixo dos outros em duelos on-curve; agora é o "canhão de vidro" físico.
+    attributes: { strength: 24, dexterity: 24, constitution: 20, intelligence: 8, wisdom: 10, charisma: 14 },
     activeSkillId: "skill_volley",
     passiveSkillIds: ["passive_ricochet", "passive_momentum"],
   },
@@ -183,133 +185,7 @@ export const classes: HeroClassDef[] = classSeeds.map((seed) => ({
 /** Os 4 heróis iniciais (§10 — o jogador ESCOLHE 1). */
 export const STARTER_HERO_CLASSES: readonly string[] = classes.map((c) => c.id);
 
-// ---------------------------------------------------------------------------
-// Inimigos da Torre (⛔ P-006 — stats, papéis e resistências)
-// ---------------------------------------------------------------------------
-
-export type EnemyRole = "guardian" | "swift" | "caster" | "balanced" | "elite";
-
-export interface EnemyDef {
-  id: string;
-  name: string;
-  role: EnemyRole;
-  assets: CharacterAssets;
-  growth: ClassGrowth;
-  /** Faixa de andares da Torre onde aparece, 1-indexado. */
-  minFloor: number;
-  maxFloor: number;
-}
-
-export const enemies: EnemyDef[] = [
-  {
-    id: "slime",
-    name: "Gosma",
-    role: "guardian",
-    assets: { portrait: "portraits/slime", sheets: charSheets("slime") },
-    growth: {
-      hp: 120, hpPerLevel: 18,
-      attack: 16, attackPerLevel: 2.2,
-      specialAttack: 6, specialAttackPerLevel: 0.4,
-      defense: 14, defensePerLevel: 1.4,
-      specialDefense: 8, specialDefensePerLevel: 0.7,
-      critChance: 0, attackSpeed: -0.2, speed: 6,
-    },
-    minFloor: 1, maxFloor: 8,
-  },
-  {
-    id: "goblin",
-    name: "Goblin",
-    role: "swift",
-    assets: { portrait: "portraits/goblin", sheets: charSheets("goblin") },
-    growth: {
-      hp: 90, hpPerLevel: 11,
-      attack: 18, attackPerLevel: 2.4,
-      specialAttack: 6, specialAttackPerLevel: 0.5,
-      defense: 9, defensePerLevel: 0.9,
-      specialDefense: 7, specialDefensePerLevel: 0.6,
-      critChance: 0.05, attackSpeed: 0.15, speed: 14,
-    },
-    minFloor: 1, maxFloor: 12,
-  },
-  {
-    id: "skeleton",
-    name: "Esqueleto",
-    role: "guardian",
-    assets: { portrait: "portraits/skeleton", sheets: charSheets("skeleton") },
-    growth: {
-      hp: 140, hpPerLevel: 20,
-      attack: 17, attackPerLevel: 2.3,
-      specialAttack: 8, specialAttackPerLevel: 0.6,
-      defense: 16, defensePerLevel: 1.6,
-      specialDefense: 10, specialDefensePerLevel: 0.9,
-      critChance: 0, attackSpeed: 0, speed: 9,
-    },
-    minFloor: 4, maxFloor: 18,
-  },
-  {
-    id: "bat",
-    name: "Morcego",
-    role: "swift",
-    // Morcego não tem retrato no pack (§62 — nada de placeholder).
-    assets: { sheets: charSheets("bat") },
-    growth: {
-      hp: 80, hpPerLevel: 10,
-      attack: 19, attackPerLevel: 2.5,
-      specialAttack: 7, specialAttackPerLevel: 0.5,
-      defense: 8, defensePerLevel: 0.8,
-      specialDefense: 8, specialDefensePerLevel: 0.7,
-      critChance: 0.08, attackSpeed: 0.25, speed: 18,
-    },
-    minFloor: 6, maxFloor: 20,
-  },
-  {
-    id: "orc",
-    name: "Orc",
-    role: "balanced",
-    assets: { portrait: "portraits/orc", sheets: charSheets("orc") },
-    growth: {
-      hp: 180, hpPerLevel: 25,
-      attack: 24, attackPerLevel: 3.2,
-      specialAttack: 9, specialAttackPerLevel: 0.7,
-      defense: 18, defensePerLevel: 1.8,
-      specialDefense: 11, specialDefensePerLevel: 1.0,
-      critChance: 0.05, attackSpeed: 0, speed: 11,
-    },
-    minFloor: 10, maxFloor: 30,
-  },
-  {
-    id: "fireorc",
-    name: "Orc Flamejante",
-    role: "caster",
-    // Sem retrato no pack (§62).
-    assets: { sheets: charSheets("fireorc") },
-    growth: {
-      hp: 150, hpPerLevel: 19,
-      attack: 12, attackPerLevel: 1.3,
-      specialAttack: 26, specialAttackPerLevel: 3.3,
-      defense: 14, defensePerLevel: 1.3,
-      specialDefense: 18, specialDefensePerLevel: 1.7,
-      critChance: 0.05, attackSpeed: 0, speed: 10,
-    },
-    minFloor: 14, maxFloor: 30,
-  },
-  {
-    id: "shadowgoblin",
-    name: "Goblin Sombrio",
-    role: "elite",
-    // Sem retrato no pack (§62).
-    assets: { sheets: charSheets("shadowgoblin") },
-    growth: {
-      hp: 260, hpPerLevel: 34,
-      attack: 30, attackPerLevel: 4.1,
-      specialAttack: 14, specialAttackPerLevel: 1.3,
-      defense: 20, defensePerLevel: 2.0,
-      specialDefense: 16, specialDefensePerLevel: 1.4,
-      critChance: 0.12, attackSpeed: 0.2, speed: 16,
-    },
-    minFloor: 18, maxFloor: 40,
-  },
-];
+// Inimigos da Torre: ver `enemies.ts` (ADR-021/022 — definidos por atributos).
 
 // ---------------------------------------------------------------------------
 // Equipamento (⛔ P-001 / P-025 — templates e catálogo)

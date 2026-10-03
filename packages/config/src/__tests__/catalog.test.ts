@@ -14,6 +14,7 @@ import {
   charSheets,
   classes,
   enemies,
+  ENEMY_ROLES,
   validateCatalog,
 } from "../index.js";
 
@@ -74,12 +75,12 @@ describe("charSheets", () => {
   });
 });
 
-describe("catálogo de inimigos (P-006 provisório)", () => {
-  it("ids únicos e faixas de andares coerentes", () => {
+describe("catálogo de inimigos (P-006 — ADR-021)", () => {
+  it("ids únicos e papéis válidos", () => {
     expect(new Set(enemies.map((e) => e.id)).size).toBe(enemies.length);
     for (const e of enemies) {
-      expect(e.minFloor, e.id).toBeGreaterThanOrEqual(1);
-      expect(e.maxFloor, e.id).toBeGreaterThanOrEqual(e.minFloor);
+      expect(ENEMY_ROLES, e.id).toContain(e.role);
+      expect(e.statMultiplier, e.id).toBeGreaterThan(0);
     }
   });
 

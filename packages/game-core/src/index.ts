@@ -51,6 +51,7 @@ export {
   kingProgress,
   heroProgress,
   kingLevelProgress,
+  killsToNextKingLevel,
 } from "./progression.js";
 export type { XpAward } from "./progression.js";
 
@@ -105,7 +106,15 @@ export {
 
 export {
   FIRST_FLOOR,
-  enemyForFloor,
+  floorCount,
+  clampFloor,
+  floorDef,
+  allFloors,
+  highestUnlockedFloor,
+  isFloorUnlocked,
+  floorPoolOdds,
+  pickEnemyForFloor,
+  towerRewardsForEnemyLevel,
   enemyStatsAtLevel,
   enemyLevelForFloor,
   describeFloor,
@@ -141,3 +150,12 @@ export { LocalStoragePersistence, MemoryStorage, SAVE_PREFIX, encodeSave, decode
 export type { KeyValueStorage } from "./persistence/local.js";
 export { PersistenceError, assertSaveShape, migrateSave } from "./persistence/types.js";
 export type { PersistenceService } from "./persistence/types.js";
+
+export {
+  simulateDuel,
+  averageDuel,
+  towerPacing,
+  floorMatchups,
+  simulateHunt,
+} from "./balance.js";
+export type { DuelParams, DuelResult, DuelAverage, FloorPacing, FloorMatchup, HuntSimResult } from "./balance.js";

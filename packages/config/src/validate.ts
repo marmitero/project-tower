@@ -6,9 +6,10 @@ import {
   EQUIPABLE_STATS,
   STARTER_HERO_CLASSES,
   classes,
-  enemies,
   type CharacterAssets,
 } from "./catalog.js";
+import { enemies, ENEMY_ROLES } from "./enemies.js";
+import { curveErrors } from "./curves.js";
 import { skills, skillsById } from "./skills.js";
 import { HEROES } from "./heroes.js";
 import {
@@ -417,15 +418,48 @@ function collectCatalogErrors(): string[] {
     }
   }
 
-  // --- Inimigos (P-006 provisório) ----------------------------------------
+  // --- Inimigos (P-006 — ADR-021) ------------------------------------------
   const enemyIds = new Set(enemies.map((e) => e.id));
   check(enemyIds.size === enemies.length, "enemies[].id duplicado");
   for (const e of enemies) {
     checkAssets(`enemies.${e.id}`, e.assets, false);
-    check(
-      e.minFloor >= 1 && e.minFloor <= e.maxFloor,
-      `enemies.${e.id}: faixa de andares inválida (${e.minFloor}..${e.maxFloor})`,
-    );
+    check(ENEMY_ROLES.includes(e.role), `enemies.${e.id}: role inválido`);
+    check(e.statMultiplier > 0, `enemies.${e.id}: statMultiplier deve ser > 0`);
+    check(e.growth.hp > 0 && e.growth.hpPerLevel > 0, `enemies.${e.id}: growth sem vida`);
+  }
+
+  // --- XP / Torre (P-005/P-009 — ADR-021) ---------------------------------
+  for (const who of ["king", "hero"] as const) {
+    check(config.xp[who].levelCap >= 1, `xp.${who}.levelCap inválido`);
+    errors.push(...curveErrors(`xp.${who}.curve`, config.xp[who].curve));
+  }
+  check(config.combat.defenseConstantPerLevel >= 0, "combat.defenseConstantPerLevel não pode ser negativo");
+  check(
+    config.combat.regenOnSearchingPctPerSec >= 0 && config.combat.regenOnSearchingPctPerSec <= 1,
+    "combat.regenOnSearchingPctPerSec deve estar em [0,1]",
+  );
+  for (const k of ["enemyStatMultiplier", "enemyHpMultiplier", "enemyAttackMultiplier"] as const) {
+    check(config.tower[k] > 0, `tower.${k} deve ser > 0`);
+  }
+  for (const k of ["kingXp", "heroXp", "coins"] as const) {
+    errors.push(...curveErrors(`tower.rewards.${k}`, config.tower.rewards[k]));
+  }
+  const floors = config.tower.floors;
+  check(floors.length > 0, "tower.floors não pode ser vazio");
+  const cap = Math.max(config.xp.king.levelCap, config.xp.hero.levelCap);
+  let prevMin = 0;
+  for (const [i, f] of floors.entries()) {
+    const at = `tower.floors[${i}]`;
+    check(f.index === i + 1, `${at}.index deve ser ${i + 1} (contíguo)`);
+    check(f.minLevel >= prevMin && f.maxLevel >= f.minLevel, `${at}: faixa de nível inválida`);
+    prevMin = f.minLevel;
+    check(f.enemyLevel >= 1, `${at}.enemyLevel inválido`);
+    check(f.requiredKingLevel >= 1 && f.requiredKingLevel <= cap, `${at}.requiredKingLevel inválido`);
+    check(f.pool.length > 0, `${at}.pool vazio`);
+    for (const p of f.pool) {
+      check(enemyIds.has(p.enemyId), `${at}: inimigo desconhecido "${p.enemyId}"`);
+      check(p.weight > 0, `${at}: peso inválido (${p.enemyId})`);
+    }
   }
 
   return errors;

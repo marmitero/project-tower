@@ -1,7 +1,7 @@
 # AI_STATE — handoff vivo do Tower Idle Adventure
 
 **Última atualização:** 2026-10-03
-**Estado:** **FASE 1–6 e 8 concluídas** · FASE 7 (Torre) é a próxima — ⛔ pergunta ao usuário P-005/P-006
+**Estado:** **FASE 1–8 concluídas (3 de 7 etapas até o MVP)** · próxima: **FASE 9 — Loot/Equipamento/X** (⛔ P-010) com a regra Admin-Ready
 **Preview:** servidor estático autocontido (ADR-018) — `node scripts/serve-preview.mjs` (porta 5173). Se o ambiente resetar, subir UMA linha; não depende de `node_modules`.
 **Repositório:** `marmitero/project-tower`
 **Branch desta sessão:** `arena/01a0f1f1-project-tower`
@@ -163,15 +163,15 @@ Todas em [`docs/DECISIONS_LOG.md`](docs/DECISIONS_LOG.md).
 
 ## 6. Pendências — o estado mais importante
 
-**67 pendências catalogadas — P-002 RESOLVIDA (2026-10-01), 6 críticas restantes.** Nenhuma foi inventada. Detalhes em [`docs/PENDING_RULES.md`](docs/PENDING_RULES.md).
+**64 pendências abertas — P-002 (2026-10-01) e P-005/P-006/P-009 (2026-10-03) RESOLVIDAS; 4 críticas restantes** (+ riscos R-01…R-05 em PENDING_RULES §6b). Nenhuma foi inventada. Detalhes em [`docs/PENDING_RULES.md`](docs/PENDING_RULES.md).
 
-### As 6 críticas (P-002 resolvida por delegação do usuário)
+### As 4 críticas restantes (P-002, P-005, P-006 resolvidas)
 
 | ID | Pendência | Bloqueia | Material de apoio |
 |---|---|---|---|
 | ~~🔴 **P-002**~~ | ~~Definição dos 4 heróis iniciais~~ ✅ | — resolvida | Identidades em `packages/config/src/heroes.ts` (Aldric/Kaia/Maelis/Vorath), ADR-015 |
-| 🔴 **P-005** | Estrutura e curva da Torre | Fase 7 | — |
-| 🔴 **P-006** | Inimigos: stats, papéis, resistências | Fase 7 | 12 inimigos + 5 elites + 1 boss com sprites prontos |
+| ~~🔴 **P-005**~~ | ~~Estrutura e curva da Torre~~ ✅ | — resolvida | 40 andares por faixa de nível, ADR-021 |
+| ~~🔴 **P-006**~~ | ~~Inimigos: stats, papéis, resistências~~ ✅ | — resolvida | 11 inimigos por papel, ADR-021 |
 | 🔴 **P-008** | Todos os valores de Coin | Fase 10 | — |
 | 🔴 **P-010** | Faixa e granularidade do X | Fase 9 | Referência usa inteiro 1–50 com fator `x/10` |
 | 🔴 **P-011** | Taxa de conversão offline → recompensa | Fase 11 | — |
@@ -187,12 +187,10 @@ Um valor inventado em silêncio é **pior** que um valor ausente, porque parece 
 
 ### Recomendação de prioridade
 
-~~P-002~~ resolvida (2026-10-01). A próxima decisão que destrava mais cadeia é o
-par **P-005/P-006 (estrutura da Torre + inimigos)**, que segura a Fase 7:
+~~P-002~~, ~~P-005/P-006/P-009~~ resolvidas. A próxima decisão que destrava cadeia é **P-010 (X do equipamento)**, que segura a Fase 9 — junto com o risco **R-02** (equipamento flat precisa escalar com o nível):
 
 ```text
-P-005/P-006 → Fase 7 (Torre) → Fase 8 (searching) → vertical slice
-P-008/P-036 (Coin) → Fase 10 · P-010 (X) → Fase 9 · P-011 (offline) → Fase 11
+P-010 (X) + R-02 → Fase 9 · P-008/P-036 (Coin) → Fase 10 · P-011 (offline) → Fase 11 · P-018 → Fase 12
 ```
 
 ---
@@ -281,12 +279,13 @@ O que as fases entregaram:
 
 ```text
 FASE 6  ✅ Combate              ← CONCLUÍDA (ADR-020: HP persistente, skills, feedback visual)
-FASE 7  Torre                  ⛔ P-005, P-006  ← PRÓXIMO PASSO (perguntar ao usuário na etapa 3)
-FASE 9  Equipamentos           ⛔ P-010
+FASE 7  ✅ Torre                ← CONCLUÍDA (ADR-021/022)
+FASE 9  Equipamentos           ⛔ P-010  ← PRÓXIMO PASSO (etapa 4)
 FASE 10 Economia                ⛔ P-008, P-036  (perguntar ao usuário na etapa 5)
 FASE 11 Offline                 ⛔ P-011
 FASE 12 Boss                    ⛔ P-018
 FASE 13 MVP LOCAL               ← o vertical slice
+FASE 14 Painel Admin            pós-MVP (docs/ADMIN_PANEL.md)
 ```
 
 ---
@@ -336,6 +335,8 @@ Todas as 15 têm teste **passando** hoje. Os arquivos abaixo existem e rodam em 
 | [`docs/EQUIPMENT_SYSTEM.md`](docs/EQUIPMENT_SYSTEM.md) | Slots, raridades, X, god rolls |
 | [`docs/TOWER_SYSTEM.md`](docs/TOWER_SYSTEM.md) | Andares e estado Procurando |
 | [`docs/BOSS_SYSTEM.md`](docs/BOSS_SYSTEM.md) | Atividades de Boss |
+| [`docs/BALANCE_REPORT.md`](docs/BALANCE_REPORT.md) | Balanceamento da Torre (gerado) |
+| [`docs/ADMIN_PANEL.md`](docs/ADMIN_PANEL.md) | Painel Admin futuro + contrato `ContentPack` |
 | [`docs/INVENTORY_SYSTEM.md`](docs/INVENTORY_SYSTEM.md) | Inventário, filtros, comparação |
 | [`docs/AUTOMATION_SYSTEM.md`](docs/AUTOMATION_SYSTEM.md) | Loop idle, offline, VIP |
 | [`docs/ECONOMY_SYSTEM.md`](docs/ECONOMY_SYSTEM.md) | Moedas, fontes, sumidouros |
@@ -422,17 +423,25 @@ editar `config/src/heroes.ts`.
   (stun/veneno) ainda não têm ícone; sem música. As 4 folhas de combate (idle/attack/hurt/death)
   carregam juntas por combatente e cada animação usa a sua própria folha.
 
-**O que fazer:** **FASE 7 — Torre** (etapa 3 de 7): estrutura de andares, curva de dificuldade,
-inimigos distintos. ⛔ **Perguntar P-005/P-006 ao usuário ANTES de codar.**
+### Fase 7 — Torre (ADR-021/022, 2026-10-03)
 
-**Estimativa até o 1º MVP jogável (FASE 13): 7 etapas — 2 concluídas** —
-1) ✅ Fase 5+8, 2) ✅ Fase 6, 3) Fase 7 (gate P-005/P-006), 4) Fase 9,
-5) Fase 10+11 (gate P-008/P-036/P-011), 6) Fase 12, 7) Fase 13 (MVP Local).
-Restam **5 etapas**. Detalhe e riscos na tabela do ROADMAP.
+- **Andares:** `config.tower.floors` (40, `FloorDef`): faixas 1–10, 10–25, 25–50, 50–100, 100–250, 250–500, 500–1000, 1000–1500, 1500–2500, 2500–5000 e **1 andar por 500 níveis até 20.000**. **Nível do inimigo = nível-base da faixa**; gate = nível do Rei (`TowerLockedError`, `highestUnlockedFloor`). Seleção manual na `TowerScreen`.
+- **Teto 20.000** (Rei e heróis). XP necessário `floor(20·(N+30)^1,35)`; XP/abate `floor(50·(E+3)^0,95)`; Coin/abate `floor(12·(E+3))` (⛔ P-008 provisória). **≈ 1.362 h** até o teto; andar 10 ≈ 168 h (gargalo, R-03).
+- **Inimigos:** 11 (`packages/config/src/enemies.ts`), 6 atributos + papel (tank/dps/swift/caster/balanced/elite) + dano físico/mágico; pool por andar com sorteio determinístico. `boss`/`slimeking` reservados à Fase 12.
+- **Engine:** defesa `K = 100 + 5×(nível−1)`; regen 5%/s em PROCURANDO; `attack = FOR×1,0 + DES×0,3`; Arqueiro FOR 24/DES 24. Calibração global `tower.enemyHpMultiplier 2,5 / enemyAttackMultiplier 0,05`. `configVersion` 3.
+- **Admin-Ready (ADR-022):** `exportContentPack`/`validateContentPack`/`applyContentPack`/`defaultContentPack`/`resetContentToDefaults` em `packages/config/src/content.ts`. **Regra para as Fases 9–12:** todo conteúdo novo = dado serializável + validável + dentro do `ContentPack` + teste de round-trip. Painel = FASE 14 (`docs/ADMIN_PANEL.md`), **não implementar antes do MVP**.
+- **Relatório:** `npm run report:balance` (`-- --md` regenera `docs/BALANCE_REPORT.md`; rodar após qualquer mudança de curva/inimigo).
+- **Futuro registrado (não implementar):** Rei anunciar personagens evoluídos no Mercado (`docs/MARKET_SYSTEM.md` §10b).
+- Testes: `tower-content`, `tower-balance`, `tower-floors`, `level-scaling`, `combat-hp`; suíte **441 verdes**.
 
-**O que perguntar ao usuário:** na hora certa (etapas 3 e 5), as pendências
-**P-005/P-006** (curva de andares + inimigos da Torre) e **P-008/P-036/P-011**
-(economia/offline). Fora isso, seguir com autoridade delegada.
+**O que fazer:** **FASE 9 — Loot/Equipamento/X** (etapa 4 de 7): pipeline de loot 5%, 10 slots, raridades, X por atributo, inventário/venda. ⛔ P-010. **Resolver R-02:** os valores base do equipamento (`EQUIP_TEMPLATES`) precisam escalar com o nível/tier do item (curvas por `CurveDef`) ou o equipamento será irrelevante a partir do Nv ~100. Seguir a **regra AR**.
+
+**Estimativa até o 1º MVP jogável (FASE 13): 7 etapas — 3 concluídas** —
+1) ✅ Fase 5+8, 2) ✅ Fase 6, 3) ✅ Fase 7, 4) Fase 9 (⛔ P-010),
+5) Fase 10+11 (gate P-008/P-036/P-011), 6) Fase 12 (⛔ P-018), 7) Fase 13 (MVP Local).
+Restam **4 etapas**. Detalhe e riscos na tabela do ROADMAP.
+
+**O que perguntar ao usuário:** na hora certa (etapa 5), as pendências **P-008/P-036/P-011** (economia/offline). Fora isso, seguir com autoridade delegada.
 
 **Como validar:**
 

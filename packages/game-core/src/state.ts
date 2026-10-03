@@ -29,7 +29,16 @@ import { requireActiveHero, placeHero, setActiveHero, unlockSlot, firstAssigned,
 import { teamHeroes } from "./team.js";
 import { addEquipment, heroCombatStats, sellEquipment } from "./inventory.js";
 import { grantHeroXp, grantKingXp, splitTeamXp } from "./progression.js";
-import { startTowerBattle, resolveTowerWin, describeFloor, enemyLevelForFloor } from "./tower.js";
+import {
+  startTowerBattle,
+  resolveTowerWin,
+  describeFloor,
+  enemyLevelForFloor,
+  clampFloor,
+  floorDef,
+  highestUnlockedFloor,
+  TowerLockedError,
+} from "./tower.js";
 import type { PersistenceService } from "./persistence/types.js";
 import { LocalStoragePersistence } from "./persistence/local.js";
 
@@ -55,6 +64,8 @@ export class GameState {
   private readonly listeners: GameEvents;
   private battle: BattleState | null = null;
   private battleSequence = 0;
+  /** Andar da batalha em curso — selecionar andar não altera uma luta já iniciada. */
+  private battleFloor: number | null = null;
   private equipmentIndex = 0;
   private dirty = false;
 
@@ -243,7 +254,25 @@ export class GameState {
   // -------------------------------------------------------------------------
 
   get currentFloor(): number {
-    return this.state.tower.currentFloor;
+    return clampFloor(this.state.tower.currentFloor);
+  }
+
+  /** Maior andar liberado para o nível atual do Rei (§46). */
+  get highestUnlockedFloor(): number {
+    return highestUnlockedFloor(this.state.king.level);
+  }
+
+  /**
+   * Seleciona o andar da caçada (ADR-021). Só vale a partir da PRÓXIMA batalha;
+   * exige o nível do Rei da faixa do andar (§46). Lança `TowerLockedError`.
+   */
+  selectFloor(floor: number): number {
+    const target = clampFloor(floor);
+    const required = floorDef(target).requiredKingLevel;
+    if (this.state.king.level < required) throw new TowerLockedError(required);
+    this.state.tower.currentFloor = target;
+    this.touch();
+    return target;
   }
 
   floorInfo(floor: number) {
@@ -256,7 +285,7 @@ export class GameState {
     const hero = this.heroById(activeId);
     if (!hero) throw new Error(`Herói ativo ${activeId} não encontrado no roster.`);
 
-    const floor = this.state.tower.currentFloor;
+    const floor = this.currentFloor;
     this.battleSequence += 1;
     const seed = hashString(`${this.state.king.accountId}:${floor}:${this.battleSequence}`) >>> 0;
     const heroStats = heroCombatStats(hero, this.state.inventory);
@@ -277,8 +306,11 @@ export class GameState {
       heroSprites: classes.find((c) => c.id === hero.classId)?.assets.sheets as unknown as
         | Record<string, string>
         | undefined,
+      // Físico × mágico importa (ADR-021): arcanist/shadowcaller batem em Def. Esp.
+      heroBasicAttackType: classes.find((c) => c.id === hero.classId)?.damageType === "magic" ? "magic" : "physical",
     });
 
+    this.battleFloor = floor;
     this.battle = battle;
     this.state.hunt = { kind: "in_battle", battleId: battle.battleId, startedAt: this.deps.now() };
     this.touch();
@@ -340,9 +372,11 @@ export class GameState {
       return;
     }
 
-    const floor = this.state.tower.currentFloor;
+    const floor = this.battleFloor ?? this.currentFloor;
     const bundle = resolveTowerWin({
       floor,
+      // A recompensa segue o nível do inimigo ENFRENTADO, não o do andar atual.
+      enemyLevel: battle.enemies[0]?.level,
       rng: this.lootRng(`tower:${floor}:${this.battleSequence}`),
       accountId: this.state.king.accountId,
       itemIndexStart: this.equipmentIndex,
@@ -456,7 +490,23 @@ export class GameState {
     const hunt = this.state.hunt;
     if (!hunt || hunt.kind !== "searching") return null;
     if (!isSearchingComplete(hunt, this.deps.now())) return null;
+    this.regenDuringSearch(hunt.durationMs);
     return this.startTower();
+  }
+
+  /**
+   * ADR-021 — regeneração passiva do herói ativo durante PROCURANDO:
+   * `regenOnSearchingPctPerSec` × duração × HP máx. Herói caído não regenera
+   * (só o descanso/reinício cura — ADR-020).
+   */
+  private regenDuringSearch(durationMs: number): void {
+    const pct = config.combat.regenOnSearchingPctPerSec;
+    if (pct <= 0) return;
+    const activeId = this.state.team.activeHeroId;
+    const hero = activeId ? this.heroById(activeId) : null;
+    if (!hero || hero.currentHp <= 0) return;
+    const max = heroCombatStats(hero, this.state.inventory).hp;
+    hero.currentHp = Math.min(max, hero.currentHp + Math.floor(max * pct * (durationMs / 1000)));
   }
 
   /** Quanto falta da animação, em ms. */
@@ -569,6 +619,8 @@ export class GameState {
   static hydrate(save: SaveData, deps: GameStateDeps, listeners: GameEvents = {}): GameState {
     const state = new GameState(save, deps, listeners);
     state.equipmentIndex = save.inventory.equipment.length;
+    // O andar salvo pode não existir mais (conteúdo editado): nunca quebra o load.
+    save.tower.currentFloor = clampFloor(save.tower.currentFloor);
     return state;
   }
 }
@@ -580,7 +632,7 @@ export class GameState {
  * da mesma classe entram na batalha. Passivas/`damageType: "none"` ficam
  * para a Fase 9+ (efeitos de traço/armas).
  */
-function engineSkillsFor(classId: string): EngineSkillDef[] {
+export function engineSkillsFor(classId: string): EngineSkillDef[] {
   return skills
     .filter((s) => s.kind === "active" && s.classId === classId && s.coefficient !== null)
     .map((s) => ({

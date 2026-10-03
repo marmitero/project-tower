@@ -39,6 +39,8 @@ AI_STATE.md → GDD.md → GAME_SYSTEMS.md → documento do sistema específico 
 | [`WEAPON_SYSTEM.md`](WEAPON_SYSTEM.md) | 9 tipos de arma, traços, afinidades e balanceamento |
 | [`EQUIPMENT_SYSTEM.md`](EQUIPMENT_SYSTEM.md) | 10 slots, raridades, X individual, qualidade, god rolls, características |
 | [`TOWER_SYSTEM.md`](TOWER_SYSTEM.md) | Andares, dificuldade, inimigos, curvas, progressão e recompensas |
+| [`BALANCE_REPORT.md`](BALANCE_REPORT.md) | Relatório de balanceamento da Torre **gerado** (`npm run report:balance -- --md`): pacing por andar, custo de vida por papel, sustentabilidade idle |
+| [`ADMIN_PANEL.md`](ADMIN_PANEL.md) | Painel Administrativo futuro (FASE 14): contrato `ContentPack`, escopo, regra Admin-Ready por fase |
 | [`BOSS_SYSTEM.md`](BOSS_SYSTEM.md) | Atividades de Boss separadas da Torre, combate de equipe, fragmentos |
 | [`INVENTORY_SYSTEM.md`](INVENTORY_SYSTEM.md) | Inventário, filtros, ordenação, equipar, vender, descartar, anunciar |
 | [`AUTOMATION_SYSTEM.md`](AUTOMATION_SYSTEM.md) | Loop idle, estado Procurando, offline progress, automação de decisões |

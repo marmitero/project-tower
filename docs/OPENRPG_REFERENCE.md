@@ -58,7 +58,7 @@ o `growth` é derivado — trocar a fantasia de uma classe é editar 6 números.
 | Nossa classe | Corpo | Base OpenRpg | Perfil |
 |---|---|---|---|
 | Guardião | `characters/hero` | Fighter ("Super tough, hits things") | FOR 26 / CON 28 — tanque físico |
-| Arqueiro | `characters/archer` | — (velocidade/DEX) | DES 24 — crítico e IAS |
+| Arqueiro | `characters/archer` | — (velocidade/DEX) | FOR 24 / DES 24 — canhão de vidro físico, crítico e IAS (ADR-021) |
 | Arcanista | `characters/mage` | Mage ("Powerful magic users") | INT 28 / SAB 20 — vidro mágico |
 | Invocador Sombrio | `characters/necromancer` | — (DoT/sustain) | INT 24 / SAB 18 — sustain |
 
@@ -67,7 +67,7 @@ o `growth` é derivado — trocar a fantasia de uma classe é editar 6 números.
 | Stat | Fórmula | Fonte no OpenRpg |
 |---|---|---|
 | `hp` | `40 + CON×5` | `FantasyVitalsStatPopulator` (MaxHealth = base + CON×5) |
-| `attack` | `FOR×0,8 + DES×0,2` | `FantasyMeleeStatPopulator` (STR/100 ≈ maçada, DEX/100 ≈ perfurante) |
+| `attack` | `FOR×1,0 + DES×0,3` (ADR-021; era 0,8/0,2) | `FantasyMeleeStatPopulator` (STR/100 ≈ maçada, DEX/100 ≈ perfurante) |
 | `specialAttack` | `INT×1,2 + SAB×0,3` | vitals (MaxMana = base + INT×5) invertido para dano |
 | `defense` | `2 + CON×0,8` | melee defense com modificador de CON |
 | `specialDefense` | `2 + SAB×0,9` | atributo mágico defensivo |

@@ -198,9 +198,11 @@ Detalhe em [`COMBAT_SYSTEM.md`](COMBAT_SYSTEM.md).
 
 | ID | Chave | Valor | Fonte |
 |---|---|---|---|
-| `tower.floorCount` | Número de andares | ⚠️ **PENDING** P-005 | §22 |
-| `tower.floors[]` | Definição de cada andar | ⚠️ **PENDING** P-005 | §22 |
-| `tower.enemyPool[]` | Templates de inimigo | ⚠️ **PENDING** P-006 | §22, §54 |
+| `tower.floors[]` | Andares (`FloorDef`: faixa, `enemyLevel`, `requiredKingLevel`, `pool`, `visual`) | ✅ 40 andares — ADR-021 (P-005) | §22 |
+| `enemies[]` (`EnemyDef`) | Inimigos: 6 atributos, papel, tipo de dano, `statMultiplier` | ✅ 11 inimigos — ADR-021 (P-006) | §22, §54 |
+| `tower.enemyStatMultiplier` / `enemyHpMultiplier` / `enemyAttackMultiplier` | Calibração global da Torre | ✅ 1 / 2,5 / 0,05 (calibrados por simulação) | ADR-021 |
+| `tower.rewards.{kingXp,heroXp,coin}` | `CurveDef` de recompensa por abate | ✅ XP; Coin ⛔ P-008 | ADR-021 |
+| `combat.defenseConstantPerLevel` · `combat.regenOnSearchingPctPerSec` | K de defesa por nível · regen em PROCURANDO | ✅ 5 · 0,05 | ADR-021 |
 | `tower.selectMode` | Seleção de andar | **manual** | §19, §107 |
 | `tower.autoAdvance` | Avanço automático de andar | **false** | §19 (Tipo A) |
 | `tower.bossInTower` | Boss em andar fixo | **false — PROIBIDO** | §21, §55 (Tipo A) |
@@ -211,13 +213,25 @@ Detalhe em [`COMBAT_SYSTEM.md`](COMBAT_SYSTEM.md).
 
 | ID | Chave | Valor | Fonte |
 |---|---|---|---|
-| `xp.king.levelCap` | Teto nível do Rei | ⚠️ **PENDING** P-009 | §46 |
-| `xp.king.requiredPerLevel` | Curva | ⚠️ **PENDING** P-009 | §46 |
-| `xp.hero.levelCap` | Teto nível do herói | ⚠️ **PENDING** P-009 | §9 |
-| `xp.hero.requiredPerLevel` | Curva | ⚠️ **PENDING** P-009 | §9 |
+| `xp.king.levelCap` | Teto nível do Rei | ✅ **20.000** (P-009, ADR-021) | §46 |
+| `xp.king.requiredPerLevel` | Curva | ✅ `floor(20·(N+30)^1,35)` | §46 |
+| `xp.hero.levelCap` | Teto nível do herói | ✅ **20.000** | §9 |
+| `xp.hero.requiredPerLevel` | Curva | ✅ idêntica à do Rei (pools separados) | §9 |
 | `xp.separatePools` | Rei e herói independentes | **true** | §45 (Tipo A) |
 
-> **P-009** — as curvas de XP não foram especificadas. Elas determinam quão rápido o jogador chega aos níveis 10 e 25 (desbloqueio de slots), e portanto **o ritmo de todo o jogo**.
+> **P-009 resolvida** (ADR-021): as curvas são `CurveDef` (dado). Ritmo medido em [`BALANCE_REPORT.md`](BALANCE_REPORT.md).
+
+### 10.1 Fluxo do `ContentPack` (ADR-022)
+
+Todo o conteúdo editável da Torre (andares, inimigos, curvas, multiplicadores) é exportado/validado/aplicado como **um pacote**, a base do futuro painel ([`ADMIN_PANEL.md`](ADMIN_PANEL.md)):
+
+```text
+exportContentPack(config) → JSON  ──edição──→  validateContentPack(json)  → erros legíveis
+                                              applyContentPack(config, json) → config novo
+defaultContentPack() · resetContentToDefaults()   // volta ao padrão
+```
+
+Regra: valor de conteúdo **nunca** é constante na lógica; muda-se o JSON e o jogo muda. `configVersion` (3) invalida saves incompatíveis.
 
 ---
 

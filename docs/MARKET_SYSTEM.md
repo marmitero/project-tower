@@ -247,6 +247,16 @@ O §105 proíbe transformar tudo em cards. O mercado é uma **decisão econômic
 
 ---
 
+## 10b. Futuro: anúncio de personagens evoluídos (registro, 2026-10-03)
+
+Decisão do usuário: **no futuro o Rei poderá anunciar no Mercado da Comunidade personagens (heróis) evoluídos** — com nível, estrelas, XP e equipamento acumulados. **Não implementar agora.** Preparação já feita ou exigida:
+
+- o teto de nível (20.000) e o XP por herói (`Hero.level/xp`) já são dado persistido e serializável;
+- o anúncio de herói deve seguir a mesma transação atômica do §5 (taxa de 15%, idempotência, server-authoritative) — um herói à venda sai da equipe/slot e é **bloqueado** (não luta, não recebe XP);
+- precisa de decisões novas (⛔ a abrir quando for desenhado): o que acontece com o equipamento do herói vendido, se o herói inicial (§10) pode ser vendido, o preço mínimo e o impacto na economia (risco R-01 em [`PENDING_RULES.md`](PENDING_RULES.md): heróis tardios com XP dividido).
+
+---
+
 ## 11. No MVP local
 
 > **No modo local pode existir: mock, desativado, estrutura técnica.** (§42)

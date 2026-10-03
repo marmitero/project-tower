@@ -15,6 +15,16 @@ import type { CombatStats } from "@tia/contracts";
 import type { CombatConfig } from "@tia/config";
 
 /**
+ * Constante de defesa efetiva para um alvo de certo nível (ADR-021):
+ * `K = defenseConstant + defenseConstantPerLevel × (nível − 1)`.
+ * Nível 1 (ou ausente) devolve a constante base — o comportamento antigo.
+ */
+export function defenseConstantFor(config: CombatConfig, targetLevel = 1): number {
+  const extra = (config.defenseConstantPerLevel ?? 0) * Math.max(0, targetLevel - 1);
+  return config.defenseConstant + extra;
+}
+
+/**
  * Dano.
  *
  *   DanoBase  = PoderOfensivo × CoeficienteDaAção × 100 / (100 + DefesaAlvo)
@@ -27,13 +37,16 @@ export function computeDamage(params: {
   offensivePower: number;
   coefficient: number;
   targetDefense: number;
+  /** Nível do alvo — escala a constante de defesa (ADR-021). Padrão 1. */
+  targetLevel?: number;
   damageModifiers: number;
   config: CombatConfig;
 }): { finalDamage: number; beforeMitigation: number; mitigatedPercent: number } {
   const { offensivePower, coefficient, targetDefense, damageModifiers, config } = params;
+  const k = defenseConstantFor(config, params.targetLevel);
 
   const raw = offensivePower * coefficient;
-  const beforeMitigation = (raw * config.defenseConstant) / (config.defenseConstant + targetDefense);
+  const beforeMitigation = (raw * k) / (k + targetDefense);
   const mitigated = beforeMitigation * damageModifiers;
   const finalDamage = Math.max(config.minDamage, Math.floor(mitigated));
   const mitigatedPercent = raw > 0 ? Math.min(100, (1 - beforeMitigation / raw) * 100) : 0;
@@ -80,14 +93,13 @@ export function dotDamage(params: {
   offensivePower: number;
   coefficient: number;
   targetDefense: number;
+  targetLevel?: number;
   config: CombatConfig;
 }): number {
   const { offensivePower, coefficient, targetDefense, config } = params;
+  const k = defenseConstantFor(config, params.targetLevel);
   const raw = offensivePower * coefficient;
-  return Math.max(
-    config.minDamage,
-    Math.floor((raw * config.defenseConstant) / (config.defenseConstant + targetDefense)),
-  );
+  return Math.max(config.minDamage, Math.floor((raw * k) / (k + targetDefense)));
 }
 
 /**

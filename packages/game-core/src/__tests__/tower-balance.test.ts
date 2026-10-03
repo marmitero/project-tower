@@ -1,0 +1,201 @@
+/**
+ * Balanceamento da Torre (ADR-021) — propriedades MEDIDAS pelo engine real.
+ *
+ * Estes testes não conferem números mágicos: conferem as promessas de design
+ * (herói on-curve vence e aguenta idle; herói fraco não; o ritmo de XP cabe
+ * na meta). Se alguém editar atributos/curvas (ou o painel adm no futuro) e
+ * quebrar uma promessa, é aqui que aparece.
+ */
+import { describe, expect, it } from "vitest";
+import { classes, config, enemies } from "@tia/config";
+import { averageDuel, simulateDuel, simulateHunt, towerPacing } from "../balance.js";
+import { floorPoolOdds, pickEnemyForFloor } from "../tower.js";
+
+const FLOORS_SAMPLE = [1, 4, 8, 10, 11, 25, 40];
+
+describe("duelo on-curve (herói no nível do inimigo do andar)", () => {
+  for (const floor of FLOORS_SAMPLE) {
+    it(`andar ${floor}: toda classe vence todo inimigo do pool, em tempo e custo de vida razoáveis`, () => {
+      const level = config.tower.floors[floor - 1]!.enemyLevel;
+      for (const { enemy } of floorPoolOdds(floor)) {
+        for (const cls of classes) {
+          const a = averageDuel({ classId: cls.id, heroLevel: level, enemyId: enemy.id, enemyLevel: level }, 4);
+          const tag = `${cls.id} × ${enemy.id} (andar ${floor})`;
+          expect(a.winRate, tag).toBe(1);
+          expect(a.avgDurationSec, tag).toBeGreaterThan(3);
+          expect(a.avgDurationSec, tag).toBeLessThan(30);
+          // elite pode doer mais; o resto custa no máximo ~1/5 da vida
+          expect(a.avgHpLostFraction, tag).toBeLessThan(enemy.role === "elite" ? 0.35 : 0.22);
+        }
+      }
+    });
+  }
+
+  it("o custo por papel segue a intenção: veloz < tanque < dano < elite", () => {
+    const level = 500;
+    const mean = (role: string) => {
+      const list = enemies.filter((e) => e.role === role);
+      let t = 0;
+      let n = 0;
+      for (const e of list) {
+        for (const c of classes) {
+          t += averageDuel({ classId: c.id, heroLevel: level, enemyId: e.id, enemyLevel: level }, 3).avgHpLostFraction;
+          n += 1;
+        }
+      }
+      return t / n;
+    };
+    expect(mean("swift")).toBeLessThan(mean("tank"));
+    expect(mean("tank")).toBeLessThan(mean("dps"));
+    expect(mean("dps")).toBeLessThan(mean("elite"));
+  });
+
+  it("as 4 classes ficam equilibradas entre si (pior média ≤ 1,4× a melhor)", () => {
+    const level = 500;
+    const means = classes.map((c) => {
+      let t = 0;
+      for (const e of enemies) t += averageDuel({ classId: c.id, heroLevel: level, enemyId: e.id, enemyLevel: level }, 3).avgHpLostFraction;
+      return t / enemies.length;
+    });
+    expect(Math.max(...means) / Math.min(...means)).toBeLessThan(1.4);
+  });
+
+  it("a dificuldade é estável do Nv 30 ao 20.000 (herói e inimigo escalam pela mesma estrutura)", () => {
+    for (const cls of classes) {
+      const at = (lv: number) => averageDuel({ classId: cls.id, heroLevel: lv, enemyId: "orc", enemyLevel: lv }, 3);
+      const base = at(100);
+      for (const lv of [1000, 5000, 20_000]) {
+        const a = at(lv);
+        expect(a.avgHpLostFraction / base.avgHpLostFraction, `${cls.id} ${lv}`).toBeGreaterThan(0.75);
+        expect(a.avgHpLostFraction / base.avgHpLostFraction, `${cls.id} ${lv}`).toBeLessThan(1.25);
+        expect(a.avgDurationSec / base.avgDurationSec, `${cls.id} ${lv}`).toBeGreaterThan(0.75);
+        expect(a.avgDurationSec / base.avgDurationSec, `${cls.id} ${lv}`).toBeLessThan(1.25);
+      }
+    }
+  });
+});
+
+describe("ser mais forte importa (o andar segura o jogador)", () => {
+  it("herói com metade do nível do inimigo sai muito ferido; com o dobro, passeia", () => {
+    for (const cls of classes) {
+      const enemyLevel = 2500; // andar 10
+      const weak = averageDuel({ classId: cls.id, heroLevel: 1250, enemyId: "skeleton", enemyLevel }, 3);
+      const strong = averageDuel({ classId: cls.id, heroLevel: 5000, enemyId: "skeleton", enemyLevel }, 3);
+      const onCurve = averageDuel({ classId: cls.id, heroLevel: enemyLevel, enemyId: "skeleton", enemyLevel }, 3);
+      // metade do nível custa ≥ 3× mais vida que estar on-curve (e passa de 25%)
+      expect(weak.avgHpLostFraction, cls.id).toBeGreaterThan(3 * onCurve.avgHpLostFraction);
+      expect(weak.avgHpLostFraction, cls.id).toBeGreaterThan(0.25);
+      expect(strong.winRate, cls.id).toBe(1);
+      expect(strong.avgHpLostFraction, cls.id).toBeLessThan(0.05);
+    }
+  });
+
+  it("subir o nível reduz o custo da mesma luta", () => {
+    const at = (lv: number) => simulateDuel({ classId: "guardian", heroLevel: lv, enemyId: "orc", enemyLevel: 1000, seed: 3 }).hpLostFraction;
+    expect(at(1000)).toBeGreaterThan(at(1500));
+    expect(at(1500)).toBeGreaterThan(at(2200));
+  });
+
+  it("tipo de dano importa: Gosma Gélida (Def. Esp. alta) segura mais o mago que o guerreiro físico", () => {
+    // mesma luta, nível alto: o arcanista (magia) demora mais contra a Gélida do que contra a Gosma comum
+    const lv = 500;
+    const vsFrost = averageDuel({ classId: "arcanist", heroLevel: lv, enemyId: "frostslime", enemyLevel: lv }, 3);
+    const vsSlime = averageDuel({ classId: "arcanist", heroLevel: lv, enemyId: "slime", enemyLevel: lv }, 3);
+    const ratioMage = vsFrost.avgDurationSec / vsSlime.avgDurationSec;
+    const gFrost = averageDuel({ classId: "guardian", heroLevel: lv, enemyId: "frostslime", enemyLevel: lv }, 3);
+    const gSlime = averageDuel({ classId: "guardian", heroLevel: lv, enemyId: "slime", enemyLevel: lv }, 3);
+    const ratioPhys = gFrost.avgDurationSec / gSlime.avgDurationSec;
+    expect(ratioMage).toBeGreaterThan(ratioPhys);
+  });
+});
+
+describe("caçada idle sustentável (regen de PROCURANDO — ADR-021)", () => {
+  const cases: Array<[number, number]> = [
+    [1, 1],
+    [5, 100],
+    [10, 2500],
+    [11, 5000],
+    [40, 19_500],
+  ];
+  it.each(cases)("andar %i: herói 5%% acima do nível-base aguenta 150 lutas seguidas (4 classes)", (floor, minLevel) => {
+    for (const cls of classes) {
+      const r = simulateHunt({ classId: cls.id, heroLevel: Math.ceil(minLevel * 1.05), floor, fights: 150, seed: 2 });
+      expect(r.defeated, cls.id).toBe(false);
+    }
+  });
+
+  it("herói com 60% do nível cai rápido (o andar é um limite real)", () => {
+    for (const cls of classes) {
+      const r = simulateHunt({ classId: cls.id, heroLevel: 3000, floor: 11, fights: 150, seed: 2 });
+      expect(r.defeated, cls.id).toBe(true);
+      expect(r.fights, cls.id).toBeLessThan(10);
+    }
+  });
+
+  it("sem regen, o mesmo herói on-curve acabaria derrotado (a regen é necessária)", () => {
+    const prev = config.combat.regenOnSearchingPctPerSec;
+    config.combat.regenOnSearchingPctPerSec = 0;
+    try {
+      const r = simulateHunt({ classId: "ranger", heroLevel: 2625, floor: 10, fights: 150, seed: 2 });
+      expect(r.defeated).toBe(true);
+    } finally {
+      config.combat.regenOnSearchingPctPerSec = prev;
+    }
+  });
+});
+
+describe("pacing do Rei (P-009 — XP moderado e desacelerando)", () => {
+  const pacing = towerPacing(15); // ciclo médio luta+procura medido: ≈15 s
+  const total = pacing.at(-1)!.cumulativeHours;
+
+  it("andar 1 é rápido (≤ 1 h) e o jogo inteiro é demorado, mas finito (1.000–2.000 h)", () => {
+    expect(pacing[0]!.hours).toBeLessThanOrEqual(1);
+    expect(total).toBeGreaterThan(1000);
+    expect(total).toBeLessThan(2000);
+  });
+
+  it("do andar 4 ao 9 cada andar demora mais que o anterior (curva desacelera)", () => {
+    for (let f = 4; f <= 9; f += 1) {
+      expect(pacing[f]!.hours, `andar ${f + 1}`).toBeGreaterThan(pacing[f - 1]!.hours);
+    }
+  });
+
+  it("do andar 11 ao 40 cada andar custa entre 15 e 60 h e cresce devagar", () => {
+    for (let f = 10; f < 40; f += 1) {
+      expect(pacing[f]!.hours, `andar ${f + 1}`).toBeGreaterThan(15);
+      expect(pacing[f]!.hours, `andar ${f + 1}`).toBeLessThan(60);
+      if (f > 10) expect(pacing[f]!.hours).toBeGreaterThanOrEqual(pacing[f - 1]!.hours);
+    }
+  });
+
+  it("o andar 10 (2.500→5.000 só com inimigos nv 2.500) é o gargalo declarado", () => {
+    const max = Math.max(...pacing.map((p) => p.hours));
+    expect(pacing[9]!.hours).toBe(max);
+    expect(pacing[9]!.hours).toBeGreaterThan(100);
+  });
+});
+
+describe("sorteio de inimigo do andar", () => {
+  it("é determinístico para a mesma semente", () => {
+    for (let s = 1; s <= 20; s += 1) {
+      expect(pickEnemyForFloor(12, s).id).toBe(pickEnemyForFloor(12, s).id);
+    }
+  });
+
+  it("segue os pesos do pool (±3 pontos em 20.000 sorteios)", () => {
+    const counts = new Map<string, number>();
+    const N = 20_000;
+    for (let s = 0; s < N; s += 1) {
+      const id = pickEnemyForFloor(12, s * 2654435761).id;
+      counts.set(id, (counts.get(id) ?? 0) + 1);
+    }
+    for (const o of floorPoolOdds(12)) {
+      expect(Math.abs((counts.get(o.enemy.id) ?? 0) / N - o.chance), o.enemy.id).toBeLessThan(0.03);
+    }
+  });
+
+  it("nunca sorteia inimigo fora do pool do andar", () => {
+    const ids = new Set(config.tower.floors[0]!.pool.map((p) => p.enemyId));
+    for (let s = 0; s < 500; s += 1) expect(ids.has(pickEnemyForFloor(1, s * 40503).id)).toBe(true);
+  });
+});

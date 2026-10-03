@@ -695,3 +695,73 @@ body {
 .tia-note--bad {
   color: #f7768e;
 }
+
+/* ------------------------------------------------- Torre: andares e papéis */
+
+.tia-role {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.tia-role--tank { color: #7dcfff; border-color: #3b6c85; }
+.tia-role--dps { color: #f7768e; border-color: #8a3f4d; }
+.tia-role--swift { color: #9ece6a; border-color: #5a7a3a; }
+.tia-role--caster { color: #bb9af7; border-color: #6b5a99; }
+.tia-role--balanced { color: #c0caf5; border-color: #55597a; }
+.tia-role--elite { color: #e0af68; border-color: #8a6b36; }
+
+.tia-pool { list-style: none; margin: 8px 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.tia-pool__row {
+  display: grid;
+  grid-template-columns: 96px 1fr auto 44px;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.tia-pool__dmg { color: var(--muted); font-size: 12px; }
+.tia-pool__chance { text-align: right; font-variant-numeric: tabular-nums; }
+
+.tia-floors {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 360px;
+  overflow-y: auto;
+}
+.tia-floor {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: var(--touch);
+  padding: 8px 10px;
+  text-align: left;
+  color: var(--text);
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.tia-floor:hover:not(:disabled) { border-color: var(--accent); }
+.tia-floor--current { border-color: var(--good); cursor: default; }
+.tia-floor--locked { opacity: 0.55; cursor: not-allowed; }
+.tia-floor__index {
+  flex: 0 0 30px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.tia-floor__main { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tia-floor__name { font-weight: 600; }
+.tia-floor__range { color: var(--muted); font-size: 12px; }
+.tia-floor__roles { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
+.tia-floor__state { flex: 0 0 auto; font-size: 12px; color: var(--muted); }
+.tia-floor--current .tia-floor__state { color: var(--good); }

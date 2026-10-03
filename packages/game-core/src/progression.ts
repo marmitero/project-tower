@@ -11,7 +11,7 @@
  */
 
 import type { Hero, King } from "@tia/contracts";
-import { config } from "@tia/config";
+import { config, evalCurve } from "@tia/config";
 import { divideXp } from "@tia/engine";
 import { heroStatsAtLevel } from "./creation.js";
 import type { ClassGrowth } from "@tia/config";
@@ -26,11 +26,11 @@ export interface XpAward {
 
 /** XP necessário para sair de `level` para `level+1`. */
 export function kingXpToNext(level: number): number {
-  return config.xp.king.requiredPerLevel(level);
+  return evalCurve(config.xp.king.curve, level);
 }
 
 export function heroXpToNext(level: number): number {
-  return config.xp.hero.requiredPerLevel(level);
+  return evalCurve(config.xp.hero.curve, level);
 }
 
 /**
@@ -97,7 +97,7 @@ export function grantHeroXp(hero: Hero, amount: bigint, growth: ClassGrowth): Xp
     // Mesmo caminho do Rei: grava o nível e zera o XP no teto.
     hero.level = cap;
     hero.xp = 0n;
-    hero.stats = heroStatsAtLevel(growth, cap);
+    applyHeroLevelStats(hero, growth, cap);
     return { xpGained: 0n, levelsGained: cap - before, level: cap, capped: true };
   }
 
@@ -106,8 +106,22 @@ export function grantHeroXp(hero: Hero, amount: bigint, growth: ClassGrowth): Xp
   // ⛔ P-006b — a progressão de stats por nível é linear e provisória.
   // Subir de nível SEM mudar os stats produziria um herói que "cresceu" e não
   // ficou mais forte, o que é pior que não subir.
-  hero.stats = heroStatsAtLevel(growth, level);
+  applyHeroLevelStats(hero, growth, level);
   return { xpGained: amount, levelsGained, level, capped: false };
+}
+
+/**
+ * Re-deriva os stats do nível e CONSERVA o HP já perdido: o HP máximo ganho
+ * pelo level-up entra no HP atual (ADR-020/021). Sem isso, subir de nível
+ * faria a barra "encolher" (mesmo HP absoluto sobre um máximo maior).
+ */
+function applyHeroLevelStats(hero: Hero, growth: ClassGrowth, level: number): void {
+  const oldMax = hero.stats.hp;
+  hero.stats = heroStatsAtLevel(growth, level);
+  const gained = hero.stats.hp - oldMax;
+  if (typeof hero.currentHp === "number" && hero.currentHp > 0 && gained > 0) {
+    hero.currentHp = Math.min(hero.stats.hp, hero.currentHp + gained);
+  }
 }
 
 /**
@@ -141,4 +155,16 @@ export function kingLevelProgress(king: King): { level: number; next: number | n
     next: king.level >= config.xp.king.levelCap ? null : king.level + 1,
     ratio: kingProgress(king),
   };
+}
+
+/**
+ * Quantos abates faltam para o Rei subir de nível, dado o nível do inimigo.
+ * Estimativa para a UI da Torre (ADR-021) — `null` no teto ou sem recompensa.
+ */
+export function killsToNextKingLevel(king: King, enemyLevel: number): number | null {
+  if (king.level >= config.xp.king.levelCap) return null;
+  const perKill = evalCurve(config.tower.rewards.kingXp, enemyLevel);
+  if (perKill <= 0) return null;
+  const remaining = Math.max(0, kingXpToNext(king.level) - Number(king.xp));
+  return Math.max(1, Math.ceil(remaining / perKill));
 }

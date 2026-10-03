@@ -34,9 +34,11 @@ function makeState(opts: { kingLevel?: number; now?: number } = {}) {
   return { state, hero, advance: (ms: number) => (now += ms) };
 }
 
-/** Andar 50 com Rei 60: o inimigo esmaga qualquer herói (derrota garantida). */
+/** Último andar (inimigos nv 19.500) com herói nv 1: derrota garantida. */
 function forceDefeat(state: { data: unknown }): void {
-  (state.data as { tower: { currentFloor: number } }).tower.currentFloor = 50;
+  const d = state.data as { tower: { currentFloor: number }; king: { level: number } };
+  d.king.level = config.xp.king.levelCap;
+  d.tower.currentFloor = config.tower.floors.length;
 }
 
 describe("HP entre batalhas (⛔ P-019 — ADR-020)", () => {
@@ -68,6 +70,11 @@ describe("HP entre batalhas (⛔ P-019 — ADR-020)", () => {
   });
 
   it("a próxima batalha da chain continua do HP restante (sem cura automática)", () => {
+    // ADR-021 acrescentou regen passiva em PROCURANDO; aqui ela é desligada para
+    // isolar a regra do ADR-020 (a chain em si não cura). A regen tem teste próprio.
+    const prevRegen = config.combat.regenOnSearchingPctPerSec;
+    config.combat.regenOnSearchingPctPerSec = 0;
+    try {
     const { state, hero, advance } = makeState();
     state.startTower();
     state.resolveBattleToEnd();
@@ -84,6 +91,9 @@ describe("HP entre batalhas (⛔ P-019 — ADR-020)", () => {
     // início da batalha 2 = HP do fim da batalha 1 (não restaura sozinho)
     expect(state.activeBattle?.allies[0]?.hp).toBe(hpAfterFirst);
     expect(state.activeBattle?.allies[0]?.maxHp).toBe(hero.stats.hp);
+    } finally {
+      config.combat.regenOnSearchingPctPerSec = prevRegen;
+    }
   });
 
   it("derrota zera o HP do herói", () => {

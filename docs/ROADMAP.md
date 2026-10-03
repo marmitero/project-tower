@@ -1,7 +1,7 @@
 # Roadmap
 
 **Tower Idle Adventure**
-**Versão:** 0.1 · **Data:** 2026-10-01 · **Estado:** FASE 3 (Rei) concluída
+**Versão:** 0.2 · **Data:** 2026-10-03 · **Estado:** FASE 7 (Torre) concluída — 3 de 7 etapas até o MVP
 **Fonte:** §96–§104 do `Master-Prompt.md`
 
 ---
@@ -16,21 +16,24 @@ FASE 3  ✅ Rei                      ← CONCLUÍDA (gate batido)
 FASE 4  ✅ Personagens              ← CONCLUÍDA (gate batido, ADR-016)
 FASE 5  ✅ Equipe                   ← CONCLUÍDA (gate batido, ADR-017)
 FASE 6  ✅ Combate                  ← CONCLUÍDA (gate batido, ADR-020)
-FASE 7  ⬜ Torre            ⛔ P-005, P-006
+FASE 7  ✅ Torre                    ← CONCLUÍDA (gate batido, ADR-021/022)
 FASE 8  ✅ Searching loop           ← CONCLUÍDA (gate batido, ADR-017)
 FASE 9  ⬜ Equipamentos     ⛔ P-010
 FASE 10 ⬜ Economia          ⛔ P-008, P-036
 FASE 11 ⬜ Offline           ⛔ P-011
 FASE 12 ⬜ Boss              ⛔ P-018
 FASE 13 ⬜ MVP LOCAL
+FASE 14 ⬜ Painel Admin      (pós-MVP — docs/ADMIN_PANEL.md, ADR-022)
 Online ⬜ → Social ⬜ → Market ⬜ → PvP ⬜ → Monetização ⬜ → Polish ⬜ → Beta ⬜ → Lançamento
 ```
 
 Implementado até aqui: especificação, documentação, fundação tipada (contratos,
 config, engine, game-core, persistência, HUD base), FASE 3 (criação do Rei),
 FASE 4 (escolha de herói §10 + códice + XP/níveis) e FASES 5+8 (equipe/slots,
-XP dividido, loop de searching ~3s com UI). O loop idle já roda
-(batalha → procura → batalha); combate visual profundo e economia ainda **não**.
+XP dividido, loop de searching ~3s com UI), FASE 6 (combate visual, HP
+persistente) e FASE 7 (Torre de 40 andares, 11 inimigos por papel, teto de nível
+20.000). O loop idle já roda de ponta a ponta (batalha → procura → batalha) com
+XP desacelerando por andar; loot/equipamento e economia ainda **não**.
 
 ### Estimativa até o 1º MVP jogável (FASE 13) — 7 etapas
 
@@ -41,14 +44,28 @@ Estimativa de trabalho (2026-10-01), ajustável; cada etapa = um ciclo completo
 |---|---|---|---|
 | 1 ✅ | FASE 5 + 8 | Equipe/slots (2=nv10+50k, 3=nv25+250k), XP dividido 1/n, searching ~3s, loop idle | decidido em ADR-017 (P-003/P-004/P-012/P-019/P-020b) |
 | 2 ✅ | FASE 6 | Combate visual de verdade: BattleScene animada, skills, números/feedback, SFX | decidido em ADR-020 (P-019/P-020) |
-| 3 | FASE 7 | Torre de ponta a ponta (andares, seleção, vitória/derrota) | ⛔ **P-005/P-006** (curva de andar) — pergunta ao usuário |
+| 3 ✅ | FASE 7 | Torre: 40 andares por faixa de nível, inimigos por papel, curvas de XP, `ContentPack` admin-ready | decidido em ADR-021/022 (P-005/P-006/P-009) |
 | 4 | FASE 9 | Loot → equipamento → raridade → X → inventário/venda | ⛔ P-010 (regra de slots/equip) |
 | 5 | FASE 10 + 11 | Economia básica (Coin, custos de slot) + offline Free 2h | ⛔ **P-008/P-036/P-011** (economia) — pergunta ao usuário |
 | 6 | FASE 12 | Boss como atividade separada (só o essencial do MVP) | ⛔ P-018 |
 | 7 | FASE 13 | MVP Local: HUD final, Debug Mode, save local, pass de estabilidade/UX | — |
 
-Riscos de prazo: P-005/P-006 e P-008/P-036 são decisões SUAS (bloqueiam as
-etapas 3 e 5); a etapa 2 (combate visual) é a mais incerta em esforço.
+Riscos de prazo: P-008/P-036 são decisões SUAS (bloqueiam a etapa 5); a etapa 4
+(equipamento) precisa resolver R-02 (equipamento flat não escala com o nível —
+`PENDING_RULES.md` §6b) antes de ser considerada concluída.
+
+### Regra de arquitetura para as etapas 4–7: conteúdo "Admin-Ready" (AR)
+
+Por decisão do usuário (2026-10-03), um **painel administrativo** (FASE 14,
+pós-MVP, [`ADMIN_PANEL.md`](ADMIN_PANEL.md)) permitirá editar/adicionar/remover
+inimigos, bosses, heróis e itens **sem código e sem IA**. Para que isso se
+aplique diretamente no jogo, **todo conteúdo novo das fases 9–12** (equipamentos,
+loot, bosses, preços, offline) deve ser: (1) **dado puro serializável**
+(JSON), (2) **validável** por função pura (`validate*`), (3) **entrar no
+`ContentPack`** (`exportContentPack`/`applyContentPack`), (4) lido do `config`
+em tempo de execução — nunca constante no código da lógica — e (5) coberto por
+um teste de round-trip export → validate → apply. A FASE 7 já entrega o
+mecanismo (ADR-022).
 
 ---
 
@@ -304,23 +321,24 @@ HP persistente entre batalhas (⛔ P-019 fechada — ADR-020), SFX por evento
 
 ---
 
-## 8. FASE 7 — Torre
+## 8. FASE 7 — Torre ✅ CONCLUÍDA (2026-10-03, ADR-021/022)
 
-> ⛔ **BLOQUEADA por `P-005` e `P-006`.**
-
-| # | Entregável | PEND |
+| # | Entregável | Estado |
 |---|---|---|
-| 1 | Estrutura de andar com requisito | `P-005` |
-| 2 | Curva de dificuldade | `P-005` |
-| 3 | Templates de inimigo com perfis distintos | `P-006` |
-| 4 | Pool por andar | `P-005` |
-| 5 | Recompensas por andar | `P-008` |
-| 6 | Identidade visual por andar | `P-028` |
+| 1 | Estrutura de andar com requisito (faixa de nível, gate do Rei) | ✅ `FloorDef`, `TowerLockedError`, `highestUnlockedFloor` |
+| 2 | Curva de dificuldade (nível do inimigo = nível-base do andar) | ✅ 40 andares até Nv 20.000 |
+| 3 | Templates de inimigo com perfis distintos | ✅ 11 inimigos, 6 papéis, físico/mágico |
+| 4 | Pool por andar (variedade tanque/dano/veloz/mago/elite) | ✅ sorteio determinístico por seed |
+| 5 | Recompensas por andar (curvas de XP desacelerando) | ✅ `CurveDef`; Coin ⛔ P-008 provisória |
+| 6 | Identidade visual por andar | ✅ nome + tema + tintura (tilesets ⛔ P-028) |
 | 7 | **Nenhum boss na Torre** | ✅ regra fechada (§55) |
+| 8 | UI de seleção de andar, faixa, papéis e aviso de nível | ✅ `TowerScreen` |
+| 9 | Relatório de balanceamento gerado | ✅ `npm run report:balance` → `BALANCE_REPORT.md` |
+| 10 | `ContentPack` (export/validate/apply) para o painel futuro | ✅ ADR-022 |
 
-> **P-006 é o mais crítico dos dois.** O §107 exige que a Torre gere a pergunta *"qual dos meus heróis é melhor?"*. Sem inimigos com perfis distintos (físico, mágico, etc.), essa pergunta não tem resposta posible e a escolha de herói vira cosmética.
-
-**Gate:** `INV-02` (nenhum boss na Torre) e `fragment-source.test.ts` passando.
+**Gate:** testes `tower-content`, `tower-balance`, `tower-floors`, `level-scaling` passando
+(inclui: nenhum boss no pool, 1×1, sustentabilidade idle, round-trip do `ContentPack`).
+Bônus: teto 20.000, regen em PROCURANDO, defesa por nível, save com `configVersion` 3.
 
 ---
 
@@ -452,6 +470,21 @@ Os 20 passos do §118 são o critério de aceite:
 
 ---
 
+## 14b. FASE 14 — Painel Admin (pós-MVP)
+
+> Especificado em [`ADMIN_PANEL.md`](ADMIN_PANEL.md). **Não implementar antes do MVP (FASE 13).**
+
+Editar/adicionar/remover inimigos, bosses, heróis, andares, curvas e itens por
+formulário, **sem código e sem IA**, com validação e prévia de balanceamento, e
+aplicação direta no jogo via `ContentPack`. Pré-requisitos já entregues: contrato
+`ContentPack` + validação + `applyContentPack` (FASE 7). Ordem prevista: AR nas
+fases 9–12 → `ContentStore` (persistência do pack) → UI do painel → (Online)
+papel `admin` + versionamento no servidor. O futuro anúncio de **personagens
+evoluídos** no Mercado da Comunidade (o Rei poderá anunciar heróis) é registrado
+em [`MARKET_SYSTEM.md`](MARKET_SYSTEM.md), sem implementação.
+
+---
+
 ## 15. Fases Online, Social, Market, PvP, Monetização, Polish
 
 ### Online
@@ -493,7 +526,7 @@ Critérios do §104: build estável, auth, save, economia, chat, mercado, segura
 ```text
 P-002 (4 heróis)     ─┐
                        ├─→ FASE 4 ─→ FASE 5 ─→ FASE 6 ─→ FASE 7
-P-005/P-006 (Torre)   ─┘                    (bloqueada por P-005)
+P-005/P-006 (Torre)   ─┘                    (✅ resolvidas — ADR-021)
 
 P-010 (X)            ──→ FASE 9
 P-008/P-036 (economia)──→ FASE 10

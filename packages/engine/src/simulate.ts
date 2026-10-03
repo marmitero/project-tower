@@ -69,13 +69,21 @@ export interface CombatantSeed {
   startHp?: number;
   heroId?: string;
   enemyId?: string;
+  /**
+   * Tipo do ataque básico (ADR-021): físico = Ataque × Defesa; mágico =
+   * Ataque Esp. × Defesa Esp. Padrão `physical`. Skills trazem o próprio tipo.
+   */
+  basicAttackType?: "physical" | "magic";
   /**(statMods, targetId) que persistem durante a batalha. */
   statuses?: StatusEffect[];
   /** Dicas de apresentação (asset ids) — o engine só repassa (§64). */
   sprites?: Record<string, string>;
+  /** Tintura 0xRRGGBB (só apresentação). */
+  tint?: number;
 }
 
 interface InternalCombatant extends Combatant {
+  basicAttackType: "physical" | "magic";
   skills: SkillDef[];
   cooldowns: Map<string, number>;
 }
@@ -96,10 +104,12 @@ function makeCombatant(seed: CombatantSeed, skills: SkillDef[]): InternalCombata
     nextActionAtMs: 0,
     statuses: seed.statuses ?? [],
     sprites: seed.sprites,
+    tint: seed.tint,
     // startHp pode nascer caído (clamp do ADR-020): o reflexo é imediato.
     isDefeated: hp <= 0,
     heroId: seed.heroId ? (asHeroId(seed.heroId) as HeroId) : undefined,
     enemyId: seed.enemyId,
+    basicAttackType: seed.basicAttackType ?? "physical",
     skills,
     cooldowns: new Map(),
   };
@@ -297,7 +307,7 @@ function performAction(actor: InternalCombatant, state: BattleState, config: Com
     : selectSingleTarget(enemies);
 
   if (!target) return;
-  dealDamage(actor, target, 1.0, "physical", state, config, rng, "basic");
+  dealDamage(actor, target, 1.0, actor.basicAttackType, state, config, rng, "basic");
 }
 
 function dealDamage(
@@ -320,6 +330,7 @@ function dealDamage(
     offensivePower: offensive,
     coefficient,
     targetDefense,
+    targetLevel: target.level,
     damageModifiers: 1,
     config,
   });

@@ -91,27 +91,37 @@ remodelação de dados, não de código.
 
 ---
 
-### P-005 — Estrutura e curva da Torre
+### P-005 — Estrutura e curva da Torre ✅ RESOLVIDA (2026-10-03)
 
-**Criticidade:** 🔴 CRÍTICA · **Bloqueia:** FASE 7
+**Criticidade:** 🔴 CRÍTICA · **Bloqueava:** FASE 7
 
-O §22 exige que a Torre tenha andares, dificuldade crescente, inimigos, grupos, progressão e recompensas. **Não diz quantos andares, nem com que curva.**
+> **RESOLVIDA em 2026-10-03** (ADR-021) — decisões do usuário + delegação:
+> **40 andares**, cada um uma **faixa de nível do Rei** (1–10, 10–25, 25–50,
+> 50–100, 100–250, 250–500, 500–1000, 1000–1500, 1500–2500, 2500–5000 e depois
+> **1 andar por 500 níveis até 20.000**); **nível dos inimigos = nível-base da
+> faixa** (andar 10 → nv 2.500; andar 12 → nv 5.500); **teto 20.000**; XP
+> moderado e que **desacelera**; pools com **variedade de papéis** (tanque,
+> dano, veloz, mago, equilibrado, elite). Tudo é `config.tower` (dado editável,
+> ADR-022). Ver `TOWER_SYSTEM.md` §3 e §7.
 
-**Decisão precisa de:** número de andares, curva de nível de inimigo, curva de requisito de nível do Rei, composição de pools, progressão entre andares.
+O §22 exige que a Torre tenha andares, dificuldade crescente, inimigos, grupos, progressão e recompensas. Não dizia quantos andares, nem com que curva.
 
 ---
 
-### P-006 — Inimigos: stats, papéis e resistências
+### P-006 — Inimigos: stats, papéis e resistências ✅ RESOLVIDA (2026-10-03)
 
-**Criticidade:** 🔴 CRÍTICA · **Bloqueia:** FASE 7 (e a meaningfully da FASE 4)
+**Criticidade:** 🔴 CRÍTICA · **Bloqueava:** FASE 7
 
-O §18 e o §107 exigem que a Torre gere a pergunta *"qual dos meus heróis é melhor para continuar avançando?"*. Isso **implica** inimigos com perfis distintos (físico, mágico, etc.) — mas nenhum inimigo é nomeado.
+> **RESOLVIDA em 2026-10-03** (ADR-021): **11 inimigos** (todos com sprite do
+> pack) definidos por **6 atributos** — a mesma base OpenRpg dos heróis — + papel
+> (`tank | dps | swift | caster | balanced | elite`) + tipo de dano
+> (físico/mágico, que o engine agora respeita: Def. × Def. Esp.) + multiplicador.
+> Calibrados por simulação: cada papel custa uma fração previsível de vida a um
+> herói on-curve (veloz ≈ 8% … elite ≈ 19%). Resistência a status fica para a
+> FASE 9+ (efeitos de traço/arma). `boss`/`slimeking` reservados à FASE 12.
+> Ver `TOWER_SYSTEM.md` §6.2.
 
-**Sem isso, a escolha de herói é cosmética**, e o §107 falha.
-
-**Material disponível:** 12 inimigos + 5 elites + 1 boss com sprites prontos ([`ASSET_INVENTORY.md` §6](ASSET_INVENTORY.md#6-inimigos)).
-
-**Decisão precisa de:** lista de inimigos, papel de cada um, stats-base, curva por nível, resistências a status.
+O §18 e o §107 exigem que a Torre gere a pergunta *"qual dos meus heróis é melhor para continuar avançando?"*. Isso **implica** inimigos com perfis distintos (físico, mágico, etc.).
 
 ---
 
@@ -209,6 +219,8 @@ Default provisório: linear (100% / 50% / 33,3%). Alternativa válida: não-line
 O §9 diz que o herói tem "nível" e "XP". **Não define** a curva, nem o teto de nível.
 
 **Decisão precisa de:** XP necessário por nível, teto de nível do herói, teto de nível do Rei.
+
+> **RESOLVIDA em 2026-10-03** (ADR-021, via P-009): herói usa a mesma curva do Rei, teto 20.000; stats por nível seguem a base OpenRpg (`growthFromAttributes`).
 
 ---
 
@@ -475,18 +487,19 @@ na banca do pack, fora do catálogo.
 
 ---
 
-### P-009 — Curvas de XP
+### P-009 — Curvas de XP ✅ RESOLVIDA (2026-10-03)
 
-**Criticidade:** 🟡 ALTA · **Bloqueia:** FASE 3/4
+**Criticidade:** 🟡 ALTA · **Bloqueava:** FASE 3/4
 
-O §45 separa XP do Rei e do herói, mas **não define nenhuma das duas curvas**. Elas determinam **quando** os slots 2 e 3 ficam disponíveis (níveis 10 e 25) — ou seja, o ritmo de expansão da equipe.
+> **RESOLVIDA em 2026-10-03** (ADR-021): **teto 20.000** (Rei e heróis);
+> XP necessário `floor(20·(N+30)^1,35)` (Rei e herói; pools separados);
+> XP por abate `floor(50·(E+3)^0,95)`, E = nível do inimigo. Curvas são **dado**
+> (`CurveDef`), editáveis sem código. Ritmo medido: **≈ 1.360 h** de jogo ativo
+> até o Nv 20.000 (andar 1 ≈ 30 min; andar 10 ≈ 168 h; andares 11–40 ≈ 27–44 h
+> cada). Slots 2 (Rei Nv 10) e 3 (Rei Nv 25) abrem em ≈ 54 min e ≈ 1,4 h
+> (sem contar a Coin: ver P-003). Ver `TOWER_SYSTEM.md` §7 e `BALANCE_REPORT.md`.
 
-**Decisão precisa de:** XP por nível do Rei, XP por nível do herói, tetos de nível.
-
-**Status (FASE 3):** ⛔ defaults provisórios implementados em
-`config.xp`: Rei `floor(100·n^1,5)`, herói `floor(100·n^1,2)`, sem teto de
-nível. A curva do Rei define o ritmo dos slots 2 (nível 10) e 3 (nível 25);
-revisar com dados de playtest.
+O §45 separa XP do Rei e do herói, mas não definia as curvas.
 
 ---
 
@@ -743,15 +756,29 @@ Uma por Boss ou uma compartilhada?
 
 ---
 
+## 6b. Riscos da Torre (abertos — registrados em 2026-10-03, ADR-021)
+
+Não são pendências do Master-Prompt: são consequências **medidas** das decisões desta fase, a revisitar com dados de jogo.
+
+| ID | Risco | Quando vira problema | Alavancas (sem código) |
+|---|---|---|---|
+| **R-01** | **Catch-up de heróis tardios.** O XP é dividido por n e o andar exige o nível do Rei; um herói novo (nv 1) num time/reino de nível 5.000 não consegue treinar no andar do Rei e o andar 1 rende XP irrisório. O mesmo vale para o 2º/3º herói que sempre fica atrás do ativo. | FASE 9–10 (aquisição de heróis) e uso real de equipe | bônus de XP para herói abaixo do nível do Rei; "treino" com XP relativo ao nível do herói; teto de diferença; ou herói herdar fração do nível médio da equipe |
+| **R-02** | **Equipamento flat vira irrelevante.** `EQUIP_TEMPLATES` tem valores base fixos (valores base fixos por slot) — num herói nv 5.000 (ataque ≈ 19.000) o item não muda nada. | FASE 9 | valores base **por tier/nível do item** (curva por `CurveDef`) e/ou bônus percentual; entra no `ContentPack` |
+| **R-03** | **Andar 10 (168 h) é o gargalo.** Faixa de 2.500 níveis com inimigos nv 2.500. | jogador chegando ao nível 2.500 | estreitar a faixa, subir `enemyLevel` do andar, subir a recompensa |
+| **R-04** | **Idle "knife-edge":** herói ≥ 0,9× do nível do andar aguenta, 0,8× cai. Isso é um limite duro; equipamento (R-02) vai alargar a janela. | FASE 9 | `regenOnSearchingPctPerSec`, `enemyAttackMultiplier` |
+| **R-05** | **Tempo de luta por classe:** o Guardião luta mais devagar (10–24 s por luta; as demais classes 7–15 s), então rende menos XP/hora. O custo de vida está equilibrado (11–14% por luta), o tempo não. | revisão de classes | equilibrar skills/atributos de dano do Guardião |
+
+---
+
 ## 7. Resumo por criticidade
 
 | Criticidade | Quantidade | IDs |
 |---|---:|---|
-| 🔴 **CRÍTICA** | **6** | `P-005`, `P-006`, `P-008`, `P-010`, `P-011`, `P-036` (P-002 resolvida 2026-10-01) |
-| 🟡 **ALTA** | **16** | `P-001`, `P-006b`, `P-015`, `P-017`, `P-018`, `P-023`, `P-027`, `P-032`, `P-007`, `P-009`, `P-011a`, `P-047`, `P-053`, `P-057`, `P-058`, `P-014` |
+| 🔴 **CRÍTICA** | **4** | `P-008`, `P-010`, `P-011`, `P-036` (P-002 resolvida 2026-10-01; P-005/P-006 resolvidas 2026-10-03) |
+| 🟡 **ALTA** | **15** | `P-001`, `P-006b`, `P-015`, `P-017`, `P-018`, `P-023`, `P-027`, `P-032`, `P-007`, `P-011a`, `P-047`, `P-053`, `P-057`, `P-058`, `P-014` |
 | 🟢 **MÉDIA** | **10** | `P-020`, `P-021`, `P-024`, `P-025`, `P-033`, `P-006c`, `P-039`, `P-040`, `P-043`, `P-016` |
 | ⚪ **BAIXA** | **29** | `P-026`, `P-028`, `P-029`, `P-031`, `P-034`, `P-035`, `P-037`, `P-038`, `P-013`, `P-041`, `P-042`, `P-044`, `P-045`, `P-046`, `P-048`, `P-049`, `P-050`, `P-051`, `P-052`, `P-054`, `P-055`, `P-022`, `P-030`, `P-056`, `P-059`, `P-060`, `P-061`, `P-062`, `P-063` |
-| **TOTAL** | **67** | |
+| **TOTAL** | **64** | |
 
 ---
 

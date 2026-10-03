@@ -11,6 +11,9 @@
  *     mais a anotacao `⛔ PENDENTE`. Nunca chame isso de regra.
  */
 
+import type { CurveDef } from "./curves.js";
+import type { TowerConfig } from "./tower.js";
+
 export type Rarity =
   | "common"
   | "uncommon"
@@ -131,14 +134,18 @@ export interface XpConfig {
 
   rounding: "floor" | "round" | "ceil";
 
+  /**
+   * P-009 (ADR-021) — XP necessário para sair do nível N = `evalCurve(curve, N)`.
+   * Curva como DADO (ADR-022): editável/serializável pelo painel administrativo.
+   */
   king: {
-    levelCap: number; // ⛔ P-009 provisório
-    requiredPerLevel: (kingLevel: number) => number; // ⛔ P-009 provisório
+    levelCap: number;
+    curve: CurveDef;
   };
 
   hero: {
-    levelCap: number; // ⛔ P-009 provisório
-    requiredPerLevel: (heroLevel: number) => number; // ⛔ P-009 provisório
+    levelCap: number;
+    curve: CurveDef;
   };
 }
 
@@ -205,6 +212,13 @@ export interface CombatConfig {
 
   /** Fórmula canônica de dano (ADR-001, reaproveitada da referência). */
   defenseConstant: number;
+  /**
+   * ADR-021 — a constante de defesa cresce com o NÍVEL do alvo:
+   * `K = defenseConstant + defenseConstantPerLevel × (nível − 1)`.
+   * Sem isso (K fixo), a mitigação tenderia a 100% em níveis altos e a duração
+   * das lutas cresceria linearmente com o nível.
+   */
+  defenseConstantPerLevel: number;
   critCap: number;
   critMultiplier: number;
   baseActionIntervalMs: number;
@@ -213,6 +227,13 @@ export interface CombatConfig {
   minDamage: number;
   /** ADR-020 (⛔ P-019) — recomeçar a caçada cura o herói? */
   healOnHuntRestart: boolean;
+  /**
+   * ADR-021 — regeneração do herói ativo durante PROCURANDO, em % do HP máximo
+   * por segundo (aplicada ao fim da procura). Ajuste explícito ao ADR-020:
+   * sem ela, o herói "on-curve" (nível = nível do andar) perderia HP a cada
+   * luta e a caçada idle terminaria em derrota inevitável.
+   */
+  regenOnSearchingPctPerSec: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -267,4 +288,5 @@ export interface GameConfig {
   combat: CombatConfig;
   economy: EconomyConfig;
   inventory: InventoryConfig;
+  tower: TowerConfig;
 }

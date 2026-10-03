@@ -111,8 +111,9 @@ describe("⛔ P-012 — a busca sobrevive a recarregar a página (§29)", () => 
 describe("⛔ P-019 — derrota encerra a caçada; recomeçar é do jogador", () => {
   it("derrota marca hunt=defeated e NÃO há auto-restart", () => {
     const { state } = makeState({ kingLevel: 500, coins: 0n });
-    const d = state.data as unknown as { tower: { currentFloor: number } };
-    d.tower.currentFloor = 400; // andar impossível: força derrota
+    const d = state.data as unknown as { tower: { currentFloor: number }; king: { level: number } };
+    d.king.level = config.xp.king.levelCap;
+    d.tower.currentFloor = config.tower.floors.length; // último andar: força derrota
 
     state.startTower();
     state.resolveBattleToEnd();
@@ -125,8 +126,9 @@ describe("⛔ P-019 — derrota encerra a caçada; recomeçar é do jogador", ()
 
   it("recomeçar é um ato explícito (startTower) e o jogo segue normalmente", () => {
     const { state } = makeState({ kingLevel: 500, coins: 0n });
-    const d = state.data as unknown as { tower: { currentFloor: number } };
-    d.tower.currentFloor = 400;
+    const d = state.data as unknown as { tower: { currentFloor: number }; king: { level: number } };
+    d.king.level = config.xp.king.levelCap;
+    d.tower.currentFloor = config.tower.floors.length;
     state.startTower();
     state.resolveBattleToEnd();
     expect(state.data.hunt?.kind).toBe("defeated");
@@ -143,8 +145,9 @@ describe("⛔ P-019 — derrota encerra a caçada; recomeçar é do jogador", ()
 
   it("derrota não credita recompensa nenhuma (§26)", () => {
     const { state } = makeState({ kingLevel: 500, coins: 0n });
-    const d = state.data as unknown as { tower: { currentFloor: number } };
-    d.tower.currentFloor = 400;
+    const d = state.data as unknown as { tower: { currentFloor: number }; king: { level: number } };
+    d.king.level = config.xp.king.levelCap;
+    d.tower.currentFloor = config.tower.floors.length;
     const coinsBefore = state.data.wallet.coins;
     const xpBefore = state.data.king.xp;
 

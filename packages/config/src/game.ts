@@ -1,3 +1,4 @@
+import { buildDefaultFloors, defaultTowerDifficulty, defaultTowerRewards, defaultXpCurve, LEVEL_CAP, type TowerConfig } from "./tower.js";
 import type {
   LootConfig,
   XpConfig,
@@ -7,6 +8,7 @@ import type {
   EconomyConfig,
   InventoryConfig,
   AccountConfig,
+  GameConfig,
 } from "./types.js";
 
 // ---------------------------------------------------------------------------
@@ -79,15 +81,18 @@ export const xp: XpConfig = {
   },
   rounding: "floor",
 
-  // ⛔ P-009 — as curvas de XP não foram definidas. Determinam QUANDO os
-  // slots 2 e 3 ficam disponíveis (níveis 10 e 25), ou seja, o ritmo do jogo.
+  // P-009 (ADR-021) — teto 20.000 (Rei e heróis) e curva que DESACELERA:
+  // XP para sair do nível N = floor(20 × (N + 30)^1,35). O offset 30 suaviza
+  // o início (andar 1 ≈ 30 min); o expoente > 1 faz cada nível custar mais que
+  // o anterior. O herói usa a mesma curva do Rei (pools continuam separados).
+  // Calibrado em `docs/TOWER_SYSTEM.md` §7 (≈1.340 h ativas até o Nv 20.000).
   king: {
-    levelCap: 100,
-    requiredPerLevel: (kingLevel: number) => Math.floor(100 * Math.pow(kingLevel, 1.5)),
+    levelCap: LEVEL_CAP,
+    curve: defaultXpCurve(),
   },
   hero: {
-    levelCap: 100,
-    requiredPerLevel: (heroLevel: number) => Math.floor(80 * Math.pow(heroLevel, 1.45)),
+    levelCap: LEVEL_CAP,
+    curve: defaultXpCurve(),
   },
 };
 
@@ -157,6 +162,8 @@ export const combat: CombatConfig = {
   // Fórmulas reaproveitadas do repositório de referência (ADR-001).
   // São decisão técnica Tipo B, coerentes com o Master-Prompt.
   defenseConstant: 100,
+  // ADR-021 — K cresce 5 por nível do alvo (a duração/dano das lutas fica estável do Nv 30 ao 20.000) (calibrado em simulação herói×inimigo).
+  defenseConstantPerLevel: 5,
   critCap: 0.75,
   critMultiplier: 1.5,
   baseActionIntervalMs: 2_000,
@@ -168,6 +175,8 @@ export const combat: CombatConfig = {
   // recomeçar a caçada (após derrota, ou botão "Descansar") cura 100%.
   // Trocar para `false` reabre a política de recuperação sem tocar em código.
   healOnHuntRestart: true,
+  // ADR-021 — ≈15% do HP por procura de ≈3 s (calibrado em simulação).
+  regenOnSearchingPctPerSec: 0.05,
 };
 
 // ---------------------------------------------------------------------------
@@ -232,7 +241,17 @@ export const inventory: InventoryConfig = {
 // Configuração agregada
 // ---------------------------------------------------------------------------
 
-import type { GameConfig } from "./types.js";
+// ---------------------------------------------------------------------------
+// ADR-021/022 — Torre (andares, recompensas, dificuldade). Dado puro.
+// ---------------------------------------------------------------------------
+
+export const tower: TowerConfig = {
+  // 1 = os atributos de `enemies.ts` valem como estão. Calibrado em simulação
+  // (`packages/game-core/src/__tests__/tower-balance.test.ts`).
+  ...defaultTowerDifficulty(),
+  rewards: defaultTowerRewards(),
+  floors: buildDefaultFloors(),
+};
 
 /**
  * A configuração completa.
@@ -242,7 +261,7 @@ import type { GameConfig } from "./types.js";
  * item só com a memória de outra zona hora vira lixo silenciosamente.
  */
 export const config: GameConfig = {
-  configVersion: 2,
+  configVersion: 3,
   account,
   team,
   xp,
@@ -251,6 +270,7 @@ export const config: GameConfig = {
   combat,
   economy,
   inventory,
+  tower,
 };
 
 export default config;

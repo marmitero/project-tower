@@ -1,6 +1,6 @@
 # Log de Decisões (ADR) — Tower Idle Adventure
 
-**Última atualização:** 2026-09-30
+**Última atualização:** 2026-10-03 (ADR-021/022)
 **Escopo:** registra decisões de arquitetura e as divergências entre o `Master-Prompt.md` e o repositório de referência `marmitero/tower-idle-adventure`.
 
 ---
@@ -544,3 +544,49 @@ do repo de origem (só o OpenRpg como referência técnica, quando necessário).
 **Alternativas rejeitadas:** (a) curar ao fim de cada vitória — mata a tensão do andar (o motivo do P-019 existir); (b) estado `HuntState` novo para descanso — a variante `paused` existente já cobre; (c) React lendo eventos por polling — o renderer é Phaser, o React só monta o canvas; (d) números de dano gerados no engine — §64: engine emite, renderer apresenta.
 
 **Consequências:** regras todas em config/dados (`healOnHuntRestart`, skills, sheets); `BattleRenderer.ts` é o único lugar que muda "como a batalha se parece"; saves ganham migração v1→v2; testes `combat-hp.test.ts` (engine + game-core) cobrem vitória/derrota/chain/descanso. **Risco:** o desfecho da batalha depende da seed (derivada do accountId) — os testes fixam vitória/derrota por configuração de andar, não por sorte.
+
+### ADR-021 — Torre: andares por faixa de nível, inimigos por atributos, XP desacelerando e teto 20.000 (P-005/P-006/P-009) — FASE 7
+
+**Data:** 2026-10-03 · **Status:** ✅ Aceita · **Tipo:** C (regra de gameplay — decisões do usuário + delegação) + B (técnica)
+**Contexto:** FASE 7 (Torre). `ROADMAP.md` §8, `TOWER_SYSTEM.md`, `PENDING_RULES.md` P-005/P-006/P-009. O usuário decidiu (2026-10-03): XP **moderado** e **desacelerando**; **variedade de papéis** de inimigo por andar; **teto 20.000** (Rei e heróis, "expressivamente demorado"); faixas de andar 1–10, 10–25, 25–50, 50–100, 100–250, 250–500, 500–1000, 1000–1500, 1500–2500, 2500–5000 e depois **1 andar por 500 níveis até 20.000** (40 andares); **nível do inimigo = nível-base (mínimo) do andar** (andar 10 → inimigos nv 2.500; andar 12 → 5.500).
+
+**Decisões do usuário (aplicadas literalmente):**
+
+1. **Andares por faixa.** `config.tower.floors` — 40 `FloorDef` explícitos (índice, nome, `minLevel`, `maxLevel`, `enemyLevel`, `requiredKingLevel`, `pool`, `visual`). Padrões: `enemyLevel = requiredKingLevel = minLevel`.
+2. **Teto 20.000** para Rei e heróis (`config.xp.*.levelCap`).
+3. **Curva de XP que desacelera:** XP para sair do nível N = `floor(20 × (N + 30)^1,35)` (Rei e herói usam a mesma curva; pools continuam separados — ADR-003). XP por abate = `floor(50 × (E + 3)^0,95)` com E = nível do inimigo. O expoente da necessidade (1,35) é maior que o da recompensa (0,95): cada nível custa mais abates que o anterior.
+
+**Decisões por delegação (todas em config/dados):**
+
+4. **Pacing (P-009).** Medido por `towerPacing()` com ciclo luta+procura ≈ 15 s: andar 1 ≈ 30 min; andares 2–4 ≈ 25 min–1 h; 5 ≈ 4 h; 6 ≈ 7 h; 7–8 ≈ 18 h; 9 ≈ 47 h; **10 ≈ 168 h**; andares 11–40 de 27 h a 44 h cada; **total ≈ 1.360 h de jogo ativo** (≈ 340 dias a 4 h/dia). `docs/BALANCE_REPORT.md` (gerado por `npm run report:balance`) tem a tabela completa. **O andar 10 é um gargalo declarado**: é consequência direta da regra do usuário (2.500→5.000 só derrotando inimigos nv 2.500, uma faixa de 2.500 níveis). Se o ritmo incomodar, ajusta-se `config.tower.floors[9]` (`maxLevel`/`enemyLevel`) ou as curvas — sem código.
+5. **Inimigos por atributos (P-006).** `EnemySeed` = id, nome, **papel** (`tank | dps | swift | caster | balanced | elite`), **tipo de dano** (`physical | magic`), 6 atributos OpenRpg, `statMultiplier`, sprites. Os stats por nível vêm da **mesma** `growthFromAttributes` dos heróis — herói e inimigo escalam pela mesma estrutura linear, então o equilíbrio vale do Nv 1 ao 20.000 sem tabela por nível. 11 inimigos (todos com sprite do pack): tank Gosma/Gosma Gélida (Def. Esp. alta); dps Goblin/Orc/Esqueleto Sangrento; veloz Morcego; mago Morcego Tóxico/Orc Flamejante; equilibrado Esqueleto; elite Arqueiro de Elite/Goblin Sombrio. `boss` e `slimeking` ficam **reservados à FASE 12** (§21/§55 — boss nunca na Torre).
+6. **Pools.** Todo andar tem tanque + dano + veloz desde o 1; mago entra no 3; elite no 9 (≤ 12% do pool). Sorteio ponderado e **determinístico** pela seed da batalha (`pickEnemyForFloor`).
+7. **Físico × mágico importa.** O engine ganhou `CombatantSeed.basicAttackType`: físico = Ataque × Defesa; mágico = Atq. Esp. × Def. Esp. (arcanista/invocador sombrio e inimigos mágicos). A Gosma Gélida, por exemplo, segura mais o mago.
+8. **Constante de defesa por nível** (`combat.defenseConstantPerLevel = 5`): `K = 100 + 5 × (nível − 1)`. Com K fixo, a mitigação tenderia a 100% em nível alto e a luta duraria ∝ nível (medido: Aldric×slime 6 s no Nv 1 → 1.644 s no Nv 20.000). Com K por nível a luta e o dano ficam **estáveis do Nv 30 ao 20.000** (±25%, coberto por teste).
+9. **Dificuldade calibrada por simulação** (`balance.ts`, mesmo engine do jogo): `enemyHpMultiplier = 2,5` (lutas de ≈ 8–20 s; tanque mais longa), `enemyAttackMultiplier = 0,05` e `statMultiplier` por inimigo → o herói **on-curve** (nível = nível do inimigo) perde ≈ 8% (veloz), 9–10% (tanque), 10% (equilibrado), 12–13% (dano/mago) e ≈ 19% (elite) da vida por luta, média das 4 classes. O Ataque dos inimigos é baixo por construção: o piso da dificuldade vem do **nível**, não de um golpe que tira metade da vida.
+10. **Regeneração em PROCURANDO** (`combat.regenOnSearchingPctPerSec = 0,05` → ≈ 15% do HP por procura de ≈ 3 s), aplicada ao fim da procura. **Ajuste explícito ao ADR-020**: a chain continua sem cura "mágica" (nenhuma cura ao vencer), mas sem regen passiva um herói on-curve perderia ≈ 12% por luta e a caçada idle terminaria em derrota inevitável (provado por teste com regen = 0). Resultado medido: herói **≥ 0,9×** o nível do andar aguenta idle; **0,8×** cai em 18–65 lutas; **0,6×** cai em < 10. O andar é um limite real. Descansar/Reiniciar (ADR-020) seguem curando 100%.
+11. **Level-up conserva o HP perdido:** o HP máximo ganho entra no HP atual (herói caído continua caído). Sem isso a barra "encolhia" ao subir de nível.
+12. **Equilíbrio dos 4 heróis (ajuste de P-002/ADR-015).** `attack = FOR×1,0 + DES×0,3` (era 0,8/0,2: magos tinham ~50% mais ofensa por INT×1,2) e **Arqueiro** com STR 18→24, INT 10→8, SAB 12→10. Resultado: custo médio por luta 11,5% (Guardião) a 14,1% (Arqueiro) — razão 1,2× (teste exige ≤ 1,4×). Identidades (nomes/skills/raridade) intactas.
+13. **Seleção manual de andar** (`GameState.selectFloor`, gate por nível do Rei, `TowerLockedError`); vale na **próxima** luta; `currentFloor` é normalizado no load (`clampFloor`) para que conteúdo editado nunca quebre um save. `bestFloor` continua sendo o maior andar vencido. Recompensa segue o **nível do inimigo enfrentado**, não o andar atual.
+14. **Moeda por abate (P-008, provisória):** `floor(12 × (E + 3))` — linear no nível do inimigo (andar 1 ≈ 48/abate; slots 50k/250k ficam acessíveis nos andares 3–4). Continua ⛔ P-008 na FASE 10.
+15. **Saves:** `configVersion` 2 → 3 (shape igual; sem reescrita).
+
+**Alternativas rejeitadas:** (a) expoente 1,5/1,0 — ≈ 3.700 h, o andar 10 viraria 420 h; (b) K fixo + stats lineares — luta ∝ nível; (c) tabela de stats por andar — milhares de números, quebra a regra "arquitetura editável"; (d) boss/slimeking como elite — §21/§55; (e) curar ao vencer — mata a tensão (ADR-020); (f) andar derivado de fórmula (`ceil(f×1,2)`) — impossível expressar as faixas irregulares do usuário.
+
+**Consequências:** nenhuma regra da Torre depende de um andar específico no código; tudo é `FloorDef`/`EnemySeed`/`CurveDef`. Testes: `tower-content.test.ts` (faixas literais, papéis, packs), `tower-balance.test.ts` (duelos, sustentabilidade, pacing, sorteio), `tower-floors.test.ts`, `level-scaling.test.ts`. **Riscos (ver `PENDING_RULES.md`):** (1) heróis que entram tarde com XP baixo precisam de catch-up (o XP é dividido por n; um herói novo no nv 1 num time de nível 5.000 não dá para treinar no andar do Rei); (2) equipamento com valores base fixos (`EQUIP_TEMPLATES`) é irrelevante em nível alto — a FASE 9 precisa escalar com tier/nível.
+
+### ADR-022 — Conteúdo data-driven e arquitetura "admin-ready" (ContentPack)
+
+**Data:** 2026-10-03 · **Status:** ✅ Aceita · **Tipo:** B (técnica) · **Contexto:** o usuário quer, no futuro, um **painel administrativo** para editar/adicionar/remover inimigos, bosses e heróis manualmente, **sem IA e sem código**, e quer as próximas etapas organizadas para que o que for editado lá se aplique **diretamente** no jogo. **Nada do painel é implementado agora** (FASE 14 — `ADMIN_PANEL.md`); esta ADR cria o alicerce.
+
+1. **Conteúdo = dado serializável.** Inimigos, andares e curvas são JSON puro (`EnemySeed`, `FloorDef`, `CurveDef`). XP deixou de ser lambda (`requiredPerLevel`) e virou `curve: { kind:"power", base, exponent, offset }` — o painel edita 3 números.
+2. **`ContentPack`** (`packages/config/src/content.ts`): `{ schemaVersion, name, enemies, tower{multiplicadores, rewards, floors}, progression }`. API: `exportContentPack()`, `validateContentPack(unknown)` (lista **todos** os erros; aceita JSON cru), `applyContentPack(pack)` (valida antes; **atômica**; muta em lugar `enemies`, `config.tower.*`, `config.xp.*` — imports existentes continuam válidos), `defaultContentPack()`, `resetContentToDefaults()`.
+3. **Derivados nunca entram no pack:** `EnemyDef.growth` é recomposto por `buildEnemy(seed)`.
+4. **Validação dupla:** `validateConfig/validateCatalog` (conteúdo vivo) e `validateContentPack` (conteúdo de fora). Regras de integridade: ids únicos, andares contíguos (1..N), pool não vazio, pesos > 0, inimigo referenciado existe, faixas coerentes, requisito ≤ teto, curvas válidas, sprites das 6 folhas.
+5. **Regra para as próximas fases (AR — "Admin-Ready").** Toda nova entidade de conteúdo nasce como dado de pack, nunca como literal em código: **FASE 9** itens/templates de equipamento/armas/raridades; **FASE 10** preços/recompensas; **FASE 12** bosses (com `bossId`, atributos, skills, recompensas, fragmentos); **FASES 4/9–12** heróis (`HeroIdentityDef`), classes e skills migram para o pack. Cada uma entrega `validate*` + teste de round-trip export→JSON→apply.
+6. **Persistência dos overrides = FASE 14.** Um `ContentStore` (local no MVP; Supabase na fase Online) guarda o pack ativo e o carrega no boot **antes** de `validateConfig`. O jogo sempre tem o pack padrão como fallback; pack inválido nunca é aplicado.
+7. **Progresso do jogador não referencia conteúdo por posição.** O save guarda ids (`classId`, `currentFloor` normalizado no load) — remover um andar/inimigo no painel não corrompe saves.
+
+**Alternativas rejeitadas:** (a) painel editando arquivos `.ts` — exige código/IA, é exatamente o que o usuário não quer; (b) manter lambdas e "regenerar" — não serializa; (c) banco de dados já agora — prematuro e prende o MVP local a infraestrutura online; (d) editar `config` em runtime sem validação — um número ruim derrubaria o jogo.
+
+**Consequências:** `docs/ADMIN_PANEL.md` descreve o escopo do futuro painel e o contrato; ROADMAP ganha a **FASE 14 — Painel Administrativo** (pós-MVP); `docs/CONFIGURATION.md` documenta o fluxo de edição.

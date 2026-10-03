@@ -115,6 +115,8 @@ DanoFinal = max(1, floor(DanoBase × ModificadoresDeDano))
 - Cálculo em precisão decimal, arredondamento **para baixo** ao aplicar HP.
 - Golpe que acertou causa **no mínimo 1** de dano.
 
+> **ADR-021 — a constante 100 cresce com o nível do alvo:** `K = 100 + 5 × (nível − 1)` (`combat.defenseConstantPerLevel`). Defesa e ataque crescem juntos com o nível; com K fixo, no Nv 5.000 a Defesa saturaria (mitigação ≈ 100%) e o combate deixaria de escalar. O tipo de dano do atacante escolhe o par Ataque×Defesa ou Ataque Esp.×Def. Esp.
+
 ### 4.2 Crítico
 
 - `ChanceCríticaEfetiva = min(0,75, críticoDoPersonaço + modificadores)`
@@ -274,6 +276,8 @@ Política vigente (ADR-020, 2026-10-03):
   e encerra a caçada (`hunt = "defeated"` — ADR-017).
 - **A chain automática NÃO cura**: a próxima batalha continua do HP do fim da
   anterior. É a tensão do andar: o jogador decide se continua ou recua.
+- **Regeneração em PROCURANDO** (ADR-021): `combat.regenOnSearchingPctPerSec` (5%/s ≈ 15% do HP por procura de ≈ 3 s) recupera o herói **vivo** entre as lutas. Não reanima herói caído. Isso refina "a chain não cura": a chain não cura *instantaneamente*, mas o idle on-curve se sustenta.
+- **Subir de nível conserva o HP perdido** (o HP máximo ganho entra no HP atual; herói caído continua caído).
 - **Cooldowns ficam prontos** ao iniciar a próxima batalha.
 - **Buffs/debuffs/DoT expiram** no fim da batalha.
 

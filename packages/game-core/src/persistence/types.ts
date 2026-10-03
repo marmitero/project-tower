@@ -79,6 +79,10 @@ export function migrateSave(data: SaveData, toConfigVersion: number): SaveData {
         ),
       };
     }
+    // v2 → v3 (ADR-021): curvas de XP, teto 20.000 e andares por faixa. O SHAPE
+    // do save não mudou (nível/XP continuam números), então não há reescrita:
+    // o andar salvo é normalizado em `GameState.hydrate` (clampFloor), porque
+    // o conteúdo é editável (ADR-022) e o andar pode deixar de existir.
     out.configVersion = toConfigVersion;
   }
   return out;

@@ -6,6 +6,7 @@
  * da `BattleScene` (visual) e de `sfx.ts` (som). Alterar o "como a batalha
  * se parece" é alterar `planBatch`, sem tocar em engine ou game-core.
  */
+import { formatCompact } from "../format.js";
 import type { BattleEvent } from "@tia/contracts";
 
 /** O que um único evento pede da cena. */
@@ -69,7 +70,7 @@ function planOne(event: BattleEvent): FeedbackPlan {
     case "damage_dealt":
       return {
         flash: true,
-        number: { text: String(event.amount), kind: "damage" },
+        number: { text: formatCompact(event.amount), kind: "damage" },
         sfx: SFX_HITS[Math.abs(hash(event.targetId + event.amount)) % SFX_HITS.length],
         shakeMs: 90,
         shakeIntensity: 0.0025,
@@ -93,7 +94,7 @@ function planOne(event: BattleEvent): FeedbackPlan {
       };
     case "heal_dealt":
       return {
-        number: { text: String(event.amount), kind: "heal" },
+        number: { text: formatCompact(event.amount), kind: "heal" },
         sfx: "audio/sfx/heal",
       };
     case "enemy_defeated":

@@ -7,6 +7,7 @@
  * flash/tremor de crítico, morte com fade, banner de fim). O renderer só
  * apresenta — as fórmulas vivem no engine (§64).
  */
+import { formatCompact } from "../format.js";
 import Phaser from "phaser";
 import type { BattleEvent, BattleState } from "@tia/contracts";
 import { skillsById } from "@tia/config";
@@ -248,7 +249,7 @@ export class BattleScene extends Phaser.Scene {
     for (const f of this.fighters.values()) {
       const c = this.combatant(f.id);
       if (!c || !f.label) continue;
-      if (!f.dead) f.label.setText(`${c.name}  ${Math.max(0, c.hp)}/${c.maxHp}`);
+      if (!f.dead) f.label.setText(`${c.name}  ${formatCompact(Math.max(0, c.hp))}/${formatCompact(c.maxHp)}`);
       this.redrawBar(f);
     }
   }
@@ -278,7 +279,7 @@ export class BattleScene extends Phaser.Scene {
     };
     const c = this.combatant(id);
     view.label = this.add
-      .text(base.x, base.y, c ? `${c.name}  ${c.hp}/${c.maxHp}` : id, {
+      .text(base.x, base.y, c ? `${c.name}  ${formatCompact(c.hp)}/${formatCompact(c.maxHp)}` : id, {
         fontSize: "13px",
         color: "#f7eec2",
         backgroundColor: "#1b1428cc",
@@ -346,6 +347,9 @@ export class BattleScene extends Phaser.Scene {
       .setOrigin(0.5, 1)
       .setScale(this.spriteScale())
       .setDepth(5);
+    // Cor do andar (ADR-021): só apresentação, vinda do dado do andar via engine.
+    const tint = this.combatant(view.id)?.tint;
+    if (tint !== undefined) sprite.setTint(tint);
     if (view.dead) {
       // já nasce caído: último quadro da folha de morte, esmaecido
       sprite.setTexture(urls.death, row * FRAME_COUNT + FRAME_COUNT - 1).setAlpha(0.25);

@@ -30,7 +30,8 @@
     "check:assets:strict": "node scripts/check-assets.mjs --strict",
     "verify": "npm run check && npm run build",
     "preview:static": "node scripts/serve-preview.mjs",
-    "build:preview": "npm run build:preview -w @tia/game-web"
+    "build:preview": "npm run build:preview -w @tia/game-web",
+    "report:balance": "vite-node --config vitest.config.ts scripts/balance-report.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.3",
