@@ -30,9 +30,10 @@ import { CreationScreen, type CreationResult } from "./CreationScreen.js";
 import { TowerScreen } from "./TowerScreen.js";
 import { InventoryScreen, LootToasts } from "./InventoryScreen.js";
 import { MarketScreen } from "./MarketScreen.js";
+import { BossScreen, BossResultModal } from "./BossScreen.js";
 import { OfflineReportModal } from "./OfflineReportModal.js";
 
-type Screen = "king" | "heroes" | "tower" | "team" | "inventory" | "market";
+type Screen = "king" | "heroes" | "tower" | "team" | "inventory" | "market" | "boss";
 
 const SCREENS: { id: Screen; label: string }[] = [
   { id: "king", label: "Rei" },
@@ -41,6 +42,7 @@ const SCREENS: { id: Screen; label: string }[] = [
   { id: "inventory", label: "Inventário" },
   { id: "market", label: "Market" },
   { id: "tower", label: "Torre" },
+  { id: "boss", label: "Arena" },
 ];
 
 export function App() {
@@ -202,8 +204,19 @@ export function App() {
         {screen === "inventory" && <InventoryScreen state={state} notify={showMessage} />}
         {screen === "market" && <MarketScreen state={state} notify={showMessage} />}
         {screen === "tower" && <TowerScreen state={state} searching={searching} />}
+        {screen === "boss" && <BossScreen state={state} />}
       </main>
 
+      {state.bossResult && (
+        <BossResultModal
+          result={state.bossResult}
+          onClose={() => {
+            // Fim da atividade: o jogador volta ao Reino, não à Torre (ADR-027).
+            state.dismissBossResult();
+            setScreen("king");
+          }}
+        />
+      )}
       {state.offlineReport && <OfflineReportModal report={state.offlineReport} onClose={() => state.dismissOfflineReport()} />}
       <LootToasts notices={loot.filter((l) => now - l.at < 8000)} />
       {message && (
@@ -229,7 +242,9 @@ export function App() {
 function Hud({ state }: { state: GameState }) {
   const king = state.data.king;
   const hunt = state.data.hunt;
-  const huntLabel = state.activeBattle
+  const huntLabel = state.activeBossId
+    ? "Chefe!"
+    : state.activeBattle
     ? "Em combate"
     : hunt?.kind === "searching"
       ? "Procurando…"

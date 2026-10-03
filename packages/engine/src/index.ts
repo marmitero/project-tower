@@ -30,7 +30,7 @@ export {
 } from "./status.js";
 export { buildGearProfile, emptyGearProfile, type GearProfile, type GearCaps } from "./gear.js";
 export { createBattle, step, healCombatant, reviveCombatant, TICK_MS } from "./simulate.js";
-export type { BattleSetup, CombatantSeed, SkillDef, StepHooks } from "./simulate.js";
+export type { BattleSetup, CombatantSeed, CombatantPhase, StatusResist, SkillDef, StepHooks } from "./simulate.js";
 // O estado de batalha é um tipo de CONTRATO: o engine o produz, mas quem o
 // consome (game-core, renderer, UI) precisa do mesmo tipo, sem duplicar a
 // definição. Reexportar mantém a dependência num sentido só.

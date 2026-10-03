@@ -15,6 +15,7 @@ import type { CurveDef } from "./curves.js";
 import type { TowerConfig } from "./tower.js";
 import type { EquipmentConfig } from "./equipment.js";
 import type { HeroAcquisitionConfig } from "./acquisition.js";
+import type { BossConfig } from "./boss.js";
 import type { BotConfig, MarketConfig, OfflineConfig } from "./market.js";
 
 export type Rarity =
@@ -316,4 +317,6 @@ export interface GameConfig {
   bot: BotConfig;
   /** Offline como simulação do online (ADR-026). */
   offline: OfflineConfig;
+  /** Bosses da Arena: chefes, fases, tentativas e recompensas (ADR-027). */
+  boss: BossConfig;
 }

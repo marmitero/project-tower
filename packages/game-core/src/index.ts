@@ -184,7 +184,30 @@ export {
 } from "./hunt.js";
 
 export { GameState } from "./state.js";
-export type { GameStateDeps, GameEvents, LootNotice, BotAction } from "./state.js";
+export type { GameStateDeps, GameEvents, LootNotice, BotAction, BossResult } from "./state.js";
+export {
+  BossBlockedError,
+  allBosses,
+  bossById,
+  bossAvailability,
+  bossStats,
+  bossSeed,
+  bossEngineSkills,
+  bossBaseRewards,
+  bossSkillId,
+  bossCombatantId,
+  createBossProgress,
+  normalizeBossProgress,
+  emptyBossRecord,
+  recordOf,
+  registerAttemptStart,
+  registerResult,
+  rollBossRewards,
+  rollBossRarity,
+  startBossBattle,
+  describeBossForUi,
+} from "./boss.js";
+export type { BossAvailability, BossBlockReason, BossAllyInput, StartBossBattleParams, RollBossRewardsParams } from "./boss.js";
 
 export {
   ShopError,
@@ -229,10 +252,12 @@ export type { PersistenceService } from "./persistence/types.js";
 
 export {
   simulateDuel,
+  simulateBossFight,
+  averageBossFight,
   averageDuel,
   towerPacing,
   floorMatchups,
   simulateHunt,
   rollGearSet,
 } from "./balance.js";
-export type { DuelParams, DuelResult, GearSet, DuelAverage, FloorPacing, FloorMatchup, HuntSimResult } from "./balance.js";
+export type { BossFightParams, BossFightResult, BossFightAverage, DuelParams, DuelResult, GearSet, DuelAverage, FloorPacing, FloorMatchup, HuntSimResult } from "./balance.js";

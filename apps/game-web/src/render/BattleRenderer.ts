@@ -30,6 +30,12 @@ export interface FeedbackPlan {
   skillName?: boolean;
   /** Banner central de fim de batalha. */
   banner?: "won" | "lost";
+  /** Texto do banner quando não é o padrão ("TEMPO ESGOTADO"). */
+  bannerText?: string;
+  /** Rótulo flutuante sobre quem o gerou ("Imune", "Resistiu"). */
+  label?: string;
+  /** Nova fase do chefe: faixa, tremor e pulso no alvo. */
+  phase?: string;
 }
 
 export interface PlannedFeedback {
@@ -108,7 +114,16 @@ function planOne(event: BattleEvent): FeedbackPlan {
     case "battle_won":
       return { banner: "won", sfx: "audio/sfx/victory" };
     case "battle_lost":
-      return { banner: "lost", sfx: "audio/sfx/defeat" };
+      return {
+        banner: "lost",
+        sfx: "audio/sfx/defeat",
+        ...(event.reason === "timeout" ? { bannerText: "TEMPO ESGOTADO" } : {}),
+      };
+    // ADR-027 — Boss: resistência a status e mudança de fase têm apresentação própria.
+    case "effect_triggered":
+      return event.effectId === "immune" || event.effectId === "resisted" ? { label: event.label } : {};
+    case "phase_changed":
+      return { phase: event.label, sfx: "audio/sfx/skill" };
     default:
       // turn_started, battle_started/finished, status_*: só sincronizam
       // estado (barras), sem apresentação própria.

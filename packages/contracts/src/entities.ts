@@ -62,6 +62,12 @@ export interface Combatant {
   sprites?: Record<string, string>;
   /** Tintura de apresentação 0xRRGGBB (cor do andar, ADR-021). Só o renderer usa. */
   tint?: number;
+  /** Escala do sprite (Boss > 1). Só apresentação (ADR-027). */
+  scale?: number;
+  /** Chefe de uma BossBattle (ADR-027): a UI destaca nome, barra e fase. */
+  isBoss?: boolean;
+  /** Fase atual do chefe (rótulo PT-BR) — vazio na fase inicial. */
+  phaseLabel?: string;
   /** Só para o lado aliado. */
   heroId?: HeroId;
   /** Só para o lado inimigo. */
@@ -78,6 +84,12 @@ export interface BattleState {
   enemies: Combatant[];
   effects: StatusEffect[];
   status: "active" | "won" | "lost" | "finished";
+  /** Limite de duração da luta (Boss, ADR-027): ao estourar, a luta é perdida. Ausente = sem limite. */
+  timeLimitMs?: number;
+  /** Id do chefe (`config.boss.bosses[].id`) quando `mode === "boss"`. */
+  bossId?: string;
+  /** Como a luta terminou (preenchido quando `status` deixa de ser `active`). */
+  endReason?: "victory" | "defeat" | "timeout";
   /** Emitidos desde o último step. Consumidos pelo renderer. */
   events: BattleEvent[];
 }
@@ -136,7 +148,9 @@ export type BattleEvent = {
     }
   | { type: "enemy_defeated"; targetId: string }
   | { type: "battle_won"; rewardBundleId: string }
-  | { type: "battle_lost" }
+  | { type: "battle_lost"; reason?: "defeat" | "timeout" }
+  /** O chefe entrou em uma nova fase (ADR-027): a UI mostra o banner e o renderer tinge/treme. */
+  | { type: "phase_changed"; targetId: string; phaseId: string; label: string }
   | { type: "battle_finished"; durationMs: number; ticks: number }
 );
 
@@ -329,6 +343,26 @@ export interface TowerFloor {
   bossId: null;
 }
 
+/** Registro de um chefe no save (ADR-027). Só contadores e marcas de tempo — as REGRAS vivem na config. */
+export interface BossRecord {
+  wins: number;
+  losses: number;
+  /** Marca do primeiro abate (null = nunca derrotado) — concede o bônus de primeira vitória uma única vez. */
+  firstClearAt: number | null;
+  bestTimeMs: number | null;
+  /** Início da janela de tentativas (modo `window`) e quantas já foram usadas nela. */
+  windowStartAt: number;
+  windowAttempts: number;
+  /** Enquanto `clock < cooldownUntil` o chefe está em recarga (modo `cooldown`). */
+  cooldownUntil: number;
+}
+
+export interface BossProgress {
+  records: Record<string, BossRecord>;
+  /** Total de lutas de chefe iniciadas (semente determinística de combate e de sorteio). */
+  battlesStarted: number;
+}
+
 export interface SaveData {
   schemaVersion: number;
   /** Rebalancear não pode corromper save antigo: migrar, nunca reinterpretar. */
@@ -346,5 +380,7 @@ export interface SaveData {
   bot: BotSettings;
   /** Contadores determinísticos do Market (ADR-025): caixas abertas, para a semente do sorteio. */
   market: { boxesOpened: number };
+  /** Progresso dos Bosses (ADR-027): vitórias, tentativas e recordes por chefe. */
+  boss: BossProgress;
   lastSavedAt: number;
 }

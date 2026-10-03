@@ -45,6 +45,33 @@ export interface SkillDef {
   enabled: boolean;
 }
 
+/**
+ * Fase de um combatente (ADR-027 — Boss). É DADO: o engine não conhece "chefe", só executa o
+ * vocabulário abaixo quando o gatilho dispara (uma única vez por fase).
+ */
+export interface CombatantPhase {
+  id: string;
+  /** Rótulo PT-BR mostrado na UI ("Fúria"). */
+  label: string;
+  trigger: {
+    /** Dispara quando HP/HPmáx <= esta fração (0..1). */
+    hpBelowFraction?: number;
+    /** Dispara quando a luta passa deste tempo (ms de batalha) — o "enrage". */
+    afterMs?: number;
+  };
+  /** Multiplicadores aplicados UMA vez sobre os stats atuais. */
+  statMultipliers?: Partial<Record<"attack" | "specialAttack" | "defense" | "specialDefense" | "speed" | "critChance", number>>;
+  /** Soma ao IAS do combatente (cadência: a luta fica mais rápida). */
+  attackSpeedBonus?: number;
+  /** Cura única, em fração do HP máximo. */
+  healFraction?: number;
+  /** Skills que passam a existir (têm prioridade sobre as anteriores). */
+  skills?: SkillDef[];
+}
+
+/** Resistência a efeitos de status (0 = nenhuma, 1 = imune). */
+export type StatusResist = Partial<Record<"stun" | "poison", number>>;
+
 export interface BattleSetup {
   mode: "tower" | "boss";
   battleId: string;
@@ -56,6 +83,10 @@ export interface BattleSetup {
   config: CombatConfig;
   /** Tetos para a soma de efeitos de equipamento (`equipment.effectCaps`). */
   gearCaps?: GearCaps;
+  /** Duração máxima (ms de batalha). Ao estourar, a luta é PERDIDA (`reason: "timeout"`). Boss (ADR-027). */
+  timeLimitMs?: number;
+  /** Id do chefe — só repassado ao `BattleState`. */
+  bossId?: string;
 }
 
 export interface CombatantSeed {
@@ -88,6 +119,14 @@ export interface CombatantSeed {
    * executa o vocabulário `GearEffect` — não conhece itens (ADR-023).
    */
   effects?: GearEffect[];
+  /** Escala do sprite (apresentação). */
+  scale?: number;
+  /** Marca o chefe da BossBattle (apresentação). */
+  isBoss?: boolean;
+  /** Imunidade/resistência a atordoamento e veneno (1 = imune). Dado de conteúdo (ADR-027). */
+  statusResist?: StatusResist;
+  /** Fases (Boss): gatilhos por HP ou tempo que mudam os stats/skills em luta. */
+  phases?: CombatantPhase[];
 }
 
 interface InternalCombatant extends Combatant {
@@ -95,6 +134,11 @@ interface InternalCombatant extends Combatant {
   skills: SkillDef[];
   cooldowns: Map<string, number>;
   gear: GearProfile;
+  statusResist: StatusResist;
+  phases: CombatantPhase[];
+  phasesDone: Set<string>;
+  /** IAS somado pelas fases. */
+  phaseIas: number;
 }
 
 function makeCombatant(seed: CombatantSeed, skills: SkillDef[], caps?: GearCaps): InternalCombatant {
@@ -114,6 +158,8 @@ function makeCombatant(seed: CombatantSeed, skills: SkillDef[], caps?: GearCaps)
     statuses: seed.statuses ?? [],
     sprites: seed.sprites,
     tint: seed.tint,
+    ...(seed.scale !== undefined ? { scale: seed.scale } : {}),
+    ...(seed.isBoss ? { isBoss: true } : {}),
     // startHp pode nascer caído (clamp do ADR-020): o reflexo é imediato.
     isDefeated: hp <= 0,
     heroId: seed.heroId ? (asHeroId(seed.heroId) as HeroId) : undefined,
@@ -122,6 +168,10 @@ function makeCombatant(seed: CombatantSeed, skills: SkillDef[], caps?: GearCaps)
     skills,
     cooldowns: new Map(),
     gear: buildGearProfile(seed.effects, caps),
+    statusResist: seed.statusResist ?? {},
+    phases: seed.phases ?? [],
+    phasesDone: new Set(),
+    phaseIas: 0,
   };
 }
 
@@ -172,6 +222,8 @@ export function createBattle(setup: BattleSetup): BattleState {
     enemies,
     effects: allies.flatMap((a) => a.statuses).concat(enemies.flatMap((e) => e.statuses)),
     status: "active",
+    ...(mode === "boss" && setup.timeLimitMs !== undefined && setup.timeLimitMs > 0 ? { timeLimitMs: setup.timeLimitMs } : {}),
+    ...(mode === "boss" && setup.bossId ? { bossId: setup.bossId } : {}),
     events: [],
   };
 
@@ -291,9 +343,12 @@ export function step(state: BattleState, untilMs: number, config: CombatConfig, 
       // IAS = DES (stats.attackSpeed) + bônus de equipamento; um status de velocidade
       // multiplica a CADÊNCIA. (Antes do ADR-023 o multiplicador de status era passado
       // como se fosse o IAS: todo mundo agia a cada 1 s e a DES não valia nada.)
-      const interval = actionIntervalMs(actor.stats.attackSpeed + actor.gear.attackSpeed, config) / Math.max(0.1, statMultiplier(actor.statuses, "attackSpeed"));
+      const interval = actionIntervalMs(actor.stats.attackSpeed + actor.gear.attackSpeed + actor.phaseIas, config) / Math.max(0.1, statMultiplier(actor.statuses, "attackSpeed"));
       actor.nextActionAtMs = state.elapsedMs + Math.max(1, Math.round(interval));
     }
+
+    // Fases (Boss, ADR-027): gatilhos por HP/tempo. Depois das ações do tick e ANTES do desfecho.
+    checkPhases(state);
 
     // Verifica derrota mútua (ambos caíram no mesmo tick).
     const alliesDead = state.allies.every((c) => !isAlive(c));
@@ -301,11 +356,14 @@ export function step(state: BattleState, untilMs: number, config: CombatConfig, 
     // Gancho (ADR-025): o aliado caiu e o jogador tem um revive no Bot — a luta continua,
     // com o inimigo no HP em que estava. O engine não sabe o que é uma poção: só pergunta.
     if (alliesDead && !enemiesDead && hooks?.onAlliesDown?.(state)) continue;
-    if (alliesDead || enemiesDead) {
+    // Tempo esgotado (Boss): perde, mesmo com todos vivos. Só vale se ninguém venceu neste tick.
+    const timedOut = !alliesDead && !enemiesDead && state.timeLimitMs !== undefined && state.elapsedMs >= state.timeLimitMs;
+    if (alliesDead || enemiesDead || timedOut) {
       const won = enemiesDead && !alliesDead;
       state.status = "finished";
+      state.endReason = won ? "victory" : timedOut ? "timeout" : "defeat";
       if (won) emit(state, { type: "battle_won", rewardBundleId: `${state.battleId}:${startTick}` });
-      else emit(state, { type: "battle_lost" });
+      else emit(state, { type: "battle_lost", reason: timedOut ? "timeout" : "defeat" });
       emit(state, { type: "battle_finished", durationMs: state.elapsedMs, ticks: state.tick - startTick });
     }
   }
@@ -313,6 +371,51 @@ export function step(state: BattleState, untilMs: number, config: CombatConfig, 
   const out = state.events.slice();
   state.events = [];
   return out;
+}
+
+/** Dispara as fases cujo gatilho foi atingido (uma única vez por fase). */
+function checkPhases(state: BattleState): void {
+  for (const c of [...state.allies, ...state.enemies] as InternalCombatant[]) {
+    if (c.phases.length === 0 || !isAlive(c)) continue;
+    for (const phase of c.phases) {
+      if (c.phasesDone.has(phase.id)) continue;
+      const byHp = phase.trigger.hpBelowFraction !== undefined && c.maxHp > 0 && c.hp / c.maxHp <= phase.trigger.hpBelowFraction;
+      const byTime = phase.trigger.afterMs !== undefined && state.elapsedMs >= phase.trigger.afterMs;
+      if (!byHp && !byTime) continue;
+      enterPhase(c, phase, state);
+      if (!isAlive(c)) break;
+    }
+  }
+}
+
+function enterPhase(c: InternalCombatant, phase: CombatantPhase, state: BattleState): void {
+  c.phasesDone.add(phase.id);
+  const m = phase.statMultipliers;
+  if (m) {
+    const next = { ...c.stats };
+    for (const key of ["attack", "specialAttack", "defense", "specialDefense", "speed"] as const) {
+      const f = m[key];
+      if (f !== undefined) next[key] = Math.floor(next[key] * f);
+    }
+    if (m.critChance !== undefined) next.critChance = next.critChance * m.critChance;
+    c.stats = next;
+    c.speed = next.speed;
+    c.critChance = next.critChance;
+  }
+  if (phase.attackSpeedBonus) c.phaseIas += phase.attackSpeedBonus;
+  if (phase.skills && phase.skills.length > 0) c.skills = [...phase.skills, ...c.skills];
+  c.phaseLabel = phase.label;
+  emit(state, { type: "phase_changed", targetId: c.id, phaseId: phase.id, label: phase.label });
+  if (phase.healFraction && phase.healFraction > 0) {
+    const real = Math.min(Math.floor(c.maxHp * phase.healFraction), c.maxHp - c.hp);
+    if (real > 0) {
+      c.hp += real;
+      emit(state, { type: "heal_dealt", sourceId: c.id, targetId: c.id, amount: real });
+      emit(state, c.side === "enemy"
+        ? { type: "enemy_damaged", targetId: c.id, currentHp: c.hp, maxHp: c.maxHp }
+        : { type: "character_damaged", targetId: c.id, currentHp: c.hp, maxHp: c.maxHp });
+    }
+  }
 }
 
 function findCombatant(state: BattleState, id: string): InternalCombatant | null {
@@ -419,6 +522,7 @@ function rollOnHitProcs(actor: InternalCombatant, target: Combatant, state: Batt
 
   for (const dot of actor.gear.dots) {
     if (!rng.bool(dot.chance)) continue;
+    if (resisted(tgt, "poison", state, rng)) continue;
     const offensive = actor.basicAttackType === "magic" ? actor.stats.specialAttack : actor.stats.attack;
     const defense = actor.basicAttackType === "magic" ? target.stats.specialDefense : target.stats.defense;
     const potency = dotDamage({ offensivePower: offensive, coefficient: dot.coefficient, targetDefense: defense, targetLevel: target.level, config });
@@ -437,6 +541,7 @@ function rollOnHitProcs(actor: InternalCombatant, target: Combatant, state: Batt
 
   for (const stun of actor.gear.stuns) {
     if (!rng.bool(stun.chance)) continue;
+    if (resisted(tgt, "stun", state, rng)) continue;
     // Cobre a PRÓXIMA ação do alvo (que pode ser mais lenta que `durationMs`).
     const untilNext = Math.max(0, tgt.nextActionAtMs - state.elapsedMs) + TICK_MS;
     const durationMs = Math.min(3_000, Math.max(stun.durationMs, untilNext));
@@ -450,6 +555,18 @@ function rollOnHitProcs(actor: InternalCombatant, target: Combatant, state: Batt
     emit(state, { type: "effect_triggered", sourceId: actor.id, effectId: "stun", label: "Atordoado" });
     emit(state, { type: "status_applied", targetId: target.id, statusId: "stun", stacks: 1, durationMs });
   }
+}
+
+/**
+ * Imunidade/resistência do ALVO (ADR-027). Só consome RNG quando há resistência parcial, então a
+ * Torre (resistência zero) segue bit a bit igual. Emite o rótulo ("Imune"/"Resistiu") sobre o alvo.
+ */
+function resisted(target: InternalCombatant, status: "stun" | "poison", state: BattleState, rng: Prng): boolean {
+  const r = target.statusResist[status] ?? 0;
+  if (r <= 0) return false;
+  if (r < 1 && !rng.bool(r)) return false;
+  emit(state, { type: "effect_triggered", sourceId: target.id, effectId: r >= 1 ? "immune" : "resisted", label: r >= 1 ? "Imune" : "Resistiu" });
+  return true;
 }
 
 /** Pulsos de DoT desde o último tick. */

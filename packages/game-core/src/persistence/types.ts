@@ -12,6 +12,7 @@
 import type { SaveData } from "@tia/contracts";
 import { classes, config } from "@tia/config";
 import { normalizeBotSettings } from "../bot.js";
+import { normalizeBossProgress } from "../boss.js";
 import { isLegacyEquipment, migrateLegacyEquipment } from "../loot.js";
 
 export interface PersistenceService {
@@ -116,6 +117,10 @@ export function migrateSave(data: SaveData, toConfigVersion: number): SaveData {
         market: { boxesOpened: Math.max(0, Math.floor((out as Partial<SaveData>).market?.boxesOpened ?? 0)) },
         offline: { ...out.offline, accumulatedMs: 0 },
       };
+    }
+    // v5 → v6 (ADR-027): progresso dos Bosses. Save antigo nasce sem vitórias nem recargas.
+    if (out.configVersion < 6) {
+      out = { ...out, boss: normalizeBossProgress((out as Partial<SaveData>).boss) };
     }
     out.configVersion = toConfigVersion;
   }

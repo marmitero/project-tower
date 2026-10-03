@@ -19,6 +19,7 @@ import { heroFinalStats, heroGearEffects } from "./gear.js";
 import { rollEquipmentOf } from "./loot.js";
 import { heroStatsAtLevel } from "./creation.js";
 import { engineSkillsFor } from "./state.js";
+import { bossById, startBossBattle } from "./boss.js";
 import { enemyStatsAtLevel, floorDef, floorPoolOdds, pickEnemyForFloor } from "./tower.js";
 
 export interface DuelParams {
@@ -264,4 +265,93 @@ export function simulateHunt(p: { classId: string; heroLevel: number; floor: num
     hpFraction = Math.min(1, hpFraction + regen);
   }
   return { fights: p.fights, wins, defeated: false, avgHpFractionAfterFight: wins ? hpSum / wins : 0 };
+}
+
+// ---------------------------------------------------------------------------
+// Boss (ADR-027)
+// ---------------------------------------------------------------------------
+
+export interface BossFightParams {
+  bossId: string;
+  /** Classes da equipe (1–3). */
+  classIds: string[];
+  /** Nível de TODOS os heróis da equipe. */
+  heroLevel: number;
+  seed?: number;
+  /** Equipamento por herói (mesma ordem de `classIds`); omitido = sem equipamento. */
+  gear?: GearSet[];
+}
+
+export interface BossFightResult {
+  won: boolean;
+  reason: "victory" | "defeat" | "timeout";
+  durationMs: number;
+  /** Heróis que caíram (0..N). */
+  fell: number;
+  /** HP médio perdido da equipe, em fração do máximo (0..1). */
+  teamHpLostFraction: number;
+  /** Fases do chefe que chegaram a disparar. */
+  phasesReached: number;
+}
+
+/** Roda UMA luta de chefe com o MESMO engine do jogo (sem Bot, sem poções). */
+export function simulateBossFight(p: BossFightParams): BossFightResult {
+  const def = bossById(p.bossId);
+  if (!def) throw new Error(`chefe desconhecido: ${p.bossId}`);
+  const allies = p.classIds.map((classId, i) => {
+    const cls = classes.find((c) => c.id === classId);
+    if (!cls) throw new Error(`classe desconhecida: ${classId}`);
+    const gear = p.gear?.[i];
+    const stats = gear ? gear.stats : heroStatsAtLevel(cls.growth, p.heroLevel);
+    return {
+      hero: { id: `sim-hero-${i}`, name: cls.name, level: p.heroLevel } as unknown as Hero,
+      stats,
+      effects: gear?.effects ?? [],
+      skills: engineSkillsFor(cls.id),
+      basicAttackType: (cls.damageType === "magic" ? "magic" : "physical") as "physical" | "magic",
+    };
+  });
+  const battle = startBossBattle({ def, allies, accountId: "balance", seed: Math.imul((p.seed ?? 1) + 1, 2654435761) >>> 0, sequence: p.seed ?? 1 });
+  const limit = def.timeLimitMs + 5_000;
+  while (battle.status === "active" && battle.elapsedMs < limit) {
+    step(battle, battle.elapsedMs + 500, config.combat);
+    }
+  const boss = battle.enemies[0]!;
+  const reached = def.phases.filter((ph) => {
+    const byHp = ph.hpBelowPct !== undefined && boss.hp / boss.maxHp <= ph.hpBelowPct / 100;
+    const byTime = ph.afterMs !== undefined && battle.elapsedMs >= ph.afterMs;
+    return byHp || byTime;
+  }).length;
+  const lost = battle.allies.reduce((s, a) => s + Math.max(0, a.maxHp - Math.max(0, a.hp)) / a.maxHp, 0) / battle.allies.length;
+  const reason = battle.endReason ?? "timeout";
+  return {
+    won: reason === "victory",
+    reason,
+    durationMs: battle.elapsedMs,
+    fell: battle.allies.filter((a) => a.isDefeated).length,
+    teamHpLostFraction: lost,
+    phasesReached: reached,
+  };
+}
+
+export interface BossFightAverage {
+  winRate: number;
+  avgDurationSec: number;
+  avgFell: number;
+  avgTeamHpLost: number;
+}
+
+export function averageBossFight(p: Omit<BossFightParams, "seed">, samples = 12): BossFightAverage {
+  let wins = 0;
+  let dur = 0;
+  let fell = 0;
+  let lost = 0;
+  for (let i = 1; i <= samples; i += 1) {
+    const r = simulateBossFight({ ...p, seed: i * 104729 });
+    if (r.won) wins += 1;
+    dur += r.durationMs;
+    fell += r.fell;
+    lost += r.teamHpLostFraction;
+  }
+  return { winRate: wins / samples, avgDurationSec: dur / samples / 1000, avgFell: fell / samples, avgTeamHpLost: lost / samples };
 }

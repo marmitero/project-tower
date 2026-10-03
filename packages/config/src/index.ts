@@ -126,6 +126,24 @@ export {
   type EquipmentConfig,
 } from "./equipment.js";
 export {
+  defaultBossConfig,
+  defaultBosses,
+  bossErrors,
+  BOSS_STATUS_IDS,
+  BOSS_STATUS_LABELS,
+  BOSS_STAT_KEYS,
+  type BossDef,
+  type BossConfig,
+  type BossBotConfig,
+  type BossSkillDef,
+  type BossPhaseDef,
+  type BossAttemptRule,
+  type BossFragmentDrop,
+  type BossRewards,
+  type BossStatusId,
+  type BossStatKey,
+} from "./boss.js";
+export {
   defaultMarketConfig,
   defaultMarketItems,
   defaultBotConfig,

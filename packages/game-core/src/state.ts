@@ -69,6 +69,20 @@ import {
 } from "./shop.js";
 import { createBotSettings, normalizeBotSettings, patchBotSettings, type BotSettingsPatch } from "./bot.js";
 import { emptyReport, type OfflineReport } from "./offline.js";
+import {
+  BossBlockedError,
+  bossAvailability,
+  bossById,
+  createBossProgress,
+  emptyBossRecord,
+  normalizeBossProgress,
+  recordOf,
+  registerAttemptStart,
+  registerResult,
+  rollBossRewards,
+  startBossBattle,
+  type BossAvailability,
+} from "./boss.js";
 import type { PersistenceService } from "./persistence/types.js";
 import { LocalStoragePersistence } from "./persistence/local.js";
 
@@ -89,6 +103,21 @@ export interface LootNotice {
 }
 type StoreOutcome = "stored" | "autoSold" | "discarded";
 
+/** Resultado da última luta de chefe (em memória até o jogador fechar a tela — ADR-027). */
+export interface BossResult {
+  bossId: string;
+  bossName: string;
+  won: boolean;
+  reason: "victory" | "defeat" | "timeout";
+  durationMs: number;
+  /** A vitória que concedeu o bônus de primeira vez. */
+  firstClear: boolean;
+  rewards: RewardBundle | null;
+  /** Estado final de cada herói da equipe (para o resumo). */
+  team: { heroId: string; name: string; hp: number; maxHp: number; fell: boolean }[];
+  at: number;
+}
+
 export interface GameEvents {
   /** Eventos de batalha para o renderer (§66). */
   onBattleEvents?: (events: BattleEvent[]) => void;
@@ -98,6 +127,8 @@ export interface GameEvents {
   onStateChanged?: (state: GameState) => void;
   /** O Bot agiu (poção, revive, Hub) — só ONLINE; no offline vira o relatório. */
   onBotAction?: (action: BotAction) => void;
+  /** Uma luta de chefe terminou (vitória, derrota ou tempo esgotado). */
+  onBossResult?: (result: BossResult) => void;
 }
 
 /** O que o Bot fez (para o toast/feedback da UI). */
@@ -131,6 +162,8 @@ export class GameState {
   private revivesThisBattle = 0;
   private potionsThisBattle = 0;
   private lastPotionAtMs = Number.NEGATIVE_INFINITY;
+  /** Último resultado de chefe, até o jogador fechar a tela de resultado. */
+  private pendingBossResult: BossResult | null = null;
 
   constructor(initial: SaveData, deps: GameStateDeps, listeners: GameEvents = {}) {
     this.state = initial;
@@ -208,6 +241,7 @@ export class GameState {
       offline: createOfflineProgress(params.now),
       bot: createBotSettings(),
       market: { boxesOpened: 0 },
+      boss: createBossProgress(),
       lastSavedAt: params.now,
     };
 
@@ -232,6 +266,11 @@ export class GameState {
 
   get data(): Readonly<SaveData> {
     return this.state;
+  }
+
+  /** Relógio do jogo agora (para a UI contar recargas e tempo de luta). */
+  get nowMs(): number {
+    return this.clock();
   }
 
   get revision(): number {
@@ -353,6 +392,8 @@ export class GameState {
 
   /** O herói ativo é obrigatório para entrar na Torre (§19). */
   startTower(): BattleState {
+    // O Boss é uma atividade à parte: a Torre não o interrompe (ADR-027).
+    if (this.activeBossId) throw new Error("Há uma luta de chefe em curso.");
     const activeId = requireActiveHero(this.state.team);
     const hero = this.heroById(activeId);
     if (!hero) throw new Error(`Herói ativo ${activeId} não encontrado no roster.`);
@@ -432,6 +473,10 @@ export class GameState {
   private settleBattle(): void {
     const battle = this.battle;
     if (!battle) return;
+    if (battle.mode === "boss") {
+      this.settleBossBattle(battle);
+      return;
+    }
     const won = battle.status === "finished" && battle.enemies.every((e) => e.isDefeated);
 
     // ADR-020 — o HP restante VOLTA para o herói nos dois desfechos:
@@ -673,7 +718,8 @@ export class GameState {
     const result = computeOffline(this.state.offline, now, this.isVip);
     const hero = this.state.team.activeHeroId ? this.heroById(this.state.team.activeHeroId) : undefined;
 
-    if (result.creditedDurationMs >= config.offline.minAwayMs && hero) {
+    // O Boss NUNCA roda offline (ADR-027): com uma luta de chefe aberta não há simulação.
+    if (result.creditedDurationMs >= config.offline.minAwayMs && hero && this.battle?.mode !== "boss") {
       const start = this.state.offline.lastActiveAt;
       const end = start + result.creditedDurationMs;
       const report = emptyReport(result);
@@ -838,16 +884,31 @@ export class GameState {
     if (this.simReport) this.simReport.itemsUsed[itemId] = (this.simReport.itemsUsed[itemId] ?? 0) + 1;
   }
 
-  /** Auto-poção: roda ANTES de cada passo da batalha (online e offline). */
+  /**
+   * Auto-poção e auto-revive: rodam ANTES de cada passo da batalha (online e offline).
+   * Na Torre cuidam do herói; na Arena de chefes (ADR-027) cuidam da EQUIPE — a poção vai para o
+   * aliado mais ferido e o revive para qualquer caído, com os limites de `config.boss.bot`.
+   */
   private botAssist(): void {
     const battle = this.battle;
+    if (!battle || battle.status !== "active") return;
+    const isBoss = battle.mode === "boss";
+    if (isBoss && !config.boss.bot.enabled) return;
+    const limits = isBoss ? config.boss.bot : config.bot;
+    if (isBoss) this.botReviveFallen(battle);
+
     const opt = this.state.bot.autoPotion;
-    if (!battle || battle.status !== "active" || !opt.enabled) return;
-    if (this.potionsThisBattle >= config.bot.maxPotionsPerBattle) return;
-    if (battle.elapsedMs - this.lastPotionAtMs < config.bot.potionCooldownMs) return;
-    const ally = battle.allies[0];
-    if (!ally || ally.isDefeated || ally.hp <= 0 || ally.maxHp <= 0) return;
-    if ((ally.hp / ally.maxHp) * 100 >= opt.hpBelowPct) return;
+    if (!opt.enabled) return;
+    if (this.potionsThisBattle >= limits.maxPotionsPerBattle) return;
+    if (battle.elapsedMs - this.lastPotionAtMs < limits.potionCooldownMs) return;
+    const candidates = isBoss ? battle.allies : battle.allies.slice(0, 1);
+    let ally: BattleState["allies"][number] | undefined;
+    for (const c of candidates) {
+      if (c.isDefeated || c.hp <= 0 || c.maxHp <= 0) continue;
+      if ((c.hp / c.maxHp) * 100 >= opt.hpBelowPct) continue;
+      if (!ally || c.hp / c.maxHp < ally.hp / ally.maxHp) ally = c;
+    }
+    if (!ally) return;
     const item = pickPotion(this.state.inventory, opt.itemId, ally.maxHp - ally.hp, ally.maxHp);
     if (!item || !spendOne(this.state.inventory, item.id)) return;
     const healed = healCombatant(battle, ally.id, effectAmount(item.effect, ally.maxHp));
@@ -857,11 +918,18 @@ export class GameState {
     if (!this.simulating) this.listeners.onBotAction?.({ kind: "potion", itemId: item.id, name: item.name, healed });
   }
 
-  /** Gancho do engine: o herói caiu e a luta acabaria — o revive o traz de volta à MESMA luta. */
-  private botRevive(st: BattleState): boolean {
+  /** Arena: revive proativo de qualquer aliado caído (a luta é em equipe; não espera todos caírem). */
+  private botReviveFallen(battle: BattleState): void {
+    for (const ally of battle.allies) {
+      if (!ally.isDefeated) continue;
+      if (!this.reviveAlly(battle, ally.id, config.boss.bot.maxRevivesPerBattle)) break;
+    }
+  }
+
+  private reviveAlly(st: BattleState, allyId: string, maxRevives: number): boolean {
     const opt = this.state.bot.autoRevive;
-    if (!opt.enabled || this.revivesThisBattle >= config.bot.maxRevivesPerBattle) return false;
-    const ally = st.allies[0];
+    if (!opt.enabled || this.revivesThisBattle >= maxRevives) return false;
+    const ally = st.allies.find((a) => a.id === allyId);
     if (!ally || !ally.isDefeated) return false;
     const item = pickRevive(this.state.inventory, opt.itemId, ally.maxHp);
     if (!item || !spendOne(this.state.inventory, item.id)) return false;
@@ -873,6 +941,15 @@ export class GameState {
     return true;
   }
 
+  /** Gancho do engine: todos caíram e a luta acabaria — o revive traz alguém de volta à MESMA luta. */
+  private botRevive(st: BattleState): boolean {
+    const isBoss = st.mode === "boss";
+    if (isBoss && !config.boss.bot.enabled) return false;
+    const ally = st.allies.find((a) => a.isDefeated);
+    if (!ally) return false;
+    return this.reviveAlly(st, ally.id, isBoss ? config.boss.bot.maxRevivesPerBattle : config.bot.maxRevivesPerBattle);
+  }
+
   /** Altera as opções do Bot (parcial). Valores fora da faixa são corrigidos, nunca lançam. */
   setBot(patch: BotSettingsPatch): BotSettings {
     this.state.bot = patchBotSettings(this.state.bot, patch);
@@ -882,6 +959,163 @@ export class GameState {
 
   get bot(): Readonly<BotSettings> {
     return this.state.bot;
+  }
+
+  // -------------------------------------------------------------------------
+  // Boss (ADR-027)
+  // -------------------------------------------------------------------------
+
+  /** Disponibilidade de um chefe agora (nível do Rei, recarga/tentativas). */
+  bossAvailability(bossId: string): BossAvailability {
+    const def = bossById(bossId);
+    if (!def) return { state: "disabled", availableAt: null, attemptsLeft: null };
+    return bossAvailability(def, recordOf(this.state.boss, bossId), this.state.king.level, this.clock());
+  }
+
+  /** Registro salvo do chefe (vitórias, recorde, recarga). */
+  bossRecord(bossId: string) {
+    return recordOf(this.state.boss, bossId);
+  }
+
+  /** O chefe da luta em curso (ou `null`). */
+  get activeBossId(): string | null {
+    const b = this.battle;
+    return b && b.mode === "boss" && b.status === "active" ? (b.bossId ?? null) : null;
+  }
+
+  /** Último resultado de chefe, até `dismissBossResult()`. */
+  get bossResult(): BossResult | null {
+    return this.pendingBossResult;
+  }
+
+  dismissBossResult(): void {
+    this.pendingBossResult = null;
+    this.touch();
+  }
+
+  /**
+   * Desafia um chefe com a EQUIPE INTEIRA (§24/§80). Substitui a luta da Torre em curso (sem
+   * recompensa nem custo de HP) e consome a tentativa AGORA — recarregar a página não a devolve.
+   * Lança `BossBlockedError` (nível, recarga, tentativas, equipe).
+   */
+  startBoss(bossId: string): BattleState {
+    if (this.simulating) throw new Error("O Boss não roda na simulação offline.");
+    const def = bossById(bossId);
+    if (!def) throw new BossBlockedError("unknown", `Chefe desconhecido: ${bossId}`);
+    if (this.activeBossId) throw new BossBlockedError("cooldown", "Já existe uma luta de chefe em curso.");
+    const members = this.team;
+    if (members.length === 0) throw new BossBlockedError("no_hero", "Monte uma equipe antes de desafiar um chefe.");
+    if (members.length < config.boss.minTeamSize) {
+      throw new BossBlockedError("team_too_small", `Este desafio exige ao menos ${config.boss.minTeamSize} herói(s) na equipe.`);
+    }
+    const now = this.clock();
+    const avail = bossAvailability(def, recordOf(this.state.boss, def.id), this.state.king.level, now);
+    if (avail.state === "disabled") throw new BossBlockedError("disabled", `${def.name} está indisponível.`);
+    if (avail.state === "locked") throw new BossBlockedError("locked", `Requer nível do Rei ${def.requiredKingLevel}.`);
+    if (avail.state === "cooldown") throw new BossBlockedError("cooldown", `${def.name} ainda está se recuperando.`, avail.availableAt);
+    if (avail.state === "no_attempts") throw new BossBlockedError("no_attempts", `Sem tentativas para ${def.name} agora.`, avail.availableAt);
+
+    const full = config.boss.startAtFullHp;
+    const allies = members.map((hero) => {
+      const stats = heroCombatStats(hero, this.state.inventory);
+      const cls = classes.find((c) => c.id === hero.classId);
+      return {
+        hero,
+        stats,
+        effects: heroCombatEffects(hero, this.state.inventory),
+        skills: engineSkillsFor(hero.classId),
+        sprites: cls?.assets.sheets as unknown as Record<string, string> | undefined,
+        basicAttackType: (cls?.damageType === "magic" ? "magic" : "physical") as "physical" | "magic",
+        startHp: full ? stats.hp : hero.currentHp,
+      };
+    });
+    if (allies.every((a) => a.startHp <= 0)) throw new BossBlockedError("heroes_down", "Toda a equipe está caída. Recupere o HP antes de lutar.");
+
+    const record = this.state.boss.records[def.id] ?? (this.state.boss.records[def.id] = emptyBossRecord());
+    registerAttemptStart(def, record, now);
+    this.state.boss.battlesStarted += 1;
+    const sequence = this.state.boss.battlesStarted;
+    const seed = hashString(`${this.state.king.accountId}:${def.id}:${sequence}`) >>> 0;
+    const battle = startBossBattle({ def, allies, accountId: this.state.king.accountId, seed, sequence });
+
+    this.battle = battle;
+    this.potionsThisBattle = 0;
+    this.revivesThisBattle = 0;
+    this.lastPotionAtMs = Number.NEGATIVE_INFINITY;
+    this.pendingBossResult = null;
+    this.state.hunt = { kind: "in_battle", battleId: battle.battleId, startedAt: now };
+    this.botAssist();
+    this.touch();
+    return battle;
+  }
+
+  /** Desistir da luta de chefe em curso (conta como derrota; a tentativa já foi consumida). */
+  forfeitBoss(): void {
+    const battle = this.battle;
+    if (!battle || battle.mode !== "boss" || battle.status !== "active") return;
+    battle.events.push({ tick: battle.tick, elapsedMs: battle.elapsedMs, type: "battle_lost", reason: "defeat" });
+    battle.status = "finished";
+    battle.endReason = "defeat";
+    this.advanceBattle(0);
+  }
+
+  private settleBossBattle(battle: BattleState): void {
+    const def = bossById(battle.bossId ?? "");
+    const reason = battle.endReason ?? (battle.enemies.every((e) => e.isDefeated) ? "victory" : "defeat");
+    const won = reason === "victory";
+    const now = this.clock();
+    let bundle: RewardBundle | null = null;
+    let firstClear = false;
+
+    if (def) {
+      const record = this.state.boss.records[def.id] ?? (this.state.boss.records[def.id] = emptyBossRecord());
+      firstClear = registerResult(def, record, won, now, battle.elapsedMs).firstClear;
+      if (won) {
+        bundle = rollBossRewards({
+          def,
+          firstClear,
+          rng: this.lootRng(`boss:${def.id}:${this.state.boss.battlesStarted}`),
+          accountId: this.state.king.accountId,
+          itemIndexStart: this.equipmentIndex,
+          createdAt: now,
+          bundleId: `boss:${def.id}`,
+        });
+        this.equipmentIndex += bundle.equipment.length;
+      }
+    }
+
+    // A Arena não mexe no HP da Torre por padrão (`persistHpAfter: false`).
+    if (config.boss.persistHpAfter) {
+      for (const ally of battle.allies) {
+        const hero = ally.heroId ? this.heroById(ally.heroId) : undefined;
+        if (hero) hero.currentHp = Math.max(0, ally.hp);
+      }
+    }
+
+    const team = battle.allies.map((a) => ({ heroId: String(a.heroId ?? a.id), name: a.name, hp: Math.max(0, a.hp), maxHp: a.maxHp, fell: a.isDefeated }));
+    this.battle = null;
+    if (bundle) this.applyRewards(bundle);
+
+    // Fim da atividade (ADR-027): a caçada da Torre retoma sozinha (idle, §111) — ou fica pausada.
+    const active = this.state.team.activeHeroId ? this.heroById(this.state.team.activeHeroId) : undefined;
+    if (!config.boss.resumeTowerAfter) this.state.hunt = { kind: "paused", at: now, reason: "boss" };
+    else if (active && active.currentHp <= 0) this.state.hunt = { kind: "defeated", at: now };
+    else this.state.hunt = null;
+
+    const result: BossResult = {
+      bossId: def?.id ?? battle.bossId ?? "",
+      bossName: def?.name ?? "Chefe",
+      won,
+      reason,
+      durationMs: battle.elapsedMs,
+      firstClear,
+      rewards: bundle,
+      team,
+      at: now,
+    };
+    this.pendingBossResult = result;
+    if (!this.simulating) this.listeners.onBossResult?.(result);
+    this.touch();
   }
 
   // -------------------------------------------------------------------------
@@ -1035,6 +1269,7 @@ export class GameState {
     // Saves sem as opções novas (ou editados à mão) caem no padrão da config.
     save.bot = normalizeBotSettings(save.bot);
     save.market = { boxesOpened: Math.max(0, Math.floor(save.market?.boxesOpened ?? 0)) };
+    save.boss = normalizeBossProgress(save.boss);
     // Recarregar no meio de uma luta não restaura a luta (ela não é salva): a caçada recomeça
     // pelo PROCURANDO, com o HP que o herói tinha. Sem isso o loop ficaria esperando uma luta que não existe.
     if (save.hunt?.kind === "in_battle") save.hunt = null;

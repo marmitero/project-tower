@@ -15,7 +15,7 @@
  *     `config.xp.*`), então todo `import { enemies }` continua válido.
  *  5. Versionado (`schemaVersion`): pack antigo é migrado, nunca reinterpretado.
  *
- * Escopo atual (schema v3 = v2 + Market, Bot/Hub e Offline — FASE 10+11, ADR-025/026): inimigos, andares, recompensas, curvas de XP e dificuldade
+ * Escopo atual (schema v4 = v3 + Bosses — FASE 12, ADR-027; v3 = v2 + Market, Bot/Hub e Offline — FASE 10+11, ADR-025/026): inimigos, andares, recompensas, curvas de XP e dificuldade
  * (v1) + equipamento (slots, templates, traços de arma, características, raridade, notas,
  * materiais, venda, requisito, tetos de efeito), drop (chance, tabela de raridade, forma do X),
  * mochila e aquisição de heróis (v2, FASE 9). Heróis/classes/skills/bosses entram nas fases
@@ -38,12 +38,13 @@ import { ATTRIBUTE_IDS } from "./attributes.js";
 import { defaultEquipmentConfig, equipmentErrors, type EquipmentConfig } from "./equipment.js";
 import { defaultHeroAcquisition, heroAcquisitionErrors, type HeroAcquisitionConfig } from "./acquisition.js";
 import { RARITY_ORDER } from "./rarity.js";
+import { bossErrors, defaultBossConfig, type BossConfig } from "./boss.js";
 import { botErrors, defaultBotConfig, defaultMarketConfig, defaultOfflineConfig, marketErrors, offlineErrors, type BotConfig, type MarketConfig, type OfflineConfig } from "./market.js";
 import type { InventoryConfig, LootConfig } from "./types.js";
 import { CHARACTER_SHEET_KEYS } from "./catalog.js";
 import { LEVEL_CAP, buildDefaultFloors, defaultTowerDifficulty, defaultTowerRewards, defaultXpCurve, type FloorDef, type TowerRewardsConfig } from "./tower.js";
 
-export const CONTENT_PACK_SCHEMA_VERSION = 3;
+export const CONTENT_PACK_SCHEMA_VERSION = 4;
 
 export interface ContentPack {
   schemaVersion: typeof CONTENT_PACK_SCHEMA_VERSION;
@@ -75,6 +76,8 @@ export interface ContentPack {
   bot: BotConfig;
   /** v3 — offline como simulação do online (ADR-026). */
   offline: OfflineConfig;
+  /** v4 — Bosses da Arena: chefes, fases, tentativas e recompensas (ADR-027). */
+  boss: BossConfig;
 }
 
 export type PackLoot = Pick<LootConfig, "equipmentChance" | "rarity"> & { x: Omit<LootConfig["x"], "independentPerAttribute"> };
@@ -110,12 +113,18 @@ export function defaultContentPack(): ContentPack {
     },
     ...defaultV2Blocks(),
     ...defaultV3Blocks(),
+    ...defaultV4Blocks(),
   };
 }
 
 /** Blocos novos do schema v3 com os valores de fábrica. */
 function defaultV3Blocks(): Pick<ContentPack, "market" | "bot" | "offline"> {
   return { market: defaultMarketConfig(), bot: defaultBotConfig(), offline: defaultOfflineConfig() };
+}
+
+/** Blocos novos do schema v4 com os valores de fábrica. */
+function defaultV4Blocks(): Pick<ContentPack, "boss"> {
+  return { boss: defaultBossConfig() };
 }
 
 /** Blocos novos do schema v2 com os valores de fábrica. */
@@ -160,6 +169,12 @@ export function migrateContentPack(input: unknown): unknown {
     if (acq && typeof acq === "object" && acq.fragmentsRequired === undefined) acq.fragmentsRequired = defaultHeroAcquisition().fragmentsRequired;
     pack.schemaVersion = 3;
   }
+  // v3 → v4: Bosses da Arena (FASE 12).
+  if (pack.schemaVersion === 3) {
+    const d = defaultV4Blocks();
+    for (const [k, v] of Object.entries(d)) if (pack[k] === undefined) pack[k] = v;
+    pack.schemaVersion = 4;
+  }
   return pack;
 }
 
@@ -196,6 +211,7 @@ export function exportContentPack(name = "exportado"): ContentPack {
     market: config.market,
     bot: config.bot,
     offline: config.offline,
+    boss: config.boss,
   } satisfies ContentPack);
 }
 
@@ -233,6 +249,7 @@ export function validateContentPack(raw: unknown): string[] {
   errors.push(...marketErrors(pack.market));
   errors.push(...botErrors(pack.bot, pack.market));
   errors.push(...offlineErrors(pack.offline));
+  errors.push(...bossErrors(pack.boss, cap > 0 ? cap : undefined));
   const loot = pack.loot;
   if (!loot) errors.push("loot ausente");
   else {
@@ -364,6 +381,10 @@ export function applyContentPack(raw: unknown): void {
   Object.assign(config.market, pack.market);
   Object.assign(config.bot, pack.bot);
   Object.assign(config.offline, pack.offline);
+  // v4 — a lista de chefes é substituída EM LUGAR (quem guardou `config.boss.bosses` continua válido).
+  config.boss.bosses.splice(0, config.boss.bosses.length, ...pack.boss.bosses);
+  const { bosses: _bosses, ...bossRules } = pack.boss;
+  Object.assign(config.boss, bossRules);
 }
 
 /** Volta ao conteúdo de fábrica (útil em testes e no botão "restaurar padrão" do painel). */

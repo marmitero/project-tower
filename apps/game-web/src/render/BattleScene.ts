@@ -48,17 +48,16 @@ export function computeLayout(
   mode: "tower" | "boss",
   width: number,
   height: number,
-): { ally: LayoutPoint; enemy: LayoutPoint } {
+  allyCount = 1,
+): { ally: LayoutPoint; enemy: LayoutPoint; allies: LayoutPoint[] } {
   if (mode === "boss") {
-    return {
-      ally: { x: width * 0.12, y: height * 0.8 },
-      enemy: { x: width * 0.5, y: height * 0.46 },
-    };
+    // Equipe em formação diagonal à esquerda (até 3), chefe grande à direita (ADR-027, §24).
+    const n = Math.max(1, Math.min(3, Math.floor(allyCount)));
+    const allies = Array.from({ length: n }, (_, i) => ({ x: width * (0.14 + 0.12 * i), y: height * (0.8 - 0.09 * i) }));
+    return { ally: allies[0]!, allies, enemy: { x: width * 0.74, y: height * 0.74 } };
   }
-  return {
-    ally: { x: width * 0.3, y: height * 0.7 },
-    enemy: { x: width * 0.7, y: height * 0.7 },
-  };
+  const ally = { x: width * 0.3, y: height * 0.7 };
+  return { ally, allies: [ally], enemy: { x: width * 0.7, y: height * 0.7 } };
 }
 
 interface FighterView {
@@ -68,6 +67,8 @@ interface FighterView {
   bar: Phaser.GameObjects.Graphics | null;
   label: Phaser.GameObjects.Text | null;
   base: LayoutPoint;
+  /** Posição do aliado na formação (0 = primeiro). */
+  index: number;
   dead: boolean;
   /** Chaves de animação por folha (preenchido quando as sheets carregam). */
   anims?: Record<SheetName, string>;
@@ -175,6 +176,7 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
     this.setNotice(null);
+    this.mode = battle.mode === "boss" ? "boss" : "tower";
     const wanted = new Set<string>();
     for (const c of battle.allies) wanted.add(c.id);
     for (const c of battle.enemies) wanted.add(c.id);
@@ -203,15 +205,20 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private relayout(): void {
-    const layout = computeLayout(this.mode, this.scale.width, this.scale.height);
+    const layout = computeLayout(this.mode, this.scale.width, this.scale.height, this.battle?.allies.length ?? 1);
     for (const f of this.fighters.values()) {
-      f.base = f.side === "ally" ? layout.ally : layout.enemy;
+      f.base = this.basePoint(f, layout);
       f.sprite?.setPosition(f.base.x, f.base.y);
-      if (f.sprite) {
-        f.sprite.setScale(this.spriteScale());
-      }
+      f.sprite?.setScale(this.scaleFor(f));
       this.placeChrome(f);
     }
+  }
+
+  /** Ponto-base do combatente; mantém nome e barra DENTRO do canvas mesmo com o chefe grande. */
+  private basePoint(f: FighterView, layout: ReturnType<typeof computeLayout>): LayoutPoint {
+    const p = f.side === "ally" ? (layout.allies[f.index] ?? layout.ally) : layout.enemy;
+    const maxY = this.scale.height - 128 * this.scaleFor(f) - 40;
+    return { x: p.x, y: Math.min(p.y, Math.max(this.scale.height * 0.4, maxY)) };
   }
 
   private spriteScale(): number {
@@ -219,8 +226,16 @@ export class BattleScene extends Phaser.Scene {
     return Math.max(0.3, Math.min(0.62, m / 780));
   }
 
+  /** Escala do sprite: base × `scale` do combatente (chefe), encolhendo a equipe na Arena. */
+  private scaleFor(f: FighterView): number {
+    const c = this.combatant(f.id);
+    let mul = c?.scale ?? 1;
+    if (this.mode === "boss" && f.side === "ally") mul *= (this.battle?.allies.length ?? 1) > 2 ? 0.82 : 0.92;
+    return Math.min(this.spriteScale() * mul, (this.scale.height * 0.62) / 256);
+  }
+
   private placeChrome(f: FighterView): void {
-    const s = this.spriteScale();
+    const s = this.scaleFor(f);
     const half = 128 * s;
     f.label?.setPosition(f.base.x, f.base.y + half + 8);
     this.redrawBar(f);
@@ -228,7 +243,7 @@ export class BattleScene extends Phaser.Scene {
 
   private redrawBar(f: FighterView): void {
     if (!f.bar) return;
-    const s = this.spriteScale();
+    const s = this.scaleFor(f);
     const width = Math.max(64, 160 * s);
     const height = 7;
     const x = f.base.x - width / 2;
@@ -249,7 +264,7 @@ export class BattleScene extends Phaser.Scene {
     for (const f of this.fighters.values()) {
       const c = this.combatant(f.id);
       if (!c || !f.label) continue;
-      if (!f.dead) f.label.setText(`${c.name}  ${formatCompact(Math.max(0, c.hp))}/${formatCompact(c.maxHp)}`);
+      if (!f.dead) f.label.setText(`${c.name}${c.phaseLabel ? ` · ${c.phaseLabel}` : ""}  ${formatCompact(Math.max(0, c.hp))}/${formatCompact(c.maxHp)}`);
       this.redrawBar(f);
     }
   }
@@ -266,17 +281,20 @@ export class BattleScene extends Phaser.Scene {
     dead: boolean,
     sheets?: Record<string, string>,
   ): void {
-    const layout = computeLayout(this.mode, this.scale.width, this.scale.height);
-    const base = side === "ally" ? layout.ally : layout.enemy;
+    const layout = computeLayout(this.mode, this.scale.width, this.scale.height, this.battle?.allies.length ?? 1);
+    const index = side === "ally" ? Math.max(0, this.battle?.allies.findIndex((c) => c.id === id) ?? 0) : 0;
     const view: FighterView = {
       id,
       side,
       sprite: null,
       bar: null,
       label: null,
-      base,
+      base: layout.enemy,
+      index,
       dead,
     };
+    view.base = this.basePoint(view, layout);
+    const base = view.base;
     const c = this.combatant(id);
     view.label = this.add
       .text(base.x, base.y, c ? `${c.name}  ${formatCompact(c.hp)}/${formatCompact(c.maxHp)}` : id, {
@@ -345,7 +363,7 @@ export class BattleScene extends Phaser.Scene {
     const sprite = this.add
       .sprite(view.base.x, view.base.y, urls.idle, row * FRAME_COUNT)
       .setOrigin(0.5, 1)
-      .setScale(this.spriteScale())
+      .setScale(this.scaleFor(view))
       .setDepth(5);
     // Cor do andar (ADR-021): só apresentação, vinda do dado do andar via engine.
     const tint = this.combatant(view.id)?.tint;
@@ -411,7 +429,7 @@ export class BattleScene extends Phaser.Scene {
       const skillId = "skillId" in event && event.skillId ? String(event.skillId) : undefined;
       const name = (skillId && skillsById[skillId]?.name) || "Skill";
       const label = this.add
-        .text(sourceView.base.x, sourceView.base.y - 128 * this.spriteScale() - 28, name, {
+        .text(sourceView.base.x, sourceView.base.y - 128 * this.scaleFor(sourceView) - 28, name, {
           fontSize: "14px",
           color: "#ffd873",
           backgroundColor: "#2a1c00cc",
@@ -453,8 +471,16 @@ export class BattleScene extends Phaser.Scene {
       this.reviveFighter(targetView);
     }
 
+    if (plan.label && sourceView) {
+      this.floatNumber(sourceView, { text: plan.label, kind: "mitigated" });
+    }
+
+    if (plan.phase && targetView) {
+      this.showPhase(plan.phase, targetView);
+    }
+
     if (plan.banner) {
-      this.showBanner(plan.banner);
+      this.showBanner(plan.banner, plan.bannerText);
     }
   }
 
@@ -499,7 +525,7 @@ export class BattleScene extends Phaser.Scene {
     const s = style[number.kind];
     const jitter = (Math.random() - 0.5) * 40;
     const text = this.add
-      .text(view.base.x + jitter, view.base.y - 128 * this.spriteScale() - 10, number.text, {
+      .text(view.base.x + jitter, view.base.y - 128 * this.scaleFor(view) - 10, number.text, {
         fontSize: s.size,
         color: s.color,
         stroke: s.stroke,
@@ -522,8 +548,34 @@ export class BattleScene extends Phaser.Scene {
     });
   }
 
-  private showBanner(kind: "won" | "lost"): void {
-    const text = kind === "won" ? "VITÓRIA!" : "DERROTA";
+  /** O chefe entrou em nova fase (ADR-027): faixa laranja, tremor e pulso vermelho no sprite. */
+  private showPhase(text: string, view: FighterView): void {
+    if (view.sprite && !REDUCED_MOTION) {
+      view.sprite.setTintFill(0xff3b3b);
+      this.time.delayedCall(220, () => {
+        const tint = this.combatant(view.id)?.tint;
+        if (tint !== undefined) view.sprite?.setTint(tint);
+        else view.sprite?.clearTint();
+      });
+      this.cameras.main.shake(260, 0.006);
+    }
+    const banner = this.add
+      .text(this.scale.width / 2, this.scale.height * 0.2, text.toUpperCase(), {
+        fontSize: "26px",
+        color: "#ff9a5a",
+        stroke: "#1b1428",
+        strokeThickness: 6,
+        fontStyle: "bold",
+      })
+      .setOrigin(0.5)
+      .setDepth(50)
+      .setAlpha(0);
+    this.tweens.add({ targets: banner, alpha: 1, duration: 160 });
+    this.tweens.add({ targets: banner, alpha: 0, delay: 1300, duration: 400, onComplete: () => banner.destroy() });
+  }
+
+  private showBanner(kind: "won" | "lost", override?: string): void {
+    const text = override ?? (kind === "won" ? "VITÓRIA!" : "DERROTA");
     const color = kind === "won" ? "#ffd873" : "#ff6e6e";
     const banner = this.add
       .text(this.scale.width / 2, this.scale.height * 0.36, text, {
