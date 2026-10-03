@@ -292,3 +292,5 @@ Todos em Node (`sharp` já é dependência), testados em `tests/integration/art-
 | `Cure`/`Cura` | Nascimento da classe **Clérigo** |
 | Modelo de itens/qualidade | Não muda nesta etapa |
 | **Arte** | **Nada utilizável**: o OpenRpg é um framework C#; a arte vem do pack Nika (referência de estilo/movimento) + gerações novas |
+
+**`--floor-gain` (Lote 2, ADR-036).** `node scripts/art.mjs kit <folha> --id <kit> --floor-gain 0.78` multiplica a luminância só dos 4 ladrilhos de piso, para quando o gerador devolve um piso mais claro que `ARENA.floorLuma` (0,10–0,55) — mais barato e determinístico que regerar. O valor usado fica na procedência. Receita contra efeitos inventados em inimigos: o prompt deve dizer "ABSOLUTELY NO special effects, only the guide's thin white slash arc".

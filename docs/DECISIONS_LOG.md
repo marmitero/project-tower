@@ -906,3 +906,26 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 
 **Consequências:** `ranger` fica com 1 identidade no elenco (Kaia) até os próximos lotes de heróis; testes novos (reflow ×4; identidade/atlas/reservado ×3); manifesto +1 atlas. **Pendente:** skill própria e `attributeDelta` do Ossian ao liberá-lo; o corpo-padrão da classe Arqueiro continua o esqueleto (só visível para identidades sem atlas — hoje, só o Ossian).
 
+
+---
+
+## ADR-036 — Lote 2 da arte: 12 retratos do Rei, arenas dos andares 2–4, andar 1 completo e andar 2 com 2 inimigos
+
+**Data:** 2026-10-03 · **Status:** ✅ Aceita (aguarda o "lote 02 aprovado") · **Tipo:** B (arte + dados) · **Pedido do usuário:** *"Lote 1 aprovado! Siga para o Lote 2."*
+
+**Gerações: 9/10 (1 reserva).** 2 folhas de retratos (B e C) · 3 kits de arena (f02, f03, f04) · 4 inimigos (Goblin Capitão ×2 — a 1ª versão foi reprovada —, Sapo-Lodo, Rato). Procedência completa em `assets/generated/PROVENANCE.md`.
+
+| Item | Decisão |
+|---|---|
+| Retratos do Rei | +8 (`portraits/king/rei_sombrio, rei_gelo, rei_sol, rei_cacador, rei_arcano, rei_rubro, rei_esmeralda, rei_anciao`; 512 px + `_s` 256 px) → **12 skins + 2 `legacy`**. Liberadas por **nível do Rei** (3, 5, 8, 10, 15, 20, 30, 50) — recompensa de progressão; tudo em `account.king.skins[].unlock` (editável; `{ kind: "default" }` libera já). A criação só mostra as 4 iniciais |
+| Tela do Rei | A lista de botões virou **grade de miniaturas** (`tia-skin-grid`): retrato, nome e, nas bloqueadas, retrato apagado + selo "Nv X". `isSkinUnlocked` continua sendo a única regra (a UI só reflete) |
+| Arenas | `f02_porao` (esgoto: lanterna verde, correntes, grade), `f03_ossadas` (candelabro, nicho de crânios, passagem de ossos), `f04_catacumbas` (sarcófagos, tocha roxa, tapeçaria com olho, piso muito escuro). `themeForFloor`: 1–4 → um kit por andar; 5+ seguem na `masmorra` até os próximos lotes. Kits em `arenas.ts` (dados) |
+| Piso claro demais | O gerador devolveu o piso do f03 com luminância 0,51–0,59 (limite 0,55 e o herói some). Em vez de regerar: novo parâmetro **`floorGain`** (`tools/art/kit.mjs`, CLI `--floor-gain 0.78`) escurece só o piso → 0,40–0,46. Registrado na procedência |
+| Andar 1 completo | + **Goblin Capitão** (elite, físico, mult 1,2) com peso 1 no pool (≈ 7 %). Exceção deliberada à regra "elite só do andar 9" (§3.1); o teste foi ajustado e o limite de 12 % de elites por andar continua valendo |
+| Andar 2 | + **Sapo-Lodo Gigante** (tank, mult 1,04, CON alta) e **Rato de Esgoto Bruto** (dps, mult 1,12, DEX/STR altas); Morcego Venenoso desde o andar 2. Faltam 2 inimigos do andar 2 (L3) |
+| Refação do Capitão | A 1ª versão trazia um raio amarelo gigante e halo no *hurt* (o gerador "inventou" efeito a partir do arco de golpe do guia orc). Receita que funcionou: prompt com **"ABSOLUTELY NO special effects… only the guide's thin white slash arc"**. Aprovado: paleta 632, movimento ≤ 6 %, âncora 0 px |
+| Balance | `npm run report:balance`: Capitão tira 62 % da vida do Rei (elite, raro), Sapo 38 %, Rato 37 %; ritmo das 4 h inalterado (Rei Nv 14–15, Slot 2 em ≈ 2,5 h) |
+
+**Alternativas rejeitadas:** (a) regerar o piso do f03 (gasta geração; a correção é determinística); (b) liberar todos os retratos já (perde o papel de recompensa); (c) deixar o Capitão com o efeito (cobria o corpo — ilegível).
+
+**Consequências:** manifesto 632 arquivos; `REQUIRED` do build de assets e `requiredAssetIds()` exigem os 12 retratos; testes de torre ajustados (15 inimigos); ainda faltam as arenas dos andares 5–10 (L4+). Capturas em `docs/art-review/lote-02/`. **Como testar:** Debug Mode (`npm run play:debug`) → "Nível do Rei" libera as skins; "Ir ao andar" 2/3/4 mostra as arenas.
