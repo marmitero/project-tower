@@ -14,11 +14,12 @@
  * peso; escondê-la junto com o nome a transformaria em formulário).
  */
 
-import { useMemo, useState } from "react";
-import { HEROES, classes, config, skillsById, type Rarity } from "@tia/config";
+import { useMemo, useState, type CSSProperties, type ReactNode } from "react";
+import { HEROES, CREATION_LAYOUT, LOGIN_ASSETS, classes, config, skillsById, type Rarity } from "@tia/config";
 import { validateNickname, NICKNAME_MESSAGES, isSkinUnlocked } from "@tia/game-core";
 import { ActionButton } from "@tia/ui";
 import { assetUrl } from "./render/assets.js";
+import { GAME_VERSION } from "./version.js";
 
 export interface CreationResult {
   nickname: string;
@@ -27,7 +28,7 @@ export interface CreationResult {
   heroId: string;
 }
 
-const SKINS = config.account.king.skins.filter((s) => isSkinUnlocked(s, 1));
+const SKINS = config.account.king.skins.filter((s) => !s.legacy && isSkinUnlocked(s, 1));
 
 const RARITY_LABEL: Record<Rarity, string> = {
   common: "Comum",
@@ -37,6 +38,40 @@ const RARITY_LABEL: Record<Rarity, string> = {
   legendary: "Lendário",
   celestial: "Celestial",
 };
+
+/**
+ * Moldura da tela de login/criação (ADR-033): fundo próprio, logotipo "Idle Tower Adventure",
+ * cartão central e a zona reservada ao login do Google. Os números vêm de `CREATION_LAYOUT`.
+ * Quem for plugar o Google renderiza o botão DENTRO de `[data-auth-slot]` — a zona já existe.
+ */
+function CreationShell({ wide, children }: { wide: boolean; children: ReactNode }) {
+  const L = CREATION_LAYOUT;
+  const bg = assetUrl(LOGIN_ASSETS.background);
+  const logo = assetUrl(LOGIN_ASSETS.logo);
+  const style = {
+    "--login-focus": L.backdropFocus,
+    "--login-shade": String(L.shade),
+    "--login-logo-w": `${L.logo.maxWidthPx}px`,
+    "--login-logo-h": `${L.logo.maxHeightVh}vh`,
+    "--login-card-w": `${wide ? L.card.heroMaxWidthPx : L.card.kingMaxWidthPx}px`,
+    "--login-auth-h": `${L.authSlot.heightPx}px`,
+    "--login-auth-w": `${L.authSlot.maxWidthPx}px`,
+    ...(bg ? { "--login-bg": `url("${new URL(bg, document.baseURI).href}")` } : {}),
+  } as CSSProperties;
+  return (
+    <div className="tia-login" style={style} data-has-art={bg ? "true" : "false"}>
+      <div className="tia-login__shade" aria-hidden="true" />
+      <header className="tia-login__logo">
+        {logo ? <img src={logo} alt="Idle Tower Adventure" /> : <h1>Idle Tower Adventure</h1>}
+      </header>
+      <div className="tia-creation">{children}</div>
+      <div className="tia-login__auth" data-auth-slot="google" aria-label="Entrar com uma conta" />
+      <footer className="tia-login__credits">
+        <span>{GAME_VERSION}</span> · Arte: Assets by Nika Studio
+      </footer>
+    </div>
+  );
+}
 
 export function CreationScreen({ onSubmit }: { onSubmit: (result: CreationResult) => void }) {
   const [step, setStep] = useState<"king" | "hero">("king");
@@ -50,10 +85,9 @@ export function CreationScreen({ onSubmit }: { onSubmit: (result: CreationResult
 
   if (step === "hero") {
     return (
-      <div className="tia-creation">
+      <CreationShell wide>
         <div className="tia-creation__card tia-frame-9">
-          <div className="tia-creation__banner" role="presentation" />
-          <h1 className="tia-creation__title">Convocação do Campeão</h1>
+          <h2 className="tia-creation__title">Convocação do Campeão</h2>
           <p className="tia-creation__lead">
             Quatro campeões juraram lealdade ao Reino — mas só <strong>um</strong> parte ao seu
             lado agora. Os outros aguardam ser encontrados pelo mundo.
@@ -95,20 +129,21 @@ export function CreationScreen({ onSubmit }: { onSubmit: (result: CreationResult
           </fieldset>
 
           <div className="tia-creation__actions">
-            <ActionButton label="Voltar" variant="secondary" onClick={() => setStep("king")} />
+            <ActionButton label="Voltar" variant="secondary" icon="back" onClick={() => setStep("king")} />
             <ActionButton
               variant="primary"
+              icon="enter"
               label={`Convocar ${chosen.name}`}
               onClick={() => onSubmit({ nickname: validation.ok ? validation.value : name, skinId, heroId })}
             />
           </div>
         </div>
-      </div>
+      </CreationShell>
     );
   }
 
   return (
-    <div className="tia-creation">
+    <CreationShell wide={false}>
       <form
         className="tia-creation__card tia-frame-9"
         onSubmit={(event) => {
@@ -117,9 +152,7 @@ export function CreationScreen({ onSubmit }: { onSubmit: (result: CreationResult
           setStep("hero");
         }}
       >
-        <div className="tia-creation__banner" role="presentation" />
-
-        <h1 className="tia-creation__title">Coroe o seu Rei</h1>
+        <h2 className="tia-creation__title">Coroe o seu Rei</h2>
         <p className="tia-creation__lead">
           O Rei é você: a conta, o Reino e os seus campeões. Escolha um nome e uma aparência —
           heróis são súditos, e é por eles que você luta.
@@ -169,8 +202,8 @@ export function CreationScreen({ onSubmit }: { onSubmit: (result: CreationResult
           </div>
         </fieldset>
 
-        <ActionButton type="submit" variant="primary" disabled={!canSubmit} label="Escolher campeão" />
+        <ActionButton type="submit" variant="primary" icon="crown" disabled={!canSubmit} label="Escolher campeão" />
       </form>
-    </div>
+    </CreationShell>
   );
 }

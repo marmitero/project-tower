@@ -7,7 +7,7 @@
  */
 
 import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
-import { ActionButton, MissingAssetsWarning, Panel, ProgressBar, StatPill } from "@tia/ui";
+import { ActionButton, MissingAssetsWarning, Panel, ProgressBar, StatPill, type ButtonIcon } from "@tia/ui";
 import { classes, config } from "@tia/config";
 import {
   GameState,
@@ -37,6 +37,7 @@ import { HuntPanel, HuntToggle } from "./HuntPanel.js";
 import { TeamPanel } from "./TeamPanel.js";
 import { ChatPanel } from "./ChatPanel.js";
 import { getSettings, updateSettings } from "./settings.js";
+import { applyGbaTheme, buildGbaTheme } from "./gbaTheme.js";
 import { OfflineReportModal } from "./OfflineReportModal.js";
 import { DEBUG_ENABLED } from "./debug-flag.js";
 
@@ -45,15 +46,15 @@ const DebugPanel = DEBUG_ENABLED ? lazy(() => import("./DebugPanel.js")) : null;
 
 type Screen = "king" | "heroes" | "tower" | "team" | "inventory" | "market" | "boss" | "options";
 
-const SCREENS: { id: Screen; label: string }[] = [
-  { id: "king", label: "Rei" },
-  { id: "heroes", label: "Heróis" },
-  { id: "team", label: "Equipe" },
-  { id: "inventory", label: "Inventário" },
-  { id: "market", label: "Market" },
-  { id: "tower", label: "Torre" },
-  { id: "boss", label: "Arena" },
-  { id: "options", label: "Opções" },
+const SCREENS: { id: Screen; label: string; icon: ButtonIcon }[] = [
+  { id: "king", label: "Rei", icon: "crown" },
+  { id: "heroes", label: "Heróis", icon: "helmet" },
+  { id: "team", label: "Equipe", icon: "banner" },
+  { id: "inventory", label: "Inventário", icon: "backpack" },
+  { id: "market", label: "Market", icon: "market" },
+  { id: "tower", label: "Torre", icon: "tower" },
+  { id: "boss", label: "Arena", icon: "swords" },
+  { id: "options", label: "Opções", icon: "gear" },
 ];
 
 export function App() {
@@ -130,6 +131,8 @@ export function App() {
         const abs = (u: string) => new URL(u, document.baseURI).href;
         if (frame) document.documentElement.style.setProperty("--asset-frame-9", `url("${abs(frame)}")`);
         if (ornate) document.documentElement.style.setProperty("--asset-panel-ornate", `url("${abs(ornate)}")`);
+        // ADR-033 — botões e ícones GBA (arte gerada); o tema só liga se o kit estiver completo.
+        applyGbaTheme(document.documentElement, buildGbaTheme((id) => { const u = assetUrl(id); return u ? abs(u) : undefined; }));
       });
     })();
 
@@ -242,7 +245,7 @@ export function App() {
     <div className="tia-app tia-app--game">
       <nav className="tia-nav" aria-label="Navegação principal">
         {SCREENS.map((s) => (
-          <ActionButton key={s.id} label={s.label} variant={screen === s.id ? "primary" : "secondary"} onClick={() => open(s.id)} />
+          <ActionButton key={s.id} label={s.label} icon={s.icon} variant={screen === s.id ? "primary" : "secondary"} onClick={() => open(s.id)} />
         ))}
       </nav>
 
@@ -373,15 +376,18 @@ function Hud({ state }: { state: GameState }) {
 function KingScreen({ state, onChangeSkin }: { state: GameState; onChangeSkin: (skinId: string) => void }) {
   const king = state.data.king;
   const offline = state.offlinePreview;
-  const skins = config.account.king.skins;
+  const skins = config.account.king.skins.filter((s) => !s.legacy);
+  const current = config.account.king.skins.find((s) => s.id === king.skinId);
   return (
     <Panel title="O Rei">
       <div className="tia-king">
-        <img
-          className="tia-king__body"
-          src={assetUrl(skins.find((s) => s.id === king.skinId)?.assetId ?? king.portraitAssetId) ?? undefined}
-          alt={`Aparência ${king.displayName}`}
-        />
+        <div className="tia-king__portrait-frame">
+          <img
+            className={current?.legacy ? "tia-king__body" : "tia-king__portrait"}
+            src={assetUrl(current?.assetId ?? king.portraitAssetId) ?? undefined}
+            alt={`Aparência ${king.displayName}`}
+          />
+        </div>
         <div className="tia-king__facts">
           <p>
             <strong>{king.displayName}</strong> é a meta-personagem da sua conta. O Rei não entra no

@@ -19,6 +19,8 @@
  * aparece é um aviso que ninguém lê.
  */
 
+import { config, gbaAssetIds, LOGIN_ASSETS } from "@tia/config";
+
 export interface AssetManifest {
   version: number;
   count?: number;
@@ -83,6 +85,12 @@ export function requiredAssetIds(): string[] {
     // Cenário mínimo de uma tela de combate.
     "tileset/floor_plain",
     "tileset/cave_wall",
+
+    // Arte gerada (ADR-033): retratos do Rei (512 + HUD), login e kit de botões GBA.
+    ...config.account.king.skins.filter((s) => !s.legacy).flatMap((s) => [s.assetId, ...(s.hudAssetId ? [s.hudAssetId] : [])]),
+    LOGIN_ASSETS.background,
+    LOGIN_ASSETS.logo,
+    ...gbaAssetIds(),
   ];
 }
 

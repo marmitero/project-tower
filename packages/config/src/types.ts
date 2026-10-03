@@ -70,7 +70,12 @@ export type BattleMode = "tower" | "boss";
 export interface KingSkinConfig {
   id: string;
   name: string;
+  /** Imagem principal: retrato 512 (skins novas) ou corpo `hero_skins/*` (legado). */
   assetId: string;
+  /** Retrato 256 do HUD (skins novas). Ausente ⇒ o retrato padrão do Rei. */
+  hudAssetId?: string;
+  /** Skin antiga (corpo do pack): válida em saves existentes, mas NÃO é oferecida na criação/Rei. */
+  legacy?: boolean;
   unlock:
     | { kind: "default" }
     | { kind: "kingLevel"; kingLevel: number };

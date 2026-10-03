@@ -14,7 +14,8 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { config, classes, enemies, equipmentErrors } from "@tia/config";
+import { config, classes, enemies, equipmentErrors, gbaAssetIds, LOGIN_ASSETS } from "@tia/config";
+import { REQUIRED } from "../../scripts/build-assets.mjs";
 import { requiredAssetIds } from "../../apps/game-web/src/render/assets.js";
 
 const MANIFEST_PATH = resolve(
@@ -55,6 +56,7 @@ function configAssetIds(): { label: string; id: string }[] {
   out.push({ label: "account.king.portrait", id: config.account.king.portraitAssetId });
   for (const skin of config.account.king.skins) {
     out.push({ label: `account.king.skins.${skin.id}`, id: skin.assetId });
+    if (skin.hudAssetId) out.push({ label: `account.king.skins.${skin.id}.hud`, id: skin.hudAssetId });
   }
   return out;
 }
@@ -108,13 +110,37 @@ describe("heróis e Rei não brigam por identidade visual", () => {
   it("cada herói tem corpo próprio, diferente do corpo do Rei na criação", () => {
     const heroBodies = new Set(classes.map((c) => c.assets.sheets.idle));
     expect(heroBodies.size).toBe(4);
-    // As skins do Rei são estáticas (hero_skins/*); os corpos dos heróis são
-    // folhas animadas (characters/*). São universos separados por design.
+    // As skins do Rei são imagens estáticas (retratos `portraits/king/*` ou corpos legados
+    // `hero_skins/*`); os corpos dos heróis são folhas animadas (characters/*): universos separados.
     for (const skin of config.account.king.skins) {
-      expect(skin.assetId.startsWith("hero_skins/")).toBe(true);
+      expect(skin.assetId.startsWith(skin.legacy ? "hero_skins/" : "portraits/king/")).toBe(true);
+      if (!skin.legacy) expect(skin.hudAssetId, skin.id).toBeTruthy();
     }
     for (const c of classes) {
       expect(c.assets.sheets.idle.startsWith("characters/")).toBe(true);
     }
+  });
+});
+
+describe("arte gerada de interface (ADR-033)", () => {
+  it("kit GBA, login e retratos do Rei estão no manifesto e na lista REQUIRED do build", () => {
+    const ids = [
+      ...gbaAssetIds(),
+      LOGIN_ASSETS.background,
+      LOGIN_ASSETS.logo,
+      ...config.account.king.skins.filter((s) => !s.legacy).flatMap((s) => [s.assetId, s.hudAssetId!]),
+    ];
+    expect(ids.length).toBeGreaterThanOrEqual(2 + 8 + 20 + 16 + 6);
+    for (const id of ids) {
+      expect(manifestIds.has(id), `manifesto: ${id}`).toBe(true);
+      expect(REQUIRED.includes(id), `REQUIRED (scripts/build-assets.mjs): ${id}`).toBe(true);
+      expect(requiredAssetIds().includes(id), `requiredAssetIds: ${id}`).toBe(true);
+    }
+  });
+
+  it("há pelo menos 10 retratos do Rei gerados (meta do roadmap) ou o saldo é explicado pelo lote", () => {
+    const king = [...manifestIds].filter((id) => id.startsWith("portraits/king/") && !id.endsWith("_s"));
+    // Lote 1 gera 4 retratos de 512 (+4 HUD); os demais chegam nos Lotes seguintes (roadmap §4.2).
+    expect(king.length).toBeGreaterThanOrEqual(4);
   });
 });

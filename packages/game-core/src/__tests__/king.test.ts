@@ -82,6 +82,17 @@ describe("skins do Rei (§5, ⛔ P-006)", () => {
     expect(king.xp).toBe(0n);
   });
 
+  it("ADR-033: a skin é um retrato — o HUD usa o retrato 256 da skin e a skin antiga volta ao retrato padrão", () => {
+    const king = createKing({ accountId: ACCOUNT, nickname: "Aldric", skinId: "rainha", now: NOW });
+    expect(king.skinId).toBe("rainha");
+    expect(king.portraitAssetId).toBe("portraits/king/rainha_s");
+    changeKingSkin(king, "rei_sabio");
+    expect(king.portraitAssetId).toBe("portraits/king/rei_sabio_s");
+    changeKingSkin(king, "royal"); // legada: continua válida em saves antigos
+    expect(king.portraitAssetId).toBe(config.account.king.portraitAssetId);
+    expect(config.account.king.skins.filter((s) => !s.legacy).length).toBeGreaterThanOrEqual(4);
+  });
+
   it("recusa skin desconhecida", () => {
     const king = createKing({ accountId: ACCOUNT, nickname: "Aldric", skinId: "royal", now: NOW });
     expect(() => changeKingSkin(king, "inexistente")).toThrow(SkinLockedError);

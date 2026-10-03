@@ -71,19 +71,27 @@ export function Panel({ title, children, actions }: PanelProps) {
  * disso o acerto erra em telas pequenas, e o jogador conclui que o
  * botão "não funciona" em vez de que ele era pequeno demais.
  */
+/** Ícones de botão (kit GBA, `ui/gba/icon_*`): o CSS mapeia `data-icon` → imagem; o rótulo continua HTML. */
+export type ButtonIcon =
+  | "crown" | "helmet" | "banner" | "backpack" | "market" | "tower" | "swords" | "gear"
+  | "potion" | "rest" | "enter" | "back" | "mute" | "chat" | "close" | "data";
+
 export function ActionButton({
   label,
   onClick,
   disabled,
   variant = "primary",
   hint,
+  icon,
   type = "button",
 }: {
   label: string;
   onClick?: () => void;
   disabled?: boolean;
-  variant?: "primary" | "secondary" | "danger";
+  /** primary = índigo · secondary = prata · danger = rubi · confirm = esmeralda · warning = âmbar. */
+  variant?: "primary" | "secondary" | "danger" | "confirm" | "warning";
   hint?: string;
+  icon?: ButtonIcon;
   /** `submit` para botões dentro de formulário (form.onSubmit faz o resto). */
   type?: "button" | "submit";
 }) {
@@ -94,6 +102,7 @@ export function ActionButton({
       onClick={onClick}
       disabled={disabled}
       title={hint}
+      {...(icon ? { "data-icon": icon } : {})}
     >
       {label}
     </button>

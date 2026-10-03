@@ -185,3 +185,4 @@ export {
   heroAcquisitionErrors,
   type HeroAcquisitionConfig,
 } from "./acquisition.js";
+export * from "./uitheme.js";

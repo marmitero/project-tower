@@ -41,8 +41,15 @@ export const account: AccountConfig = {
     // `assetId` segue o ID do manifesto (`hero_skins/<id>`), não um
     // apelido: o jogo nunca monta caminho, ele pede ID (§62).
     skins: [
-      { id: "royal", name: "Real", assetId: "hero_skins/royal", unlock: { kind: "default" } },
-      { id: "paladin", name: "Paladino", assetId: "hero_skins/paladin", unlock: { kind: "default" } },
+      // ADR-033 / Lote 1: a skin do Rei é um RETRATO de RPG clássico (512 na criação e no Rei,
+      // 256 no HUD). As 12 do roadmap chegam em 3 lotes; as duas do pack ficam como `legacy`
+      // (saves antigos continuam válidos, a UI não as oferece mais).
+      { id: "rei_real", name: "Rei Real", assetId: "portraits/king/rei_real", hudAssetId: "portraits/king/rei_real_s", unlock: { kind: "default" } },
+      { id: "rei_guerreiro", name: "Rei Guerreiro", assetId: "portraits/king/rei_guerreiro", hudAssetId: "portraits/king/rei_guerreiro_s", unlock: { kind: "default" } },
+      { id: "rainha", name: "Rainha", assetId: "portraits/king/rainha", hudAssetId: "portraits/king/rainha_s", unlock: { kind: "default" } },
+      { id: "rei_sabio", name: "Rei Sábio", assetId: "portraits/king/rei_sabio", hudAssetId: "portraits/king/rei_sabio_s", unlock: { kind: "default" } },
+      { id: "royal", name: "Real", assetId: "hero_skins/royal", legacy: true, unlock: { kind: "default" } },
+      { id: "paladin", name: "Paladino", assetId: "hero_skins/paladin", legacy: true, unlock: { kind: "default" } },
     ],
     portraitAssetId: "portraits/hero",
   },

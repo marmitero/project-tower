@@ -115,6 +115,7 @@ function tintForFloor(index: number): number | null {
 }
 
 function themeForFloor(index: number): string {
+  if (index === 1) return "f01_entrada"; // kit próprio (Lote 1); os andares 2–4 seguem na masmorra até o seu lote
   if (index <= 4) return "masmorra";
   if (index <= 8) return "gelo e sombra";
   if (index <= 12) return "sangue e brasa";

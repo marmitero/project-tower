@@ -30,9 +30,8 @@ export function createKing(params: CreateKingParams): King {
     nickname: params.nickname,
     displayName: params.nickname,
     skinId: skin.id,
-    // §5 — retrato do Rei: o busto (`portraits/hero`). A skin muda o
-    // corpo; o rosto é o mesmo. Quem mostra o corpo olha `skinId`.
-    portraitAssetId: config.account.king.portraitAssetId,
+    // §5 — retrato do Rei (HUD): o da skin (ADR-033); skin antiga/sem retrato usa `portraits/hero`.
+    portraitAssetId: skin.hudAssetId ?? config.account.king.portraitAssetId,
     level: 1,
     // §45 — pool do Rei, separado do dos heróis. Começa em zero.
     xp: 0n,
@@ -72,6 +71,7 @@ export function changeKingSkin(king: King, skinId: string): void {
   const skin = config.account.king.skins.find((s) => s.id === skinId);
   if (!skin || !isSkinUnlocked(skin, king.level)) throw new SkinLockedError(skinId);
   king.skinId = skin.id;
+  king.portraitAssetId = skin.hudAssetId ?? config.account.king.portraitAssetId;
 }
 
 /**

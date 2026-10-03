@@ -9,4 +9,4 @@
  */
 
 export { ProgressBar, StatPill, Panel, ActionButton, MissingAssetsWarning } from "./Hud.js";
-export type { ProgressBarProps, StatPillProps, PanelProps } from "./Hud.js";
+export type { ProgressBarProps, StatPillProps, PanelProps, ButtonIcon } from "./Hud.js";

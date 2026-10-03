@@ -333,19 +333,13 @@ body {
 }
 
 .tia-creation__card {
-  width: min(560px, 100%);
+  width: min(var(--login-card-w, 560px), 100%);
   display: flex;
   flex-direction: column;
   gap: 12px;
   padding: 20px 22px 24px;
   background: var(--panel);
   border-radius: 6px;
-}
-
-.tia-creation__banner {
-  height: 72px;
-  background: var(--asset-panel-ornate, none) center / 100% 100% no-repeat;
-  margin: -4px -6px 4px;
 }
 
 .tia-creation__title {
@@ -1103,3 +1097,140 @@ body {
 .tia-hunt__cell { padding: 2px 6px; }
 .tia-hunt__foot { flex-wrap: nowrap; }
 .tia-hunt__foot > span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+
+/* ===================================================== Login / Criação (ADR-033) */
+/* Fundo próprio + logotipo + cartão + zona reservada ao login do Google. Tudo parametrizado por
+   variáveis CSS vindas de CREATION_LAYOUT (packages/config/src/uitheme.ts). */
+
+.tia-login {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+  background: #0b0a12 var(--login-bg, none) var(--login-focus, 62% 38%) / cover no-repeat;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+.tia-login__shade {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(8, 6, 16, calc(var(--login-shade, 0.4) * 0.6)), rgba(8, 6, 16, var(--login-shade, 0.4)));
+}
+.tia-login > * { position: relative; }
+.tia-login__shade { position: fixed; }
+.tia-login__logo { flex: none; width: 100%; display: flex; justify-content: center; padding: 18px 16px 0; }
+.tia-login__logo img {
+  display: block;
+  width: min(var(--login-logo-w, 520px), 100%);
+  max-height: var(--login-logo-h, 26vh);
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.45));
+}
+.tia-login__logo h1 { margin: 0; font-size: 32px; text-align: center; }
+.tia-login > .tia-creation { width: 100%; flex: 1 0 auto; }
+/* Zona reservada ao Google: altura fixa mesmo vazia ⇒ o botão futuro entra sem mover o cartão. */
+.tia-login__auth {
+  flex: none;
+  width: min(var(--login-auth-w, 320px), calc(100% - 32px));
+  min-height: var(--login-auth-h, 52px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tia-login__credits { flex: none; padding: 6px 12px 12px; font-size: 11px; color: rgba(230, 227, 240, 0.7); text-shadow: 0 1px 0 #000; }
+
+.tia-creation__skin-grid { justify-content: center; }
+.tia-creation__skin { min-width: 104px; padding: 8px; }
+.tia-creation__skin-art { width: 96px; height: 96px; object-fit: cover; border-radius: 4px; }
+.tia-king__portrait-frame { padding: 6px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; }
+.tia-king__portrait { display: block; width: 208px; height: 208px; object-fit: cover; image-rendering: pixelated; border-radius: 4px; }
+@media (max-width: 640px) {
+  .tia-login__logo { padding-top: 10px; }
+  .tia-king__portrait { width: 150px; height: 150px; }
+}
+
+/* ===================================================== Botões GBA (ADR-033) */
+/* Só valem com a classe `tia-gba` (ligada por gbaTheme.ts quando o kit de arte está completo);
+   sem ela, o visual anterior continua. 6px = canto/borda do kit; 12px = espessura exibida (2×). */
+
+.tia-gba .tia-btn,
+.tia-gba .tia-chat__btn,
+.tia-gba .tia-gamebox__toggle {
+  --b-n: var(--gba-silver-normal); --b-h: var(--gba-silver-hover); --b-p: var(--gba-silver-pressed); --b-d: var(--gba-silver-disabled);
+  --b-ink: #1a1a33; --b-shadow: none;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: var(--touch);
+  padding: 2px 6px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: var(--b-ink);
+  text-shadow: var(--b-shadow);
+  background: none;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 12px;
+  border-radius: 0;
+  border-image: var(--b-n) 6 fill / 12px / 0 stretch;
+  image-rendering: pixelated;
+  box-shadow: none;
+}
+.tia-gba .tia-btn:hover:not(:disabled),
+.tia-gba .tia-chat__btn:hover:not(:disabled),
+.tia-gba .tia-gamebox__toggle:hover { border-image: var(--b-h) 6 fill / 12px / 0 stretch; }
+.tia-gba .tia-btn:active:not(:disabled),
+.tia-gba .tia-chat__btn:active:not(:disabled),
+.tia-gba .tia-chat__btn[aria-pressed="true"] { border-image: var(--b-p) 6 fill / 12px / 0 stretch; transform: translateY(1px); }
+.tia-gba .tia-btn:disabled,
+.tia-gba .tia-chat__btn:disabled { border-image: var(--b-d) 6 fill / 12px / 0 stretch; color: #6b6b88; text-shadow: none; opacity: 1; }
+.tia-gba .tia-btn:focus-visible,
+.tia-gba .tia-chat__btn:focus-visible { outline: 2px solid #fff; outline-offset: 1px; box-shadow: 0 0 0 4px #1a1a33; }
+
+.tia-gba .tia-btn--primary { --b-n: var(--gba-indigo-normal); --b-h: var(--gba-indigo-hover); --b-p: var(--gba-indigo-pressed); --b-d: var(--gba-indigo-disabled); --b-ink: #f4f4ff; --b-shadow: 1px 1px 0 #10102a; background: none; }
+.tia-gba .tia-btn--danger { --b-n: var(--gba-ruby-normal); --b-h: var(--gba-ruby-hover); --b-p: var(--gba-ruby-pressed); --b-d: var(--gba-ruby-disabled); --b-ink: #fff; --b-shadow: 1px 1px 0 #3a0a14; }
+.tia-gba .tia-btn--confirm { --b-n: var(--gba-emerald-normal); --b-h: var(--gba-emerald-hover); --b-p: var(--gba-emerald-pressed); --b-d: var(--gba-emerald-disabled); --b-ink: #fff; --b-shadow: 1px 1px 0 #0d3320; }
+.tia-gba .tia-btn--warning { --b-n: var(--gba-amber-normal); --b-h: var(--gba-amber-hover); --b-p: var(--gba-amber-pressed); --b-d: var(--gba-amber-disabled); --b-ink: #2a1a00; }
+.tia-gba .tia-chat__btn { min-height: 28px; font-size: 11px; border-width: 8px; border-image-width: 8px; border-image: var(--b-n) 6 fill / 8px / 0 stretch; }
+.tia-gba .tia-chat__btn:hover:not(:disabled) { border-image: var(--b-h) 6 fill / 8px / 0 stretch; }
+.tia-gba .tia-chat__btn:active:not(:disabled), .tia-gba .tia-chat__btn[aria-pressed="true"] { border-image: var(--b-p) 6 fill / 8px / 0 stretch; color: #1a1a33; }
+.tia-gba .tia-chat__btn:disabled { border-image: var(--b-d) 6 fill / 8px / 0 stretch; }
+.tia-gba .tia-gamebox__toggle { min-height: 36px; font-size: 12px; }
+
+/* Ícones do kit: `data-icon="crown"` → ::before com a imagem (pixelada, 20px). */
+.tia-gba .tia-btn[data-icon]::before {
+  content: "";
+  flex: none;
+  width: 20px;
+  height: 20px;
+  background: center / contain no-repeat;
+  image-rendering: pixelated;
+}
+.tia-gba .tia-btn[data-icon="crown"]::before { background-image: var(--gba-icon-crown); }
+.tia-gba .tia-btn[data-icon="helmet"]::before { background-image: var(--gba-icon-helmet); }
+.tia-gba .tia-btn[data-icon="banner"]::before { background-image: var(--gba-icon-banner); }
+.tia-gba .tia-btn[data-icon="backpack"]::before { background-image: var(--gba-icon-backpack); }
+.tia-gba .tia-btn[data-icon="market"]::before { background-image: var(--gba-icon-market); }
+.tia-gba .tia-btn[data-icon="tower"]::before { background-image: var(--gba-icon-tower); }
+.tia-gba .tia-btn[data-icon="swords"]::before { background-image: var(--gba-icon-swords); }
+.tia-gba .tia-btn[data-icon="gear"]::before { background-image: var(--gba-icon-gear); }
+.tia-gba .tia-btn[data-icon="potion"]::before { background-image: var(--gba-icon-potion); }
+.tia-gba .tia-btn[data-icon="rest"]::before { background-image: var(--gba-icon-rest); }
+.tia-gba .tia-btn[data-icon="enter"]::before { background-image: var(--gba-icon-enter); }
+.tia-gba .tia-btn[data-icon="back"]::before { background-image: var(--gba-icon-back); }
+.tia-gba .tia-btn[data-icon="mute"]::before { background-image: var(--gba-icon-mute); }
+.tia-gba .tia-btn[data-icon="chat"]::before { background-image: var(--gba-icon-chat); }
+.tia-gba .tia-btn[data-icon="close"]::before { background-image: var(--gba-icon-close); }
+.tia-gba .tia-btn[data-icon="data"]::before { background-image: var(--gba-icon-data); }
+
+@media (max-width: 640px) {
+  /* Navegação em telas estreitas: botões mais compactos. */
+  .tia-gba .tia-nav .tia-btn { padding-inline: 0; font-size: 12px; }
+}

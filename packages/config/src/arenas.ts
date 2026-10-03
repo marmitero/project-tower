@@ -42,7 +42,30 @@ export const BOSS_ARENA_KIT_ID = "boss";
 
 /** Kits de fábrica (peças do pack Nika). Os kits gerados por andar (Onda 1) entram aqui. */
 export function defaultArenaKits(): ArenaKitDef[] {
+  const f01 = (n: string) => `arenas/f01_entrada/${n}`;
   return [
+    {
+      // Lote 1 (ADR-033): primeiro kit GERADO — a Entrada da Torre (andar 1). Pedra azul-acinzentada,
+      // tochas laranja, portão, janela com grade e estandarte; adereços baixos de guarnição.
+      // A lista de paredes repete as peças comuns para que o estandarte, o portão e a janela
+      // apareçam raramente (≈ 1 em 12 cada) — é só dado: edite os pesos repetindo/removendo ids.
+      id: "f01_entrada",
+      name: "Entrada da Torre",
+      wall: [
+        f01("wall_0"), f01("wall_1"), f01("wall_2"), f01("wall_0"), f01("wall_4"), f01("wall_1"),
+        f01("banner"), f01("wall_2"), f01("wall_3"), f01("wall_0"), f01("wall_4"), f01("gate"),
+      ],
+      torch: f01("torch"),
+      torchEvery: 4,
+      floor: [f01("floor_0"), f01("floor_1"), f01("floor_0"), f01("floor_2"), f01("floor_3")],
+      props: [
+        { assetId: f01("prop_0"), weight: 3 },
+        { assetId: f01("prop_1"), weight: 3 },
+        { assetId: f01("prop_2"), weight: 2 },
+        { assetId: f01("prop_3"), weight: 2 },
+      ],
+      tint: 0xffffff,
+    },
     {
       id: "masmorra",
       name: "Masmorra",
