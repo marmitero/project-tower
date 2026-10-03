@@ -1,6 +1,6 @@
 # Pendências — Decisões que NÃO podem ser inventadas
 
-**Versão:** 0.4 · **Data:** 2026-10-03 · **Estado:** 67 pendências catalogadas (P-002, P-003, P-004, P-005, P-006, P-010, P-012, P-016, P-019, P-020, P-020b, P-023, P-024, P-025, P-033 resolvidas)
+**Versão:** 0.5 · **Data:** 2026-10-03 · **Estado:** 67 pendências catalogadas (P-008/P-036/P-017/P-018/P-021(Boss)/P-029/P-062 provisórias; P-011/P-011a, P-002, P-003, P-004, P-005, P-006, P-010, P-012, P-016, P-019, P-020, P-020b, P-023, P-024, P-025, P-033 resolvidas)
 **Fonte:** §73 do `Master-Prompt.md`
 
 ---
@@ -242,7 +242,9 @@ O repositório de referência sugere 1★–5★ com slots extras de skill por e
 
 ---
 
-### P-017 — Fragmentos: quantidade por Boss e por herói
+### P-017 — Fragmentos: quantidade por Boss e por herói ⚠️ DECIDIDA PROVISORIAMENTE (2026-10-03, ADR-027)
+
+> Chefe da classe-casa: 3–5 fragmentos por vitória (+1 sorteio de classe qualquer) e 6–10 extras na 1ª vitória; herói completo = `fragmentsRequired` (20/30/40/70/100/250, ADR-024). Tudo em `config.boss.bosses[].rewards`. Texto original abaixo.
 
 **Criticidade:** 🟡 ALTA · **Bloqueia:** FASE 12
 
@@ -252,7 +254,9 @@ O §12 e o §54 definem que Boss é a fonte principal de fragmentos, mas **não 
 
 ---
 
-### P-018 — Conteúdo de Boss
+### P-018 — Conteúdo de Boss ⚠️ DECIDIDA PROVISORIAMENTE (2026-10-03, ADR-027)
+
+> 8 chefes de fábrica em `packages/config/src/boss.ts` (fases, skills, resistências, recompensas), calibrados por tamanho de equipe e medidos em `BALANCE_REPORT.md`. Texto original abaixo.
 
 **Criticidade:** 🟡 ALTA · **Bloqueia:** FASE 12
 
@@ -307,7 +311,9 @@ Leitura mais óbvia: não. Mas isso é Tipo C.
 
 ---
 
-### P-021 — Resistência a status por inimigo e Boss
+### P-021 — Resistência a status por inimigo e Boss ⚠️ DECIDIDA PARA BOSS (2026-10-03, ADR-027)
+
+> `statusResist` (0–1) por chefe, para Atordoamento/Veneno, executado no engine. Inimigo comum da Torre segue sem resistência. Texto original abaixo.
 
 **Criticidade:** 🟢 MÉDIA · **Bloqueia:** FASE 7
 
@@ -385,7 +391,9 @@ O §28 exige animação de procura real e o §22 exige progressão visual da Tor
 
 ---
 
-### P-029 — Limites de tentativa de Boss
+### P-029 — Limites de tentativa de Boss ⚠️ DECIDIDA PROVISORIAMENTE (2026-10-03, ADR-027)
+
+> `attempts` por chefe: `none` / `cooldown` / `window` (janela móvel, relógio do aparelho; consumida ao entrar). Texto original abaixo.
 
 **Criticidade:** ⚪ BAIXA · **Bloqueia:** FASE 12
 
@@ -764,7 +772,9 @@ Precisa de regra **transparente** contra last-hit farming e desconexão.
 
 **Criticidade:** ⚪ BAIXA · **Bloqueia:** FASE Polish · depende de `P-002`
 
-### P-062 — Trilha de Boss
+### P-062 — Trilha de Boss ⚠️ DECIDIDA PROVISORIAMENTE (2026-10-03, ADR-027)
+
+> Sem trilha própria por ora (SFX reaproveitados); fica para a fase de áudio/Polish. Texto original abaixo.
 
 **Criticidade:** ⚪ BAIXA · **Bloqueia:** FASE 12 · depende de `P-018`
 
@@ -794,11 +804,11 @@ Não são pendências do Master-Prompt: são consequências **medidas** das deci
 
 | Criticidade | Quantidade | IDs |
 |---|---:|---|
-| 🔴 **CRÍTICA** | **3** | `P-008`, `P-011`, `P-036` (P-002 resolvida 2026-10-01; P-005/P-006 resolvidas 2026-10-03; P-010 resolvida 2026-10-03) |
-| 🟡 **ALTA** | **14** | `P-001`, `P-006b`, `P-015`, `P-017`, `P-018`, `P-027`, `P-032`, `P-007`, `P-011a`, `P-047`, `P-053`, `P-057`, `P-058`, `P-014` |
-| 🟢 **MÉDIA** | **6** | `P-020`, `P-021`, `P-006c`, `P-039`, `P-040`, `P-043` (P-016/P-024/P-025/P-033 resolvidas 2026-10-03) |
-| ⚪ **BAIXA** | **29** | `P-026`, `P-028`, `P-029`, `P-031`, `P-034`, `P-035`, `P-037`, `P-038`, `P-013`, `P-041`, `P-042`, `P-044`, `P-045`, `P-046`, `P-048`, `P-049`, `P-050`, `P-051`, `P-052`, `P-054`, `P-055`, `P-022`, `P-030`, `P-056`, `P-059`, `P-060`, `P-061`, `P-062`, `P-063` |
-| **TOTAL** | **64** (6 resolvidas na FASE 9 permanecem catalogadas acima) | |
+| 🔴 **CRÍTICA** | **0** | — (`P-008`/`P-036` decididas provisoriamente na Fase 10 e `P-011` resolvida na Fase 11; P-002 resolvida 2026-10-01; P-005/P-006 resolvidas 2026-10-03; P-010 resolvida 2026-10-03) |
+| 🟡 **ALTA** | **11** | `P-001`, `P-006b`, `P-015`, `P-027`, `P-032`, `P-007`, `P-047`, `P-053`, `P-057`, `P-058`, `P-014` |
+| 🟢 **MÉDIA** | **5** | `P-020`, `P-006c`, `P-039`, `P-040`, `P-043` (P-016/P-024/P-025/P-033 resolvidas 2026-10-03; P-021 decidida p/ Boss na Fase 12) |
+| ⚪ **BAIXA** | **27** | `P-026`, `P-028`, `P-031`, `P-034`, `P-035`, `P-037`, `P-038`, `P-013`, `P-041`, `P-042`, `P-044`, `P-045`, `P-046`, `P-048`, `P-049`, `P-050`, `P-051`, `P-052`, `P-054`, `P-055`, `P-022`, `P-030`, `P-056`, `P-059`, `P-060`, `P-061`, `P-063` |
+| **TOTAL** | **43 abertas** (as 24 decididas/provisórias até a Fase 12 permanecem catalogadas no corpo do documento) | |
 
 ---
 

@@ -9,20 +9,55 @@ Um RPG idle de navegador onde **você é o Rei**. Escolhe seus campeões, decide
 ## Estado do projeto
 
 ```text
-FASE 0 · Inspeção     ✅ concluída
-FASE 1 · Documentação ✅ concluída   ← estamos aqui
-FASE 2 · Fundação    ⬜ próximo passo
+FASE 0  · Inspeção            ✅
+FASE 1  · Documentação        ✅
+FASE 2  · Fundação            ✅
+FASE 3  · Rei                 ✅
+FASE 4  · Personagens         ✅
+FASE 5  · Equipe              ✅
+FASE 6  · Combate             ✅
+FASE 7  · Torre               ✅
+FASE 8  · Searching loop      ✅
+FASE 9  · Equipamentos        ✅
+FASE 10 · Economia (Market)   ✅
+FASE 11 · Offline             ✅
+FASE 12 · Boss                ✅  ← fase atual concluída (2026-10-03)
+FASE 13 · MVP Local           ⬜  ← próxima (última etapa até o 1º MVP jogável)
+FASE 14 · Painel Admin        ⬜  (pós-MVP)
 ```
 
-**Nenhum gameplay foi implementado.** O repositório contém a especificação e o conjunto completo de documentação de design e arquitetura.
+**6 de 7 etapas até o primeiro MVP jogável.** O jogo já roda no navegador de ponta a ponta: criar o Rei → escolher 1 dos 4 heróis → montar equipe (slots 2 e 3 por nível + Coin) → subir a Torre 1×1 em loop automático → XP, Coin e equipamento com raridade/X → inventário, venda e Market → Bot e Hub → offline (Free 2 h) → **Arena dos Chefes**.
+
+### Fase 12 — Arena dos Chefes (a mais recente)
+
+Chefe é uma **atividade separada da Torre**: a **equipe inteira** (até 3 heróis) enfrenta **um** chefe, todos atacando ao mesmo tempo. A Torre continua 1×1 e sem chefe em nenhum andar; fragmentos de herói só saem daqui.
+
+- **8 chefes** (Rei Gosma → Colosso da Torre), com **fases** (por vida restante ou por tempo/*enrage*), **imunidade/resistência** a Atordoamento e Veneno, skills de área, **tempo limite** e **tentativas** por recarga ou por janela.
+- **Recompensas:** Coin e XP em "abates equivalentes", equipamento garantido, **fragmentos de herói** e bônus na 1ª vitória.
+- **Calibrado por tamanho de equipe:** o chefe 1 cai com 1 herói; do 3º em diante só uma equipe de 3 vence — por isso vale desbloquear os slots.
+- **100% editável:** tudo está em `config.boss` (`ContentPack` v4, com validação) — adicionar ou rebalancear um chefe é mudar dados, sem tocar em código. O futuro Painel Admin edita este mesmo bloco.
+- Regras completas: [`docs/BOSS_SYSTEM.md`](docs/BOSS_SYSTEM.md) §14 · decisão: [`ADR-027`](docs/DECISIONS_LOG.md) · números medidos: [`docs/BALANCE_REPORT.md`](docs/BALANCE_REPORT.md).
+
+> Os números de Coin e de Boss são **provisórios** (P-008, P-017, P-018, P-029) e serão revisados com jogo real na Fase 13.
 
 | | |
 |---|---|
-| Documentos de especificação | [`Master-Prompt.md`](Master-Prompt.md) — 125 seções, fonte de autoridade |
-| Documentação | [`docs/`](docs/README.md) — 30 documentos (+ este README e o `AI_STATE.md`) |
+| Especificação | [`Master-Prompt.md`](Master-Prompt.md) — 125 seções, fonte de autoridade |
+| Documentação | [`docs/`](docs/README.md) — 36 documentos (+ este README e o `AI_STATE.md`) |
 | Handoff | [`AI_STATE.md`](AI_STATE.md) — **leia primeiro** |
-| Assets disponíveis | **422 sprites** de um pack profissional, prontos para uso |
-| Pendências | 7 críticas, 67 no total — ver [`docs/PENDING_RULES.md`](docs/PENDING_RULES.md) |
+| Testes | 616 unitários/integração + 28 de arquitetura (`npm run check`) |
+| Assets | **422 sprites** do pack Nika Studio, versionados no repositório |
+| Pendências | Nenhuma crítica aberta; decisões provisórias em [`docs/PENDING_RULES.md`](docs/PENDING_RULES.md) |
+
+### Como rodar
+
+```bash
+npm install
+npm run assets:build   # gera a cópia de trabalho dos assets (uma vez)
+npm run dev            # http://localhost:5173
+npm run check          # docs + tipos + testes + arquitetura + assets + segredos
+npm run report:balance # relatório de balanceamento (Torre, equipamento, Market, Chefes)
+```
 
 ---
 
@@ -115,7 +150,7 @@ Você configura, decide, observa. **Nunca** clica para atacar.
 | [`docs/GDD.md`](docs/GDD.md) | Visão, pilares, fantasia central, escopo |
 | [`docs/GAME_SYSTEMS.md`](docs/GAME_SYSTEMS.md) | Mapa de todos os sistemas e suas dependências |
 | [`docs/ROADMAP.md`](docs/ROADMAP.md) | Fases, gates e entregáveis |
-| [`docs/PENDING_RULES.md`](docs/PENDING_RULES.md) | As 67 decisões que **não podem ser inventadas** |
+| [`docs/PENDING_RULES.md`](docs/PENDING_RULES.md) | As 67 decisões catalogadas (24 já decididas/provisórias) |
 | [`docs/DECISIONS_LOG.md`](docs/DECISIONS_LOG.md) | ADR e as 18 divergências resolvidas |
 
 ### Índice completo
@@ -142,11 +177,11 @@ Você configura, decide, observa. **Nunca** clica para atacar.
 
 ```text
 TypeScript · Vite · React · Phaser
-Supabase (Auth · Postgres · RLS · Realtime · Edge Functions)
+Supabase (Auth · Postgres · RLS · Realtime · Edge Functions) — fase online, ainda não implementada
 Vercel
 ```
 
-**Monorepo:** `packages/engine` (Battle Engine puro, sem React), `packages/config` (todo número de balanceamento), `packages/contracts`, `apps/game-web`, `apps/admin-web`.
+**Monorepo:** `packages/engine` (Battle Engine puro, sem React), `packages/config` (todo número de balanceamento, empacotável como `ContentPack`), `packages/game-core` (estado e regras), `packages/contracts`, `packages/ui`, `apps/game-web`, `apps/admin-web` (futuro).
 
 > A regra que estrutura tudo: **a lógica do jogo não depende de componentes React** — e isso é verificado por teste, não por intenção.
 
@@ -154,7 +189,7 @@ Vercel
 
 ## Assets
 
-O projeto **não precisa criar nenhum asset novo** para a vertical slice.
+O pack cobre a vertical slice; ícones de revive/caixas e SFX foram gerados no estilo do pack (ver `assets/SOURCES.md`).
 
 | | |
 |---|---|
@@ -180,23 +215,9 @@ O que ainda falta para o MVP: [`docs/ASSET_GAP.md`](docs/ASSET_GAP.md).
 
 ---
 
-## O que está bloqueado
+## Decisões provisórias
 
-Sete decisões de produto impedem a implementação de partes do jogo. Elas **não** foram inventadas — o `Master-Prompt.md` §73 proíbe explicitamente, e inventar um valor de economia é pior que deixar ausente.
-
-| ID | Pendência | Bloqueia |
-|---|---|---|
-| 🔴 **P-002** | Definição dos 4 heróis | Fase 4 → vertical slice |
-| 🔴 **P-005** | Estrutura e curva da Torre | Fase 7 |
-| 🔴 **P-006** | Inimigos: stats e papéis | Fase 7 |
-| 🔴 **P-008** | Valores de Coin | Fase 10 |
-| 🔴 **P-010** | Faixa do X por atributo | Fase 9 |
-| 🔴 **P-011** | Taxa de conversão offline | Fase 11 |
-| 🔴 **P-036** | Sumidouros de Coin | Fase 10 |
-
-> **A Fase 2 (fundação) não depende de nenhuma delas** e pode começar agora.
-
-Detalhes, material de apoio e processo de resolução em [`docs/PENDING_RULES.md`](docs/PENDING_RULES.md).
+As pendências de produto foram decididas por delegação (cada uma registrada em ADR, **toda em config editável**) e aguardam ratificação com playtest: Coin e preços do Market (P-008/P-036, ADR-025), fragmentos, conteúdo e tentativas de Boss (P-017/P-018/P-029, ADR-027). Nenhuma é bloqueio de implementação. Detalhes em [`docs/PENDING_RULES.md`](docs/PENDING_RULES.md).
 
 ---
 

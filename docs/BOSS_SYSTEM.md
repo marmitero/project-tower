@@ -1,7 +1,11 @@
 # Sistema de Boss
 
-**Versão:** 0.1 · **Data:** 2026-09-30 · **Estado:** especificado, conteúdo bloqueado (P-018)
+**Versão:** 1.0 · **Data:** 2026-10-03 · **Estado:** ✅ implementado na FASE 12 (ADR-027) — números provisórios, 100% editáveis (`config.boss`)
 **Fonte:** §21, §23–§25, §54, §55, §80, §110 do `Master-Prompt.md`
+
+> **FASE 12 (2026-10-03):** este documento é a especificação; a **implementação e as regras vigentes** estão em
+> [§14](#14-regras-implementadas-fase-12-adr-027) e na [ADR-027](DECISIONS_LOG.md). O conteúdo de fábrica (8 chefes) mora em
+> `packages/config/src/boss.ts` e é medido em [`BALANCE_REPORT.md`](BALANCE_REPORT.md).
 
 ---
 
@@ -254,13 +258,15 @@ O §25 inclui balanceamento na lista de lugares onde a distinção Torre/Boss de
 
 ## 12. Pendências
 
-| ID | Pendência | Bloqueia |
+| ID | Pendência | Estado |
 |---|---|---|
-| `P-018` | Conteúdo de Boss: stats, fases, mecânicas, recompensas | FASE 12 |
-| `P-017` | Fragmentos por Boss e por herói | FASE 12 |
-| `P-029` | Limites de tentativa / janela de disponibilidade | FASE 12 |
-| `P-030` | World Boss: regra de last hit | FASE Social |
-| `P-031` | Boss de guilda: escala e distribuição de recompensa | FASE Social |
+| `P-018` | Conteúdo de Boss: stats, fases, mecânicas, recompensas | ⚠️ decidida provisoriamente (ADR-027) — 8 chefes de fábrica, editáveis |
+| `P-017` | Fragmentos por Boss e por herói | ⚠️ decidida provisoriamente — 3–5 por vitória do chefe da classe + 1ª vitória; `fragmentsRequired` 20/30/40/70/100/250 (ADR-024) |
+| `P-021` | Resistência a status (Boss) | ⚠️ decidida — `statusResist` por chefe; inimigo comum sem resistência |
+| `P-029` | Limites de tentativa | ⚠️ decidida — `none` / `cooldown` / `window` por chefe |
+| `P-062` | Trilha de Boss | ⚠️ decidida — sem trilha própria (SFX reaproveitados) |
+| `P-030` | World Boss: regra de last hit | ⛔ FASE Social |
+| `P-031` | Boss de guilda: escala e distribuição de recompensa | ⛔ FASE Social |
 
 ---
 
@@ -270,3 +276,70 @@ O §25 inclui balanceamento na lista de lugares onde a distinção Torre/Boss de
 - [`TOWER_SYSTEM.md`](TOWER_SYSTEM.md) §2 — a regra abolida
 - [`CHARACTER_SYSTEM.md`](CHARACTER_SYSTEM.md) §4 — sistema de fragmentos
 - [`MMO_SYSTEMS.md`](MMO_SYSTEMS.md) — World Boss, Guild Boss no contexto dos sistemas MMO
+
+---
+
+## 14. Regras implementadas (FASE 12, ADR-027)
+
+### 14.1 Fluxo
+
+```text
+Aba "Arena" → cartão do chefe (nível do Rei, recarga/tentativas, resistências, skills, recompensas)
+   → "Desafiar com a equipe"  → startBoss(id)   [consome a tentativa]
+   → cena própria: equipe (até 3) em diagonal à esquerda × chefe grande à direita
+   → fases (banner), Bot, tempo limite
+   → settleBossBattle → bossResult (modal: fragmentos em destaque, equipamento, Coin/XP)
+   → "Voltar ao Reino" → a Torre retoma sozinha
+```
+
+Código: regras puras em `packages/game-core/src/boss.ts`; integração em `GameState` (`startBoss`, `forfeitBoss`, `bossAvailability`, `bossResult`, `dismissBossResult`); combate no **mesmo** `simulate.ts` da Torre (`mode: "boss"`); UI em `apps/game-web/src/BossScreen.tsx` e `render/BattleScene.ts`.
+
+### 14.2 Tudo é dado — `config.boss`
+
+| Campo | O que controla |
+|---|---|
+| `minTeamSize` | Tamanho mínimo da equipe para entrar (padrão 1) |
+| `startAtFullHp` / `persistHpAfter` | Equipe entra com HP cheio (sim) / HP da Arena volta para a Torre (não) |
+| `resumeTowerAfter` | Torre retoma sozinha ao fechar o resultado (sim) |
+| `bot.*` | `enabled`, `maxPotionsPerBattle` (8), `maxRevivesPerBattle` (3), `potionCooldownMs` (2.500) |
+| `bosses[]` | Roster (abaixo) |
+
+Cada `BossDef`:
+
+| Campo | O que controla |
+|---|---|
+| `enabled` | Liga/desliga o chefe sem apagá-lo |
+| `requiredKingLevel` / `level` | Nível do Rei para desafiar / nível do chefe (escala stats como inimigo) |
+| `attributes`, `statMultiplier`, `multipliers{hp,attack,defense,speed}` | Stats: template × multiplicadores (o que faz dele um chefe) |
+| `damageType`, `skills[]` | Dano básico e habilidades (`single` ou `all_enemies` = área na equipe) |
+| `statusResist{stun,poison}` | 0–1 (1 = imune) |
+| `phases[]` | `hpBelowPct` **ou** `afterMs`; `statMultipliers`, `attackSpeedBonus`, `healPct`, `skills` |
+| `timeLimitMs` | Estourar = derrota (`timeout`) |
+| `attempts` | `none` · `cooldown{afterWinMs,afterLossMs}` · `window{windowMs,maxAttempts}` |
+| `rewards` | `coinKills`/`kingXpKills`/`heroXpKills` (em abates da Torre), `firstClearMultiplier`, `equipment{rolls,minRarity}`, `fragments[]`, `firstClearFragments[]` |
+| `assets`, `scale`, `tint` | Só apresentação |
+
+A validação (`bossErrors`) roda ao aplicar um `ContentPack` (atômico: pack inválido não altera nada). O Painel Admin futuro edita este bloco; o balanceamento é conferido com `npm run report:balance`.
+
+### 14.3 Roster de fábrica
+
+| # | Chefe | Rei | Nv chefe | Resistência | Fases | Tentativas | Fragmentos (classe-casa) |
+|---|---|---:|---:|---|---|---|---|
+| 1 | Rei Gosma | 10 | 10 | — | Gosma Furiosa (50%) | recarga 10 min | Guardião · comum |
+| 2 | Sentinela da Torre | 50 | 37 | imune a Atordoamento | Postura Final (40%) | recarga 15 min | Arqueiro · comum |
+| 3 | Matriarca Gélida | 250 | 158 | Veneno 50% | Lamúria Gélida (50%, cura 10%) | recarga 30 min | Arcanista · comum/incomum |
+| 4 | Senhor da Forja | 1.000 | 630 | Atordoamento 50% | Brasa Viva (60%), Fornalha (30%) | recarga 60 min | Invocador Sombrio · incomum |
+| 5 | Rainha dos Morcegos | 2.500 | 1.575 | imune a Veneno, Atord. 50% | Frenesi (50%) | 3 por 8 h | Arqueiro · rara |
+| 6 | Carrasco Sangrento | 5.000 | 3.150 | Atordoamento 75% | Fúria Total (35%) | 2 por 8 h | Guardião · rara |
+| 7 | Lorde das Sombras | 10.000 | 6.300 | Atord. 50%, Veneno 50% | Loucura das Sombras (enrage aos 75 s) | 2 por 12 h | Arcanista · épica |
+| 8 | Colosso da Torre | 19.500 | 12.300 | imune a Atordoamento, Veneno 50% | Armadura Rachada (70%), Fúria do Colosso (40%), Último Fôlego (15%, cura 8%) | 1 por 24 h | Invocador Sombrio · lendária |
+
+Além do fragmento da classe-casa, quase todo chefe pode dar fragmentos de classe sorteada (`"any"`) e **todo chefe dá fragmentos extras na 1ª vitória**. Equipamento garantido: 1 rolagem (chefes 1–4), 2 (5–7), 3 épicas ou melhores (chefe 8).
+
+### 14.4 Calibração
+
+Medida com o engine real, heróis no nível do chefe, sem equipamento e sem Bot (`docs/BALANCE_REPORT.md`): chefe 1 vence com 1 herói; chefe 2 exige 2; chefes 3–8 exigem 3 (≈ 50 s, perdem ≈ 55% do HP); bem abaixo do nível do chefe (≈ 0,6×) a equipe perde. Equipamento e Bot dão margem acima disso.
+
+### 14.5 Garantias testadas
+
+`boss-battle-size` (equipe inteira × 1, ataque simultâneo), `fragment-source` (a Torre nunca dá fragmento; só chefe), Torre sem chefe (`towerAutoBossFloors = []`, nenhum andar usa chefe), tentativa consumida ao entrar, offline não roda chefe, save v5→v6 e pack v3→v4 migram, chefe novo só com dados, config inválida é recusada por inteiro.

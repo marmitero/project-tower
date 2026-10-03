@@ -21,8 +21,8 @@ FASE 8  ✅ Searching loop           ← CONCLUÍDA (gate batido, ADR-017)
 FASE 9  ✅ Equipamentos        ← CONCLUÍDA (gate batido, ADR-023/024)
 FASE 10 ✅ Economia (Market)  ← CONCLUÍDA (ADR-025; preços provisórios P-008/P-036)
 FASE 11 ✅ Offline           ← CONCLUÍDA (ADR-026; simulação do online)
-FASE 12 ⬜ Boss              ⛔ P-018
-FASE 13 ⬜ MVP LOCAL
+FASE 12 ✅ Boss              ← CONCLUÍDA (ADR-027; chefes 100% dado, números provisórios)
+FASE 13 ⬜ MVP LOCAL        ← próxima
 FASE 14 ⬜ Painel Admin      (pós-MVP — docs/ADMIN_PANEL.md, ADR-022)
 Online ⬜ → Social ⬜ → Market ⬜ → PvP ⬜ → Monetização ⬜ → Polish ⬜ → Beta ⬜ → Lançamento
 ```
@@ -33,7 +33,7 @@ FASE 4 (escolha de herói §10 + códice + XP/níveis) e FASES 5+8 (equipe/slots
 XP dividido, loop de searching ~3s com UI), FASE 6 (combate visual, HP
 persistente) e FASE 7 (Torre de 40 andares, 11 inimigos por papel, teto de nível
 20.000). O loop idle já roda de ponta a ponta (batalha → procura → batalha) com
-XP desacelerando por andar; loot/equipamento/inventário/venda **sim** (Fase 9); economia final (Coin) e offline ainda **não**.
+XP desacelerando por andar; loot/equipamento/inventário/venda **sim** (Fase 9); Market, Bot, Hub e offline (Fases 10/11) e a **Arena dos Chefes** (Fase 12) também. Falta o fechamento do MVP (Fase 13).
 
 ### Estimativa até o 1º MVP jogável (FASE 13) — 7 etapas
 
@@ -47,7 +47,7 @@ Estimativa de trabalho (2026-10-01), ajustável; cada etapa = um ciclo completo
 | 3 ✅ | FASE 7 | Torre: 40 andares por faixa de nível, inimigos por papel, curvas de XP, `ContentPack` admin-ready | decidido em ADR-021/022 (P-005/P-006/P-009) |
 | 4 ✅ | FASE 9 | Loot → equipamento → raridade → X → inventário/venda; heróis adquiridos balanceados | decidido em ADR-023/024 (P-010/P-016/P-023/P-024/P-025/P-033) |
 | 5 ✅ | FASE 10 + 11 | Market (poções/revives/caixas), Bot, Hub e offline como simulação do online (Free 2 h) | decidido em ADR-025/026 (P-008/P-036 provisórias; P-011/P-011a resolvidas) |
-| 6 | FASE 12 | Boss como atividade separada (só o essencial do MVP) | ⛔ P-018 |
+| 6 ✅ | FASE 12 | Boss como atividade separada: 8 chefes data-driven (fases, resistências, tentativas, fragmentos), Arena na UI | decidido em ADR-027 (P-017/P-018/P-021/P-029/P-062 provisórias) |
 | 7 | FASE 13 | MVP Local: HUD final, Debug Mode, save local, pass de estabilidade/UX | — |
 
 Riscos de prazo: P-008/P-036 são decisões SUAS (bloqueiam a etapa 5). A etapa 4
@@ -428,22 +428,22 @@ Vitória → Recompensa → Procurando → ~3s → Novo inimigo
 
 ---
 
-## 13. FASE 12 — Boss
+## 13. FASE 12 — Boss ✅
 
-> ⛔ **BLOQUEADA por `P-018`.**
+> **CONCLUÍDA em 2026-10-03** (ADR-027; regras em [`BOSS_SYSTEM.md`](BOSS_SYSTEM.md) §14).
 
-| # | Entregável | PEND |
+| # | Entregável | Estado |
 |---|---|---|
-| 1 | Boss Arena como atividade separada | `P-018` |
-| 2 | `BossBattle` equipe × 1 | `P-018` |
-| 3 | Conteúdo de Boss | `P-018` |
-| 4 | **Fragmentos de Boss** (§54) | `P-017` |
-| 5 | Fragmentos → craft de herói (§12) | `P-017` |
-| 6 | UI de atividade especial (§110) | — |
+| 1 | Boss Arena como atividade separada (aba **Arena**) | ✅ |
+| 2 | `BossBattle` equipe × 1 (mesmo engine, `mode: "boss"`) | ✅ |
+| 3 | Conteúdo de Boss: 8 chefes, fases, resistências, tempo limite, tentativas (`config.boss`, ContentPack v4) | ✅ |
+| 4 | **Fragmentos de Boss** (§54) na conta, 1ª vitória com bônus | ✅ |
+| 5 | Fragmentos → invocação de herói (§12, ADR-025) | ✅ |
+| 6 | UI de atividade especial (§110): cena própria, fase, cronômetro, resultado | ✅ |
 
-**Gate:** `boss-battle-size.test.ts` **e** `fragment-source.test.ts` passando.
+**Gate batido:** testes de tamanho de equipe e de fonte de fragmentos (`boss.test.ts`, `boss-battle.test.ts`).
 
-> O teste de fragmento é o que garante a §12: um herói **nunca** pode ser obtido de um slime.
+> Fica para depois: World/Guild/Event Boss (só arquitetura), trilha de Boss (P-062) e a revisão dos números com jogo real (Fase 13).
 
 ---
 

@@ -180,14 +180,14 @@ Detalhe em [`COMBAT_SYSTEM.md`](COMBAT_SYSTEM.md).
 | ID | Chave | Valor | Fonte |
 |---|---|---|---|
 | `economy.coins.name` | — | `Coin` | §43 (Tipo A) |
-| `economy.coins.sources` | — | ⚠️ **PENDING** P-008 | §43 |
-| `economy.coins.sinks` | — | ⚠️ **PENDING** P-008 | §43 |
+| `economy.coins.sources` | — | ⚠️ provisório (P-008, ADR-025) | §43 |
+| `economy.coins.sinks` | — | ⚠️ provisório (P-008, ADR-025) | §43 |
 | `economy.market.taxRate` | Taxa do mercado | **0.15** | §41 (Tipo A) |
 | `economy.market.taxDestination` | Destino | **consumida pelo servidor** (sink) | §41 (Tipo A) |
 | `economy.market.listingLimit` | Anúncios simultâneos | ⚠️ **PENDING** P-014 | §40 |
 | `economy.market.minPrice` / `maxPrice` | Faixa de preço | ⚠️ **PENDING** P-014 | §40 |
 | `economy.equipment.sellEnabled` | Venda por Coin | **true** | §39 (Tipo A) |
-| `economy.equipment.sellPrice` | Preço de venda | ⚠️ **PENDING** P-008 | §39 |
+| `economy.equipment.sellPrice` | Preço de venda | ⚠️ provisório (P-008, ADR-025) | §39 |
 | `economy.diamonds.enabled` | — | `false` no MVP | §44 |
 | `economy.vip.enabled` | Estrutura presente | `true` (dados) | §49 (Tipo A) |
 | `economy.vip.benefits` | Benefícios | ⚠️ **PENDING** P-013 | §49, §73 |
@@ -230,6 +230,22 @@ Tudo é validado (`marketErrors`, `botErrors`, `offlineErrors`) com o caminho do
 | `tower.bossInTower` | Boss em andar fixo | **false — PROIBIDO** | §21, §55 (Tipo A) |
 
 ---
+
+## 10b. Chefes (Arena) — `config.boss`
+
+> FASE 12, ADR-027. Tudo é dado e entra no `ContentPack` v4; detalhes e roster em [`BOSS_SYSTEM.md`](BOSS_SYSTEM.md) §14.
+
+| ID | Chave | Valor | Fonte |
+|---|---|---:|---|
+| `boss.minTeamSize` | Equipe mínima | 1 | ADR-027 (provisório) |
+| `boss.startAtFullHp` | Equipe entra com HP cheio | true | ADR-027 |
+| `boss.persistHpAfter` | HP da Arena volta à Torre | false | ADR-027 |
+| `boss.resumeTowerAfter` | Torre retoma ao fechar o resultado | true | ADR-027 |
+| `boss.bot.*` | Bot na Arena (poções 8 / revives 3 por luta, cooldown 2,5 s) | — | ADR-027 |
+| `boss.bosses[]` | 8 chefes: nível, stats, resistência, skills, fases, tempo, tentativas, recompensas, sprites | ver roster | ADR-027 (P-017/P-018/P-021/P-029) |
+| `boss.bosses[].attempts` | `none` · `cooldown` · `window` | por chefe | P-029 (provisório) |
+| `boss.bosses[].timeLimitMs` | Tempo máximo (120–180 s) | por chefe | ADR-027 |
+| `combat.bossBattleSize` / `towerAutoBossFloors` | equipe × 1 / `[]` | — | §24/§80, §21/§55 (Tipo A) |
 
 ## 11. XP e níveis
 

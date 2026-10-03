@@ -132,4 +132,17 @@
 - Caixa Rara: Rei Nv 1500+, 54.108.000 Coin ≈ 3000 abates (12.5 h) por caixa; herói completo direto 5.6%; ≈ 10.3 caixas por herói da raridade (129 h de caça)
 - Caixa Lendária: Rei Nv 5000+, 480.288.000 Coin ≈ 8000 abates (33.3 h) por caixa; herói completo direto 3.0%; ≈ 20.2 caixas por herói da raridade (675 h de caça)
 
+## Chefes da Arena (heróis no nível do chefe, sem equipamento, sem Bot)
+
+| Chefe | Nv Rei | Nv chefe | Limite | Recarga (vitória/derrota) | 1 herói | 2 heróis | 3 heróis |
+|---|---:|---:|---:|---|---|---|---|
+| Rei Gosma | 10 | 10 | 120 s | 10 min / 2 min | 100% · 66 s · -65% HP | 100% · 28 s · -22% HP | 100% · 16 s · -10% HP |
+| Sentinela da Torre | 50 | 37 | 120 s | 15 min / 2 min | 0% · 68 s · -100% HP | 100% · 60 s · -65% HP | 100% · 30 s · -29% HP |
+| Matriarca Gélida | 250 | 158 | 120 s | 30 min / 3 min | 0% · 50 s · -100% HP | 0% · 73 s · -100% HP | 100% · 49 s · -54% HP |
+| Senhor da Forja | 1000 | 630 | 150 s | 60 min / 5 min | 0% · 57 s · -100% HP | 0% · 86 s · -100% HP | 100% · 52 s · -57% HP |
+| Rainha dos Morcegos | 2500 | 1575 | 150 s | 3 por 480 min | 0% · 51 s · -100% HP | 0% · 79 s · -100% HP | 100% · 51 s · -56% HP |
+| Carrasco Sangrento | 5000 | 3150 | 150 s | 2 por 480 min | 0% · 66 s · -100% HP | 0% · 91 s · -100% HP | 100% · 54 s · -56% HP |
+| Lorde das Sombras | 10000 | 6300 | 150 s | 2 por 720 min | 0% · 43 s · -100% HP | 0% · 71 s · -100% HP | 100% · 49 s · -59% HP |
+| Colosso da Torre | 19500 | 12300 | 180 s | 1 por 1440 min | 0% · 77 s · -100% HP | 0% · 93 s · -100% HP | 100% · 56 s · -59% HP |
+
 Parâmetros: defesa K = 100 + 5×(nível−1); regen 5%/s em PROCURANDO; inimigos HP×2.5, Ataque×0.05.

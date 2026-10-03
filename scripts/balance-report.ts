@@ -9,7 +9,7 @@
  * O Painel Admin (FASE 14) vai expor esta mesma API como pré-visualização.
  */
 import { classes, config, enemies } from "@tia/config";
-import { averageDuel, coinsPerKillFor, floorMatchups, itemPrice, rollGearSet, simulateHunt, towerPacing } from "@tia/game-core";
+import { averageBossFight, averageDuel, coinsPerKillFor, floorMatchups, itemPrice, rollGearSet, simulateHunt, towerPacing } from "@tia/game-core";
 
 const md = process.argv.includes("--md");
 const CYCLE = 15;
@@ -117,6 +117,28 @@ title("Market — preços e caixas (ADR-025; 1 abate ≈ 1 ciclo de 15 s)");
     const kills = Number(price) / coinPerKill(it.requiredKingLevel);
     const boxes = 1 / heroEq;
     line(`${md ? "- " : ""}${it.name}: Rei Nv ${it.requiredKingLevel}+, ${price.toLocaleString("pt-BR")} Coin ≈ ${kills.toFixed(0)} abates (${h((kills * CYCLE) / 3600)}) por caixa; herói completo direto ${(heroChance * 100).toFixed(1)}%; ≈ ${boxes.toFixed(1)} caixas por herói da raridade (${h((boxes * kills * CYCLE) / 3600)} de caça)`);
+  }
+}
+
+title("Chefes da Arena (heróis no nível do chefe, sem equipamento, sem Bot)");
+{
+  const teams: Array<[string, string[]]> = [
+    ["1 herói", ["guardian"]],
+    ["2 heróis", ["guardian", "ranger"]],
+    ["3 heróis", ["guardian", "ranger", "arcanist"]],
+  ];
+  if (md) {
+    line("| Chefe | Nv Rei | Nv chefe | Limite | Recarga (vitória/derrota) | 1 herói | 2 heróis | 3 heróis |");
+    line("|---|---:|---:|---:|---|---|---|---|");
+  }
+  for (const b of config.boss.bosses) {
+    const cells = teams.map(([, ids]) => {
+      const r = averageBossFight({ bossId: b.id, classIds: ids, heroLevel: b.level }, 6);
+      return `${pct(r.winRate)} · ${r.avgDurationSec.toFixed(0)} s · -${pct(r.avgTeamHpLost)} HP`;
+    });
+    const cd = b.attempts.kind === "cooldown" ? `${Math.round(b.attempts.afterWinMs / 60000)} min / ${Math.round(b.attempts.afterLossMs / 60000)} min` : b.attempts.kind === "window" ? `${b.attempts.maxAttempts} por ${Math.round(b.attempts.windowMs / 60000)} min` : "sem limite";
+    if (md) line(`| ${b.name} | ${b.requiredKingLevel} | ${b.level} | ${Math.round(b.timeLimitMs / 1000)} s | ${cd} | ${cells.join(" | ")} |`);
+    else line(`${b.name} (Rei ${b.requiredKingLevel}, nv ${b.level}): ${teams.map(([n], i) => `${n} ${cells[i]}`).join(" | ")}`);
   }
 }
 

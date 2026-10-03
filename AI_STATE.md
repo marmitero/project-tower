@@ -1,7 +1,7 @@
 # AI_STATE — handoff vivo do Tower Idle Adventure
 
 **Última atualização:** 2026-10-03
-**Estado:** **FASE 1–11 concluídas (5 de 7 etapas até o MVP)** — Market, Bot, Hub e offline como simulação do online (ADR-025/026) · próxima: **FASE 12 — Boss** (⛔ P-018) e depois **FASE 13 — MVP Local**, sempre com a regra Admin-Ready
+**Estado:** **FASE 1–12 concluídas (6 de 7 etapas até o MVP)** — Arena dos Chefes (ADR-027) sobre Market/Bot/Hub/offline (ADR-025/026) · próxima: **FASE 13 — MVP Local** (HUD final, Debug Mode, save local, estabilidade/UX), sempre com a regra Admin-Ready
 **Preview:** servidor estático autocontido (ADR-018) — `node scripts/serve-preview.mjs` (porta 5173). Se o ambiente resetar, subir UMA linha; não depende de `node_modules`.
 **Repositório:** `marmitero/project-tower`
 **Branch desta sessão:** `arena/01a0f1f1-project-tower`
@@ -187,7 +187,7 @@ Um valor inventado em silêncio é **pior** que um valor ausente, porque parece 
 
 ### Recomendação de prioridade
 
-~~P-002~~, ~~P-005/P-006/P-009~~ resolvidas. P-008/P-036 (Coin) foram decididas provisoriamente na Fase 10 e P-011/P-011a resolvidas (ADR-025/026). A próxima decisão que destrava cadeia é **P-018 (Boss)**, que segura a Fase 12:
+~~P-002~~, ~~P-005/P-006/P-009~~ resolvidas. P-008/P-036 (Coin) foram decididas provisoriamente na Fase 10 e P-011/P-011a resolvidas (ADR-025/026). P-017/P-018/P-021(Boss)/P-029/P-062 foram decididas provisoriamente na Fase 12 (ADR-027). Nenhuma pendência crítica bloqueia mais o MVP:
 
 ```text
 ~~P-010~~ → Fase 9 ✅ · P-008/P-036 (Coin) → Fase 10 ✅ (provisório) · P-011 (offline) → Fase 11 ✅ · P-018 → Fase 12
@@ -283,8 +283,8 @@ FASE 7  ✅ Torre                ← CONCLUÍDA (ADR-021/022)
 FASE 9  ✅ Equipamentos         ← CONCLUÍDA (ADR-023/024)
 FASE 10 ✅ Economia (Market)    ← CONCLUÍDA (ADR-025; preços provisórios)
 FASE 11 ✅ Offline              ← CONCLUÍDA (ADR-026; simulação do online)
-FASE 12 Boss                    ⛔ P-018  ← PRÓXIMO PASSO (etapa 6)
-FASE 13 MVP LOCAL               ← o vertical slice
+FASE 12 ✅ Boss                 ← CONCLUÍDA (ADR-027; chefes 100% dado)
+FASE 13 MVP LOCAL               ← PRÓXIMO PASSO (etapa 7) — o vertical slice
 FASE 14 Painel Admin            pós-MVP (docs/ADMIN_PANEL.md)
 ```
 
@@ -457,14 +457,23 @@ editar `config/src/heroes.ts`.
 - Testes: `market-bot-offline`, `heal-revive` (engine), `tower-content` (Market como conteúdo), `hunt` (por ausência); suíte completa verde.
 - **Cuidados:** `GameState.clock()` deve ser usado em TODA marca de tempo do estado de caça (só `lastSavedAt` usa o relógio real); `simulating` suprime listeners/toasts; no sorteio de caixa a semente vem de `market.boxesOpened`.
 
-**O que fazer:** **FASE 12 — Boss** (etapa 6 de 7; ⛔ **P-018**). Aqui entram os drops de herói do Rei (Boss) com `rollHeroAcquisition` (ADR-024) e os fragmentos — o ponto de entrada já existe (`grantFragments`, `RewardBundle.fragments[].rarity`). **Regra AR:** tudo no `ContentPack`.
+### Fase 12 — Boss (ADR-027, 2026-10-03)
 
-**Estimativa até o 1º MVP jogável (FASE 13): 7 etapas — 5 concluídas** —
+- **Boss = dado.** `config.boss` (`packages/config/src/boss.ts`, ContentPack **v4**, `configVersion` 6, save v6): `BossDef` com nível, stats, resistências (`statusResist`), skills (área na equipe), **fases** (HP% ou tempo/enrage; multiplicadores, cura, skills), `timeLimitMs`, **tentativas** (`none`/`cooldown`/`window`), recompensas em *abates equivalentes*, fragmentos e sprites. Adicionar chefe = clonar objeto + id novo. Validação `bossErrors`; pack inválido é recusado por inteiro. Regras e roster: `docs/BOSS_SYSTEM.md` §14.
+- **Engine:** mesmo `simulate.ts` da Torre (`mode: "boss"`, equipe × 1, ataque simultâneo): `phases`, `statusResist`, `timeLimitMs` (timeout = derrota), eventos `phase_changed`. **Game-core:** `boss.ts` (disponibilidade, tentativa consumida ao entrar, recompensa, normalização do save); `GameState.startBoss/forfeitBoss/bossAvailability/bossResult/dismissBossResult`; Bot na Arena com limites próprios; **offline nunca roda chefe**; `startTower` é bloqueado durante a luta.
+- **UI:** aba **Arena** (`BossScreen.tsx`), cena própria no `BattleScene` (equipe em diagonal × chefe grande, banner de fase), modal de resultado (fragmentos em destaque) que devolve ao Reino.
+- **Calibração por tamanho de equipe** (`BALANCE_REPORT.md`, seção "Chefes da Arena"): chefe 1 vence com 1 herói; chefe 2 com 2; chefes 3–8 exigem 3 heróis no nível do chefe. Nível do chefe ≈ nível do Rei exigido × f(n) (f = 1 / 0,74 / 0,63).
+- Testes: `engine/boss-battle` (16), `game-core/boss` (33), `config/boss-content` (12), assets dos chefes (integração), migração de save v5→v6. Suíte completa verde.
+- **Cuidados:** a tentativa é consumida ao ENTRAR; `GameState.clock()` em toda marca de tempo; recalibrar chefes se mexer em IAS/equipamento/XP (`npm run report:balance -- --md`).
+
+**O que fazer:** **FASE 13 — MVP Local** (etapa 7 de 7): HUD final, Debug Mode (§93, só dev), save local robusto, passe de estabilidade/UX/performance, revisão dos números provisórios (P-008/P-017/P-018/P-029) com jogo real, e rodar o loop completo (Rei → herói → Torre → loot → Market → Arena) sem quebra. **Regra AR:** tudo no `ContentPack`.
+
+**Estimativa até o 1º MVP jogável (FASE 13): 7 etapas — 6 concluídas** —
 1) ✅ Fase 5+8, 2) ✅ Fase 6, 3) ✅ Fase 7, 4) ✅ Fase 9, 5) ✅ Fase 10+11,
-6) Fase 12 (⛔ P-018), 7) Fase 13 (MVP Local).
-Restam **2 etapas**. Detalhe e riscos na tabela do ROADMAP.
+6) ✅ Fase 12 (Boss), 7) Fase 13 (MVP Local).
+Resta **1 etapa**. Detalhe e riscos na tabela do ROADMAP.
 
-**O que perguntar ao usuário:** na hora certa (etapa 6), a pendência **P-018** (Boss). Fora isso, seguir com autoridade delegada; ratificar preços do Market (P-008/P-036) quando houver playtest.
+**O que perguntar ao usuário:** ratificar os números provisórios de Coin e de Boss (P-008/P-017/P-018/P-029) depois de jogar a Fase 13. Fora isso, seguir com autoridade delegada; ratificar preços do Market (P-008/P-036) quando houver playtest.
 
 **Como validar:**
 
