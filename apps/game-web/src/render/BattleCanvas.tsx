@@ -1,9 +1,15 @@
 /**
  * Container do canvas de batalha.
  *
- * §63 — GAME RENDERING é um degrau separado da UI/HUD. Este componente
- * é a ponte: ele só inicializa o Phaser, passa o `BattleState` para a
- * cena e descarta. Nenhuma decisão de gameplay passa por aqui.
+ * §63 — GAME RENDERING é um degrau separado da UI/HUD. Este componente é
+ * a ponte: inicializa o Phaser UMA vez e entrega à cena uma FONTE de dados
+ * (`source`), que a cena consulta a cada frame. Nenhuma decisão de gameplay
+ * passa por aqui.
+ *
+ * ADR-029 — antes, a batalha era empurrada para a cena por um `useEffect`.
+ * O empurrão se perdia (cena criada de forma assíncrona; `GameState` mutado
+ * no lugar) e o jogador via só "Aguardando a batalha...". Puxar o estado a
+ * cada frame elimina a corrida de inicialização.
  *
  * §67 — o canvas é dimensionado pelo CSS do container, com
  * `Phaser.Scale.RESIZE`. Um canvas com tamanho fixo seria a primeira coisa
@@ -12,14 +18,22 @@
 
 import { useEffect, useRef } from "react";
 import Phaser from "phaser";
-import type { BattleState } from "@tia/contracts";
 import { BattleScene, TOWER_SCENE_KEY } from "./BattleScene.js";
 import { loadAssetManifest } from "./assets.js";
+import type { BattleViewSource } from "./battleSource.js";
 
-export function BattleCanvas({ battle }: { battle: BattleState | null }) {
+declare global {
+  interface Window {
+    /** Leitura (somente) do estado da cena — usada nos testes de navegador. */
+    __tiaBattle?: { snapshot: () => Record<string, unknown> | null };
+  }
+}
+
+export function BattleCanvas({ source }: { source: BattleViewSource }) {
   const hostRef = useRef<HTMLDivElement | null>(null);
-  const gameRef = useRef<Phaser.Game | null>(null);
-  const sceneRef = useRef<BattleScene | null>(null);
+  // A fonte é lida pela cena a cada frame; guardá-la numa ref evita recriar o Phaser se o App re-renderizar.
+  const sourceRef = useRef<BattleViewSource>(source);
+  sourceRef.current = source;
 
   useEffect(() => {
     const host = hostRef.current;
@@ -36,47 +50,32 @@ export function BattleCanvas({ battle }: { battle: BattleState | null }) {
         type: Phaser.AUTO,
         parent: hostRef.current,
         backgroundColor: "#0b0a12",
+        // Pixel art (README do pack): filtro nearest, sem suavização.
+        pixelArt: true,
         scale: {
           mode: Phaser.Scale.RESIZE,
           autoCenter: Phaser.Scale.CENTER_BOTH,
         },
-        // §62 — sem arte não há jogo. A cena mostra o que falta em vez
-        // de desenhar geometria.
         banner: false,
-        scene: [BattleScene],
-        callbacks: {
-          preBoot: (g) => {
-            g.scene.start(TOWER_SCENE_KEY, { manifest });
-          },
-        },
+        // Cena adicionada abaixo, com dados de início — assim ela nasce UMA vez só
+        // (antes: `scene:[BattleScene]` + `scene.start` no preBoot = duas partidas).
+        scene: [],
       });
-
-      gameRef.current = game;
-      sceneRef.current = (game.scene.getScene(TOWER_SCENE_KEY) as BattleScene) ?? null;
-      sceneRef.current?.setBattle(battle);
+      game.scene.add(TOWER_SCENE_KEY, BattleScene, true, { manifest, getView: () => sourceRef.current() });
+      const g = game;
+      window.__tiaBattle = {
+        snapshot: () => (g.scene.getScene(TOWER_SCENE_KEY) as BattleScene | null)?.debugSnapshot() ?? null,
+      };
     })();
 
     return () => {
       disposed = true;
-      gameRef.current = null;
-      sceneRef.current = null;
+      delete window.__tiaBattle;
       // `destroy` é obrigatório: manter o canvas vivo depois do unmount
       // deixa o rAF rodando e o WebGL context vazado em cada hot reload.
       game?.destroy(true);
     };
-    // A cena é criada UMA vez; a batalha é atualizada pelo efeito abaixo.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    sceneRef.current?.setBattle(battle);
-  }, [battle]);
-
-  useEffect(() => {
-    if (!battle) return;
-    const id = window.setInterval(() => sceneRef.current?.syncHealth(), 120);
-    return () => window.clearInterval(id);
-  }, [battle]);
 
   return <div className="tia-canvas" ref={hostRef} aria-label="Arena de batalha" />;
 }

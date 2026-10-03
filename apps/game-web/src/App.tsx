@@ -26,6 +26,7 @@ import { boot, createGame, startLoop, type LoopHandle } from "./boot.js";
 import { loadAssetManifest, assetUrl, type AssetManifest } from "./render/assets.js";
 import { BattleCanvas } from "./render/BattleCanvas.js";
 import { battleFeedbackQueue } from "./render/BattleRenderer.js";
+import { buildBattleView } from "./render/battleSource.js";
 import { CreationScreen, type CreationResult } from "./CreationScreen.js";
 import { TowerScreen } from "./TowerScreen.js";
 import { InventoryScreen, LootToasts } from "./InventoryScreen.js";
@@ -118,8 +119,11 @@ export function App() {
         // pergaminho entram como variáveis CSS, sem o CSS montar caminho.
         const frame = assetUrl("ui/frame_9slice_stone");
         const ornate = assetUrl("ui/panel_ornate");
-        if (frame) document.documentElement.style.setProperty("--asset-frame-9", `url("${frame}")`);
-        if (ornate) document.documentElement.style.setProperty("--asset-panel-ornate", `url("${ornate}")`);
+        // URL ABSOLUTA: um `url()` relativo dentro de variável CSS é resolvido contra a FOLHA DE
+        // ESTILO (`/assets/index-*.css`), o que gerava `/assets/assets/ui/...` (404) no bundle.
+        const abs = (u: string) => new URL(u, document.baseURI).href;
+        if (frame) document.documentElement.style.setProperty("--asset-frame-9", `url("${abs(frame)}")`);
+        if (ornate) document.documentElement.style.setProperty("--asset-panel-ornate", `url("${abs(ornate)}")`);
       });
     })();
 
@@ -210,6 +214,7 @@ export function App() {
   }
 
   const data = state.data;
+  const battleSource = () => buildBattleView(state);
   const hunt = data.hunt;
   // `useMemo` não serve: o estado é mutado no lugar e o guia lê dados que mudam sem trocar a referência.
   const guide = nextStep(state);
@@ -221,7 +226,7 @@ export function App() {
 
       {manifest && manifest.missing.length > 0 && <MissingAssetsWarning ids={manifest.missing} />}
 
-      <BattleCanvas battle={state.activeBattle} />
+      <BattleCanvas source={battleSource} />
 
       <main className="tia-main">
         {guide && screen !== "options" && (

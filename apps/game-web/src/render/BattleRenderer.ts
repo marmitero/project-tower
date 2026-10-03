@@ -8,6 +8,17 @@
  */
 import { formatCompact } from "../format.js";
 import type { BattleEvent } from "@tia/contracts";
+import { skillsById } from "@tia/config";
+import type { VfxKind } from "./vfxAtlas";
+
+/** Efeito visual do pack a tocar (sheets de `vfxAtlas.ts`). */
+export interface VfxRequest {
+  kind: VfxKind;
+  /** Onde: no alvo do evento, em quem agiu, ou no adversário de quem agiu. */
+  on: "target" | "source" | "opponent";
+  /** Multiplicador sobre o tamanho padrão do efeito (padrão 1). */
+  scale?: number;
+}
 
 /** O que um único evento pede da cena. */
 export interface FeedbackPlan {
@@ -26,6 +37,8 @@ export interface FeedbackPlan {
   death?: boolean;
   /** O combatente caído volta à luta (poção de reviver). */
   revive?: boolean;
+  /** Efeitos do pack (corte, faísca, fogo, raio, cura) — ADR-029. */
+  vfx?: VfxRequest[];
   /** Nome da skill acima do usuário. */
   skillName?: boolean;
   /** Banner central de fim de batalha. */
@@ -66,6 +79,13 @@ export const battleFeedbackQueue = {
   },
 };
 
+/** Efeito do golpe por tipo de dano: físico corta, mágico explode, dano contínuo só faísca. */
+export function damageVfx(kind: "physical" | "magic" | "dot"): VfxRequest[] {
+  if (kind === "physical") return [{ kind: "slash", on: "target" }, { kind: "hit", on: "target", scale: 0.8 }];
+  if (kind === "magic") return [{ kind: "fire", on: "target" }];
+  return [{ kind: "hit", on: "target", scale: 0.55 }];
+}
+
 const SFX_HITS = ["audio/sfx/hit_01", "audio/sfx/hit_02", "audio/sfx/hit_03"];
 
 /** Plano de um evento isolado (sem o contexto do lote). */
@@ -74,10 +94,16 @@ function planOne(event: BattleEvent): FeedbackPlan {
     case "attack_started":
       return { lunge: true };
     case "skill_used":
-      return { skillName: true, sfx: "audio/sfx/skill" };
+      // Skill mágica: o raio cai sobre o adversário de quem lançou.
+      return {
+        skillName: true,
+        sfx: "audio/sfx/skill",
+        ...(skillsById[event.skillId]?.damageType === "magic" ? { vfx: [{ kind: "lightning", on: "opponent" }] } : {}),
+      };
     case "damage_dealt":
       return {
         flash: true,
+        vfx: damageVfx(event.kind),
         number: { text: formatCompact(event.amount), kind: "damage" },
         sfx: SFX_HITS[Math.abs(hash(event.targetId + event.amount)) % SFX_HITS.length],
         shakeMs: 90,
@@ -86,7 +112,7 @@ function planOne(event: BattleEvent): FeedbackPlan {
     case "damage_mitigated":
       return {
         number: {
-          text: `-${event.mitigatedPercent}%`,
+          text: `-${Math.round(event.mitigatedPercent)}%`,
           kind: "mitigated",
         },
       };
@@ -96,6 +122,7 @@ function planOne(event: BattleEvent): FeedbackPlan {
       // crítico é distinto sem depender de cor: som + tamanho + tremor).
       return {
         sfx: "audio/sfx/critical",
+        vfx: [{ kind: "hit", on: "target", scale: 1.5 }],
         flash: true,
         shakeMs: 220,
         shakeIntensity: 0.006,
@@ -103,14 +130,15 @@ function planOne(event: BattleEvent): FeedbackPlan {
     case "heal_dealt":
       return {
         number: { text: formatCompact(event.amount), kind: "heal" },
+        vfx: [{ kind: "heal", on: "target" }],
         sfx: "audio/sfx/heal",
       };
     case "enemy_defeated":
-      return { death: true, sfx: "audio/sfx/death_enemy" };
+      return { death: true, sfx: "audio/sfx/death_enemy", vfx: [{ kind: "hit", on: "target", scale: 1.8 }] };
     case "character_defeated":
-      return { death: true, sfx: "audio/sfx/death_hero" };
+      return { death: true, sfx: "audio/sfx/death_hero", vfx: [{ kind: "hit", on: "target", scale: 1.6 }] };
     case "character_revived":
-      return { revive: true, sfx: "audio/sfx/heal" };
+      return { revive: true, sfx: "audio/sfx/heal", vfx: [{ kind: "heal", on: "target", scale: 1.2 }] };
     case "battle_won":
       return { banner: "won", sfx: "audio/sfx/victory" };
     case "battle_lost":

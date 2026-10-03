@@ -153,7 +153,8 @@ body {
 /* ------------------------------------------------------------- Canvas */
 
 .tia-canvas {
-  width: 100%;
+  /* sem `width: 100%`: com margem lateral isso estourava a viewport à direita (ADR-029) */
+  width: auto;
   /* §67 — altura relativa à largura, com piso e teto. Um canvas de altura
      fixa estoura a viewport em telas baixas; um de altura porcentual
      depende de o pai ter altura, e o pai não tem. */
