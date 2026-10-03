@@ -19,8 +19,8 @@ FASE 6  ✅ Combate                  ← CONCLUÍDA (gate batido, ADR-020)
 FASE 7  ✅ Torre                    ← CONCLUÍDA (gate batido, ADR-021/022)
 FASE 8  ✅ Searching loop           ← CONCLUÍDA (gate batido, ADR-017)
 FASE 9  ✅ Equipamentos        ← CONCLUÍDA (gate batido, ADR-023/024)
-FASE 10 ⬜ Economia          ⛔ P-008, P-036
-FASE 11 ⬜ Offline           ⛔ P-011
+FASE 10 ✅ Economia (Market)  ← CONCLUÍDA (ADR-025; preços provisórios P-008/P-036)
+FASE 11 ✅ Offline           ← CONCLUÍDA (ADR-026; simulação do online)
 FASE 12 ⬜ Boss              ⛔ P-018
 FASE 13 ⬜ MVP LOCAL
 FASE 14 ⬜ Painel Admin      (pós-MVP — docs/ADMIN_PANEL.md, ADR-022)
@@ -46,7 +46,7 @@ Estimativa de trabalho (2026-10-01), ajustável; cada etapa = um ciclo completo
 | 2 ✅ | FASE 6 | Combate visual de verdade: BattleScene animada, skills, números/feedback, SFX | decidido em ADR-020 (P-019/P-020) |
 | 3 ✅ | FASE 7 | Torre: 40 andares por faixa de nível, inimigos por papel, curvas de XP, `ContentPack` admin-ready | decidido em ADR-021/022 (P-005/P-006/P-009) |
 | 4 ✅ | FASE 9 | Loot → equipamento → raridade → X → inventário/venda; heróis adquiridos balanceados | decidido em ADR-023/024 (P-010/P-016/P-023/P-024/P-025/P-033) |
-| 5 | FASE 10 + 11 | Economia básica (Coin, custos de slot) + offline Free 2h | ⛔ **P-008/P-036/P-011** (economia) — pergunta ao usuário |
+| 5 ✅ | FASE 10 + 11 | Market (poções/revives/caixas), Bot, Hub e offline como simulação do online (Free 2 h) | decidido em ADR-025/026 (P-008/P-036 provisórias; P-011/P-011a resolvidas) |
 | 6 | FASE 12 | Boss como atividade separada (só o essencial do MVP) | ⛔ P-018 |
 | 7 | FASE 13 | MVP Local: HUD final, Debug Mode, save local, pass de estabilidade/UX | — |
 
@@ -391,7 +391,9 @@ Vitória → Recompensa → Procurando → ~3s → Novo inimigo
 
 ## 11. FASE 10 — Economia
 
-> ⛔ **BLOQUEADA por `P-008` e `P-036`.** É o maior bloqueio do projeto.
+> ✅ **CONCLUÍDA em 2026-10-03** (ADR-025) — Market por Coin com Poções/Revives/Caixas, Bot (auto-poção/revive/Hub) e fragmentos da conta. P-008/P-036 decididas **provisoriamente** (tudo em `config.market`, editável). Ledger append-only e auditoria (§44) ficam para a fase online.
+
+> _Escopo original (histórico):_
 
 | # | Entregável | PEND |
 |---|---|---|
@@ -408,7 +410,9 @@ Vitória → Recompensa → Procurando → ~3s → Novo inimigo
 
 ## 12. FASE 11 — Offline
 
-> ⛔ **BLOQUEADA por `P-011`** (taxa de conversão).
+> ✅ **CONCLUÍDA em 2026-10-03** (ADR-026) — o offline é a **simulação do online** (teto por ausência 2 h Free / 8 h VIP; Hub e Bot incluídos). Não há taxa de conversão (P-011/P-011a resolvidas).
+
+> _Escopo original (histórico):_
 
 | # | Entregável | PEND |
 |---|---|---|

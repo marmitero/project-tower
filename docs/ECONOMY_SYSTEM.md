@@ -1,6 +1,6 @@
 # Sistema de Economia
 
-**Versão:** 0.1 · **Data:** 2026-09-30 · **Estado:** **ESTRUTURA definida · VALORES bloqueados (P-008)**
+**Versão:** 0.1 · **Data:** 2026-09-30 · **Estado:** **ESTRUTURA definida · VALORES provisórios em `config` (P-008/P-036, ADR-025)**
 **Fonte:** §15, §39, §41, §43, §44, §49, §73, §99, §124 do `Master-Prompt.md`
 
 ---

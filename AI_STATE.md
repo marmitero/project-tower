@@ -1,7 +1,7 @@
 # AI_STATE — handoff vivo do Tower Idle Adventure
 
 **Última atualização:** 2026-10-03
-**Estado:** **FASE 1–9 concluídas (4 de 7 etapas até o MVP)** · próxima: **FASE 10+11 — Economia + Offline** (⛔ P-008/P-036/P-011 — perguntar ao usuário) com a regra Admin-Ready
+**Estado:** **FASE 1–11 concluídas (5 de 7 etapas até o MVP)** — Market, Bot, Hub e offline como simulação do online (ADR-025/026) · próxima: **FASE 12 — Boss** (⛔ P-018) e depois **FASE 13 — MVP Local**, sempre com a regra Admin-Ready
 **Preview:** servidor estático autocontido (ADR-018) — `node scripts/serve-preview.mjs` (porta 5173). Se o ambiente resetar, subir UMA linha; não depende de `node_modules`.
 **Repositório:** `marmitero/project-tower`
 **Branch desta sessão:** `arena/01a0f1f1-project-tower`
@@ -187,10 +187,10 @@ Um valor inventado em silêncio é **pior** que um valor ausente, porque parece 
 
 ### Recomendação de prioridade
 
-~~P-002~~, ~~P-005/P-006/P-009~~ resolvidas. A próxima decisão que destrava cadeia é **P-008/P-036 (Coin)**, que segura a Fase 10 (R-02 foi endereçado e medido na Fase 9):
+~~P-002~~, ~~P-005/P-006/P-009~~ resolvidas. P-008/P-036 (Coin) foram decididas provisoriamente na Fase 10 e P-011/P-011a resolvidas (ADR-025/026). A próxima decisão que destrava cadeia é **P-018 (Boss)**, que segura a Fase 12:
 
 ```text
-~~P-010~~ → Fase 9 ✅ · P-008/P-036 (Coin) → Fase 10 · P-011 (offline) → Fase 11 · P-018 → Fase 12
+~~P-010~~ → Fase 9 ✅ · P-008/P-036 (Coin) → Fase 10 ✅ (provisório) · P-011 (offline) → Fase 11 ✅ · P-018 → Fase 12
 ```
 
 ---
@@ -281,9 +281,9 @@ O que as fases entregaram:
 FASE 6  ✅ Combate              ← CONCLUÍDA (ADR-020: HP persistente, skills, feedback visual)
 FASE 7  ✅ Torre                ← CONCLUÍDA (ADR-021/022)
 FASE 9  ✅ Equipamentos         ← CONCLUÍDA (ADR-023/024)
-FASE 10 Economia                ⛔ P-008, P-036  ← PRÓXIMO PASSO (etapa 5; perguntar ao usuário)
-FASE 11 Offline                 ⛔ P-011
-FASE 12 Boss                    ⛔ P-018
+FASE 10 ✅ Economia (Market)    ← CONCLUÍDA (ADR-025; preços provisórios)
+FASE 11 ✅ Offline              ← CONCLUÍDA (ADR-026; simulação do online)
+FASE 12 Boss                    ⛔ P-018  ← PRÓXIMO PASSO (etapa 6)
 FASE 13 MVP LOCAL               ← o vertical slice
 FASE 14 Painel Admin            pós-MVP (docs/ADMIN_PANEL.md)
 ```
@@ -446,14 +446,25 @@ editar `config/src/heroes.ts`.
 - **Cuidado:** os ícones soltos da raiz de `assets/sprites/icons1/` têm nomes que não casam com o conteúdo — usar só as folhas `icons_*_N`.
 - Testes: suíte `unit+integration+arch` ≥ 546 verdes (`gear-effects`, `hero-acquisition`, `equipment-flow`, `content-pack-v2`, `equipment`, `gear`, `loot`, `inventory`, `tower-balance`).
 
-**O que fazer:** **FASE 10+11 — Economia + Offline** (etapa 5 de 7). ⛔ **P-008 (Coin), P-036 (sumidouros), P-011 (offline)**: perguntar ao usuário. Já existe um padrão provisório (Coin/abate `floor(12·(E+3))`, preço de venda por dados, custos de slot 50k/250k) — a Fase 10 fecha ou ajusta. **Regra AR:** tudo no `ContentPack`.
+### Fase 10+11 — Market, Bot e offline (ADR-025/026, 2026-10-03)
 
-**Estimativa até o 1º MVP jogável (FASE 13): 7 etapas — 4 concluídas** —
-1) ✅ Fase 5+8, 2) ✅ Fase 6, 3) ✅ Fase 7, 4) ✅ Fase 9,
-5) Fase 10+11 (gate P-008/P-036/P-011), 6) Fase 12 (⛔ P-018), 7) Fase 13 (MVP Local).
-Restam **3 etapas**. Detalhe e riscos na tabela do ROADMAP.
+- **Market** (`MarketScreen.tsx`, `packages/game-core/src/shop.ts`, dados em `packages/config/src/market.ts`): abas Poções/Revives/Caixas; compra atômica por Coin (preço fixo ou em abates, nível mínimo); caixas (Nv 250/1.500/5.000) sorteiam fragmentos ou herói completo com chances baixas; fragmentos são da **conta** (`classe:raridade`) e a invocação usa `heroAcquisition.fragmentsRequired`. Ícones: 6 novos gerados (`items/revive_*`, `items/box_*`).
+- **Bot** (`bot.ts`, `BotPanel.tsx`, `SaveData.bot`): auto-poção (limite de vida, item "auto" ou específico), auto-revive (mesma luta, via gancho `onAlliesDown` do engine), voltar do Hub sozinho. Salvaguardas em `config.bot`. **Hub** = `hunt: defeated` + `bot.hubRecoveryMs` (60 s) → volta curado ao MESMO andar.
+- **Offline = simulação do online** (`GameState.claimOffline`, `runSimulation`, relógio virtual `clock()`): teto 2 h Free / 8 h VIP **por ausência** (o modelo "acumulado" caiu); mínimo 30 s; relatório `OfflineReport` e modal "Bem-vindo de volta". O boot agora **chama** `claimOffline` (antes só marcava `lastActiveAt`) e há heartbeat de 5 s no loop.
+- **Loop único:** `advanceIdle(dt)` (luta/busca/Hub/nova busca) é usado pelo loop do navegador e pela simulação.
+- **ContentPack v3** (`market`, `bot`, `offline`); `configVersion` 5; migração 4→5 (Bot/Market padrão, `accumulatedMs` zerado); `hunt in_battle` sem luta em memória vira `null` ao carregar.
+- **Balanço:** `BALANCE_REPORT.md` ganhou a seção "Market" (≈ 22 h / 129 h / 675 h de caça por herói completo via Caixa Básica/Rara/Lendária).
+- Testes: `market-bot-offline`, `heal-revive` (engine), `tower-content` (Market como conteúdo), `hunt` (por ausência); suíte completa verde.
+- **Cuidados:** `GameState.clock()` deve ser usado em TODA marca de tempo do estado de caça (só `lastSavedAt` usa o relógio real); `simulating` suprime listeners/toasts; no sorteio de caixa a semente vem de `market.boxesOpened`.
 
-**O que perguntar ao usuário:** na hora certa (etapa 5), as pendências **P-008/P-036/P-011** (economia/offline). Fora isso, seguir com autoridade delegada.
+**O que fazer:** **FASE 12 — Boss** (etapa 6 de 7; ⛔ **P-018**). Aqui entram os drops de herói do Rei (Boss) com `rollHeroAcquisition` (ADR-024) e os fragmentos — o ponto de entrada já existe (`grantFragments`, `RewardBundle.fragments[].rarity`). **Regra AR:** tudo no `ContentPack`.
+
+**Estimativa até o 1º MVP jogável (FASE 13): 7 etapas — 5 concluídas** —
+1) ✅ Fase 5+8, 2) ✅ Fase 6, 3) ✅ Fase 7, 4) ✅ Fase 9, 5) ✅ Fase 10+11,
+6) Fase 12 (⛔ P-018), 7) Fase 13 (MVP Local).
+Restam **2 etapas**. Detalhe e riscos na tabela do ROADMAP.
+
+**O que perguntar ao usuário:** na hora certa (etapa 6), a pendência **P-018** (Boss). Fora isso, seguir com autoridade delegada; ratificar preços do Market (P-008/P-036) quando houver playtest.
 
 **Como validar:**
 

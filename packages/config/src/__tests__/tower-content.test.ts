@@ -218,3 +218,51 @@ describe("ContentPack (ADR-022)", () => {
     }
   });
 });
+
+describe("Market, Bot e offline como CONTEÚDO (ADR-025/026)", () => {
+  it("o catálogo padrão valida e traz o que o usuário pediu", () => {
+    expect(validateContentPack(defaultContentPack())).toEqual([]);
+    const ids = config.market.items.map((i) => i.id);
+    for (const id of ["potion_basic", "potion_modest", "potion_improved", "potion_rare", "potion_epic", "potion_legendary", "potion_magic", "potion_magic_rare", "potion_magic_supreme", "revive_basic", "revive_improved", "revive_magic", "box_basic", "box_rare", "box_legendary"]) {
+      expect(ids).toContain(id);
+    }
+    expect(config.market.tabs.map((t) => t.id).length).toBe(3);
+  });
+
+  it("curas fixas e % do pedido", () => {
+    const eff = (id: string) => (config.market.items.find((i) => i.id === id) as { effect: { kind: string; amount?: number; pct?: number } }).effect;
+    expect(eff("potion_basic")).toEqual({ kind: "healFlat", amount: 60 });
+    expect(eff("potion_legendary")).toEqual({ kind: "healFlat", amount: 2500 });
+    expect(eff("potion_magic")).toEqual({ kind: "healPct", pct: 0.3 });
+    expect(eff("potion_magic_supreme")).toEqual({ kind: "healPct", pct: 1 });
+    expect(eff("revive_basic")).toEqual({ kind: "revivePct", pct: 0.3 });
+    expect(eff("revive_magic")).toEqual({ kind: "revivePct", pct: 1 });
+  });
+
+  it("caixas: chances baixas, exigem Rei forte e herói completo é raro", () => {
+    for (const box of config.market.items.filter((i) => i.kind === "box")) {
+      if (box.kind !== "box") continue;
+      const total = box.outcomes.reduce((s, o) => s + o.weight, 0);
+      const heroChance = box.outcomes.filter((o) => o.kind === "hero").reduce((s, o) => s + o.weight, 0) / total;
+      expect(heroChance).toBeLessThan(0.1);
+      expect(box.requiredKingLevel).toBeGreaterThanOrEqual(250);
+    }
+  });
+
+  it("offline: 2 h Free e 8 h VIP; padrões do Bot vêm da config", () => {
+    expect(config.offline.capFreeMs).toBe(2 * 3_600_000);
+    expect(config.offline.capVipMs).toBe(8 * 3_600_000);
+    expect(config.bot.defaults.autoReturnFromHub).toBe(true);
+  });
+
+  it("pack inválido do Market é reportado com o caminho e não altera nada", () => {
+    const pack = JSON.parse(JSON.stringify(defaultContentPack())) as ContentPack;
+    pack.market.items[0]!.price = { kind: "fixed", coins: -5 };
+    pack.bot.defaults.autoPotion.itemId = "nao_existe";
+    const errors = validateContentPack(pack);
+    expect(errors.length).toBeGreaterThanOrEqual(2);
+    const before = config.market.items.length;
+    expect(() => applyContentPack(pack)).toThrow();
+    expect(config.market.items.length).toBe(before);
+  });
+});

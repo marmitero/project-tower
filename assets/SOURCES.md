@@ -45,7 +45,7 @@ produto é pior do que um build que não acontece (§62).
 | Caminho | Versionado | Conteúdo |
 |---|---|---|
 | `assets/sprites/` | ✅ | Pack Nika Studio (422 PNG + LICENSE/manifesto do pack) |
-| `assets/generated/` | ✅ | Arte própria deste projeto (retratos, UI PT-BR, áudio procedural e `items/*` — 8 ícones de equipamento **gerados por IA** em 64×64 no estilo do pack; `scripts/gen-item-icons.mjs` recorta/normaliza a partir das imagens-fonte). Sobrescreve a entrada do pack de mesmo id |
+| `assets/generated/` | ✅ | Arte própria deste projeto (retratos, UI PT-BR, áudio procedural e `items/*` — 14 ícones **gerados por IA** em 64×64 (8 de equipamento + 3 revives + 3 caixas do Market) no estilo do pack; `scripts/gen-item-icons.mjs` recorta/normaliza a partir das imagens-fonte). Sobrescreve a entrada do pack de mesmo id |
 | `assets/ATTRIBUTION.md` | ✅ | Crédito obrigatório da licença |
 | `assets/SOURCES.md` | ✅ | Este arquivo |
 | `reference/tower-idle-adventure/` | ✅ | Material importado do repo de origem (docs/protótipos/supabase) |

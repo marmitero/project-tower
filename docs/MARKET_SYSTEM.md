@@ -247,6 +247,18 @@ O §105 proíbe transformar tudo em cards. O mercado é uma **decisão econômic
 
 ---
 
+## 10a. O Market do Reino (loja por Coin — implementado, ADR-025)
+
+> Não confundir com o **Mercado da Comunidade** deste documento (entre jogadores, taxa de 15%, futuro). O **Market** é a loja do Reino: compra **só com Coin**, sem taxa, sem outros jogadores, **100% data-driven** (`config.market`).
+
+- **Abas:** Poções (cura fixa e em %), Revives (30/50/100%), Caixas (fragmentos e heróis).
+- **Preço:** fixo em Coin ou em **abates** (acompanha a economia); caixas exigem nível do Rei (250/1.500/5.000) e são deliberadamente caras e de chance baixa — **segundo meio** de obter heróis, não o foco.
+- **Fragmentos** são da conta (classe + raridade); a invocação usa `heroAcquisition.fragmentsRequired`.
+- **Bot:** poções e revives são consumidos automaticamente (online e offline) conforme as opções do jogador.
+- Detalhes, valores e alternativas rejeitadas: ADR-025 em [`DECISIONS_LOG.md`](DECISIONS_LOG.md); metas de tempo por caixa em [`BALANCE_REPORT.md`](BALANCE_REPORT.md).
+
+---
+
 ## 10b. Futuro: anúncio de personagens evoluídos (registro, 2026-10-03)
 
 Decisão do usuário: **no futuro o Rei poderá anunciar no Mercado da Comunidade personagens (heróis) evoluídos** — com nível, estrelas, XP e equipamento acumulados. **Não implementar agora.** Preparação já feita ou exigida:

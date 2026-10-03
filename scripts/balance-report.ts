@@ -9,7 +9,7 @@
  * O Painel Admin (FASE 14) vai expor esta mesma API como pré-visualização.
  */
 import { classes, config, enemies } from "@tia/config";
-import { averageDuel, floorMatchups, rollGearSet, simulateHunt, towerPacing } from "@tia/game-core";
+import { averageDuel, coinsPerKillFor, floorMatchups, itemPrice, rollGearSet, simulateHunt, towerPacing } from "@tia/game-core";
 
 const md = process.argv.includes("--md");
 const CYCLE = 15;
@@ -90,6 +90,34 @@ for (const [floor, min] of checks) {
 title("Matchups de um andar (herói no nível-base)");
 for (const m of floorMatchups(10, 2500, 3).filter((x) => x.classId === "guardian")) {
   line(`${md ? "- " : ""}guardian × ${m.enemy.name}: ${pct(m.duel.avgHpLostFraction)} de vida, ${m.duel.avgDurationSec.toFixed(1)} s (chance ${pct(m.chance)})`);
+}
+
+title("Market — preços e caixas (ADR-025; 1 abate ≈ 1 ciclo de 15 s)");
+{
+  const need = config.heroAcquisition.fragmentsRequired;
+  const coinPerKill = (kingLevel: number) => coinsPerKillFor(kingLevel);
+  for (const kingLevel of [1, 100, 2500]) {
+    const fixed = config.market.items.filter((i) => i.kind === "consumable" && i.price.kind === "fixed");
+    line(`${md ? "- " : ""}Poções de cura fixa em abates (Rei Nv ${kingLevel}, ${coinPerKill(kingLevel)} Coin/abate): ${fixed.map((i) => `${i.name} ${(Number(itemPrice(i, kingLevel)) / coinPerKill(kingLevel)).toFixed(1)}`).join(" · ")}`);
+  }
+  for (const it of config.market.items) {
+    if (it.kind !== "box") continue;
+    const total = it.outcomes.reduce((s, o) => s + o.weight, 0);
+    const avgFrag = (it.fragments.min + it.fragments.max) / 2;
+    let heroEq = 0;
+    let heroChance = 0;
+    for (const o of it.outcomes) {
+      const p = o.weight / total;
+      if (o.kind === "hero") {
+        heroChance += p;
+        if (o.rarity === it.rarity) heroEq += p;
+      } else heroEq += (p * avgFrag) / need[o.rarity];
+    }
+    const price = itemPrice(it, it.requiredKingLevel);
+    const kills = Number(price) / coinPerKill(it.requiredKingLevel);
+    const boxes = 1 / heroEq;
+    line(`${md ? "- " : ""}${it.name}: Rei Nv ${it.requiredKingLevel}+, ${price.toLocaleString("pt-BR")} Coin ≈ ${kills.toFixed(0)} abates (${h((kills * CYCLE) / 3600)}) por caixa; herói completo direto ${(heroChance * 100).toFixed(1)}%; ≈ ${boxes.toFixed(1)} caixas por herói da raridade (${h((boxes * kills * CYCLE) / 3600)} de caça)`);
+  }
 }
 
 line(`\nParâmetros: defesa K = ${config.combat.defenseConstant} + ${config.combat.defenseConstantPerLevel}×(nível−1); regen ${config.combat.regenOnSearchingPctPerSec * 100}%/s em PROCURANDO; inimigos HP×${config.tower.enemyHpMultiplier}, Ataque×${config.tower.enemyAttackMultiplier}.`);

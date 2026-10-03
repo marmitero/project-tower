@@ -125,9 +125,11 @@ O §18 e o §107 exigem que a Torre gere a pergunta *"qual dos meus heróis é m
 
 ---
 
-### P-008 — Valores de Coin
+### P-008 — Valores de Coin ⚠️ DECIDIDA PROVISORIAMENTE (2026-10-03)
 
 **Criticidade:** 🔴 CRÍTICA · **Bloqueia:** FASE 10
+
+> **Decidida provisoriamente** (ADR-025, delegação "você decide"): Coin por abate (curva da Torre), venda de equipamento (ADR-023), slots (ADR-017) e **preços do Market** (poções, revives, caixas) estão em `config` e são editáveis; ratificação humana e playtest recomendados. O texto abaixo é o histórico.
 
 O §43 exige **fontes** e **sumidouros** claramente documentados, mas **nenhum valor** foi especificado.
 
@@ -155,9 +157,11 @@ O repositório de referência usa **inteiro 1–50** com fator `x/10` (0,1× a 5
 
 ---
 
-### P-011 — Taxa de conversão offline
+### P-011 — Taxa de conversão offline ✅ RESOLVIDA (2026-10-03)
 
 **Criticidade:** 🔴 CRÍTICA · **Bloqueia:** FASE 11
+
+> **RESOLVIDA em 2026-10-03** (ADR-026, decisão do usuário): **não há taxa de conversão** — o offline é a **simulação do online** pelo tempo creditado (2 h Free / 8 h VIP, teto por ausência). O texto abaixo é o histórico.
 
 O §47 e o §48 definem o **sistema** (registrar, calcular, limitar, simular, entregar) e o **limite** (2h Free / 8h VIP). **Não definem a conversão de tempo em recompensa.**
 
@@ -435,9 +439,11 @@ O §44 lista Diamonds como moeda possível, sem definir origem nem uso. O §73 p
 
 ---
 
-### P-036 — Sumidouros principais de Coin
+### P-036 — Sumidouros principais de Coin ⚠️ DECIDIDA PROVISORIAMENTE (2026-10-03)
 
 **Criticidade:** 🔴 CRÍTICA · **Bloqueia:** FASE 10
+
+> **Decidida provisoriamente** (ADR-025): consumíveis do Bot (poções/revives) e caixas do Market são o principal sumidouro, ao lado dos slots 2/3. Tudo em `config.market`. O texto abaixo é o histórico.
 
 > Este é o **par de `P-008`** e, junto com ele, forma o maior bloqueio do projeto.
 
@@ -531,9 +537,11 @@ Sem política explícita, dois timers paralelos geram inconsistência entre o qu
 
 ---
 
-### P-011a — Modelo de derrota durante offline
+### P-011a — Modelo de derrota durante offline ✅ RESOLVIDA (2026-10-03)
 
 **Criticidade:** 🟡 ALTA · **Bloqueia:** FASE 11
+
+> **RESOLVIDA em 2026-10-03** (ADR-026, decisão do usuário): se morrer, recupera no **Hub** e volta ao **mesmo andar**; poções e revives seguem o **Bot**. O texto abaixo é o histórico.
 
 Se a equipe cai 20 minutos antes de o jogador sair, o que acontece nas 2 horas offline? Três modelos possíveis (revivê-la, parar no primeiro defeat, congelar após N defeats), com impactos distintos em `P-011`.
 

@@ -196,6 +196,26 @@ Detalhe em [`COMBAT_SYSTEM.md`](COMBAT_SYSTEM.md).
 
 ---
 
+### 9.1 Market, Bot e Offline (ADR-025/026 — `ContentPack` v3)
+
+| Bloco | Chave | Valor padrão | Observação |
+|---|---|---|---|
+| `market` | `tabs` | Poções · Revives · Caixas | abas da loja |
+| `market` | `maxStack` | 9.999 | por item |
+| `market` | `items[]` | 9 poções, 3 revives, 3 caixas | `kind`, `price` (`fixed` Coin ou `perKill` abates com piso), `requiredKingLevel`, `effect`/`outcomes`, `iconId`, `enabled` |
+| `market` | caixas | Básica Nv 250 · Rara Nv 1.500 · Lendária Nv 5.000 | pesos de resultado e `fragments {min,max}` por caixa |
+| `bot` | `defaults` | auto-poção ligada, 40%, "auto"; auto-revive ligado, "auto"; voltar do Hub ligado | valores iniciais do `SaveData.bot` |
+| `bot` | `potionCooldownMs` / `maxPotionsPerBattle` / `maxRevivesPerBattle` | 2.500 / 6 / 2 | salvaguardas |
+| `bot` | `hubRecoveryMs` | 60.000 | tempo no Hub |
+| `bot` | `hpThresholdMinPct` / `MaxPct` | 5 / 95 | faixa do limite de vida |
+| `offline` | `capFreeMs` / `capVipMs` | 2 h / 8 h | **por ausência** |
+| `offline` | `minAwayMs` | 30.000 | abaixo disso não simula |
+| `offline` | `maxSimulatedSteps` | 2.000.000 | trava de segurança |
+
+Tudo é validado (`marketErrors`, `botErrors`, `offlineErrors`) com o caminho do erro, e aplicado atomicamente por `applyContentPack`. Pack v1/v2 é migrado completando estes blocos com o padrão.
+
+---
+
 ## 10. Conteúdo da Torre
 
 | ID | Chave | Valor | Fonte |

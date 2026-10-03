@@ -186,6 +186,8 @@ interface OfflineSummary {
 }
 ```
 
+> ✅ **ATUALIZAÇÃO 2026-10-03 (ADR-026):** o modelo abaixo (acumulado, conversão de tempo em recompensa) foi **substituído**: o offline é a **simulação do próprio jogo** pelo tempo creditado (`min(ausência, teto)` **por ausência**: 2 h Free / 8 h VIP), com o Bot (auto-poção, auto-revive, Hub) e o retorno ao mesmo andar. `accumulatedMs` vale sempre 0. Ver `OfflineReport` em `packages/game-core/src/offline.ts`. O texto histórico segue para referência.
+
 ### 6.3 O problema de "herói caiu durante o offline"
 
 Se a equipe cai 20 minutos antes de o jogador sair, o que acontece durante as 2 horas offline?

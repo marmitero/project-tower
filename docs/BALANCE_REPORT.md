@@ -1,3 +1,7 @@
+
+> tower-idle-adventure@0.1.0 report:balance
+> vite-node --config vitest.config.ts scripts/balance-report.ts --md
+
 # Relatório de balanceamento — Torre (gerado)
 
 > Gerado por `npm run report:balance -- --md`. Não edite à mão.
@@ -118,5 +122,14 @@
 - guardian × Orc Flamejante: 12% de vida, 11.8 s (chance 12%)
 - guardian × Esqueleto Sangrento: 12% de vida, 11.8 s (chance 12%)
 - guardian × Goblin Sombrio: 21% de vida, 14.4 s (chance 4%)
+
+## Market — preços e caixas (ADR-025; 1 abate ≈ 1 ciclo de 15 s)
+
+- Poções de cura fixa em abates (Rei Nv 1, 48 Coin/abate): Poção Básica 0.9 · Poção Modesta 2.7 · Poção Melhorada 7.9 · Poção Rara 22.9 · Poção Épica 31.3 · Poção Lendária 83.3
+- Poções de cura fixa em abates (Rei Nv 100, 1236 Coin/abate): Poção Básica 0.0 · Poção Modesta 0.1 · Poção Melhorada 0.3 · Poção Rara 0.9 · Poção Épica 1.2 · Poção Lendária 3.2
+- Poções de cura fixa em abates (Rei Nv 2500, 30036 Coin/abate): Poção Básica 0.0 · Poção Modesta 0.0 · Poção Melhorada 0.0 · Poção Rara 0.0 · Poção Épica 0.0 · Poção Lendária 0.1
+- Caixa Básica: Rei Nv 250+, 2.428.800 Coin ≈ 800 abates (3.3 h) por caixa; herói completo direto 6.6%; ≈ 6.5 caixas por herói da raridade (21.7 h de caça)
+- Caixa Rara: Rei Nv 1500+, 54.108.000 Coin ≈ 3000 abates (12.5 h) por caixa; herói completo direto 5.6%; ≈ 10.3 caixas por herói da raridade (129 h de caça)
+- Caixa Lendária: Rei Nv 5000+, 480.288.000 Coin ≈ 8000 abates (33.3 h) por caixa; herói completo direto 3.0%; ≈ 20.2 caixas por herói da raridade (675 h de caça)
 
 Parâmetros: defesa K = 100 + 5×(nível−1); regen 5%/s em PROCURANDO; inimigos HP×2.5, Ataque×0.05.
