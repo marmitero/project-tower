@@ -449,7 +449,7 @@ export class GameState {
       this.state.hunt = { kind: "defeated", at: this.clock() };
       this.battle = null;
       if (this.simReport) this.simReport.defeats += 1;
-      this.listeners.onBotAction?.({ kind: "hub_enter" });
+      if (!this.simulating && this.state.bot.autoReturnFromHub) this.listeners.onBotAction?.({ kind: "hub_enter" });
       this.touch();
       return;
     }
@@ -825,7 +825,7 @@ export class GameState {
     for (const hero of this.state.heroes) hero.currentHp = heroCombatStats(hero, this.state.inventory).hp;
     this.state.hunt = null;
     if (this.simReport) this.simReport.hubTrips += 1;
-    this.listeners.onBotAction?.({ kind: "hub_return" });
+    if (!this.simulating) this.listeners.onBotAction?.({ kind: "hub_return" });
     this.touch();
     return true;
   }

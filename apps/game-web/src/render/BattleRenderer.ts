@@ -24,6 +24,8 @@ export interface FeedbackPlan {
   number?: { text: string; kind: "crit" | "damage" | "mitigated" | "heal" };
   /** Animação de morte + fade do combatente. */
   death?: boolean;
+  /** O combatente caído volta à luta (poção de reviver). */
+  revive?: boolean;
   /** Nome da skill acima do usuário. */
   skillName?: boolean;
   /** Banner central de fim de batalha. */
@@ -101,6 +103,8 @@ function planOne(event: BattleEvent): FeedbackPlan {
       return { death: true, sfx: "audio/sfx/death_enemy" };
     case "character_defeated":
       return { death: true, sfx: "audio/sfx/death_hero" };
+    case "character_revived":
+      return { revive: true, sfx: "audio/sfx/heal" };
     case "battle_won":
       return { banner: "won", sfx: "audio/sfx/victory" };
     case "battle_lost":

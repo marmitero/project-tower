@@ -449,9 +449,27 @@ export class BattleScene extends Phaser.Scene {
       this.killFighter(targetView);
     }
 
+    if (plan.revive && targetView) {
+      this.reviveFighter(targetView);
+    }
+
     if (plan.banner) {
       this.showBanner(plan.banner);
     }
+  }
+
+  /** Poção de reviver: o herói levanta (cancela o fade da morte) e a luta segue. */
+  private reviveFighter(view: FighterView): void {
+    view.dead = false;
+    const sprite = view.sprite;
+    if (!sprite) return;
+    this.tweens.killTweensOf(sprite);
+    sprite.setAlpha(1);
+    const tint = this.combatant(view.id)?.tint;
+    if (tint !== undefined) sprite.setTint(tint);
+    else sprite.clearTint();
+    if (view.anims) sprite.play(view.anims.idle, true);
+    this.floatNumber(view, { text: "REVIVEU!", kind: "heal" });
   }
 
   private killFighter(view: FighterView): void {

@@ -21,11 +21,13 @@
  */
 
 import { GameState, LocalStoragePersistence, LOCAL_ACCOUNT } from "@tia/game-core";
-import type { LootNotice, PersistenceService } from "@tia/game-core";
+import type { BotAction, LootNotice, PersistenceService } from "@tia/game-core";
 import { asAccountId, type BattleEvent, type SaveData } from "@tia/contracts";
 
 const SAVE_INTERVAL_MS = 15_000;
 const MAX_STEP_MS = 250;
+/** §47 — `lastActiveAt` é tocado a cada ~5 s: é o que mede o tempo fora (offline). */
+const HEARTBEAT_MS = 5_000;
 
 /** Relógio do navegador, isolado para poder ser substituído em teste. */
 export type Clock = () => number;
@@ -39,6 +41,8 @@ export interface BootOptions {
   onBattleEvents?: (events: BattleEvent[]) => void;
   /** Cada drop de equipamento e o destino dele (ADR-023). */
   onLoot?: (drops: LootNotice[]) => void;
+  /** O Bot bebeu poção, usou revive ou mudou de Hub (ADR-025). */
+  onBotAction?: (action: BotAction) => void;
 }
 
 /**
@@ -74,6 +78,7 @@ export async function boot(options: BootOptions = {}): Promise<{ state: GameStat
     onStateChanged: options.onStateChanged,
     onBattleEvents: options.onBattleEvents,
     onLoot: options.onLoot,
+    onBotAction: options.onBotAction,
   };
 
   if (save) return { state: GameState.hydrate(save, deps, listeners), recovered };
@@ -110,6 +115,7 @@ export async function createGame(
         onStateChanged: options.onStateChanged,
         onBattleEvents: options.onBattleEvents,
         onLoot: options.onLoot,
+        onBotAction: options.onBotAction,
       },
     },
   );
@@ -165,6 +171,7 @@ export function startLoop(
 ): LoopHandle {
   let last = clock();
   let lastSave = last;
+  let lastBeat = last;
   let running = true;
   let frame = 0;
 
@@ -176,19 +183,18 @@ export function startLoop(
     const dt = Math.min(MAX_STEP_MS, Math.max(0, rawDelta));
 
     try {
-      if (state.activeBattle) {
-        state.advanceBattle(dt);
-      } else if (state.data.hunt?.kind === "searching") {
-        // §29 — navegar não pausa. O tick do loop é o ÚNICO lugar que
-        // decide se a busca terminou.
-        state.tickSearch();
-      } else if (state.data.hunt === null && state.data.team.activeHeroId) {
-        state.beginSearch();
-      }
+      // Um único ponto de entrada (luta, busca, Hub, nova busca): é o MESMO que a simulação
+      // offline usa (ADR-026). §29 — navegar não pausa; o tick decide se a busca terminou.
+      state.advanceIdle(dt);
     } catch (error) {
       // Uma exceção no tick NÃO pode derrubar o loop: o jogador ficaria
       // olhando uma tela parada. Loga e segue no próximo frame.
       console.error("[loop] erro no tick:", error);
+    }
+
+    if (now - lastBeat >= HEARTBEAT_MS) {
+      lastBeat = now;
+      state.markActive();
     }
 
     if (now - lastSave >= SAVE_INTERVAL_MS) {

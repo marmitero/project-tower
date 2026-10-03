@@ -18,6 +18,7 @@ import {
   towerRewardsForEnemyLevel,
 } from "@tia/game-core";
 import { formatCompact, formatInt } from "./format.js";
+import { BotPanel } from "./BotPanel.js";
 
 export function TowerScreen({ state, searching }: { state: GameState; searching: number }) {
   const floor = state.currentFloor;
@@ -114,7 +115,14 @@ export function TowerScreen({ state, searching }: { state: GameState; searching:
         </div>
       )}
 
-      {hunt?.kind === "defeated" && (
+      {hunt?.kind === "defeated" && state.bot.autoReturnFromHub && (
+        <p className="tia-note tia-note--bad" aria-live="polite">
+          O herói caiu e está se recuperando no Hub: volta em {Math.ceil(state.hubRemainingMs() / 1000)} s e retoma o andar{" "}
+          {floor}. Nenhuma recompensa foi perdida (§26).
+        </p>
+      )}
+
+      {hunt?.kind === "defeated" && !state.bot.autoReturnFromHub && (
         <p className="tia-note tia-note--bad">
           O herói caiu e a caçada terminou — nenhuma recompensa foi perdida, mas nada foi
           creditado (§26). Recomeçar é uma sua decisão (o herói recupera o HP ao reiniciar,
@@ -138,7 +146,9 @@ export function TowerScreen({ state, searching }: { state: GameState; searching:
       <ActionButton
         label={
           hunt?.kind === "defeated"
-            ? "Recomeçar a caçada"
+            ? state.bot.autoReturnFromHub
+              ? "Voltar agora para a Torre"
+              : "Recomeçar a caçada"
             : state.activeBattle
               ? "Em combate"
               : hunt?.kind === "searching"
@@ -170,6 +180,7 @@ export function TowerScreen({ state, searching }: { state: GameState; searching:
         />
       )}
     </Panel>
+    <BotPanel state={state} />
     <FloorPicker state={state} />
     </>
   );

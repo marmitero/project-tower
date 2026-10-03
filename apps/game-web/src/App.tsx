@@ -21,7 +21,7 @@ import {
   teamHeroes,
 } from "@tia/game-core";
 import type { HeroId } from "@tia/contracts";
-import type { LootNotice } from "@tia/game-core";
+import type { BotAction, LootNotice } from "@tia/game-core";
 import { boot, createGame, startLoop, type LoopHandle } from "./boot.js";
 import { loadAssetManifest, assetUrl, type AssetManifest } from "./render/assets.js";
 import { BattleCanvas } from "./render/BattleCanvas.js";
@@ -29,14 +29,17 @@ import { battleFeedbackQueue } from "./render/BattleRenderer.js";
 import { CreationScreen, type CreationResult } from "./CreationScreen.js";
 import { TowerScreen } from "./TowerScreen.js";
 import { InventoryScreen, LootToasts } from "./InventoryScreen.js";
+import { MarketScreen } from "./MarketScreen.js";
+import { OfflineReportModal } from "./OfflineReportModal.js";
 
-type Screen = "king" | "heroes" | "tower" | "team" | "inventory";
+type Screen = "king" | "heroes" | "tower" | "team" | "inventory" | "market";
 
 const SCREENS: { id: Screen; label: string }[] = [
   { id: "king", label: "Rei" },
   { id: "heroes", label: "Heróis" },
   { id: "team", label: "Equipe" },
   { id: "inventory", label: "Inventário" },
+  { id: "market", label: "Market" },
   { id: "tower", label: "Torre" },
 ];
 
@@ -61,6 +64,17 @@ export function App() {
     window.setTimeout(() => setMessage((m) => (m === text ? null : m)), 5000);
   }, []);
 
+  /** O Bot agiu online (poção, revive, Hub): vira aviso curto. No offline entra no relatório. */
+  const onBotAction = useCallback(
+    (a: BotAction) => {
+      if (a.kind === "potion") showMessage(`Bot: ${a.name} (+${a.healed} de vida).`);
+      else if (a.kind === "revive") showMessage(`Bot: ${a.name} — o herói voltou à luta!`);
+      else if (a.kind === "hub_enter") showMessage("O herói caiu — recuperando no Hub.");
+      else showMessage("O herói se recuperou e voltou à Torre.");
+    },
+    [showMessage],
+  );
+
   useEffect(() => {
     let cancelled = false;
 
@@ -72,13 +86,16 @@ export function App() {
         // §64 — os eventos da batalha viram apresentação (BattleScene drena).
         onBattleEvents: (events) => battleFeedbackQueue.push(events),
         onLoot: pushLoot,
+        onBotAction,
       });
       if (cancelled) return;
 
       // Sem save não existe Rei (§5): `state: null` mostra a criação.
       if (gameState) {
         setState(gameState);
-        gameState.markActive();
+        // ADR-026 — voltar ao jogo SIMULA o tempo fora (até 2 h Free) antes de o loop começar;
+        // o relatório aparece no "Bem-vindo de volta". `claimOffline` também marca `lastActiveAt`.
+        gameState.claimOfflineSafe();
         // O loop é o ÚNICO motor de tempo. Nenhum `setInterval` espalhado
         // pela UI: dois timers brigariam por quem "possui" o estado.
         loopRef.current = startLoop(gameState, () => Date.now(), () => {
@@ -114,6 +131,7 @@ export function App() {
         onStateChanged: (s) => setState(s),
         onBattleEvents: (events) => battleFeedbackQueue.push(events),
         onLoot: pushLoot,
+        onBotAction,
       });
       setState(gameState);
       gameState.markActive();
@@ -182,9 +200,11 @@ export function App() {
         {screen === "heroes" && <HeroesScreen state={state} onAssign={assign} />}
         {screen === "team" && <TeamScreen state={state} onAssign={assign} />}
         {screen === "inventory" && <InventoryScreen state={state} notify={showMessage} />}
+        {screen === "market" && <MarketScreen state={state} notify={showMessage} />}
         {screen === "tower" && <TowerScreen state={state} searching={searching} />}
       </main>
 
+      {state.offlineReport && <OfflineReportModal report={state.offlineReport} onClose={() => state.dismissOfflineReport()} />}
       <LootToasts notices={loot.filter((l) => now - l.at < 8000)} />
       {message && (
         <p className="tia-flash" role="alert">
@@ -214,7 +234,9 @@ function Hud({ state }: { state: GameState }) {
     : hunt?.kind === "searching"
       ? "Procurando…"
       : hunt?.kind === "defeated"
-        ? "Derrota"
+        ? state.bot.autoReturnFromHub
+          ? `Hub ${Math.ceil(state.hubRemainingMs() / 1000)}s`
+          : "Derrota"
         : "No Reino";
   return (
     <header className="tia-hud">
@@ -277,13 +299,10 @@ function KingScreen({ state, onChangeSkin }: { state: GameState; onChangeSkin: (
             color="#7aa2f7"
             readout={`${king.xp.toLocaleString("pt-BR")} XP`}
           />
-          {offline.creditedDurationMs > 0 && (
-            <StatPill
-              label="Offline pendente"
-              value={`${Math.round(offline.creditedDurationMs / 60000)} min`}
-              tone="good"
-            />
-          )}
+          <p className="tia-note">
+            Offline: ao voltar, o jogo simula até {Math.round(offline.capMs / 3_600_000)} h de caçada como se você tivesse
+            ficado jogando (Bot incluso).
+          </p>
           <fieldset className="tia-king__skins">
             <legend>Aparência</legend>
             <div className="tia-king__skin-row">
