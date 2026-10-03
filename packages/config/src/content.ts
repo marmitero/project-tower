@@ -15,12 +15,17 @@
  *     `config.xp.*`), então todo `import { enemies }` continua válido.
  *  5. Versionado (`schemaVersion`): pack antigo é migrado, nunca reinterpretado.
  *
- * Escopo atual: inimigos, andares, recompensas, curvas de XP e dificuldade.
- * Heróis/classes/skills/itens/bosses entram no pack nas fases 9–12 (regra
- * registrada no ROADMAP: toda nova entidade de conteúdo nasce como dado de pack).
+ * Escopo atual (schema v2): inimigos, andares, recompensas, curvas de XP e dificuldade
+ * (v1) + equipamento (slots, templates, traços de arma, características, raridade, notas,
+ * materiais, venda, requisito, tetos de efeito), drop (chance, tabela de raridade, forma do X),
+ * mochila e aquisição de heróis (v2, FASE 9). Heróis/classes/skills/bosses entram nas fases
+ * 10–12 (regra do ROADMAP: toda nova entidade de conteúdo nasce como dado de pack).
+ *
+ * Migração: pack v1 (sem os blocos novos) é aceito — `migrateContentPack` completa com os
+ * padrões de fábrica. Nunca se reinterpreta em silêncio.
  */
 
-import { config } from "./game.js";
+import { config, defaultInventory, defaultLoot } from "./game.js";
 import { curveErrors, type CurveDef } from "./curves.js";
 import {
   ENEMY_ROLES,
@@ -30,10 +35,14 @@ import {
   type EnemySeed,
 } from "./enemies.js";
 import { ATTRIBUTE_IDS } from "./attributes.js";
+import { defaultEquipmentConfig, equipmentErrors, type EquipmentConfig } from "./equipment.js";
+import { defaultHeroAcquisition, heroAcquisitionErrors, type HeroAcquisitionConfig } from "./acquisition.js";
+import { RARITY_ORDER } from "./rarity.js";
+import type { InventoryConfig, LootConfig } from "./types.js";
 import { CHARACTER_SHEET_KEYS } from "./catalog.js";
 import { LEVEL_CAP, buildDefaultFloors, defaultTowerDifficulty, defaultTowerRewards, defaultXpCurve, type FloorDef, type TowerRewardsConfig } from "./tower.js";
 
-export const CONTENT_PACK_SCHEMA_VERSION = 1;
+export const CONTENT_PACK_SCHEMA_VERSION = 2;
 
 export interface ContentPack {
   schemaVersion: typeof CONTENT_PACK_SCHEMA_VERSION;
@@ -51,7 +60,20 @@ export interface ContentPack {
     king: { levelCap: number; curve: CurveDef };
     hero: { levelCap: number; curve: CurveDef };
   };
+  /** v2 — catálogo de equipamento (ADR-023). */
+  equipment: EquipmentConfig;
+  /** v2 — drop de equipamento: chance, tabela de raridade e forma do X (§32/§33/§36). */
+  loot: PackLoot;
+  /** v2 — mochila (⛔ P-016). */
+  inventory: PackInventory;
+  /** v2 — aquisição de heróis (ADR-024). */
+  heroAcquisition: HeroAcquisitionConfig;
 }
+
+export type PackLoot = Pick<LootConfig, "equipmentChance" | "rarity"> & { x: Omit<LootConfig["x"], "independentPerAttribute"> };
+export type PackInventory = Pick<InventoryConfig, "equipmentMaxItems" | "onFull" | "pageSize" | "defaultSort">;
+
+const INVENTORY_SORTS = ["rarityDesc", "powerDesc", "qualityDesc", "levelDesc"];
 
 export class ContentPackError extends Error {
   readonly errors: string[];
@@ -79,7 +101,45 @@ export function defaultContentPack(): ContentPack {
       king: { levelCap: LEVEL_CAP, curve: defaultXpCurve() },
       hero: { levelCap: LEVEL_CAP, curve: defaultXpCurve() },
     },
+    ...defaultV2Blocks(),
   };
+}
+
+/** Blocos novos do schema v2 com os valores de fábrica. */
+function defaultV2Blocks(): Pick<ContentPack, "equipment" | "loot" | "inventory" | "heroAcquisition"> {
+  const DEFAULT_LOOT = defaultLoot();
+  const DEFAULT_INVENTORY = defaultInventory();
+  return {
+    equipment: defaultEquipmentConfig(),
+    loot: {
+      equipmentChance: DEFAULT_LOOT.equipmentChance,
+      rarity: { ...DEFAULT_LOOT.rarity },
+      x: (({ independentPerAttribute: _i, ...rest }) => ({ ...rest, shape: { ...rest.shape } }))(DEFAULT_LOOT.x),
+    },
+    inventory: {
+      equipmentMaxItems: DEFAULT_INVENTORY.equipmentMaxItems,
+      onFull: DEFAULT_INVENTORY.onFull,
+      pageSize: DEFAULT_INVENTORY.pageSize,
+      defaultSort: DEFAULT_INVENTORY.defaultSort,
+    },
+    heroAcquisition: defaultHeroAcquisition(),
+  };
+}
+
+/**
+ * Migra um pack de schema antigo para o atual. v1 → v2: completa os blocos novos com o padrão
+ * de fábrica (o que o jogo já usava). Devolve cópia; entrada inválida passa sem mudança
+ * (a validação reporta).
+ */
+export function migrateContentPack(input: unknown): unknown {
+  if (typeof input !== "object" || input === null) return input;
+  const pack = clone(input) as Record<string, unknown>;
+  if (pack.schemaVersion === 1) {
+    const d = defaultV2Blocks();
+    for (const [k, v] of Object.entries(d)) if (pack[k] === undefined) pack[k] = v;
+    pack.schemaVersion = 2;
+  }
+  return pack;
 }
 
 /** Exporta o conteúdo VIVO (o que o jogo está usando agora) como pack. */
@@ -99,13 +159,27 @@ export function exportContentPack(name = "exportado"): ContentPack {
       king: { levelCap: config.xp.king.levelCap, curve: config.xp.king.curve },
       hero: { levelCap: config.xp.hero.levelCap, curve: config.xp.hero.curve },
     },
+    equipment: config.equipment,
+    loot: {
+      equipmentChance: config.loot.equipmentChance,
+      rarity: config.loot.rarity,
+      x: (({ independentPerAttribute: _i, ...rest }) => rest)(config.loot.x),
+    },
+    inventory: {
+      equipmentMaxItems: config.inventory.equipmentMaxItems,
+      onFull: config.inventory.onFull,
+      pageSize: config.inventory.pageSize,
+      defaultSort: config.inventory.defaultSort,
+    },
+    heroAcquisition: config.heroAcquisition,
   } satisfies ContentPack);
 }
 
 const isNum = (v: unknown): v is number => typeof v === "number" && Number.isFinite(v);
 
 /** Lista TODOS os problemas do pack (vazio = aplicável). Aceita `unknown` (JSON cru). */
-export function validateContentPack(input: unknown): string[] {
+export function validateContentPack(raw: unknown): string[] {
+  const input = migrateContentPack(raw);
   const errors: string[] = [];
   const check = (cond: boolean, msg: string) => {
     if (!cond) errors.push(msg);
@@ -127,6 +201,32 @@ export function validateContentPack(input: unknown): string[] {
       errors.push(...curveErrors(`progression.${who}.curve`, p.curve));
     }
     cap = Math.max(prog.king.levelCap, prog.hero.levelCap);
+  }
+
+  // --- equipamento, drop, mochila e aquisição (v2) -----------------------------
+  errors.push(...equipmentErrors(pack.equipment));
+  errors.push(...heroAcquisitionErrors(pack.heroAcquisition));
+  const loot = pack.loot;
+  if (!loot) errors.push("loot ausente");
+  else {
+    check(isNum(loot.equipmentChance) && loot.equipmentChance >= 0 && loot.equipmentChance <= 0.5, "loot.equipmentChance deve estar em [0, 0,5] (§30)");
+    const sum = RARITY_ORDER.reduce((a, r) => a + (isNum(loot.rarity?.[r]) && loot.rarity[r] >= 0 ? loot.rarity[r] : NaN), 0);
+    check(Math.abs(sum - 1) < 1e-6, `loot.rarity deve somar 1 (soma = ${sum})`);
+    const x = loot.x;
+    if (!x) errors.push("loot.x ausente");
+    else {
+      check(isNum(x.min) && x.min > 0 && isNum(x.max) && x.max >= x.min, "loot.x: min deve ser > 0 e max >= min");
+      check(isNum(x.decimals) && Number.isInteger(x.decimals) && x.decimals >= 0 && x.decimals <= 4, "loot.x.decimals deve ser inteiro em [0, 4]");
+      check(!!x.shape && isNum(x.shape.samples) && Number.isInteger(x.shape.samples) && x.shape.samples >= 1 && x.shape.samples <= 8 && isNum(x.shape.power) && x.shape.power > 0, "loot.x.shape inválido (samples 1–8, power > 0)");
+    }
+  }
+  const inv = pack.inventory;
+  if (!inv) errors.push("inventory ausente");
+  else {
+    check(isNum(inv.equipmentMaxItems) && Number.isInteger(inv.equipmentMaxItems) && inv.equipmentMaxItems > 0, "inventory.equipmentMaxItems deve ser inteiro > 0");
+    check(inv.onFull === "autoSell" || inv.onFull === "discard", "inventory.onFull deve ser autoSell ou discard");
+    check(isNum(inv.pageSize) && inv.pageSize > 0, "inventory.pageSize deve ser > 0");
+    check(INVENTORY_SORTS.includes(inv.defaultSort), "inventory.defaultSort inválido");
   }
 
   // --- inimigos -------------------------------------------------------------
@@ -208,10 +308,10 @@ export function validateContentPack(input: unknown): string[] {
  * Aplica o pack ao jogo. Valida primeiro (lança `ContentPackError`); se válido,
  * muta os objetos vivos em lugar. Retorna os ids de inimigos aplicados.
  */
-export function applyContentPack(input: unknown): void {
-  const errors = validateContentPack(input);
+export function applyContentPack(raw: unknown): void {
+  const errors = validateContentPack(raw);
   if (errors.length > 0) throw new ContentPackError(errors);
-  const pack = clone(input as ContentPack);
+  const pack = clone(migrateContentPack(raw) as ContentPack);
 
   enemies.splice(0, enemies.length, ...pack.enemies.map(buildEnemy));
 
@@ -225,6 +325,14 @@ export function applyContentPack(input: unknown): void {
   config.xp.king.curve = pack.progression.king.curve;
   config.xp.hero.levelCap = pack.progression.hero.levelCap;
   config.xp.hero.curve = pack.progression.hero.curve;
+
+  // v2 — muta em lugar: quem guardou `config.equipment`/`config.loot` continua válido.
+  Object.assign(config.equipment, pack.equipment);
+  config.loot.equipmentChance = pack.loot.equipmentChance;
+  Object.assign(config.loot.rarity, pack.loot.rarity);
+  Object.assign(config.loot.x, pack.loot.x);
+  Object.assign(config.inventory, pack.inventory);
+  Object.assign(config.heroAcquisition, pack.heroAcquisition);
 }
 
 /** Volta ao conteúdo de fábrica (útil em testes e no botão "restaurar padrão" do painel). */

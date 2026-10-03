@@ -102,7 +102,8 @@ export const xp: XpConfig = {
 // §30/§32/§33/§34/§35/§36 — Loot
 // ---------------------------------------------------------------------------
 
-export const loot: LootConfig = {
+/** Valores de fábrica do drop (independentes do estado vivo — base do ContentPack padrão). */
+export const defaultLoot = (): LootConfig => ({
   // §32 — "Nenhum equipamento: 95% / Equipamento: 5%".
   equipmentChance: 0.05,
 
@@ -132,7 +133,9 @@ export const loot: LootConfig = {
 
   // §12 — REGRA ABSOLUTA. Fragmentos nunca vêm de inimigo comum da Torre.
   fragmentsFromCommonTower: false,
-};
+});
+
+export const loot: LootConfig = defaultLoot();
 
 // ---------------------------------------------------------------------------
 // §27/§28/§29 — Estado Procurando
@@ -221,7 +224,8 @@ export const economy: EconomyConfig = {
 // §13/§70 — Inventário
 // ---------------------------------------------------------------------------
 
-export const inventory: InventoryConfig = {
+/** Valores de fábrica da mochila. */
+export const defaultInventory = (): InventoryConfig => ({
   // §13 — "O jogador possui PERSONAGENS ILIMITADOS. Não criar limite
   // artificial de quantidade de heróis possuídos."
   heroLimit: null,
@@ -231,7 +235,9 @@ export const inventory: InventoryConfig = {
   onFull: "autoSell",
   pageSize: 50,
   defaultSort: "rarityDesc",
-};
+});
+
+export const inventory: InventoryConfig = defaultInventory();
 
 // ---------------------------------------------------------------------------
 // Configuração agregada

@@ -69,6 +69,7 @@ export {
   validateContentPack,
   applyContentPack,
   resetContentToDefaults,
+  migrateContentPack,
   type ContentPack,
 } from "./content.js";
 export { skills, skillsById, type SkillDef, type SkillTargeting, type SkillDamageType, type SkillTag } from "./skills.js";
