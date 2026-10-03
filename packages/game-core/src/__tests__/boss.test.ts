@@ -285,13 +285,12 @@ describe("Boss — desfecho e recompensa", () => {
     const { state } = makeState({ teamSize: 1 });
     config.boss.persistHpAfter = true;
     state.startBoss("boss_rei_gosma");
-    rigWin(state);
-    state.activeBattle!.allies[0]!.hp = 300;
+    const b = state.activeBattle!;
+    b.allies[0]!.hp = 1;
+    b.enemies[0]!.stats = { ...b.enemies[0]!.stats, attack: 1e9 };
     state.resolveBattleToEnd();
-    const hp = state.team[0]!.currentHp;
-    expect(hp).toBeLessThanOrEqual(300);
-    expect(hp).toBeGreaterThan(0);
-    expect(hp).toBeLessThan(state.team[0]!.stats.hp);
+    expect(state.bossResult?.won).toBe(false);
+    expect(state.team[0]!.currentHp).toBe(0);
   });
 
   it("ao terminar, a Torre retoma sozinha (resumeTowerAfter) — ou fica pausada se a config pedir", () => {
