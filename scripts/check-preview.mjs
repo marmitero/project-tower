@@ -124,7 +124,7 @@ if (!/^\*\.bat\s+-text/m.test(gitattr)) fail(".gitattributes precisa de `*.bat -
 // 5) extraível no Windows --------------------------------------------------------------------
 let tracked = [];
 try {
-  tracked = execFileSync("git", ["ls-files"], { cwd: ROOT, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 }).split("\n").filter(Boolean);
+  tracked = execFileSync("git", ["ls-files"], { cwd: ROOT, encoding: "utf8", maxBuffer: 64 * 1024 * 1024, stdio: ["ignore", "pipe", "ignore"] }).split("\n").filter(Boolean);
 } catch {
   /* sem git (zip): essa checagem só faz sentido no repositório */
 }
