@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { config, validateConfig } from "@tia/config";
 import { App } from "./App.js";
+import { ErrorBoundary } from "./ErrorBoundary.js";
 import "./styles.css";
 
 /**
@@ -29,6 +30,8 @@ if (!container) throw new Error("#root não encontrado no index.html");
 
 createRoot(container).render(
   <StrictMode>
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </StrictMode>,
 );

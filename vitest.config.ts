@@ -32,7 +32,7 @@ export default defineConfig({
         // stub, e percorre todas as telas. Pega exceção de render que typecheck não vê.
         test: {
           name: "ui",
-          include: ["apps/*/src/**/*.test.tsx"],
+          include: ["apps/*/src/**/*.test.ts", "apps/*/src/**/*.test.tsx"],
           environment: "jsdom",
         },
       },

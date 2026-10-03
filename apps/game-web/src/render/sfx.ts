@@ -4,14 +4,16 @@
  * puramente reativo (disparo por evento), nada de música/loop agora.
  */
 import { assetUrl, loadAssetManifest } from "./assets";
+import { getSettings } from "../settings";
 
 const cache = new Map<string, HTMLAudioElement>();
-/** Volume único configurável (ARQUITETURA_EDITAVEL.md — mudar 1 linha). */
-const VOLUME = 0.4;
-
 /** Toca um efeito do manifesto (`audio/sfx/<id>`). Falhas ficam mudas. */
-export function playSfx(id: string, volume: number = VOLUME): void {
+export function playSfx(id: string, volume?: number): void {
   try {
+    // Opções do jogador (som ligado/volume). Padrão em `settings.ts`.
+    const prefs = getSettings();
+    if (!prefs.sfxEnabled) return;
+    volume = volume ?? prefs.sfxVolume;
     let a = cache.get(id);
     if (!a) {
       const url = assetUrl(id);

@@ -220,15 +220,22 @@ export function startLoop(
   };
   document.addEventListener("visibilitychange", onVisibility);
 
-  window.addEventListener("beforeunload", () => {
+  // Fechar/recarregar a aba: grava na hora (o `setItem` roda antes do 1º `await`, então vale
+  // mesmo durante o descarregamento). `pagehide` cobre mobile, onde `beforeunload` não dispara.
+  const onLeave = () => {
     void state.save();
-  });
+  };
+  window.addEventListener("beforeunload", onLeave);
+  window.addEventListener("pagehide", onLeave);
 
   return {
     stop() {
       running = false;
       cancelAnimationFrame(frame);
       document.removeEventListener("visibilitychange", onVisibility);
+      // Importar/apagar o save para o loop ANTES: sem isto o "beforeunload" regravaria o save antigo.
+      window.removeEventListener("beforeunload", onLeave);
+      window.removeEventListener("pagehide", onLeave);
     },
     async forceSave() {
       await state.save();

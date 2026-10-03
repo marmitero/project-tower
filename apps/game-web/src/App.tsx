@@ -31,13 +31,15 @@ import { TowerScreen } from "./TowerScreen.js";
 import { InventoryScreen, LootToasts } from "./InventoryScreen.js";
 import { MarketScreen } from "./MarketScreen.js";
 import { BossScreen, BossResultModal } from "./BossScreen.js";
+import { SettingsScreen } from "./SettingsScreen.js";
+import { nextStep } from "./guide.js";
 import { OfflineReportModal } from "./OfflineReportModal.js";
 import { DEBUG_ENABLED } from "./debug-flag.js";
 
 /** Debug Mode: só existe no bundle quando `VITE_DEBUG_MODE=true` (ver `debug-flag.ts`). */
 const DebugPanel = DEBUG_ENABLED ? lazy(() => import("./DebugPanel.js")) : null;
 
-type Screen = "king" | "heroes" | "tower" | "team" | "inventory" | "market" | "boss";
+type Screen = "king" | "heroes" | "tower" | "team" | "inventory" | "market" | "boss" | "options";
 
 const SCREENS: { id: Screen; label: string }[] = [
   { id: "king", label: "Rei" },
@@ -47,6 +49,7 @@ const SCREENS: { id: Screen; label: string }[] = [
   { id: "market", label: "Market" },
   { id: "tower", label: "Torre" },
   { id: "boss", label: "Arena" },
+  { id: "options", label: "Opções" },
 ];
 
 export function App() {
@@ -147,6 +150,12 @@ export function App() {
     })();
   }, []);
 
+  /** Para o loop (e os saves de saída) antes de trocar/apagar o save. */
+  const stopLoop = useCallback(() => {
+    loopRef.current?.stop();
+    loopRef.current = null;
+  }, []);
+
   const assign = useCallback((heroId: HeroId, slot: 0 | 1 | 2) => {
     setState((prev) => {
       if (!prev) return prev;
@@ -185,12 +194,25 @@ export function App() {
       <div className="tia-app">
         {manifest && manifest.missing.length > 0 && <MissingAssetsWarning ids={manifest.missing} />}
         <CreationScreen onSubmit={create} />
+        <details className="tia-start-options">
+          <summary>Já tenho um save ou quero ajustar o som</summary>
+          <div className="tia-main">
+            <SettingsScreen state={null} notify={showMessage} onBeforeReplace={stopLoop} />
+          </div>
+        </details>
+        {message && (
+          <p className="tia-flash" role="alert">
+            {message}
+          </p>
+        )}
       </div>
     );
   }
 
   const data = state.data;
   const hunt = data.hunt;
+  // `useMemo` não serve: o estado é mutado no lugar e o guia lê dados que mudam sem trocar a referência.
+  const guide = nextStep(state);
   const searching = hunt?.kind === "searching" ? searchingProgress(hunt, now) : 0;
 
   return (
@@ -202,6 +224,17 @@ export function App() {
       <BattleCanvas battle={state.activeBattle} />
 
       <main className="tia-main">
+        {guide && screen !== "options" && (
+          <aside className="tia-guide" aria-label="Próximo passo">
+            <p className="tia-guide__text">
+              <span className="tia-guide__tag">Próximo passo</span>
+              {guide.text}
+            </p>
+            {screen !== guide.screen && (
+              <ActionButton label={`Ir para ${guide.go}`} variant="secondary" onClick={() => setScreen(guide.screen)} />
+            )}
+          </aside>
+        )}
         {screen === "king" && <KingScreen state={state} onChangeSkin={changeSkin} />}
         {screen === "heroes" && <HeroesScreen state={state} onAssign={assign} />}
         {screen === "team" && <TeamScreen state={state} onAssign={assign} />}
@@ -209,6 +242,7 @@ export function App() {
         {screen === "market" && <MarketScreen state={state} notify={showMessage} />}
         {screen === "tower" && <TowerScreen state={state} searching={searching} />}
         {screen === "boss" && <BossScreen state={state} />}
+        {screen === "options" && <SettingsScreen state={state} notify={showMessage} onBeforeReplace={stopLoop} />}
       </main>
 
       {state.bossResult && (
