@@ -12,7 +12,7 @@
  * Raízes servidas, em ordem:
  *   1. apps/game-web/preview  — bundle de produção leve (vite --mode preview)
  *   2. apps/game-web/public   — assets do pack + manifest.json
- *   3. assets/sprites         — fallback (symlink para o pack re-clonado)
+ *   3. assets/generated + assets/sprites — versionados; `/assets/<x>` resolve também como `<x>`
  *
  * Rotas desconhecidas que NÃO pedem asset caem no index.html (SPA).
  * Porta 5173 em 0.0.0.0: é a porta que o preview do ambiente exponha.
@@ -74,9 +74,19 @@ async function tryFile(path) {
 const server = createServer(async (req, res) => {
   const urlPath = req.url === "/" ? "/index.html" : (req.url ?? "/index.html");
 
-  // 1) asset ou arquivo direto nas raízes, em ordem
+  // 1) asset ou arquivo direto nas raízes, em ordem.
+  //    `/assets/<caminho>` também é tentado SEM o prefixo: o manifesto
+  //    aponta `<caminho>` relativo ao pack versionado (assets/sprites,
+  //    assets/generated). Assim o preview funciona num clone limpo, sem
+  //    depender da cópia gerada em `public/assets/` (não versionada).
+  const stripped = urlPath.startsWith("/assets/") ? urlPath.slice("/assets".length) : null;
+  const attempts = [];
   for (const root of ROOTS) {
-    const candidate = safeJoin(root, urlPath);
+    attempts.push([root, urlPath]);
+    if (stripped) attempts.push([root, stripped]);
+  }
+  for (const [root, rel] of attempts) {
+    const candidate = safeJoin(root, rel);
     if (!candidate) continue;
     const hit = await tryFile(candidate);
     if (hit) {
