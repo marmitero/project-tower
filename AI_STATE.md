@@ -1,6 +1,6 @@
 # AI_STATE — handoff vivo do Tower Idle Adventure
 
-**Última atualização:** 2026-10-03 (pós-Fase 13: rebalanceamento de ritmo e desafio do combate — ADR-030)
+**Última atualização:** 2026-10-03 (planejamento da fase de arte "otimização e estilização" — ADR-032; nenhuma imagem gerada)
 **Estado:** **FASE 1–13 concluídas — MVP LOCAL JOGÁVEL (7 de 7 etapas)** (ADR-028). Próximo: **FASE 14 — Painel Admin** (pós-MVP, regra Admin-Ready) e a **Fase Online**. Como jogar no Windows: [`docs/PLAY_LOCAL.md`](docs/PLAY_LOCAL.md) (`JOGAR.bat`).
 **Preview:** servidor estático autocontido (ADR-018) — `node scripts/serve-preview.mjs` (porta 5173). Se o ambiente resetar, subir UMA linha; não depende de `node_modules`.
 **Repositório:** `marmitero/project-tower`
@@ -351,6 +351,8 @@ Todas as 15 têm teste **passando** hoje. Os arquivos abaixo existem e rodam em 
 | [`docs/ART_GUIDELINES.md`](docs/ART_GUIDELINES.md) | Direção de arte, pipeline, QA |
 | [`docs/ASSET_INVENTORY.md`](docs/ASSET_INVENTORY.md) | **Inventário concreto dos 422 sprites** |
 | [`docs/ASSET_GAP.md`](docs/ASSET_GAP.md) | **Lacunas de arte para o MVP** (áudio, UI, retratos) |
+| [`docs/STYLIZATION_ROADMAP.md`](docs/STYLIZATION_ROADMAP.md) | **Roadmap da fase de arte** (ondas, lotes de 10 gerações, metas M1–M10) |
+| [`docs/ART_PIPELINE.md`](docs/ART_PIPELINE.md) | **Pipeline de arte** (spec medida dos sprites, `ita-atlas-v1`, prompts, chroma key, validação) |
 | [`docs/AUDIO_GUIDELINES.md`](docs/AUDIO_GUIDELINES.md) | Áudio (esboço — FASE Polish) |
 | [`docs/SECURITY.md`](docs/SECURITY.md) | Threat model, RLS, anti-cheat |
 | [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md) | Orçamento de performance |
@@ -467,6 +469,14 @@ editar `config/src/heroes.ts`.
 - **Calibração por tamanho de equipe** (`BALANCE_REPORT.md`, seção "Chefes da Arena"): chefe 1 vence com 1 herói; chefe 2 com 2; chefes 3–8 exigem 3 heróis no nível do chefe. Nível do chefe ≈ nível do Rei exigido × f(n) (f = 1 / 0,74 / 0,63).
 - Testes: `engine/boss-battle` (16), `game-core/boss` (33), `config/boss-content` (12), assets dos chefes (integração), migração de save v5→v6. Suíte completa verde.
 - **Cuidados:** a tentativa é consumida ao ENTRAR; `GameState.clock()` em toda marca de tempo; recalibrar chefes se mexer em IAS/equipamento/XP (`npm run report:balance -- --md`).
+
+### Fase de arte — "otimização e estilização" (ADR-032, 2026-10-03) — PLANEJADA
+
+- **Estado:** só documentação (`docs/STYLIZATION_ROADMAP.md`, `docs/ART_PIPELINE.md`, ADR-032). **0 imagens geradas, 0 código alterado.** Painel Admin (Fase 14) vem depois.
+- **Regra do usuário:** ≤ **10 gerações de imagem por sessão**; ao fim do lote parar, explicar, aplicar no jogo, listar o próximo passo e **esperar "lote NN aprovado"**. Sprites com fundo magenta `#FF00FF`; poses/movimentação iguais às do pack.
+- **Plano:** Onda 1 = andares 1–10 (50 inimigos, 10 arenas) + UI GBA + login (zona reservada ao Google) + 12 retratos do Rei + 25 heróis (5ª classe Clérigo) ≈ 83 gerações ≈ 11–13 lotes; Etapa F0 (0 gerações: scripts `art:*`, `ita-atlas-v1`, `ArenaKit`, carga por andar, ADR-033) antes do Lote 1.
+- **Gate 0 pendente:** D1 (escopo por ondas), D3 (Clérigo), nomes/conceitos (roadmap §3.1/§4.3), "go" para F0 + Lote 1.
+- **Cuidados:** NÃO gerar nada antes do Gate 0; contador de gerações no `PROVENANCE.md`; `art:validate` decide fidelidade (limiares a calibrar no Lote 1); UI gerada sem texto.
 
 ### Pós-Fase 13 — HUB em 3 colunas, painel de dados e curva de XP (ADR-031, 2026-10-03)
 

@@ -26,7 +26,8 @@ FASE 13 ✅ MVP LOCAL        ← CONCLUÍDA (ADR-028; MVP local jogável — `do
   ↳ pós-13 ✅ Batalha visível: arena, caminhada, VFX, correção da tela preta (ADR-029)
   ↳ pós-13 ✅ Rebalanceamento: ataque ≈ 2 s, desgaste/poções, IAS por nível de item (ADR-030)
   ↳ pós-13 ✅ HUB em 3 colunas, painel de dados (XP/h·Coin/h·Custo/h), chat simulado, curva de XP Nv100 ≈ 24 h (ADR-031)
-FASE 14 ⬜ Painel Admin      (pós-MVP — docs/ADMIN_PANEL.md, ADR-022)
+ARTE   🟡 Otimização e estilização (PLANEJADA — docs/STYLIZATION_ROADMAP.md, docs/ART_PIPELINE.md, ADR-032; lotes de 10 gerações; aguarda Gate 0)
+FASE 14 ⬜ Painel Admin      (pós-MVP, depois da arte — docs/ADMIN_PANEL.md, ADR-022)
 Online ⬜ → Social ⬜ → Market ⬜ → PvP ⬜ → Monetização ⬜ → Polish ⬜ → Beta ⬜ → Lançamento
 ```
 

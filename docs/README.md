@@ -66,6 +66,8 @@ AI_STATE.md → GDD.md → GAME_SYSTEMS.md → documento do sistema específico 
 | [`CONFIGURATION.md`](CONFIGURATION.md) | **Configuração centralizada** — todo número que não pode ser hardcoded |
 | [`UI_UX.md`](UI_UX.md) | HUD, telas, fluxos, responsividade, desktop-first e Android browser |
 | [`ART_GUIDELINES.md`](ART_GUIDELINES.md) | Direção de arte, pipeline, política de assets, placeholders e QA |
+| [`STYLIZATION_ROADMAP.md`](STYLIZATION_ROADMAP.md) | **Roadmap da fase "otimização e estilização"**: ondas, lotes de 10 gerações, metas M1–M10 (ADR-032) |
+| [`ART_PIPELINE.md`](ART_PIPELINE.md) | **Pipeline de arte**: spec medida dos sprites, `ita-atlas-v1`, prompts, chroma key, validação, integração |
 | [`ASSET_INVENTORY.md`](ASSET_INVENTORY.md) | Inventário do pack de sprites disponível, mapeamento de classes/inimigos e licenças |
 | [`AUDIO_GUIDELINES.md`](AUDIO_GUIDELINES.md) | Trilha, SFX, mixagem, acessibilidade e performance de áudio |
 | [`SECURITY.md`](SECURITY.md) | Threat model, RLS, server authority, anti-cheat, segredos e variáveis de ambiente |

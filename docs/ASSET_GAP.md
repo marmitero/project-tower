@@ -143,11 +143,15 @@ A §28 exige *"uma animação de busca que comunique que o jogo está procurando
 
 ### 🟡 3.5 Torre — sem identidade visual por andar
 
+> **Plano:** arena própria por andar, 5 inimigos por andar e demais metas estão em [`STYLIZATION_ROADMAP.md`](STYLIZATION_ROADMAP.md) (ADR-032); especificação em [`ART_PIPELINE.md`](ART_PIPELINE.md).
+
 **Gravidade:** média · **Bloqueia:** §22
 
 A §22 fala em *"progressão visual"* e a `P-028` cobre isso. O tileset tem 3 biomas (dungeon, cave, bone) e 20 props, o que dá base. **Falta:** um mapeamento andar→bioma e a arte de estágio (e.g., o que muda quando o jogador sobe de andar). Não é arte ausente, é direção de arte ausente.
 
 ### 🟢 3.6 Ícones de sistema do jogo
+
+> **Plano:** kit de botões GBA e 16 ícones no Lote 1 (`STYLIZATION_ROADMAP.md` §5, `ART_PIPELINE.md` §10).
 
 **Gravidade:** baixa
 

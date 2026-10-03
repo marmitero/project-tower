@@ -316,3 +316,4 @@ test("nenhum placeholder em produção", () => {
 - [`COMBAT_SYSTEM.md`](COMBAT_SYSTEM.md) — eventos que viram animação
 - [`AUDIO_GUIDELINES.md`](AUDIO_GUIDELINES.md) — o outro canal de feedback
 - [`DECISIONS_LOG.md`](DECISIONS_LOG.md#adr-004--reaproveitamento-do-pack-de-sprites) — ADR-004
+- [`STYLIZATION_ROADMAP.md`](STYLIZATION_ROADMAP.md) e [`ART_PIPELINE.md`](ART_PIPELINE.md) — fase "otimização e estilização" (ADR-032): lotes de 10 gerações, spec medida dos sprites e validação de fidelidade
