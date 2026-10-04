@@ -57,3 +57,18 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 7 | `enemies/royal_mummy` | atlas | aprovado (reconstruído do commit WIP) | guide_orc, goblin_captain | Múmia Real (elite, andar 4), faraó com foice e faixa vermelha |
 | 8 | `portraits/heroes/clerigos` | portrait | aprovado (reconstruído do commit WIP) | king_ref | Retratos dos 4 clérigos (2x2, magenta): sacerdotisa, monge, bispo, druida |
 
+## Lote L5 — 10/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `heroes/guardian_rubro` | atlas | aprovado | guide_hero, borin | Cavaleiro Rubro (Guardião 3), armadura carmesim, elmo com pluma, guia hero magenta |
+| 2 | `heroes/guardian_monk` | atlas | aprovado | guide_hero, borin | Monge de Ferro (Guardião 4), monge careca de punhos de ferro, soco no lugar da espada |
+| 3 | `heroes/guardian_lord` | atlas | aprovado | guide_hero, borin | Lorde Cinzento (Guardião 5), cavaleiro negro de elmo com chifres, capa cinza |
+| 4 | `heroes/ranger_stalker` | atlas | aprovado visual (IoU idle 0,43: capuz e adagas) | guide_archer, kaia | Caçador Furtivo (Arqueiro 2), capuz e máscara, duas adagas |
+| 5 | `heroes/ranger_crossbow` | atlas | reprovado (folha 8x4 em 16:9 — layout errado) | guide_archer, kaia | Besteiro Pesado (Arqueiro 3), 1ª versão |
+| 6 | `heroes/ranger_warden` | atlas | aprovado | guide_archer, kaia | Guardiã da Floresta (Arqueiro 4), ruiva com falcão no ombro |
+| 7 | `heroes/ranger_nomad` | atlas | reprovado (folha 6x4 em 16:9; refazer no L6) | guide_archer, kaia | Arqueiro Nômade (Arqueiro 5), turbante e arco curvo — 1ª versão |
+| 8 | `heroes/arcanist_pyro` | atlas | reprovado (folha 6x4; hurt/dead com outro personagem) | guide_mage, aurora | Piromante (Arcanista 2), 1ª versão |
+| 9 | `heroes/ranger_crossbow` | atlas | aprovado com ressalva (fundo rosa-claro 253,142,252 tratado por normalizeKeyColour; hurt segura arco) | guide_archer, kaia | Besteiro Pesado — refação com 'tall portrait 4:5, exactly 4 columns' |
+| 10 | `heroes/arcanist_pyro` | atlas | aprovado | guide_mage, aurora | Piromante — refação com 'tall portrait 4:5, exactly 4 columns, same character in every frame' |
+

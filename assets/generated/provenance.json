@@ -362,6 +362,126 @@
         "king_ref"
       ],
       "verdict": "aprovado (reconstruído do commit WIP)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/guardian_rubro",
+      "kind": "atlas",
+      "prompt": "Cavaleiro Rubro (Guardião 3), armadura carmesim, elmo com pluma, guia hero magenta",
+      "refs": [
+        "guide_hero",
+        "borin"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/guardian_monk",
+      "kind": "atlas",
+      "prompt": "Monge de Ferro (Guardião 4), monge careca de punhos de ferro, soco no lugar da espada",
+      "refs": [
+        "guide_hero",
+        "borin"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/guardian_lord",
+      "kind": "atlas",
+      "prompt": "Lorde Cinzento (Guardião 5), cavaleiro negro de elmo com chifres, capa cinza",
+      "refs": [
+        "guide_hero",
+        "borin"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/ranger_stalker",
+      "kind": "atlas",
+      "prompt": "Caçador Furtivo (Arqueiro 2), capuz e máscara, duas adagas",
+      "refs": [
+        "guide_archer",
+        "kaia"
+      ],
+      "verdict": "aprovado visual (IoU idle 0,43: capuz e adagas)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/ranger_crossbow",
+      "kind": "atlas",
+      "prompt": "Besteiro Pesado (Arqueiro 3), 1ª versão",
+      "refs": [
+        "guide_archer",
+        "kaia"
+      ],
+      "verdict": "reprovado (folha 8x4 em 16:9 — layout errado)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/ranger_warden",
+      "kind": "atlas",
+      "prompt": "Guardiã da Floresta (Arqueiro 4), ruiva com falcão no ombro",
+      "refs": [
+        "guide_archer",
+        "kaia"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/ranger_nomad",
+      "kind": "atlas",
+      "prompt": "Arqueiro Nômade (Arqueiro 5), turbante e arco curvo — 1ª versão",
+      "refs": [
+        "guide_archer",
+        "kaia"
+      ],
+      "verdict": "reprovado (folha 6x4 em 16:9; refazer no L6)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/arcanist_pyro",
+      "kind": "atlas",
+      "prompt": "Piromante (Arcanista 2), 1ª versão",
+      "refs": [
+        "guide_mage",
+        "aurora"
+      ],
+      "verdict": "reprovado (folha 6x4; hurt/dead com outro personagem)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/ranger_crossbow",
+      "kind": "atlas",
+      "prompt": "Besteiro Pesado — refação com 'tall portrait 4:5, exactly 4 columns'",
+      "refs": [
+        "guide_archer",
+        "kaia"
+      ],
+      "verdict": "aprovado com ressalva (fundo rosa-claro 253,142,252 tratado por normalizeKeyColour; hurt segura arco)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/arcanist_pyro",
+      "kind": "atlas",
+      "prompt": "Piromante — refação com 'tall portrait 4:5, exactly 4 columns, same character in every frame'",
+      "refs": [
+        "guide_mage",
+        "aurora"
+      ],
+      "verdict": "aprovado"
     }
   ]
 }

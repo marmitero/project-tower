@@ -125,3 +125,34 @@ export function chromaKey(raw, opts = {}) {
   const residual = residualMagenta(out);
   return { raw: out, stats: { islandsRemoved: islands, residual, residualOk: residual <= THRESHOLDS.residualMagenta } };
 }
+
+/**
+ * Fundo "quase magenta" (Lote 5, ADR-040): alguns geradores devolvem o fundo rosa-claro (ex.: 253,142,252)
+ * em vez de #FF00FF, e o chroma key deixa uma franja enorme. Se os 4 cantos concordam entre si e NÃO são
+ * magenta puro, todo pixel perto dessa cor (distância RGB ≤ `tolerance`) vira #FF00FF antes da chave.
+ * Não mexe em folhas que já vêm com magenta de verdade. Determinístico, zero geração.
+ *
+ * @returns {{raw: {w:number,h:number,data:Uint8Array}, replaced: number, colour: number[]|null}}
+ */
+export function normalizeKeyColour(raw, { tolerance = 60, cornerAgreement = 24 } = {}) {
+  const { w, h, data } = raw;
+  const at = (x, y) => [data[(y * w + x) * 4], data[(y * w + x) * 4 + 1], data[(y * w + x) * 4 + 2]];
+  const corners = [at(2, 2), at(w - 3, 2), at(2, h - 3), at(w - 3, h - 3)];
+  const base = corners[0];
+  const agree = corners.every((c) => Math.hypot(c[0] - base[0], c[1] - base[1], c[2] - base[2]) <= cornerAgreement);
+  const isPure = Math.hypot(base[0] - 255, base[1], base[2] - 255) <= 24;
+  const pinkish = Math.min(base[0], base[2]) - base[1] > 60 && base[0] > 150 && base[2] > 150;
+  if (!agree || isPure || !pinkish) return { raw, replaced: 0, colour: null };
+  const out = cloneRaw(raw);
+  let replaced = 0;
+  for (let i = 0; i < out.data.length; i += 4) {
+    const d = Math.hypot(out.data[i] - base[0], out.data[i + 1] - base[1], out.data[i + 2] - base[2]);
+    if (d <= tolerance) {
+      out.data[i] = 255;
+      out.data[i + 1] = 0;
+      out.data[i + 2] = 255;
+      replaced += 1;
+    }
+  }
+  return { raw: out, replaced, colour: base };
+}

@@ -27,7 +27,7 @@ import { reflowRows } from "../tools/art/reflow.mjs";
 import { despeckleCells } from "../tools/art/despeckle.mjs";
 import { GUIDE_BY_KIND, HEIGHT_BY_KIND, ARENA, PACK, BUDGET } from "../tools/art/spec.mjs";
 import { readRaw, writePng, resizeSmart, frameOf, crop, bbox } from "../tools/art/image.mjs";
-import { chromaKey } from "../tools/art/key.mjs";
+import { chromaKey, normalizeKeyColour } from "../tools/art/key.mjs";
 import { atlasMeta, buildGuide, guideOnMagenta, normalizeAtlas } from "../tools/art/atlas.mjs";
 import { formatReport, validateAtlas } from "../tools/art/validate.mjs";
 import { contactSheet } from "../tools/art/contact.mjs";
@@ -111,7 +111,9 @@ async function main() {
       const kind = need(opt.kind, "--kind");
       const guideName = opt.guide ?? GUIDE_BY_KIND[kind];
       const outDir = resolve(opt.out ?? join(ROOT, "assets/generated"));
-      const { raw: keyed00, stats } = chromaKey(await readRaw(need(args[0], "<bruto>")));
+      const sheet0 = normalizeKeyColour(await readRaw(need(args[0], "<bruto>")));
+      if (sheet0.colour) console.log(`${id}: fundo rosa-claro (${sheet0.colour.join(",")}) tratado como magenta — ${sheet0.replaced} px`);
+      const { raw: keyed00, stats } = chromaKey(sheet0.raw);
       // geradores que devolvem a folha quadrada: reorganiza as 5 linhas sem esticar (tools/art/reflow.mjs)
       const { raw: keyed0, reflowed, bands } = reflowRows(keyed00);
       // fragmentos do quadro vizinho dentro da célula: apagados antes de medir (tools/art/despeckle.mjs)
