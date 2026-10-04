@@ -488,9 +488,10 @@
       "batch": "L6",
       "asset": "heroes/arcanist_cryomancer",
       "kind": "atlas",
-      "prompt": "Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos)",
+      "prompt": "Criomante (Arcanista 3): mago de manto azul-gelo, capuz branco, cristal de gelo no cajado. Guia mage magenta + estilo do Piromante; TALL PORTRAIT 4:5, EXACTLY 4 columns and 5 rows, magenta #FF00FF, sem efeitos.",
       "refs": [
-        "guia magenta + estilo aprovado"
+        "guide_mage.magenta",
+        "style_arcanist_pyro"
       ],
       "verdict": "ok"
     },
@@ -499,9 +500,10 @@
       "batch": "L6",
       "asset": "heroes/arcanist_stormcaller",
       "kind": "atlas",
-      "prompt": "Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos)",
+      "prompt": "Tempestuário (Arcanista 4): mago jovem de cabelo escuro, túnica violeta com friso dourado, cajado com orbe. Guia mage magenta + estilo do Piromante; mesmo prompt-modelo.",
       "refs": [
-        "guia magenta + estilo aprovado"
+        "guide_mage.magenta",
+        "style_arcanist_pyro"
       ],
       "verdict": "ok"
     },
@@ -510,9 +512,10 @@
       "batch": "L6",
       "asset": "heroes/arcanist_elder",
       "kind": "atlas",
-      "prompt": "Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos)",
+      "prompt": "Mago Ancião (Arcanista 5): mago idoso de barba longa, chapéu pontudo roxo, manto magenta e dourado. Guia mage magenta + estilo do Piromante; mesmo prompt-modelo.",
       "refs": [
-        "guia magenta + estilo aprovado"
+        "guide_mage.magenta",
+        "style_arcanist_pyro"
       ],
       "verdict": "ok"
     },
@@ -521,9 +524,10 @@
       "batch": "L6",
       "asset": "heroes/shadowcaller_bones",
       "kind": "atlas",
-      "prompt": "Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos)",
+      "prompt": "Necromante dos Ossos (Invocador 2): necromante encapuzado com bastão de caveira. 2ª versão depois da reprovação (a 1ª tinha hurt/death fora do guia).",
       "refs": [
-        "guia magenta + estilo aprovado"
+        "guide_necromancer.magenta",
+        "style_candle_skull"
       ],
       "verdict": "refeito"
     },
@@ -532,9 +536,10 @@
       "batch": "L6",
       "asset": "heroes/shadowcaller_witch",
       "kind": "atlas",
-      "prompt": "Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos)",
+      "prompt": "Bruxa do Pântano (Invocador 3): bruxa de chapéu verde-musgo, cabelo ruivo, frascos no cinto. Guia necromancer magenta + estilo do Crânio Necrovela.",
       "refs": [
-        "guia magenta + estilo aprovado"
+        "guide_necromancer.magenta",
+        "style_candle_skull"
       ],
       "verdict": "ok"
     },
@@ -543,9 +548,10 @@
       "batch": "L6",
       "asset": "heroes/shadowcaller_reaper",
       "kind": "atlas",
-      "prompt": "Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos)",
+      "prompt": "Ceifeira (Invocador 4): ceifadora encapuzada de negro com foice grande. Guia necromancer magenta + estilo da Múmia Real.",
       "refs": [
-        "guia magenta + estilo aprovado"
+        "guide_necromancer.magenta",
+        "style_royal_mummy"
       ],
       "verdict": "ok"
     },
@@ -554,9 +560,10 @@
       "batch": "L6",
       "asset": "heroes/shadowcaller_demon",
       "kind": "atlas",
-      "prompt": "Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos)",
+      "prompt": "Demonólogo (Invocador 5): mago de manto carmesim com chifres, cajado de crânio. Guia necromancer magenta + estilo da Múmia Real.",
       "refs": [
-        "guia magenta + estilo aprovado"
+        "guide_necromancer.magenta",
+        "style_royal_mummy"
       ],
       "verdict": "ok"
     },
@@ -565,20 +572,21 @@
       "batch": "L6",
       "asset": "heroes/ranger_nomad",
       "kind": "atlas",
-      "prompt": "Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos)",
+      "prompt": "Arqueiro Nômade (refação do Lote 5): arqueiro de turbante e colete, arco curvo. Guia archer magenta + estilo da Kaia; folha aprovada depois de 2 tentativas (a 1ª, do L5, veio 6x4 em 16:9).",
       "refs": [
-        "guia magenta + estilo aprovado"
+        "guide_archer.magenta",
+        "style_ranger_kaia"
       ],
       "verdict": "ok"
     },
     {
       "date": "2026-10-04",
       "batch": "L6",
-      "asset": "portraits/heroes (4 bustos: Criomante, Tempestuário, Mago Ancião, Vorath)",
+      "asset": "portraits/heroes (Criomante, Tempestuário, Mago Ancião, Vorath)",
       "kind": "portrait",
-      "prompt": "Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos)",
+      "prompt": "Folha 2x2 de retratos de busto sobre magenta: Criomante (capuz azul-gelo), Tempestuário (jovem de violeta), Mago Ancião (barba + chapéu roxo) e Vorath (encapuzado, fisionomia pálida) — 512 px + 256 px.",
       "refs": [
-        "guia magenta + estilo aprovado"
+        "king_ref"
       ],
       "verdict": "ok"
     },
@@ -587,11 +595,11 @@
       "batch": "L6",
       "asset": "heroes/shadowcaller_bones#refacao",
       "kind": "atlas",
-      "prompt": "1ª tentativa do Necromante dos Ossos",
+      "prompt": "1ª tentativa do Necromante dos Ossos: quadros hurt/death não seguiam o guia (personagem diferente) — descartada e refeita com 'same character in EVERY frame'.",
       "refs": [
-        "guia necromancer"
+        "guide_necromancer.magenta"
       ],
-      "verdict": "reprovada (death fora do guia) -> refeita"
+      "verdict": "reprovada (hurt/death fora do guia) -> refeita"
     }
   ]
 }

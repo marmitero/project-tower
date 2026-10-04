@@ -76,14 +76,14 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 
 | # | Asset | Tipo | Veredito | Referências | Prompt |
 |---|---|---|---|---|---|
-| 1 | `heroes/arcanist_cryomancer` | atlas | ok | guia magenta + estilo aprovado | Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos) |
-| 2 | `heroes/arcanist_stormcaller` | atlas | ok | guia magenta + estilo aprovado | Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos) |
-| 3 | `heroes/arcanist_elder` | atlas | ok | guia magenta + estilo aprovado | Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos) |
-| 4 | `heroes/shadowcaller_bones` | atlas | refeito | guia magenta + estilo aprovado | Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos) |
-| 5 | `heroes/shadowcaller_witch` | atlas | ok | guia magenta + estilo aprovado | Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos) |
-| 6 | `heroes/shadowcaller_reaper` | atlas | ok | guia magenta + estilo aprovado | Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos) |
-| 7 | `heroes/shadowcaller_demon` | atlas | ok | guia magenta + estilo aprovado | Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos) |
-| 8 | `heroes/ranger_nomad` | atlas | ok | guia magenta + estilo aprovado | Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos) |
-| 9 | `portraits/heroes (4 bustos: Criomante, Tempestuário, Mago Ancião, Vorath)` | portrait | ok | guia magenta + estilo aprovado | Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos) |
-| 10 | `heroes/shadowcaller_bones#refacao` | atlas | reprovada (death fora do guia) -> refeita | guia necromancer | 1ª tentativa do Necromante dos Ossos |
+| 1 | `heroes/arcanist_cryomancer` | atlas | ok | guide_mage.magenta, style_arcanist_pyro | Criomante (Arcanista 3): mago de manto azul-gelo, capuz branco, cristal de gelo no cajado. Guia mage magenta + estilo do |
+| 2 | `heroes/arcanist_stormcaller` | atlas | ok | guide_mage.magenta, style_arcanist_pyro | Tempestuário (Arcanista 4): mago jovem de cabelo escuro, túnica violeta com friso dourado, cajado com orbe. Guia mage ma |
+| 3 | `heroes/arcanist_elder` | atlas | ok | guide_mage.magenta, style_arcanist_pyro | Mago Ancião (Arcanista 5): mago idoso de barba longa, chapéu pontudo roxo, manto magenta e dourado. Guia mage magenta +  |
+| 4 | `heroes/shadowcaller_bones` | atlas | refeito | guide_necromancer.magenta, style_candle_skull | Necromante dos Ossos (Invocador 2): necromante encapuzado com bastão de caveira. 2ª versão depois da reprovação (a 1ª ti |
+| 5 | `heroes/shadowcaller_witch` | atlas | ok | guide_necromancer.magenta, style_candle_skull | Bruxa do Pântano (Invocador 3): bruxa de chapéu verde-musgo, cabelo ruivo, frascos no cinto. Guia necromancer magenta +  |
+| 6 | `heroes/shadowcaller_reaper` | atlas | ok | guide_necromancer.magenta, style_royal_mummy | Ceifeira (Invocador 4): ceifadora encapuzada de negro com foice grande. Guia necromancer magenta + estilo da Múmia Real. |
+| 7 | `heroes/shadowcaller_demon` | atlas | ok | guide_necromancer.magenta, style_royal_mummy | Demonólogo (Invocador 5): mago de manto carmesim com chifres, cajado de crânio. Guia necromancer magenta + estilo da Múm |
+| 8 | `heroes/ranger_nomad` | atlas | ok | guide_archer.magenta, style_ranger_kaia | Arqueiro Nômade (refação do Lote 5): arqueiro de turbante e colete, arco curvo. Guia archer magenta + estilo da Kaia; fo |
+| 9 | `portraits/heroes (Criomante, Tempestuário, Mago Ancião, Vorath)` | portrait | ok | king_ref | Folha 2x2 de retratos de busto sobre magenta: Criomante (capuz azul-gelo), Tempestuário (jovem de violeta), Mago Ancião  |
+| 10 | `heroes/shadowcaller_bones#refacao` | atlas | reprovada (hurt/death fora do guia) -> refeita | guide_necromancer.magenta | 1ª tentativa do Necromante dos Ossos: quadros hurt/death não seguiam o guia (personagem diferente) — descartada e refeit |
 
