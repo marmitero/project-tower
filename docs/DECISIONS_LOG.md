@@ -1009,3 +1009,20 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 **Alternativas rejeitadas:** (a) remendar à mão a folha 8×4 do Besteiro (fidelidade de movimento incerta, e os quadros *hurt/dead* eram inconsistentes); (b) usar uma 11ª geração (viola a regra de 10); (c) mudar a classe do Ossian para ter skill pronta (a skill nova é só dado).
 
 **Consequências:** manifesto +7 atlas; `skills` = 27 (17 ativas); `HERO_ROSTER` = 18; ferramenta de plano corporal continua adiada (todos os heróis até o L7 são bípedes).
+
+## ADR-041 — Handoff da fase de arte: `ART_HANDOFF.md` + `art:refs`
+
+**Data:** 2026-10-04 · **Status:** ✅ Aceita · **Tipo:** A (documentação/ferramenta) · **Pedido do usuário:** *"atualize a documentação garantindo que quando eu iniciar outra conversa, apenas acessando o repo e lendo README + AI_STATE + documentação e analisando as artes, você consiga, sem histórico, continuar o projeto do mesmo jeito, sem se perder nem mudar o estilo de arte."*
+
+**Problema:** o conhecimento operacional da arte (regras de 10 gerações e de parada, receitas de prompt que funcionam, falhas do gerador, limites que a CI exige de heróis/skills/inimigos, onde editar) estava só na conversa e espalhado em ADRs. As referências usadas no gerador (`f01_ref`, `king_ref`, guias) viviam em `assets/_incoming/`, que é ignorada pelo Git, e se perdiam a cada reciclagem do sandbox.
+
+| Item | Decisão |
+|---|---|
+| Documento | [`ART_HANDOFF.md`](ART_HANDOFF.md): regras do usuário, estado por lote, spec de estilo, preparação do ambiente, receitas de prompt (herói/inimigo/kit/retratos), fluxo de lote por comando, tabelas do estado atual, onde editar e o que a CI exige, fila L6–L11, armadilhas |
+| Referências reproduzíveis | `scripts/art-refs.mjs` (`npm run art:refs`) recria em `assets/_incoming/refs/` os guias magenta, referências de estilo (copiadas de `assets/generated/`), kits de arena 4×4 recompostos dos ladrilhos e a folha 2×2 de retratos do Rei — tudo derivado do que já está commitado, sem geração nova |
+| Ordem de leitura | `README.md` → `AI_STATE.md` → `ART_HANDOFF.md` (se for arte) → documento do sistema; **olhar `docs/art-review/` e `assets/generated/`** antes de gerar |
+| Fonte da verdade | O handoff resume e aponta; números e listas vivem no config (`packages/config/src/*`) e em `tools/art/spec.mjs` — se divergirem, vale o código |
+
+**Alternativas rejeitadas:** versionar `assets/_incoming/refs/` (duplica PNGs grandes; o script os reconstrói); manter só ADRs (obriga a ler 10 registros para montar um prompt).
+
+**Consequências:** todo lote futuro atualiza §2 e §9 do `ART_HANDOFF.md` junto com o ADR e o `AI_STATE`; `check-docs` passa a cobrir 39 documentos.

@@ -39,7 +39,12 @@ https://github.com/marmitero/project-tower/archive/refs/heads/arena/01a0f1f1-pro
 
 Linux/macOS: `./jogar.sh` (ou `npm run play`). **Nunca** abra `index.html` direto (`file://`): não funciona.
 
-### Pós-Fase 13 — Batalha visível (a mais recente)
+### Fase atual — arte "otimização e estilização" (Lote 5 de ~11; a mais recente)
+
+- **Em andamento, em lotes de 10 imagens geradas** (o usuário aprova cada lote com "lote NN aprovado"). Feito: Lotes 1–4 aprovados e **Lote 5 aguardando aprovação** — **18 heróis** em 5 classes (a 5ª, Clérigo, cura), **25 inimigos** (andares 1–4 com 5 papéis cada), **4 arenas** próprias, **12 retratos do Rei**, botões/ícones no estilo GBA e tela de login com o logotipo.
+- Faltam ~6 lotes (L6–L11: 7 heróis, arenas e inimigos dos andares 5–10) e depois a **Fase 14 — Painel Admin**. Para continuar a arte sem o histórico: leia [`AI_STATE.md`](AI_STATE.md) → **[`docs/ART_HANDOFF.md`](docs/ART_HANDOFF.md)** e olhe as imagens em `docs/art-review/` e `assets/generated/`. `npm run art:refs` recria os guias e referências de estilo.
+
+### Pós-Fase 13 — Batalha visível
 
 - Corrigida a **tela preta** da batalha (a cena não recebia a batalha) e entregue a **arena**: cenário de ladrilhos com tema por andar e para chefes, o **herói anda** até o próximo inimigo (que entra caminhando), **efeitos** de corte/faísca/fogo/raio/cura, sombra e recuo. Causa, auditoria e decisões: [`ADR-029`](docs/DECISIONS_LOG.md). Prova visual: `scripts/browser-smoke.mjs` (veja [`docs/TESTING.md`](docs/TESTING.md)).
 
@@ -67,7 +72,7 @@ Chefe é uma **atividade separada da Torre**: a **equipe inteira** (até 3 heró
 | | |
 |---|---|
 | Especificação | [`Master-Prompt.md`](Master-Prompt.md) — 125 seções, fonte de autoridade |
-| Documentação | [`docs/`](docs/README.md) — 38 documentos (+ este README e o `AI_STATE.md`) |
+| Documentação | [`docs/`](docs/README.md) — 39 documentos (+ este README e o `AI_STATE.md`) |
 | Handoff | [`AI_STATE.md`](AI_STATE.md) — **leia primeiro** |
 | Testes | 746 de lógica, interface (jsdom), jornada §118 e soak + 28 de arquitetura (`npm run check`) |
 | Assets | **422 sprites** do pack Nika Studio, versionados no repositório |
@@ -174,6 +179,7 @@ Você configura, decide, observa. **Nunca** clica para atacar.
 | Documento | O que é |
 |---|---|
 | **[`AI_STATE.md`](AI_STATE.md)** | **Handoff vivo.** Estado atual, decisões, pendências, próximo passo |
+| **[`docs/ART_HANDOFF.md`](docs/ART_HANDOFF.md)** | **Continuar a fase de arte sem histórico**: regras, estilo, prompts, fluxo, onde editar, fila de lotes |
 | **[`docs/PLAY_LOCAL.md`](docs/PLAY_LOCAL.md)** | **Como jogar no Windows** (passo a passo) e solução de problemas |
 | [`docs/MVP_ACCEPTANCE.md`](docs/MVP_ACCEPTANCE.md) | Matriz de aceite do MVP: §78 e §118 → testes |
 | [`docs/GDD.md`](docs/GDD.md) | Visão, pilares, fantasia central, escopo |

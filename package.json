@@ -52,7 +52,8 @@
     "art:trim": "node scripts/art.mjs trim",
     "art:backdrop": "node scripts/art.mjs backdrop",
     "play": "node scripts/play.mjs",
-    "play:debug": "npm run build:debug -w @tia/game-web && node scripts/play.mjs --debug"
+    "play:debug": "npm run build:debug -w @tia/game-web && node scripts/play.mjs --debug",
+    "art:refs": "node scripts/art-refs.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.3",

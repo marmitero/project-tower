@@ -1,5 +1,7 @@
 # Pipeline de arte — otimização e estilização
 
+> **Continuar a arte sem o histórico da conversa:** [`ART_HANDOFF.md`](ART_HANDOFF.md) (regras do usuário, receitas de prompt, fluxo por comando, onde editar, estado e fila de lotes).
+
 **Versão:** 0.2 · **Data:** 2026-10-03 · **Estado:** ✅ **F0 IMPLEMENTADA** (ferramentas, formato e renderer prontos e testados; **0 imagens geradas** — o Lote 1 é o primeiro). As seções marcam **[medido]** (fato do pack) e **[as-built]** (como ficou no código)
 **Roadmap:** [`STYLIZATION_ROADMAP.md`](STYLIZATION_ROADMAP.md) · **Decisão:** [ADR-032](DECISIONS_LOG.md) · **Base:** [`ART_GUIDELINES.md`](ART_GUIDELINES.md), [`ASSET_INVENTORY.md`](ASSET_INVENTORY.md), [`ASSET_GAP.md`](ASSET_GAP.md), [`OPENRPG_REFERENCE.md`](OPENRPG_REFERENCE.md)
 
