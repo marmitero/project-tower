@@ -1026,3 +1026,23 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 **Alternativas rejeitadas:** versionar `assets/_incoming/refs/` (duplica PNGs grandes; o script os reconstrói); manter só ADRs (obriga a ler 10 registros para montar um prompt).
 
 **Consequências:** todo lote futuro atualiza §2 e §9 do `ART_HANDOFF.md` junto com o ADR e o `AI_STATE`; `check-docs` passa a cobrir 39 documentos.
+
+## ADR-042 — Lote 6 da arte: Arcanista e Invocador fechados (26 heróis) e o Arqueiro Nômade
+
+**Data:** 2026-10-04 · **Status:** ✅ Aceita (aguarda o "lote 06 aprovado") · **Tipo:** B (arte + dados) · **Pedido do usuário:** *"considere o lote 5 validado e prossiga para o próximo lote."*
+
+**Gerações: 10/10.** 8 heróis em paralelo (um atlas 4×5 cada: Arcanista 3–5 e Invocador 2–5 **+ o Arqueiro Nômade**, que ficou pendente no L5), 1 folha 2×2 de retratos e **1 refação** (Necromante dos Ossos — a 1ª folha trouxe *hurt/death* com outro personagem). Todos os atlas usam guia magenta + uma folha já aprovada como estilo; o prompt-modelo do `ART_HANDOFF.md` §5.1 foi repetido sem alteração.
+
+| Item | Decisão |
+|---|---|
+| Elenco | Arcanista: Maelis, Cinder, **Sylas (Criomante), Zephyr (Tempestuário), Ordanis (Mago Ancião)** = 5/5 · Invocador: Vorath, **Vasko (Necromante dos Ossos), Morcha (Bruxa do Pântano), Sylvara (Ceifeira), Baalor (Demonólogo)** = 5/5 · Arqueiro **6** (extra: **Amir, o Nômade**) · Guardião 5 · Clérigo 5 ⇒ **26 heróis** (a meta do roadmap é ≥ 25 — **batida**) |
+| Skills assinatura (8 novas) | *Tempestade de Gelo* (0,55 × 2 golpes / 9 s), *Relâmpago em Cadeia* (0,85/7 s), *Lança Arcana* (1,25/10 s), *Saraivada de Ossos* (0,65 × 2 / 8 s), *Lâmina Venenosa* (1,0/6 s, veneno), *Ceifar Alma* (1,35/8 s), *Pacto Demoníaco* (2,0/12 s), *Tiro do Nômade* (1,3/6 s). Régua do teste estendida ao **Invocador** (±15 % do DPS da skill da classe em 1×1); Arcanista mantém o teto de 1,35× da Nova |
+| Atributos | Deltas de soma zero, poder ±8 % do modelo da classe (CI). **Hipótese da Ceifeira confirmada:** o engine **não** tem roubo de vida para skills (`SkillDef` só tem `heal`), então ela entrou como dano alto/cadência lenta — o conceito "roubo de vida" fica para quando o vocabulário de `GearEffect` chegar às skills |
+| Retratos | 1 folha 2×2 com **Criomante, Tempestuário, Mago Ancião e Vorath** (o Arcanista inicial ganhou retrato próprio e o Invocador também). Os 4 invocadores do lote usam o retrato da classe até o L7 |
+| Prioridade dentro do lote | O **Arqueiro Nômade** veio antes dos retratos porque era dívida do L5 e a arte dele já existia em texto de prompt; os retratos ficaram com a última geração disponível |
+| Verificação no jogo | Chromium real (Debug Mode): os 8 heróis criados por identidade, equipados no Slot 1 e **cada um entrou em batalha com o atlas próprio** — Criomante (*Tempestade de Gelo*), Ceifeira (*Ceifar Alma*), Demonólogo (*Pacto Demoníaco*), Amir (*Tiro do Nômade*) —, sem 404 nem erro de console. Códice mostrando os 8 como "Recrutado". `docs/art-review/lote-06/` |
+| Ressalvas | (a) o flash de dano pinta o sprite de branco — as capturas são tiradas **antes do primeiro golpe**; (b) 17 dos 26 heróis ainda usam o retrato da classe (só 9 têm retrato próprio: 4 clérigos, Vorath, Criomante, Tempestuário, Mago Ancião, Ossian); (c) os 4 invocadores do lote e o Amir usam o retrato da classe até o L7; (d) Osian, Aldric, Maelis e Vorath continuam sem atlas próprio (usam o corpo da classe) |
+
+**Alternativas rejeitadas:** (a) trocar "roubo de vida" da Ceifeira por uma regra nova no engine antes do L7 (não é regra do `Master-Prompt.md` e o lote é de arte); (b) gerar 4 retratos de invocadores em vez do Nômade (deixaria uma dívida antiga aberta e o Nômade é jogável agora); (c) usar a 10ª geração para mais um retrato (a refação do Necromante era obrigatória).
+
+**Consequências:** `HERO_ROSTER` = 26; `skills` = 35 (25 ativas); manifesto +8 atlas e +8 retratos. **A meta de heróis da Onda 1 está cumprida** — o L7 fica só com retratos (4 folhas) + andar 5, e os lotes L8–L11 com os andares 6–10.

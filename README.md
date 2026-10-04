@@ -41,8 +41,8 @@ Linux/macOS: `./jogar.sh` (ou `npm run play`). **Nunca** abra `index.html` diret
 
 ### Fase atual — arte "otimização e estilização" (Lote 5 de ~11; a mais recente)
 
-- **Em andamento, em lotes de 10 imagens geradas** (o usuário aprova cada lote com "lote NN aprovado"). Feito: Lotes 1–5 aprovados (**Lote 6 em andamento**) — **18 heróis** em 5 classes (a 5ª, Clérigo, cura), **25 inimigos** (andares 1–4 com 5 papéis cada), **4 arenas** próprias, **12 retratos do Rei**, botões/ícones no estilo GBA e tela de login com o logotipo.
-- Faltam ~6 lotes (L6–L11: 7 heróis, arenas e inimigos dos andares 5–10) e depois a **Fase 14 — Painel Admin**. Para continuar a arte sem o histórico: leia [`AI_STATE.md`](AI_STATE.md) → **[`docs/ART_HANDOFF.md`](docs/ART_HANDOFF.md)** e olhe as imagens em `docs/art-review/` e `assets/generated/`. `npm run art:refs` recria os guias e referências de estilo.
+- **Em andamento, em lotes de 10 imagens geradas** (o usuário aprova cada lote com "lote NN aprovado"). Feito: Lotes 1–5 aprovados e **Lote 6 entregue aguardando "lote 06 aprovado"** — **26 heróis** em 5 classes (a 5ª, Clérigo, cura) — **meta de 25 heróis batida** —, **25 inimigos** (andares 1–4 com 5 papéis cada), **4 arenas** próprias, **12 retratos do Rei**, botões/ícones no estilo GBA e tela de login com o logotipo. Cada herói novo traz **skill assinatura própria** (35 skills no catálogo).
+- Faltam ~5 lotes (L7–L11: retratos restantes e arenas/inimigos dos andares 5–10) e depois a **Fase 14 — Painel Admin**. Para continuar a arte sem o histórico: leia [`AI_STATE.md`](AI_STATE.md) → **[`docs/ART_HANDOFF.md`](docs/ART_HANDOFF.md)** e olhe as imagens em `docs/art-review/` e `assets/generated/`. `npm run art:refs` recria os guias e referências de estilo.
 
 ### Pós-Fase 13 — Batalha visível
 
@@ -74,8 +74,8 @@ Chefe é uma **atividade separada da Torre**: a **equipe inteira** (até 3 heró
 | Especificação | [`Master-Prompt.md`](Master-Prompt.md) — 125 seções, fonte de autoridade |
 | Documentação | [`docs/`](docs/README.md) — 39 documentos (+ este README e o `AI_STATE.md`) |
 | Handoff | [`AI_STATE.md`](AI_STATE.md) — **leia primeiro** |
-| Testes | 746 de lógica, interface (jsdom), jornada §118 e soak + 28 de arquitetura (`npm run check`) |
-| Assets | **422 sprites** do pack Nika Studio, versionados no repositório |
+| Testes | 783 de lógica, interface (jsdom), jornada §118 e soak + 28 de arquitetura (`npm run check`) |
+| Assets | **422 sprites** do pack Nika Studio + **arte gerada** (36 atlas de personagem, 4 kits de arena, retratos, UI GBA, login), tudo versionado |
 | Pendências | Nenhuma crítica aberta; decisões provisórias em [`docs/PENDING_RULES.md`](docs/PENDING_RULES.md) |
 
 ### Como rodar

@@ -2,7 +2,7 @@
 
 > **Continuar a arte sem o histórico da conversa:** [`ART_HANDOFF.md`](ART_HANDOFF.md) (regras do usuário, receitas de prompt, fluxo por comando, onde editar, estado e fila de lotes).
 
-**Versão:** 0.2 · **Data:** 2026-10-03 · **Estado:** ✅ Gate 0 aprovado · **F0 implementada** (ADR-033) · **Lote 1 aprovado** (ADR-034) · **Lote 2 aprovado** · **Lotes 3–5 aprovados** (ADR-037/038/039/040) · **Lote 6 em andamento**
+**Versão:** 0.3 · **Data:** 2026-10-04 · **Estado:** ✅ Gate 0 aprovado · **F0 implementada** (ADR-033) · **Lotes 1–5 aprovados** · **Lote 6 aplicado** (ADR-042: 26 heróis — meta M3 batida) — aguarda "lote 06 aprovado"
 **Decisão:** [ADR-032](DECISIONS_LOG.md) · **Documento técnico irmão:** [`ART_PIPELINE.md`](ART_PIPELINE.md) (especificação medida dos sprites, prompts, chroma key, validação, integração)
 **Fonte do pedido:** mensagem do usuário de 2026-10-03 ("otimização e estilização") · **Regras superiores:** `Master-Prompt.md` §10, §22, §23, §59–§62, §105
 
@@ -223,7 +223,7 @@ Cada lote: **8 itens planejados + 2 reservas**. Resultado aplicado no jogo ao fi
 | **L3** | Andar 2: 2 inimigos restantes · Andar 3: 4 inimigos · Andar 4: 2 inimigos (de 4) | Andares 2 e 3 completos · **[as-built L3, ADR-037]** entregue: 8 inimigos (Enguia, Troll, Golem, Cão, Necrovela, Cavaleiro, Estátua, Escaravelho); o andar 4 fica com 2 de 4 novos (Sacerdote e Múmia Real no L4) |
 | **L4** | Andar 4: 2 restantes · **5 heróis do Clérigo** · 1 folha de retratos (4) | Andar 4 completo (cobre o Nv 1→100, ≈ 24 h) · Clérigo no jogo · **[as-built L4, ADR-038/039]** entregue: Sacerdote Mumificado, Múmia Real, 5 atlas do Clérigo, 4 retratos (Oráculo sem retrato próprio → L7); engine de cura; 8/10 gerações |
 | **L5** | 8 heróis (Guardião 3–5, Arqueiro 2–5, Arcanista 2) | +8 heróis · **[as-built L5, ADR-040]** entregue: 7 atlas novos (Cavaleiro Rubro, Monge de Ferro, Lorde Cinzento, Caçador Furtivo, Besteiro Pesado, Guardiã da Floresta, Piromante) + **Ossian liberado** (sem geração) = Guardião 5/5, Arqueiro 5/5, Clérigo 5/5, Arcanista 2/5, Invocador 1/5 = **18 heróis**; o Arqueiro Nômade fica como 6º arqueiro (refazer, 1 geração); 10/10 gerações (3 folhas reprovadas por layout) |
-| **L6** | 7 heróis (Arcanista 3–5, Invocador 2–5) · 1 folha de retratos | +7 heróis |
+| **L6** | 7 heróis (Arcanista 3–5, Invocador 2–5) · 1 folha de retratos | +7 heróis · **[as-built L6, ADR-042]** entregue: **8 atlas** (Criomante, Tempestuário, Mago Ancião, Necromante dos Ossos, Bruxa do Pântano, Ceifeira, Demonólogo **+ o Arqueiro Nômade refeito**, dívida do L5) e **1 folha 2×2 de retratos** (Criomante, Tempestuário, Mago Ancião e Vorath); 10/10 gerações (1 refação — o Necromante dos Ossos veio com *hurt/death* de outro personagem). Arcanista 5/5, Invocador 5/5, Arqueiro 6 ⇒ **26 heróis (meta M3 batida)**; 8 skills assinatura novas. Os retratos dos 4 invocadores e do Nômade ficam para o L7 |
 | **L7** | 4 folhas de retratos (heróis restantes) · arena do andar 5 · 3 inimigos do andar 5 | **25 heróis completos** · andar 5 em andamento |
 | **L8** | Andar 5: 2 restantes · arena 6 + 4 inimigos do andar 6 · arena 7 | Andares 5 e 6 completos |
 | **L9** | Andar 7: 4 inimigos · arena 8 + 3 inimigos do andar 8 | Andar 7 completo |
