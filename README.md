@@ -41,7 +41,7 @@ Linux/macOS: `./jogar.sh` (ou `npm run play`). **Nunca** abra `index.html` diret
 
 ### Fase atual — arte "otimização e estilização" (Lote 5 de ~11; a mais recente)
 
-- **Em andamento, em lotes de 10 imagens geradas** (o usuário aprova cada lote com "lote NN aprovado"). Feito: Lotes 1–4 aprovados e **Lote 5 aguardando aprovação** — **18 heróis** em 5 classes (a 5ª, Clérigo, cura), **25 inimigos** (andares 1–4 com 5 papéis cada), **4 arenas** próprias, **12 retratos do Rei**, botões/ícones no estilo GBA e tela de login com o logotipo.
+- **Em andamento, em lotes de 10 imagens geradas** (o usuário aprova cada lote com "lote NN aprovado"). Feito: Lotes 1–5 aprovados (**Lote 6 em andamento**) — **18 heróis** em 5 classes (a 5ª, Clérigo, cura), **25 inimigos** (andares 1–4 com 5 papéis cada), **4 arenas** próprias, **12 retratos do Rei**, botões/ícones no estilo GBA e tela de login com o logotipo.
 - Faltam ~6 lotes (L6–L11: 7 heróis, arenas e inimigos dos andares 5–10) e depois a **Fase 14 — Painel Admin**. Para continuar a arte sem o histórico: leia [`AI_STATE.md`](AI_STATE.md) → **[`docs/ART_HANDOFF.md`](docs/ART_HANDOFF.md)** e olhe as imagens em `docs/art-review/` e `assets/generated/`. `npm run art:refs` recria os guias e referências de estilo.
 
 ### Pós-Fase 13 — Batalha visível

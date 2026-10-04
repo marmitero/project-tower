@@ -31,9 +31,9 @@
 | L2 | 8 retratos do Rei (12 skins), arenas f02–f04, Goblin Capitão, Sapo-Lodo, Rato | 9 | 036 | ✅ aprovado |
 | L3 | 8 inimigos (andares 2–4) | 8 | 037 | ✅ aprovado |
 | L4 | Andar 4 completo, **Clérigo** (5ª classe, engine de cura, 5 identidades, 4 retratos) | 8 | 038/039 | ✅ aprovado |
-| L5 | 7 heróis novos + Ossian liberado → **18 heróis**; 8 skills assinatura | 10 | 040 | ⏳ **aguarda "lote 05 aprovado"** |
+| L5 | 7 heróis novos + Ossian liberado → **18 heróis**; 8 skills assinatura | 10 | 040 | ✅ aprovado (2026-10-04) |
 
-**Próximo: Lote 6** — só depois do "lote 05 aprovado". Plano detalhado em §9.
+**Próximo: Lote 6** — **liberado**: o usuário aprovou o Lote 5 em 2026-10-04. Plano detalhado em §9.
 
 Metas numéricas (Onda 1): 25 heróis (hoje **18**) · 12 retratos do Rei (**feito**) · 10 arenas (hoje **4**) · 50 inimigos nos andares 1–10 (hoje **25 no roster**, andares 1–4 completos) · UI GBA + login (**feito**).
 
@@ -192,7 +192,7 @@ Depois de qualquer asset: `node scripts/build-assets.mjs` (regenera `apps/game-w
 
 ## 9. Próximo lote e o restante da fila (ajuste pelo roadmap §9, que é a fonte do plano)
 
-**Lote 6 (próximo, após "lote 05 aprovado"):** Arcanista 3–5 (Criomante, Tempestuário, Mago Ancião) + Invocador 2–5 (Necromante dos Ossos, Bruxa do Pântano, Ceifeira, Demonólogo) = 7 heróis, **+ Arqueiro Nômade refeito** (1) **+ 1 folha de 4 retratos** ⇒ 9 gerações, 1 de reserva. Skills novas para cada um (Criomante = *Tempestade de Gelo* mágica; Bruxa = veneno; Ceifeira = roubo de vida só se o engine suportar — senão dano; confira `SkillDef`). Guias: `mage` (arcanista), `necromancer` (invocador). Corpos humanoides — a ferramenta de validação **por plano corporal** ainda não é necessária.
+**Lote 6 (em andamento, liberado por "lote 05 aprovado"):** Arcanista 3–5 (Criomante, Tempestuário, Mago Ancião) + Invocador 2–5 (Necromante dos Ossos, Bruxa do Pântano, Ceifeira, Demonólogo) = 7 heróis, **+ Arqueiro Nômade refeito** (1) **+ 1 folha de 4 retratos** ⇒ 9 gerações, 1 de reserva. Skills novas para cada um (Criomante = *Tempestade de Gelo* mágica; Bruxa = veneno; Ceifeira = roubo de vida só se o engine suportar — senão dano; confira `SkillDef`). Guias: `mage` (arcanista), `necromancer` (invocador). Corpos humanoides — a ferramenta de validação **por plano corporal** ainda não é necessária.
 **Lote 7:** 4 folhas de retratos (heróis restantes, incluindo o Oráculo) + arena do andar 5 + 3 inimigos do andar 5 → **25 heróis completos**.
 **L8–L11:** andares 5–10 (arenas + inimigos conforme a tabela do roadmap §3.1: andar 5 Salão dos Ecos; 6 Fornalha; 7 Jardim Gélido; 8 Ninho das Sombras; 9 Corredor Sangrento; 10 Câmara dos Mil Passos) + 7 gerações de reserva. Cada andar novo: arena (1 geração) + 4–5 inimigos (1 cada) e uma passada de balanceamento.
 **Ferramenta pendente (aprovada pelo usuário, momento a critério do agente):** validação de movimento **por plano corporal** (quadrúpede, inseto, rastejante) — perfil `--body` em `art.mjs ingest/validate` que relaxa limiares de movimento/IoU para corpos que não casam com o guia bípede/blob (hoje Cão de Ossos e Escaravelho foram aprovados à mão). Implemente **antes do primeiro lote com quadrúpedes/insetos** (andares 7–8, conforme a tabela do roadmap §3.1), com teste e ADR.
