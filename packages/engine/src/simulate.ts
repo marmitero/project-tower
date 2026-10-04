@@ -29,20 +29,35 @@ import {
   allEnemies,
   initialTurnOrder,
   isAlive,
+  selectAllyToHeal,
   selectSingleTarget,
   towerTargetFor,
 } from "./targeting.js";
-import { applyDot, applyStun, clearOnDeath, hasStun, statMultiplier, tickStatuses } from "./status.js";
+import { applyDot, applyRegen, applyStun, clearOnDeath, hasStun, statMultiplier, tickStatuses } from "./status.js";
 import { asBattleId, asHeroId } from "@tia/contracts";
+
+/**
+ * Efeito de CURA de uma skill (ADR-038). O engine só conhece o vocabulário: cura instantânea de
+ * `coefficient × Ataque Especial` e, opcionalmente, uma regeneração (`regen`) que devolve
+ * `totalFraction` do HP máximo do alvo ao longo de `durationMs`, em pulsos de `intervalMs`.
+ */
+export interface SkillHeal {
+  coefficient: number;
+  /** A skill só dispara se o alvo estiver com HP/HPmáx ≤ esta fração (não gasta cooldown à toa). */
+  thresholdFraction: number;
+  regen?: { totalFraction: number; durationMs: number; intervalMs: number };
+}
 
 export interface SkillDef {
   id: string;
-  targeting: "single" | "all_enemies" | "self";
+  targeting: "single" | "all_enemies" | "self" | "ally_lowest_hp";
   damageType: "physical" | "magic" | "none";
   coefficient: number;
   hitCount: number;
   cooldownMs: number;
   enabled: boolean;
+  /** Skill de suporte: `damageType: "none"` + `heal`. Sem `heal`, uma skill "none" nunca dispara. */
+  heal?: SkillHeal;
 }
 
 /**
@@ -454,8 +469,33 @@ function performAction(actor: InternalCombatant, state: BattleState, config: Com
 
   // 1) Tentativa de skill (prioridade: slot em ordem, se pronta e habilitada).
   const used = actor.skills.find(
-    (s) => s.enabled && (actor.cooldowns.get(s.id) ?? 0) <= state.elapsedMs && s.damageType !== "none",
+    (s) =>
+      s.enabled &&
+      (actor.cooldowns.get(s.id) ?? 0) <= state.elapsedMs &&
+      (s.heal ? healTargetFor(actor, s, state) !== null : s.damageType !== "none"),
   );
+  if (used?.heal) {
+    // Skill de cura (ADR-038): não ataca, não rola on-hit; gasta o cooldown só quando cura de fato.
+    const target = healTargetFor(actor, used, state)!;
+    actor.cooldowns.set(used.id, state.elapsedMs + used.cooldownMs * (1 - actor.gear.cooldownReduction));
+    emit(state, { type: "skill_used", actorId: actor.id, skillId: used.id });
+    heal(actor, target, Math.max(1, Math.floor(actor.stats.specialAttack * used.heal.coefficient)), state);
+    const regen = used.heal.regen;
+    if (regen) {
+      const pulses = Math.max(1, Math.floor(regen.durationMs / regen.intervalMs));
+      state.effects = applyRegen(state.effects, state.effects, {
+        effectId: `regen:${actor.id}:${target.id}`,
+        sourceId: actor.id,
+        targetId: target.id,
+        potency: Math.max(1, Math.floor((target.maxHp * regen.totalFraction) / pulses)),
+        tickIntervalMs: regen.intervalMs,
+        durationMs: pulses * regen.intervalMs,
+      });
+      syncStatusCopies(state);
+      emit(state, { type: "status_applied", targetId: target.id, statusId: "regen", stacks: 1, durationMs: pulses * regen.intervalMs });
+    }
+    return;
+  }
   if (used) {
     actor.cooldowns.set(used.id, state.elapsedMs + used.cooldownMs * (1 - actor.gear.cooldownReduction));
     emit(state, { type: "skill_used", actorId: actor.id, skillId: used.id });
@@ -504,6 +544,14 @@ function performAction(actor: InternalCombatant, state: BattleState, config: Com
     }
     rollOnHitProcs(actor, t, state, rng, config);
   }
+}
+
+/** Alvo de uma skill de cura: o próprio ator (`self`) ou o aliado com menos % de HP; null = ninguém precisa. */
+function healTargetFor(actor: InternalCombatant, skill: SkillDef, state: BattleState): Combatant | null {
+  const allies = actor.side === "ally" ? state.allies : state.enemies;
+  const candidate = skill.targeting === "ally_lowest_hp" ? selectAllyToHeal(allies) : isAlive(actor) ? actor : null;
+  if (!candidate || !skill.heal) return null;
+  return candidate.hp / candidate.maxHp <= skill.heal.thresholdFraction ? candidate : null;
 }
 
 /** Cura limitada ao HP faltante; emite `heal_dealt` só se curou algo. */
@@ -572,7 +620,7 @@ function resisted(target: InternalCombatant, status: "stun" | "poison", state: B
 /** Pulsos de DoT desde o último tick. */
 function applyDotPulses(state: BattleState, config: CombatConfig): void {
   for (const e of state.effects.slice()) {
-    if (e.statusId !== "poison" || !e.tickIntervalMs) continue;
+    if ((e.statusId !== "poison" && e.statusId !== "regen") || !e.tickIntervalMs) continue;
     const before = e.durationMs - e.remainingMs;
     const pulses = Math.floor((before + TICK_MS) / e.tickIntervalMs) - Math.floor(before / e.tickIntervalMs);
     if (pulses <= 0) continue;
@@ -580,7 +628,9 @@ function applyDotPulses(state: BattleState, config: CombatConfig): void {
     const source = findCombatant(state, e.sourceId);
     for (let i = 0; i < pulses; i += 1) {
       if (!target || !source || !isAlive(target)) break;
-      applyDamage(source, target, Math.max(1, e.multiplier), "dot", false, state, config, 0);
+      // Regeneração (ADR-038): o pulso cura em vez de ferir; não crita e não dispara nada.
+      if (e.statusId === "regen") heal(source, target, Math.max(1, e.multiplier), state);
+      else applyDamage(source, target, Math.max(1, e.multiplier), "dot", false, state, config, 0);
     }
   }
 }

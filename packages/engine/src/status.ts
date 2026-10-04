@@ -87,6 +87,38 @@ export function applyDot(
   return effects.filter((e) => !(e.effectId === input.effectId && e.targetId === input.targetId)).concat(next);
 }
 
+/**
+ * Regeneração (HoT, ADR-038): renova, não acumula (mesma regra do DoT). `potency` = HP devolvido por
+ * pulso. Pulsos não critam e não disparam outros efeitos.
+ */
+export function applyRegen(
+  effects: StatusEffect[],
+  existing: StatusEffect[],
+  input: {
+    effectId: string;
+    sourceId: string;
+    targetId: string;
+    potency: number;
+    tickIntervalMs: number;
+    durationMs: number;
+  },
+): StatusEffect[] {
+  void existing;
+  return effects.filter((e) => !(e.effectId === input.effectId && e.targetId === input.targetId)).concat({
+    effectId: input.effectId,
+    sourceId: input.sourceId,
+    targetId: input.targetId,
+    statusId: "regen" as StatusId,
+    stacks: 1,
+    maxStacks: 1,
+    multiplier: input.potency,
+    tickIntervalMs: input.tickIntervalMs,
+    durationMs: input.durationMs,
+    remainingMs: input.durationMs,
+    dispellable: true,
+  });
+}
+
 /** Atordoamento: não acumula, perde 1 ação. */
 export function applyStun(
   effects: StatusEffect[],

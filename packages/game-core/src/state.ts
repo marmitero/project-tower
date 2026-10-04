@@ -1334,15 +1334,17 @@ export class GameState {
  */
 export function engineSkillsFor(classId: string): EngineSkillDef[] {
   return skills
-    .filter((s) => s.kind === "active" && s.classId === classId && s.coefficient !== null)
+    .filter((s) => s.kind === "active" && s.classId === classId && (s.coefficient !== null || s.heal !== undefined))
     .map((s) => ({
       id: s.id,
-      targeting: s.targeting === "all_enemies" ? "all_enemies" : s.targeting === "self" ? "self" : "single",
-      damageType: s.damageType === "magic" ? "magic" : "physical",
-      coefficient: s.coefficient ?? 1,
+      targeting:
+        s.targeting === "all_enemies" ? "all_enemies" : s.targeting === "self" ? "self" : s.targeting === "ally_lowest_hp" ? "ally_lowest_hp" : "single",
+      damageType: s.heal ? "none" : s.damageType === "magic" ? "magic" : "physical",
+      coefficient: s.coefficient ?? 0,
       hitCount: s.hitCount ?? 1,
       cooldownMs: s.cooldownMs,
       enabled: true,
+      ...(s.heal ? { heal: s.heal } : {}),
     }));
 }
 

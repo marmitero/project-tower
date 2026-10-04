@@ -16,6 +16,17 @@ import type { StatusId } from "./types.js";
 
 export type SkillTargeting = "single" | "all_enemies" | "self" | "ally_lowest_hp";
 export type SkillDamageType = "physical" | "magic" | "none";
+/**
+ * Efeito de cura de uma skill (ADR-038). Cura instantânea = `coefficient × Ataque Especial`; `regen`
+ * devolve `totalFraction` do HP máximo do alvo ao longo de `durationMs` (pulsos de `intervalMs`).
+ * Só dispara com o alvo em `thresholdFraction` de HP ou menos.
+ */
+export interface SkillHealDef {
+  coefficient: number;
+  thresholdFraction: number;
+  regen?: { totalFraction: number; durationMs: number; intervalMs: number };
+}
+
 export type SkillTag = "dano" | "buff" | "controle" | "cura" | "sustain" | "reativo";
 
 export interface SkillDef {
@@ -44,6 +55,8 @@ export interface SkillDef {
    * `docs/OPENRPG_REFERENCE.md` §7).
    */
   manaCost: number;
+  /** Skill de suporte (`damageType: "none"`): cura instantânea e/ou regeneração (ADR-038). */
+  heal?: SkillHealDef;
 }
 
 /**
@@ -234,6 +247,52 @@ export const skills: SkillDef[] = [
     targeting: "self",
     damageType: "none",
     coefficient: 0.3,
+    cooldownMs: 0,
+    canCrit: false,
+    tags: ["cura", "sustain"],
+    manaCost: 0,
+  },
+
+  // ---- Clérigo (suporte / sustain) — ADR-038 --------------------------------
+  {
+    id: "skill_cure",
+    name: "Cura",
+    description: "Reza e restaura vida: cura na hora e deixa uma regeneração curta. Só reza quando está ferido (≤ 70% de vida).",
+    classId: "cleric",
+    kind: "active",
+    targeting: "self",
+    damageType: "none",
+    coefficient: null,
+    cooldownMs: 9000,
+    canCrit: false,
+    tags: ["cura", "sustain"],
+    manaCost: 10,
+    // Base OpenRpg `Cure` (potência sobre o poder mágico, alvo único). Valores ⛔ P-022 calibrados em `balance.ts`.
+    heal: { coefficient: 2.4, thresholdFraction: 0.7, regen: { totalFraction: 0.08, durationMs: 4000, intervalMs: 1000 } },
+  },
+  {
+    id: "passive_blessing",
+    name: "Bênção",
+    description: "Fé inabalável: +10% de defesa mágica passivamente.",
+    classId: "cleric",
+    kind: "passive",
+    targeting: "self",
+    damageType: "none",
+    coefficient: null,
+    cooldownMs: 0,
+    canCrit: false,
+    tags: ["buff"],
+    manaCost: 0,
+  },
+  {
+    id: "passive_sanctuary",
+    name: "Santuário",
+    description: "Cura recebida de qualquer fonte rende +10%.",
+    classId: "cleric",
+    kind: "passive",
+    targeting: "self",
+    damageType: "none",
+    coefficient: null,
     cooldownMs: 0,
     canCrit: false,
     tags: ["cura", "sustain"],

@@ -24,6 +24,7 @@ import { writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { reflowRows } from "../tools/art/reflow.mjs";
+import { despeckleCells } from "../tools/art/despeckle.mjs";
 import { GUIDE_BY_KIND, HEIGHT_BY_KIND, ARENA, PACK, BUDGET } from "../tools/art/spec.mjs";
 import { readRaw, writePng, resizeSmart, frameOf, crop, bbox } from "../tools/art/image.mjs";
 import { chromaKey } from "../tools/art/key.mjs";
@@ -110,9 +111,12 @@ async function main() {
       const kind = need(opt.kind, "--kind");
       const guideName = opt.guide ?? GUIDE_BY_KIND[kind];
       const outDir = resolve(opt.out ?? join(ROOT, "assets/generated"));
-      const { raw: keyed0, stats } = chromaKey(await readRaw(need(args[0], "<bruto>")));
+      const { raw: keyed00, stats } = chromaKey(await readRaw(need(args[0], "<bruto>")));
       // geradores que devolvem a folha quadrada: reorganiza as 5 linhas sem esticar (tools/art/reflow.mjs)
-      const { raw: keyed, reflowed, bands } = reflowRows(keyed0);
+      const { raw: keyed0, reflowed, bands } = reflowRows(keyed00);
+      // fragmentos do quadro vizinho dentro da célula: apagados antes de medir (tools/art/despeckle.mjs)
+      const { raw: keyed, removedPixels, cellsTouched } = opt["no-despeckle"] ? { raw: keyed0, removedPixels: 0, cellsTouched: 0 } : despeckleCells(keyed0);
+      if (removedPixels > 0) console.log(`${id}: ${removedPixels} px soltos removidos em ${cellsTouched} células`);
       if (reflowed) console.log(`${id}: folha fora de 4:5 — linhas reposicionadas sem reamostrar (${bands.map((b) => b.join("-")).join(", ")})`);
       const { atlas, report } = normalizeAtlas(keyed, { kind, snap: opt.snap ? Number(opt.snap) : 0 });
       const guide = await buildGuide(CHARS, guideName);

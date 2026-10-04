@@ -72,7 +72,7 @@ export {
   migrateContentPack,
   type ContentPack,
 } from "./content.js";
-export { skills, skillsById, type SkillDef, type SkillTargeting, type SkillDamageType, type SkillTag } from "./skills.js";
+export { skills, skillsById, type SkillDef, type SkillHealDef, type SkillTargeting, type SkillDamageType, type SkillTag } from "./skills.js";
 export {
   arenaKits,
   arenaKitById,
