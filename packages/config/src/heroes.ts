@@ -151,6 +151,9 @@ export const HEROES: HeroIdentityDef[] = [
       origin: "starter",
       hint: "Herói inicial; depois, eventos especiais e ofertas raras no Mercado.",
     },
+    // Retrato próprio do Lote 6 (ADR-042). O corpo segue o da classe (`characters/necromancer/*`) —
+    // o atlas próprio do Vorath fica para a fila de retratos/atlas do Lote 7.
+    assets: { portrait: "portraits/heroes/hero_vorath" },
   },
 ];
 
@@ -434,6 +437,171 @@ export const EXTRA_HEROES: HeroIdentityDef[] = [
     // que a classe Arqueiro mantém como folha-padrão. Liberado no Lote 5 (ADR-040).
     assets: { portrait: "portraits/skeleton" },
     attributeDelta: { constitution: 1, strength: -3, dexterity: 2 },
+  },
+
+  // -------------------------------------------------------------------------
+  // Lote 6 (ADR-042) — Arcanista 3–5, Invocador 2–5 e o Arqueiro Nômade.
+  // Fecham o Arcanista e o Invocador em 5/5 e dão ao Arqueiro um sexto membro
+  // (o Nômade é o extra planejado desde o Lote 5). Todos bípedes, com atlas
+  // próprio `heroes/<id>` e retrato próprio; `attributeDelta` de soma zero com
+  // poder ±8 % do modelo da classe (medido — ver ADR-042).
+  // -------------------------------------------------------------------------
+  {
+    id: "hero_criomante",
+    classId: "arcanist",
+    name: "Sylas",
+    epithet: "o Criomante",
+    lore:
+      "Sylas estudava o degelo das montanhas quando congelou a própria aldeia para salvá-la da peste. Hoje carrega o inverno " +
+      "num cristal na ponta do cajado — e não o solta nem quando o inverno pede para voltar.",
+    personality: ["reservado", "metódico", "implacável"],
+    voiceNotes: "Fala devagar, como quem mede a temperatura de cada palavra; sopro branco no fim das frases.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_ice_storm",
+    combatStyle: "Frio cirúrgico — dois cortes de gelo onde um só não basta.",
+    range: "ranged",
+    statPriority: ["specialAttack", "critChance", "attackSpeed"],
+    acquisition: { origin: "market", hint: "Mercado comum, caixas e invocações de Arcanista." },
+    assets: { portrait: "portraits/heroes/hero_criomante", atlas: "heroes/arcanist_cryomancer" },
+    attributeDelta: { intelligence: 4, wisdom: -3, charisma: -1 },
+  },
+  {
+    id: "hero_tempestuario",
+    classId: "arcanist",
+    name: "Zephyr",
+    epithet: "o Tempestuário",
+    lore:
+      "Zephyr subiu numa torre de sino para ver a tempestade chegar e desceu com ela nos punhos. Dizem que o vento o segue " +
+      "por dívida; ele diz que é por companhia.",
+    personality: ["inquieto", "espirituoso", "imprevisível"],
+    voiceNotes: "Fala em rajadas curtas, acelerando no fim; estala os dedos quando pensa.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_chain_lightning",
+    combatStyle: "Rajada rápida — o relâmpago volta mais vezes que o inimigo aguenta.",
+    range: "ranged",
+    statPriority: ["attackSpeed", "specialAttack", "critChance"],
+    acquisition: { origin: "summon", hint: "Invocações de Arcanista e eventos da Torre." },
+    assets: { portrait: "portraits/heroes/hero_tempestuario", atlas: "heroes/arcanist_stormcaller" },
+    attributeDelta: { dexterity: 4, intelligence: 2, constitution: -2, charisma: -4 },
+  },
+  {
+    id: "hero_mago_anciao",
+    classId: "arcanist",
+    name: "Ordanis",
+    epithet: "o Mago Ancião",
+    lore:
+      "Ordanis viu três reinos erguerem e caírem a mesma torre. Não corre mais atrás de nada: fica onde a magia é mais densa " +
+      "e espera — a paciência dele já derrubou coisas maiores que dragões.",
+    personality: ["venerável", "teimoso", "professor"],
+    voiceNotes: "Voz grave e arrastada; para no meio da frase para lembrar do nome das coisas.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_arcane_lance",
+    combatStyle: "Casta lenta e pesada — uma lança de mana no tempo certo.",
+    range: "ranged",
+    statPriority: ["specialAttack", "specialDefense", "hp"],
+    acquisition: { origin: "event", hint: "Eventos especiais da Torre e caixas de invocação de Arcanista." },
+    assets: { portrait: "portraits/heroes/hero_mago_anciao", atlas: "heroes/arcanist_elder" },
+    attributeDelta: { wisdom: 3, constitution: -2, charisma: -1 },
+  },
+  {
+    id: "hero_necromante_ossos",
+    classId: "shadowcaller",
+    name: "Vasko",
+    epithet: "o Necromante dos Ossos",
+    lore:
+      "Vasko foi aprendiz de coveiro antes de ser mago, e aprendeu com os mortos o que os vivos não tinham paciência de ensinar. " +
+      "Cada osso no cinto dele tem nome — e ele nunca esquece um nome.",
+    personality: ["obsessivo", "cerimonioso", "solitário"],
+    voiceNotes: "Sussurra; conta os ossos em voz alta antes de cada golpe.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_bone_volley",
+    combatStyle: "Artilharia de ossos — dois dardos por vez, sempre no mesmo alvo.",
+    range: "ranged",
+    statPriority: ["specialAttack", "hp", "critChance"],
+    acquisition: { origin: "boss", hint: "Fragmentos de Boss e caixas de invocação de Invocador." },
+    // Retrato próprio pendente (o lote estourou 1 geração): até o Lote 7 usa o retrato do Invocador (_class_).
+    assets: { atlas: "heroes/shadowcaller_bones" },
+    attributeDelta: { intelligence: 3, constitution: -1, strength: -2 },
+  },
+  {
+    id: "hero_bruxa_pantano",
+    classId: "shadowcaller",
+    name: "Morcha",
+    epithet: "a Bruxa do Pântano",
+    lore:
+      "Morcha vende remédio, veneno e a mesma garrafa para os dois usos. Quem aprende a ler o sorriso dela compra o remédio; " +
+      "quem não aprende, o veneno acha o caminho sozinho.",
+    personality: ["maliciosa", "prática", "paciente"],
+    voiceNotes: "Ri baixo entre as frases; masca folhas e cospe de lado antes de falar sério.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_poison_blade",
+    combatStyle: "Veneno de longo prazo — a lâmina corta, o resto trabalha sozinho.",
+    range: "ranged",
+    statPriority: ["specialAttack", "speed", "hp"],
+    acquisition: { origin: "market", hint: "Mercado comum e caixas de invocação de Invocador." },
+    // Retrato próprio pendente (o lote estourou 1 geração): até o Lote 7 usa o retrato da classe.
+    assets: { atlas: "heroes/shadowcaller_witch" },
+    attributeDelta: { wisdom: 3, dexterity: -1, intelligence: -2 },
+  },
+  {
+    id: "hero_ceifeira",
+    classId: "shadowcaller",
+    name: "Sylvara",
+    epithet: "a Ceifeira",
+    lore:
+      "Sylvara colhe o que a Torre planta: almas que ninguém mais vai buscar. Não gosta do trabalho e não o entrega a ninguém — " +
+      "diz que foice só é limpa na mão de quem sabe que a lâmina é pesada.",
+    personality: ["fatalista", "honesta", "cansada"],
+    voiceNotes: "Fala pouco e sem rodeio; o arrastar da foice marca o fim da frase.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_soul_reap",
+    combatStyle: "Golpe de ceifa — dano alto, cadência de colheita.",
+    range: "melee",
+    statPriority: ["specialAttack", "critChance", "hp"],
+    acquisition: { origin: "summon", hint: "Invocações de Invocador e eventos da Torre." },
+    // Retrato próprio pendente (o lote estourou 1 geração): até o Lote 7 usa o retrato da classe.
+    assets: { atlas: "heroes/shadowcaller_reaper" },
+    attributeDelta: { strength: 5, intelligence: -3, charisma: -2 },
+  },
+  {
+    id: "hero_demonologo",
+    classId: "shadowcaller",
+    name: "Baalor",
+    epithet: "o Demonólogo",
+    lore:
+      "Baalor negociou três vezes com o mesmo demônio e ganhou as três — o que, segundo ele, só prova que o demônio sabe " +
+      "esperar. Enquanto espera, Baalor cobra caro pelos serviços.",
+    personality: ["arrogante", "calculista", "encantador"],
+    voiceNotes: "Fala como quem já ganhou a discussão; sorri com metade da boca.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_demon_pact",
+    combatStyle: "Pacto pesado — um golpe devastador por ciclo longo.",
+    range: "ranged",
+    statPriority: ["specialAttack", "critChance", "defense"],
+    acquisition: { origin: "event", hint: "Eventos especiais da Torre e caixas de invocação de Invocador." },
+    // Retrato próprio pendente (o lote estourou 1 geração): até o Lote 7 usa o retrato da classe.
+    assets: { atlas: "heroes/shadowcaller_demon" },
+    attributeDelta: { intelligence: 5, dexterity: -4, constitution: -1 },
+  },
+  {
+    id: "hero_arqueiro_nomade",
+    classId: "ranger",
+    name: "Amir",
+    epithet: "o Arqueiro Nômade",
+    lore:
+      "Amir nunca dormiu duas vezes no mesmo acampamento e não pretende começar agora. Atira andando, come andando e só para " +
+      "quando a Torre exige que ele fique — o que, para ele, é a pior parte do trabalho.",
+    personality: ["livre", "direto", "curioso"],
+    voiceNotes: "Fala depressa e sem cerimônia; assobia para chamar o cavalo que não tem.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_nomad_shot",
+    combatStyle: "Tiro em movimento — flecha certeira sem perder o passo.",
+    range: "ranged",
+    statPriority: ["attack", "attackSpeed", "critChance"],
+    acquisition: { origin: "market", hint: "Mercado comum e invocações de Arqueiro." },
+    // Retrato próprio pendente (o lote estourou 1 geração): até o Lote 7 usa o retrato do Arqueiro (_class_).
+    assets: { atlas: "heroes/ranger_nomad" },
+    attributeDelta: { dexterity: 4, intelligence: -1, charisma: -3 },
   },
 ];
 

@@ -72,3 +72,18 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 9 | `heroes/ranger_crossbow` | atlas | aprovado com ressalva (fundo rosa-claro 253,142,252 tratado por normalizeKeyColour; hurt segura arco) | guide_archer, kaia | Besteiro Pesado — refação com 'tall portrait 4:5, exactly 4 columns' |
 | 10 | `heroes/arcanist_pyro` | atlas | aprovado | guide_mage, aurora | Piromante — refação com 'tall portrait 4:5, exactly 4 columns, same character in every frame' |
 
+## Lote L6 — 10/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `heroes/arcanist_cryomancer` | atlas | ok | guia magenta + estilo aprovado | Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos) |
+| 2 | `heroes/arcanist_stormcaller` | atlas | ok | guia magenta + estilo aprovado | Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos) |
+| 3 | `heroes/arcanist_elder` | atlas | ok | guia magenta + estilo aprovado | Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos) |
+| 4 | `heroes/shadowcaller_bones` | atlas | refeito | guia magenta + estilo aprovado | Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos) |
+| 5 | `heroes/shadowcaller_witch` | atlas | ok | guia magenta + estilo aprovado | Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos) |
+| 6 | `heroes/shadowcaller_reaper` | atlas | ok | guia magenta + estilo aprovado | Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos) |
+| 7 | `heroes/shadowcaller_demon` | atlas | ok | guia magenta + estilo aprovado | Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos) |
+| 8 | `heroes/ranger_nomad` | atlas | ok | guia magenta + estilo aprovado | Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos) |
+| 9 | `portraits/heroes (4 bustos: Criomante, Tempestuário, Mago Ancião, Vorath)` | portrait | ok | guia magenta + estilo aprovado | Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos) |
+| 10 | `heroes/shadowcaller_bones#refacao` | atlas | reprovada (death fora do guia) -> refeita | guia necromancer | 1ª tentativa do Necromante dos Ossos |
+

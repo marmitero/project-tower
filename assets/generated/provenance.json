@@ -482,6 +482,116 @@
         "aurora"
       ],
       "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L6",
+      "asset": "heroes/arcanist_cryomancer",
+      "kind": "atlas",
+      "prompt": "Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos)",
+      "refs": [
+        "guia magenta + estilo aprovado"
+      ],
+      "verdict": "ok"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L6",
+      "asset": "heroes/arcanist_stormcaller",
+      "kind": "atlas",
+      "prompt": "Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos)",
+      "refs": [
+        "guia magenta + estilo aprovado"
+      ],
+      "verdict": "ok"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L6",
+      "asset": "heroes/arcanist_elder",
+      "kind": "atlas",
+      "prompt": "Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos)",
+      "refs": [
+        "guia magenta + estilo aprovado"
+      ],
+      "verdict": "ok"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L6",
+      "asset": "heroes/shadowcaller_bones",
+      "kind": "atlas",
+      "prompt": "Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos)",
+      "refs": [
+        "guia magenta + estilo aprovado"
+      ],
+      "verdict": "refeito"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L6",
+      "asset": "heroes/shadowcaller_witch",
+      "kind": "atlas",
+      "prompt": "Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos)",
+      "refs": [
+        "guia magenta + estilo aprovado"
+      ],
+      "verdict": "ok"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L6",
+      "asset": "heroes/shadowcaller_reaper",
+      "kind": "atlas",
+      "prompt": "Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos)",
+      "refs": [
+        "guia magenta + estilo aprovado"
+      ],
+      "verdict": "ok"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L6",
+      "asset": "heroes/shadowcaller_demon",
+      "kind": "atlas",
+      "prompt": "Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos)",
+      "refs": [
+        "guia magenta + estilo aprovado"
+      ],
+      "verdict": "ok"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L6",
+      "asset": "heroes/ranger_nomad",
+      "kind": "atlas",
+      "prompt": "Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos)",
+      "refs": [
+        "guia magenta + estilo aprovado"
+      ],
+      "verdict": "ok"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L6",
+      "asset": "portraits/heroes (4 bustos: Criomante, Tempestuário, Mago Ancião, Vorath)",
+      "kind": "portrait",
+      "prompt": "Lote 6: 1 geração por personagem (4x5, magenta, sem efeitos)",
+      "refs": [
+        "guia magenta + estilo aprovado"
+      ],
+      "verdict": "ok"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L6",
+      "asset": "heroes/shadowcaller_bones#refacao",
+      "kind": "atlas",
+      "prompt": "1ª tentativa do Necromante dos Ossos",
+      "refs": [
+        "guia necromancer"
+      ],
+      "verdict": "reprovada (death fora do guia) -> refeita"
     }
   ]
 }
