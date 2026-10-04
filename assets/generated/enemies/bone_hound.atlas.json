@@ -1,0 +1,47 @@
+{
+  "format": "ita-atlas-v1",
+  "id": "enemies/bone_hound",
+  "cell": 256,
+  "cols": 4,
+  "anchor": [
+    128,
+    243
+  ],
+  "facing": "right",
+  "flipForLeft": true,
+  "anims": {
+    "idle": {
+      "row": 0,
+      "frames": 4,
+      "fps": 7,
+      "loop": true
+    },
+    "walk": {
+      "row": 1,
+      "frames": 4,
+      "fps": 10,
+      "loop": true
+    },
+    "attack": {
+      "row": 2,
+      "frames": 4,
+      "fps": 12,
+      "loop": false
+    },
+    "hurt": {
+      "row": 3,
+      "frames": 4,
+      "fps": 12,
+      "loop": false
+    },
+    "death": {
+      "row": 4,
+      "frames": 4,
+      "fps": 8,
+      "loop": false
+    }
+  },
+  "kind": "low",
+  "guide": "goblin",
+  "scale": 1
+}

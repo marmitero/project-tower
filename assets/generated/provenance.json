@@ -1,0 +1,487 @@
+{
+  "version": 1,
+  "maxPerBatch": 10,
+  "entries": [
+    {
+      "date": "2026-10-03",
+      "batch": "L1",
+      "asset": "heroes/guardian_borin",
+      "kind": "atlas",
+      "prompt": "Borin Escudeiro da Muralha, guia hero magenta + estilo orc idle",
+      "refs": []
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L1",
+      "asset": "enemies/spark_imp",
+      "kind": "atlas",
+      "prompt": "Duende de Faíscas (andar 1, M), guia mage magenta + estilo goblin",
+      "refs": []
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L1",
+      "asset": "arenas/f01_entrada",
+      "kind": "arena",
+      "prompt": "Kit de arena do andar 1 (Entrada da Torre), grade 4x4",
+      "refs": []
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L1",
+      "asset": "ui/gba/buttons",
+      "kind": "ui",
+      "prompt": "Kit de botões GBA índigo/prata, 4x4, sem texto",
+      "refs": []
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L1",
+      "asset": "ui/gba/icons",
+      "kind": "ui",
+      "prompt": "16 ícones de aba/ação estilo GBA, 4x4",
+      "refs": []
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L1",
+      "asset": "login/background",
+      "kind": "login",
+      "prompt": "Fundo da tela de login: a Torre ao entardecer, 16:9 sem texto",
+      "refs": []
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L1",
+      "asset": "login/logo",
+      "kind": "login",
+      "prompt": "Logotipo IDLE TOWER ADVENTURE, pixel art sobre magenta",
+      "refs": []
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L1",
+      "asset": "portraits/king/lote-a",
+      "kind": "portrait",
+      "prompt": "Retratos do Rei A: Real, Guerreiro, Rainha, Sábio (2x2)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L1",
+      "asset": "heroes/ranger_kaia",
+      "kind": "atlas",
+      "prompt": "Refação da Kaia (arqueira de capa verde, igual ao retrato): guia archer magenta + retrato + estilo Borin; folha veio quadrada → reflow de linhas",
+      "refs": []
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L2",
+      "asset": "portraits/king/lote-b",
+      "kind": "portrait",
+      "prompt": "Retratos do Rei B: Sombrio, do Gelo, Sol, Caçador (2x2, magenta)",
+      "refs": [
+        "king_ref"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L2",
+      "asset": "portraits/king/lote-c",
+      "kind": "portrait",
+      "prompt": "Retratos do Rei C: Arcano, Rubro, Esmeralda, Ancião (2x2, magenta)",
+      "refs": [
+        "king_ref"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L2",
+      "asset": "arenas/f02_porao",
+      "kind": "arena",
+      "prompt": "Kit de arena do andar 2 (Porão Alagado): lanterna verde, correntes, grade de esgoto; 4x4",
+      "refs": [
+        "f01_ref"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L2",
+      "asset": "arenas/f03_ossadas",
+      "kind": "arena",
+      "prompt": "Kit de arena do andar 3 (Salão das Ossadas): candelabro, nicho de crânios; piso claro demais, ingerido com floorGain 0.78",
+      "refs": [
+        "f01_ref"
+      ],
+      "verdict": "aprovado (--floor-gain 0.78)"
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L2",
+      "asset": "arenas/f04_catacumbas",
+      "kind": "arena",
+      "prompt": "Kit de arena do andar 4 (Catacumbas): sarcófagos, tocha roxa, tapeçaria com olho; piso muito escuro",
+      "refs": [
+        "f01_ref"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L2",
+      "asset": "enemies/goblin_captain",
+      "kind": "atlas",
+      "prompt": "Goblin Capitão (elite, andar 1), guia orc magenta — 1ª versão",
+      "refs": [
+        "guide_orc",
+        "spark_imp"
+      ],
+      "verdict": "reprovado (raio/halo inventado)"
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L2",
+      "asset": "enemies/mud_toad",
+      "kind": "atlas",
+      "prompt": "Sapo-Lodo Gigante (tank, andar 2), guia slime magenta",
+      "refs": [
+        "guide_slime",
+        "spark_imp"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L2",
+      "asset": "enemies/sewer_rat",
+      "kind": "atlas",
+      "prompt": "Rato de Esgoto Bruto (dps, andar 2), guia goblin magenta",
+      "refs": [
+        "guide_goblin",
+        "spark_imp"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-03",
+      "batch": "L2",
+      "asset": "enemies/goblin_captain",
+      "kind": "atlas",
+      "prompt": "Refação do Goblin Capitão com 'NO special effects' (só o arco fino do guia)",
+      "refs": [
+        "guide_orc",
+        "spark_imp"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L3",
+      "asset": "enemies/sewer_eel",
+      "kind": "atlas",
+      "prompt": "Enguia Rastejante (veloz, andar 2), guia slime magenta",
+      "refs": [
+        "guide_slime",
+        "mud_toad"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L3",
+      "asset": "enemies/sewer_troll",
+      "kind": "atlas",
+      "prompt": "Troll do Esgoto (elite, andar 2), guia orc magenta, cinza-azulado com musgo e cano enferrujado",
+      "refs": [
+        "guide_orc",
+        "goblin_captain"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L3",
+      "asset": "enemies/bone_golem",
+      "kind": "atlas",
+      "prompt": "Golem de Ossos (tanque, andar 3), guia orc magenta",
+      "refs": [
+        "guide_orc",
+        "goblin_captain"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L3",
+      "asset": "enemies/bone_hound",
+      "kind": "atlas",
+      "prompt": "Cão de Ossos (veloz, andar 3), guia goblin magenta",
+      "refs": [
+        "guide_goblin",
+        "mud_toad"
+      ],
+      "verdict": "aprovado visual (métrica REFAZER: quadrúpede x guia bípede)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L3",
+      "asset": "enemies/candle_skull",
+      "kind": "atlas",
+      "prompt": "Crânio Necrovela (mago, andar 3), guia morcego magenta",
+      "refs": [
+        "guide_bat",
+        "spark_imp"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L3",
+      "asset": "enemies/bone_knight",
+      "kind": "atlas",
+      "prompt": "Cavaleiro de Ossos (elite, andar 3), guia orc magenta",
+      "refs": [
+        "guide_orc",
+        "goblin_captain"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L3",
+      "asset": "enemies/guardian_statue",
+      "kind": "atlas",
+      "prompt": "Estátua Guardiã (tanque, andar 4), guia orc magenta",
+      "refs": [
+        "guide_orc",
+        "goblin_captain"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L3",
+      "asset": "enemies/tomb_scarab",
+      "kind": "atlas",
+      "prompt": "Escaravelho de Tumba (veloz, andar 4), guia slime magenta",
+      "refs": [
+        "guide_slime",
+        "mud_toad"
+      ],
+      "verdict": "aprovado visual (métrica REFAZER: paleta 1221 e silhueta; o pack final tem 64 cores)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L4",
+      "asset": "heroes/cleric_aurora",
+      "kind": "atlas",
+      "prompt": "Sacerdotisa da Aurora (Clérigo), guia magenta de mago, capuz branco e dourado, maça",
+      "refs": [
+        "guide_mage"
+      ],
+      "verdict": "aprovado (reconstruído do commit WIP)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L4",
+      "asset": "heroes/cleric_monk",
+      "kind": "atlas",
+      "prompt": "Monge Curandeiro (Clérigo), túnica laranja e contas, punhos enfaixados",
+      "refs": [
+        "guide_goblin"
+      ],
+      "verdict": "aprovado (reconstruído do commit WIP)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L4",
+      "asset": "heroes/cleric_bishop",
+      "kind": "atlas",
+      "prompt": "Bispo Guerreiro (Clérigo), mitra, armadura e maça pesada",
+      "refs": [
+        "guide_orc"
+      ],
+      "verdict": "aprovado (reconstruído do commit WIP)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L4",
+      "asset": "heroes/cleric_druid",
+      "kind": "atlas",
+      "prompt": "Druida da Vida (Clérigo), coroa de galhos, capa verde, cajado com broto",
+      "refs": [
+        "guide_mage"
+      ],
+      "verdict": "aprovado (reconstruído do commit WIP)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L4",
+      "asset": "heroes/cleric_oracle",
+      "kind": "atlas",
+      "prompt": "Oráculo (Clérigo), cabelo prateado, venda lunar, manto violeta",
+      "refs": [
+        "guide_mage"
+      ],
+      "verdict": "aprovado (reconstruído do commit WIP)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L4",
+      "asset": "enemies/mummy_priest",
+      "kind": "atlas",
+      "prompt": "Sacerdote Mumificado (mago, andar 4), faixas, toucado azul e cajado",
+      "refs": [
+        "guide_mage",
+        "candle_skull"
+      ],
+      "verdict": "aprovado (reconstruído do commit WIP)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L4",
+      "asset": "enemies/royal_mummy",
+      "kind": "atlas",
+      "prompt": "Múmia Real (elite, andar 4), faraó com foice e faixa vermelha",
+      "refs": [
+        "guide_orc",
+        "goblin_captain"
+      ],
+      "verdict": "aprovado (reconstruído do commit WIP)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L4",
+      "asset": "portraits/heroes/clerigos",
+      "kind": "portrait",
+      "prompt": "Retratos dos 4 clérigos (2x2, magenta): sacerdotisa, monge, bispo, druida",
+      "refs": [
+        "king_ref"
+      ],
+      "verdict": "aprovado (reconstruído do commit WIP)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/guardian_rubro",
+      "kind": "atlas",
+      "prompt": "Cavaleiro Rubro (Guardião 3), armadura carmesim, elmo com pluma, guia hero magenta",
+      "refs": [
+        "guide_hero",
+        "borin"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/guardian_monk",
+      "kind": "atlas",
+      "prompt": "Monge de Ferro (Guardião 4), monge careca de punhos de ferro, soco no lugar da espada",
+      "refs": [
+        "guide_hero",
+        "borin"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/guardian_lord",
+      "kind": "atlas",
+      "prompt": "Lorde Cinzento (Guardião 5), cavaleiro negro de elmo com chifres, capa cinza",
+      "refs": [
+        "guide_hero",
+        "borin"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/ranger_stalker",
+      "kind": "atlas",
+      "prompt": "Caçador Furtivo (Arqueiro 2), capuz e máscara, duas adagas",
+      "refs": [
+        "guide_archer",
+        "kaia"
+      ],
+      "verdict": "aprovado visual (IoU idle 0,43: capuz e adagas)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/ranger_crossbow",
+      "kind": "atlas",
+      "prompt": "Besteiro Pesado (Arqueiro 3), 1ª versão",
+      "refs": [
+        "guide_archer",
+        "kaia"
+      ],
+      "verdict": "reprovado (folha 8x4 em 16:9 — layout errado)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/ranger_warden",
+      "kind": "atlas",
+      "prompt": "Guardiã da Floresta (Arqueiro 4), ruiva com falcão no ombro",
+      "refs": [
+        "guide_archer",
+        "kaia"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/ranger_nomad",
+      "kind": "atlas",
+      "prompt": "Arqueiro Nômade (Arqueiro 5), turbante e arco curvo — 1ª versão",
+      "refs": [
+        "guide_archer",
+        "kaia"
+      ],
+      "verdict": "reprovado (folha 6x4 em 16:9; refazer no L6)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/arcanist_pyro",
+      "kind": "atlas",
+      "prompt": "Piromante (Arcanista 2), 1ª versão",
+      "refs": [
+        "guide_mage",
+        "aurora"
+      ],
+      "verdict": "reprovado (folha 6x4; hurt/dead com outro personagem)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/ranger_crossbow",
+      "kind": "atlas",
+      "prompt": "Besteiro Pesado — refação com 'tall portrait 4:5, exactly 4 columns'",
+      "refs": [
+        "guide_archer",
+        "kaia"
+      ],
+      "verdict": "aprovado com ressalva (fundo rosa-claro 253,142,252 tratado por normalizeKeyColour; hurt segura arco)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L5",
+      "asset": "heroes/arcanist_pyro",
+      "kind": "atlas",
+      "prompt": "Piromante — refação com 'tall portrait 4:5, exactly 4 columns, same character in every frame'",
+      "refs": [
+        "guide_mage",
+        "aurora"
+      ],
+      "verdict": "aprovado"
+    }
+  ]
+}

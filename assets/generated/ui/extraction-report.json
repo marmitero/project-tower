@@ -1,0 +1,558 @@
+{
+  "source": {
+    "kit": "assets/sprites/ui/ui_kit.png",
+    "dialog": "assets/sprites/ui/ui_dialog.png"
+  },
+  "method": "allowlist_curada_em_pixels + guardrail_componentes_conectados",
+  "sheetSize": 2048,
+  "composition": {
+    "note": "Composição de barras: trilho esticado + fill recortado pela fração + caps. Números em PT-BR renderizados pelo jogo, nunca na arte.",
+    "bandHeight": 101,
+    "capHeight": 114,
+    "capOffsetY": -7,
+    "fillClip": "recortar bar_fill_* horizontalmente pela fração preenchida; o lado esquerdo é a origem do fill",
+    "ids": {
+      "track": "ui/bar_track",
+      "fills": {
+        "hp": "ui/bar_fill_hp",
+        "mp": "ui/bar_fill_mp",
+        "xp": "ui/bar_fill_xp"
+      },
+      "capLeft": [
+        "ui/bar_cap_left_heart",
+        "ui/bar_cap_left_orb"
+      ],
+      "capRight": "ui/bar_cap_right"
+    }
+  },
+  "pieces": [
+    {
+      "id": "frame_9slice_stone",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 36,
+        "y": 1269,
+        "w": 332,
+        "h": 334
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0,
+      "slice9": 24
+    },
+    {
+      "id": "frame_9slice_brick",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 398,
+        "y": 1269,
+        "w": 332,
+        "h": 334
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0,
+      "slice9": 24
+    },
+    {
+      "id": "frame_9slice_dark",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 758,
+        "y": 1270,
+        "w": 334,
+        "h": 333
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0,
+      "slice9": 24
+    },
+    {
+      "id": "panel_ornate",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1235,
+        "y": 907,
+        "w": 723,
+        "h": 247
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0,
+      "slice9": 40
+    },
+    {
+      "id": "divider_gold",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1232,
+        "y": 1187,
+        "w": 381,
+        "h": 84
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "divider_stone",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1651,
+        "y": 1192,
+        "w": 334,
+        "h": 77
+      },
+      "brightPixels": 4,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "divider_diamond",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1228,
+        "y": 1308,
+        "w": 388,
+        "h": 84
+      },
+      "brightPixels": 2,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "divider_gold_thin",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1651,
+        "y": 1311,
+        "w": 336,
+        "h": 79
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "divider_scroll",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1270,
+        "y": 1416,
+        "w": 614,
+        "h": 116
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "arrow_left",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1272,
+        "y": 780,
+        "w": 120,
+        "h": 110
+      },
+      "brightPixels": 5,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "arrow_right",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1429,
+        "y": 780,
+        "w": 119,
+        "h": 110
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "arrow_up",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1586,
+        "y": 780,
+        "w": 117,
+        "h": 110
+      },
+      "brightPixels": 6,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "arrow_down",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1742,
+        "y": 780,
+        "w": 117,
+        "h": 110
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "slot_frame_sword",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1235,
+        "y": 467,
+        "w": 143,
+        "h": 113
+      },
+      "brightPixels": 37,
+      "glyphBlobs": 1,
+      "glyphBhMedian": 3
+    },
+    {
+      "id": "slot_frame_shield",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1388,
+        "y": 467,
+        "w": 144,
+        "h": 113
+      },
+      "brightPixels": 11,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "slot_frame_potion",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1543,
+        "y": 467,
+        "w": 143,
+        "h": 113
+      },
+      "brightPixels": 27,
+      "glyphBlobs": 1,
+      "glyphBhMedian": 4
+    },
+    {
+      "id": "slot_frame_bag",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1697,
+        "y": 467,
+        "w": 143,
+        "h": 113
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "slot_frame_gear",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1851,
+        "y": 467,
+        "w": 143,
+        "h": 113
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "crest_blue",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1169,
+        "y": 1555,
+        "w": 170,
+        "h": 195
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "crest_red",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1393,
+        "y": 1555,
+        "w": 166,
+        "h": 207
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "crest_steel",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1613,
+        "y": 1555,
+        "w": 165,
+        "h": 207
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "crest_gold",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1821,
+        "y": 1550,
+        "w": 173,
+        "h": 180
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "plaque_wide",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 691,
+        "y": 1660,
+        "w": 173,
+        "h": 60
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "plaque_narrow",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 886,
+        "y": 1660,
+        "w": 182,
+        "h": 60
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "banner_blue",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 484,
+        "y": 1660,
+        "w": 185,
+        "h": 60
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0
+    },
+    {
+      "id": "chest",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1505,
+        "y": 1779,
+        "w": 266,
+        "h": 190
+      },
+      "brightPixels": 6,
+      "glyphBlobs": 1,
+      "glyphBhMedian": 3
+    },
+    {
+      "id": "bar_track",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1754,
+        "y": 328,
+        "w": 221,
+        "h": 101
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0,
+      "role": "track",
+      "bar": "template",
+      "capOffsetY": -7
+    },
+    {
+      "id": "bar_fill_hp",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1366,
+        "y": 58,
+        "w": 198,
+        "h": 101
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0,
+      "role": "fill",
+      "bar": "hp"
+    },
+    {
+      "id": "bar_fill_mp",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1365,
+        "y": 192,
+        "w": 199,
+        "h": 101
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0,
+      "role": "fill",
+      "bar": "mp"
+    },
+    {
+      "id": "bar_fill_xp",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1370,
+        "y": 328,
+        "w": 194,
+        "h": 101
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0,
+      "role": "fill",
+      "bar": "xp"
+    },
+    {
+      "id": "bar_cap_left_heart",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1244,
+        "y": 51,
+        "w": 122,
+        "h": 114
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0,
+      "role": "cap_left",
+      "bar": "hp"
+    },
+    {
+      "id": "bar_cap_left_orb",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1244,
+        "y": 185,
+        "w": 122,
+        "h": 114
+      },
+      "brightPixels": 3,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0,
+      "role": "cap_left",
+      "bar": "mp"
+    },
+    {
+      "id": "bar_cap_right",
+      "status": "ok",
+      "source": "kit",
+      "bounds": {
+        "x": 1968,
+        "y": 51,
+        "w": 36,
+        "h": 114
+      },
+      "brightPixels": 0,
+      "glyphBlobs": 0,
+      "glyphBhMedian": 0,
+      "role": "cap_right",
+      "bar": "hp"
+    }
+  ],
+  "rejected": [
+    {
+      "id": "bar_hp_frame",
+      "reason": "texto rasterizado '100 / 100' — substituída por bar_track + bar_fill_hp"
+    },
+    {
+      "id": "bar_mp_frame",
+      "reason": "texto rasterizado — substituída por bar_track + bar_fill_mp"
+    },
+    {
+      "id": "bar_xp_frame",
+      "reason": "texto rasterizado + cap com letras 'XP' — substituída por partes"
+    },
+    {
+      "id": "button_red_banner",
+      "sheet": "dialog",
+      "reason": "texto rasterizado no bloco vermelho (verificado em zoom)"
+    },
+    {
+      "id": "button_blue_banner",
+      "sheet": "dialog",
+      "reason": "texto rasterizado no bloco azul"
+    },
+    {
+      "id": "label_strip",
+      "sheet": "dialog",
+      "reason": "tira clara com glifos inequívocos em zoom"
+    },
+    {
+      "id": "ornament_strip_1",
+      "sheet": "kit",
+      "x": 54,
+      "y": 1660,
+      "w": 220,
+      "h": 60,
+      "reason": "ornamento complexo com formas de glifo — requer revisão humana"
+    },
+    {
+      "id": "ornament_strip_2",
+      "sheet": "kit",
+      "x": 297,
+      "y": 1660,
+      "w": 164,
+      "h": 60,
+      "reason": "idem"
+    }
+  ]
+}

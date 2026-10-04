@@ -1,0 +1,66 @@
+# Dependências
+node_modules/
+.pnp
+.pnp.js
+
+# Build
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# Cache de ferramentas
+.cache/
+.vite/
+.turbo/
+.parcel-cache/
+.eslintcache
+coverage/
+*.lcov
+
+# Ambiente — NUNCA commitar segredos (§91 do Master-Prompt.md)
+.env
+.env.local
+.env.*.local
+.env.production
+!.env.example
+
+# Sistema operacional / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Assets do pack Nika Studio — VERSIONADOS neste repositório desde 2026-10-02
+# (decisão do usuário: o projeto não depende mais do repositório
+# `marmitero/tower-idle-adventure`; tudo o que é necessário vive aqui).
+#
+# `assets/sprites/` entra no Git COMPLETO: os 422 PNGs do pack + os arquivos
+# de licença/manifesto do próprio pack (LICENSE.txt, ASSET_MANIFEST.md,
+# README_IMPORT.txt). A licença MIT da Nika Studio exige manter o aviso de
+# copyright junto — os arquivos ficam na raiz de `assets/sprites/`.
+#
+# O que continua NÃO versionado é o que é GERADO a partir daí:
+# `apps/*/public/assets/` (cópia de trabalho feita por
+# `scripts/build-assets.mjs`). O manifesto gerado (`manifest.json`) é
+# versionado porque é o contrato id -> caminho entre código e arte.
+
+# Build de assets derivados (gerados a partir de assets/sprites/)
+# `/*` e não `/` aqui: excluindo o DIRETÓRIO inteiro, a exceção do
+# manifesto abaixo seria anulada (gitignore não re-inclui arquivos sob
+# um diretório excluído).
+apps/*/public/assets/*
+# ...exceto o manifesto versionado que mapeia ID -> caminho
+!apps/*/public/assets/manifest.json
+apps/game-web/preview-debug/
+
+# Fase de arte (ADR-032): saídas brutas dos geradores e folhas de revisão — nunca versionadas
+assets/_incoming/
+assets/_review/

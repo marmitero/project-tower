@@ -1,0 +1,169 @@
+/**
+ * Fórmulas de combate.
+ *
+ * §37: "A implementação matemática exata deve ficar centralizada. Nunca
+ * duplicar fórmulas em componentes de UI." Este arquivo é o único lugar onde
+ * essas fórmulas existem.
+ *
+ * As fórmulas foram reaproveitadas do repositório de referência (ADR-001,
+ * decisão técnica Tipo B) e são coerentes com o Master-Prompt: o §36 exige X
+ * individual por atributo de equipamento, e o §60 exige feedback visual
+ * inequívoco, que depende de o dano ser auditável.
+ */
+
+import type { CombatStats } from "@tia/contracts";
+import type { CombatConfig } from "@tia/config";
+
+/**
+ * Constante de defesa efetiva para um alvo de certo nível (ADR-021):
+ * `K = defenseConstant + defenseConstantPerLevel × (nível − 1)`.
+ * Nível 1 (ou ausente) devolve a constante base — o comportamento antigo.
+ */
+export function defenseConstantFor(config: CombatConfig, targetLevel = 1): number {
+  const extra = (config.defenseConstantPerLevel ?? 0) * Math.max(0, targetLevel - 1);
+  return config.defenseConstant + extra;
+}
+
+/**
+ * Dano.
+ *
+ *   DanoBase  = PoderOfensivo × CoeficienteDaAção × 100 / (100 + DefesaAlvo)
+ *   DanoFinal = max(1, floor(DanoBase × ModificadoresDeDano))
+ *
+ * A mitigação retorna com saturação: Defesa 100 → metade; Defesa 300 →
+ * um quarto. Reduz retornos sem tornar defesa infinita.
+ */
+export function computeDamage(params: {
+  offensivePower: number;
+  coefficient: number;
+  targetDefense: number;
+  /** Nível do alvo — escala a constante de defesa (ADR-021). Padrão 1. */
+  targetLevel?: number;
+  damageModifiers: number;
+  config: CombatConfig;
+}): { finalDamage: number; beforeMitigation: number; mitigatedPercent: number } {
+  const { offensivePower, coefficient, targetDefense, damageModifiers, config } = params;
+  const k = defenseConstantFor(config, params.targetLevel);
+
+  const raw = offensivePower * coefficient;
+  const beforeMitigation = (raw * k) / (k + targetDefense);
+  const mitigated = beforeMitigation * damageModifiers;
+  const finalDamage = Math.max(config.minDamage, Math.floor(mitigated));
+  const mitigatedPercent = raw > 0 ? Math.min(100, (1 - beforeMitigation / raw) * 100) : 0;
+
+  return { finalDamage, beforeMitigation, mitigatedPercent };
+}
+
+/**
+ * Crítico.
+ *
+ * A chance efetiva é limitada por `critCap` (0.75). O multiplicador é 1.5.
+ * O crítico multiplica o dano JÁ mitigado.
+ */
+export function rollCritical(params: {
+  critChance: number;
+  bonusFlatPercent: number;
+  rngNext: number;
+  config: CombatConfig;
+}): { isCritical: boolean; effectiveChance: number } {
+  const { critChance, bonusFlatPercent, rngNext, config } = params;
+  const effectiveChance = Math.min(
+    config.critCap,
+    critChance + bonusFlatPercent / 100,
+  );
+  return { isCritical: rngNext < effectiveChance, effectiveChance };
+}
+
+/**
+ * Intervalo entre ações.
+ *
+ *   intervalo = T₀ / (1 + IAS)
+ *
+ * IAS é limitado a [iasCapMin, iasCapMax] = [-0.5, +1.0], o que dá
+ * intervalo de 2000ms a 500ms (T₀ = 1000ms). Isso impede loops extremos de ataque sem
+ * remover builds de velocidade.
+ */
+export function actionIntervalMs(attackSpeed: number, config: CombatConfig): number {
+  const ias = Math.min(config.iasCapMax, Math.max(config.iasCapMin, attackSpeed));
+  return config.baseActionIntervalMs / (1 + ias);
+}
+
+/** Dano periódico ignora crítico (§66/ADR-001). */
+export function dotDamage(params: {
+  offensivePower: number;
+  coefficient: number;
+  targetDefense: number;
+  targetLevel?: number;
+  config: CombatConfig;
+}): number {
+  const { offensivePower, coefficient, targetDefense, config } = params;
+  const k = defenseConstantFor(config, params.targetLevel);
+  const raw = offensivePower * coefficient;
+  return Math.max(config.minDamage, Math.floor((raw * k) / (k + targetDefense)));
+}
+
+/**
+ * Poder total — métrica COMPARATIVA, não preditiva (§34/§38).
+ *
+ * Mesma fórmula aplicada aos 8 valores finais. NÃO inclui HP atual, buff
+ * temporário, característica aleatória nem traço de arma: esses aparecem
+ * separados no tooltip, para não sugerir previsão de combate que a métrica
+ * não oferece.
+ */
+export function powerOf(stats: CombatStats): number {
+  const critPP = stats.critChance * 100;
+  const iasPP = stats.attackSpeed * 100;
+  return (
+    stats.attack +
+    stats.specialAttack +
+    0.75 * stats.defense +
+    0.75 * stats.specialDefense +
+    0.02 * stats.hp +
+    1.5 * critPP +
+    iasPP +
+    0.5 * stats.speed
+  );
+}
+
+/**
+ * Nota — qualidade das rolagens, independente da raridade (§34/§35).
+ *
+ *   Nota% = média((x_i − xMin) / (xMax − xMin)) × 100
+ *
+ * Normalizar pela FAIXA (não por `x/xMax`) faz a nota ir de 0 a 100 de verdade:
+ * X mínimo em todas as linhas = 0%, X máximo = 100%. A letra vem da tabela
+ * `equipment.grades` (ordenada do maior para o menor `minQuality`) — dado, não
+ * limiar fixo no código (ADR-023).
+ */
+export function qualityGrade<G extends string>(
+  xValues: readonly number[],
+  range: { min: number; max: number },
+  grades: readonly { grade: G; minQuality: number }[],
+): { quality: number; grade: G } {
+  const last = grades[grades.length - 1]?.grade as G;
+  const span = range.max - range.min;
+  if (xValues.length === 0 || span <= 0) return { quality: 0, grade: last };
+  const mean = xValues.reduce((a, b) => a + (b - range.min) / span, 0) / xValues.length;
+  const quality = Math.min(100, Math.max(0, mean * 100));
+  const found = grades.find((g) => quality >= g.minQuality);
+  return { quality, grade: (found?.grade ?? last) as G };
+}
+
+/** Divisão de XP entre membros da equipe (§20, §81). */
+export function divideXp(totalXp: number, teamSize: number, split: Record<1 | 2 | 3, number>): number[] {
+  const size = Math.min(3, Math.max(1, teamSize)) as 1 | 2 | 3;
+  const share = split[size];
+  const per = Math.floor(totalXp * share);
+  const out = Array.from({ length: size }, () => per);
+  // Remainder distribution: o XP que se perderia no floor é dado ao primeiro
+  // membro. Perder XP por arredondamento é silencioso e injusto.
+  const distributed = per * size;
+  let remainder = totalXp - distributed;
+  let i = 0;
+  while (remainder > 0 && size > 0) {
+    out[i % size] = out[i % size]! + 1;
+    remainder -= 1;
+    i += 1;
+  }
+  return out;
+}
