@@ -196,7 +196,7 @@ export function defaultEnemySeeds(): EnemySeed[] {
       attributes: attrs(27, 20, 26, 6, 14),
       assets: { sheets: charSheets("skeleton"), atlas: "enemies/bone_knight" } },
     // Lote 4: elite RARO do andar 4.
-    { id: "royal_mummy", name: "Múmia Real", role: "elite", damageType: "physical", statMultiplier: 1.12,
+    { id: "royal_mummy", name: "Múmia Real", role: "elite", damageType: "physical", statMultiplier: 1.18,
       attributes: attrs(30, 14, 28, 10, 16),
       assets: { sheets: charSheets("skeleton"), atlas: "enemies/royal_mummy" } },
     { id: "elitearcher", name: "Arqueiro de Elite", role: "elite", damageType: "physical", statMultiplier: 1.26,

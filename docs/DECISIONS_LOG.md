@@ -950,3 +950,39 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 **Alternativas rejeitadas:** (a) regerar Cão/Escaravelho — o resultado seria o mesmo tipo de silhueta e gastaria 2 gerações; (b) afrouxar os limiares globais — a métrica continua útil para bípedes; (c) manter o Esqueleto como `balanced` e deixar o andar 3 sem dano.
 
 **Consequências:** roster 23 inimigos; manifesto 640 arquivos; **melhoria futura sugerida:** guia por *plano corporal* (quadrúpede/inseto) para a métrica de movimento. Faltam no andar 4 o Sacerdote Mumificado (M) e a Múmia Real (E) → L4.
+
+## ADR-038 — Skills de cura e o Clérigo (5ª classe)
+
+**Data:** 2026-10-04 · **Status:** ✅ Aceita · **Tipo:** A (engine + dados) · **Origem:** Gate 0 (D3: 5ª classe = Clérigo, suporte/sustain)
+
+| Item | Decisão |
+|---|---|
+| Dado | `SkillDef.heal { coefficient, thresholdFraction, regen?{ totalFraction, durationMs, intervalMs } }` — tudo em `packages/config/src/skills.ts`, validado em `validate.ts` (faixas de coeficiente, limiar e regeneração) |
+| Motor | `packages/engine/src/simulate.ts`/`status.ts`: a cura só dispara se o alvo estiver **≤ limiar de vida** (não gasta cooldown à toa); cura = `floor(ataque especial × coeficiente)` limitada ao HP faltante; a regeneração **renova** (não acumula) e seus pulsos não critam; alvos `self` / `ally_lowest_hp`. Sem alvo ferido o herói bate no básico. Teste: `heal-skill.test.ts` |
+| Skill por herói | `engineSkillsFor(classId, identityId?)` devolve **UMA** skill ativa: a *assinatura* da identidade (se for ativa e da classe) ou `cls.activeSkillId`. Antes devolvia todas as ativas da classe — com 5 skills de Clérigo daria 5 simultâneas (§22: 1 ativa + 2 passivas) |
+| Classe | `cleric`: FOR 10 · DES 10 · CON 22 · INT 16 · SAB 24 · CAR 18 (soma 100, como as outras), dano mágico, arma `mace`, papel "Suporte / sustain", passivas `passive_blessing` e `passive_sanctuary`. **Não** entra em `STARTER_HERO_CLASSES` (continuam 4 iniciais, §10); chega por caixas, fragmentos e chefe (Rainha dos Morcegos entrega fragmentos de Clérigo raro no lugar do 2º de Arqueiro) |
+| Elenco (5) | Sacerdotisa da Aurora (*Cura* `skill_cure`), Monge Curandeiro (Tobias, *Palma Restauradora*: DES+4 CAR−4), Bispo Guerreiro (Gaspar, *Punição*: dano mágico, FOR+6 SAB−4 INT−2), Druida da Vida (Yara, *Florescer*: CON+3 INT−3), Oráculo (Nyra, *Profecia*: INT+4 CAR−2 CON−2; sem retrato próprio até o L7 — usa o da classe) |
+| Calibração | A 1ª versão (cura 2,4× + 8 %/4 s, limiar 70 %) deixava o Clérigo com 14 % de perda média contra 33–40 % dos outros e aguentando idle para sempre. A métrica de perda é **líquida** (a cura apaga o dano), então o sustain precisa ser modesto: `skill_cure` = 0,45× + 3 % em 4 s, cd 9 s, limiar 70 %. Resultado: perda média ≈ 31 % (razão pior/melhor ≤ 1,4), cai em idle antes de 30 lutas, e o poder das variações fica em ±8 % |
+| Armadilha de teste | CAR não entra em nenhuma fórmula de combate: é o "atributo livre" para compensar deltas sem mudar o poder. O modelo de poder (hp × def × atq) é multiplicativo, então reduzir CON/SAB penaliza duas vezes |
+
+**Alternativas rejeitadas:** (a) cura forte e alterar os testes de balanceamento — esconderia que o suporte venceria o limite do andar; (b) tratar cura como "dano negativo" — quebraria o relatório de dano; (c) Clérigo como 5º inicial — contraria o §10 (MVP com 4).
+
+**Consequências:** `balance.ts` mede só a skill da classe (modelo); `shop.ts` sorteia classe entre 5; testes de catálogo agora distinguem "iniciais" de "classes".
+
+## ADR-039 — Lote 4 da arte: andar 4 completo e Clérigo no jogo
+
+**Data:** 2026-10-04 · **Status:** ✅ Aceita (aguarda o "lote 04 aprovado") · **Tipo:** B (arte + dados) · **Pedido do usuário:** *"O lote 03 está aprovado… siga com o lote 4."*
+
+**Gerações: 8/10 (2 reservas)** — 5 atlas de herói do Clérigo, 2 atlas de inimigo (**Sacerdote Mumificado**, M; **Múmia Real**, E) e 1 folha 2×2 de retratos (Sacerdotisa, Monge, Bispo, Druida). As entradas de proveniência foram **reconstruídas** do commit de trabalho (o sandbox foi reciclado no meio do lote); o número real pode ter incluído refações descartadas — conservadoramente tratado como 8.
+
+| Item | Decisão |
+|---|---|
+| Andar 4 | Pool: Estátua 4 · Orc 4 · Escaravelho 3 · Sacerdote 2 · Múmia Real 1 (elite). O Morcego Tóxico (provisório) passa a começar no andar 5. Roster: 25 inimigos |
+| Balanceamento | Sacerdote **27 %** da vida do Rei (caster, mult 0,92) · Múmia Real **60 %** (mult 1,18; 1,12 deu 53 %) — alvo ≈ 58–60 % como o Capitão (62 %) |
+| Retratos | 4 de 5 (o Oráculo fica para o L7); `despeckle.mjs` (ADR-039) apaga fragmentos soltos do quadro vizinho por célula — ferramenta nova, determinística, com teste |
+| Teste frágil | `loot.test.ts` comparava raridades em nível 5 (arredondamento inteiro dependia da semente — mudou quando o catálogo ganhou uma classe); agora usa nível 2000 |
+| Verificação no jogo | Chromium real com Debug Mode, andar 4: Sacerdote, Estátua, Escaravelho e Orc desenhados; sem 404 nem erro. `docs/art-review/lote-04/` |
+
+**Alternativas rejeitadas:** gerar o retrato do Oráculo agora (estoura o lote e ele só aparece a partir do L7).
+
+**Consequências:** manifesto +atlas; os andares 5–10 e os demais heróis vêm nos lotes seguintes (§9: L5 = 8 heróis); a ferramenta de validação por plano corporal continua planejada antes de L5/L6.

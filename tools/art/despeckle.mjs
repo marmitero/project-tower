@@ -1,5 +1,5 @@
 /**
- * Limpeza de fragmentos soltos (Lote 4, ADR-038): geradores às vezes deixam pedaços do quadro vizinho
+ * Limpeza de fragmentos soltos (Lote 4, ADR-039): geradores às vezes deixam pedaços do quadro vizinho
  * (ponta de espada, sandália) dentro da célula. Eles inflam o bbox, deslocam a âncora e reprovam a
  * margem. Por célula da grade, mantém o MAIOR componente e só os componentes próximos dele
  * (arco de golpe, arma destacada); apaga o resto. Zero geração, determinístico.

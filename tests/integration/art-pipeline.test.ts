@@ -8,6 +8,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { ITA_ATLAS, gbaAssetIds, ICON_NAMES as CONFIG_ICONS, GBA_PREFIX } from "@tia/config";
+import { despeckleCells } from "../../tools/art/despeckle.mjs";
 import { contentBands, reflowRows } from "../../tools/art/reflow.mjs";
 import { KIT_LAYOUT, sliceKit } from "../../tools/art/kit.mjs";
 import { ICON_NAMES as TOOL_ICONS, UIKIT, sliceButtons, sliceIcons } from "../../tools/art/uikit.mjs";
@@ -451,5 +452,38 @@ describe("reflow de folha quadrada (ADR-035)", () => {
     const bad = newRaw(1024, 1024) as Raw;
     blit(bad, newRaw(60, 100, [90, 120, 80, 255]) as Raw, 100, 100);
     expect(() => reflowRows(bad)).toThrow(/esperava 5 linhas/);
+  });
+});
+
+describe("despeckle (Lote 4, ADR-039)", () => {
+  const COLS = 4;
+  const ROWS = 5;
+  const W = 400;
+  const H = 500;
+  const solid = (raw: Raw, x: number, y: number) => raw.data[(y * raw.w + x) * 4 + 3]! > 0;
+
+  it("apaga o fragmento solto do quadro vizinho e mantém o corpo e a arma encostada", () => {
+    const raw = newRaw(W, H, [0, 0, 0, 0]) as Raw;
+    // célula (0,0) = 100×100: corpo 30×60, fragmento 6×8 longe, arma 14×14 colada ao corpo
+    blit(raw, newRaw(30, 60, [90, 120, 80, 255]) as Raw, 35, 30);
+    blit(raw, newRaw(14, 14, [200, 200, 200, 255]) as Raw, 70, 40);
+    blit(raw, newRaw(6, 8, [200, 50, 50, 255]) as Raw, 2, 90);
+    const out = despeckleCells(raw, { cols: COLS, rows: ROWS, minArea: 150, reach: 30 }) as { raw: Raw; removedPixels: number; cellsTouched: number };
+    expect(out.removedPixels).toBe(48);
+    expect(out.cellsTouched).toBe(1);
+    expect(solid(out.raw, 4, 92)).toBe(false);
+    expect(solid(out.raw, 50, 50)).toBe(true);
+    expect(solid(out.raw, 75, 45)).toBe(true);
+    expect(solid(raw, 4, 92)).toBe(true); // não muta a entrada
+  });
+
+  it("célula limpa fica intacta e a operação é determinística", () => {
+    const raw = newRaw(W, H, [0, 0, 0, 0]) as Raw;
+    blit(raw, newRaw(30, 60, [90, 120, 80, 255]) as Raw, 135, 30);
+    const a = despeckleCells(raw, { cols: COLS, rows: ROWS }) as { raw: Raw; removedPixels: number };
+    const b = despeckleCells(raw, { cols: COLS, rows: ROWS }) as { raw: Raw; removedPixels: number };
+    expect(a.removedPixels).toBe(0);
+    expect(Buffer.from(a.raw.data).equals(Buffer.from(b.raw.data))).toBe(true);
+    expect(Buffer.from(a.raw.data).equals(Buffer.from(raw.data))).toBe(true);
   });
 });

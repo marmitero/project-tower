@@ -44,3 +44,16 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 7 | `enemies/guardian_statue` | atlas | aprovado | guide_orc, goblin_captain | Estátua Guardiã (tanque, andar 4), guia orc magenta |
 | 8 | `enemies/tomb_scarab` | atlas | aprovado visual (métrica REFAZER: paleta 1221 e silhueta; o pack final tem 64 cores) | guide_slime, mud_toad | Escaravelho de Tumba (veloz, andar 4), guia slime magenta |
 
+## Lote L4 — 8/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `heroes/cleric_aurora` | atlas | aprovado (reconstruído do commit WIP) | guide_mage | Sacerdotisa da Aurora (Clérigo), guia magenta de mago, capuz branco e dourado, maça |
+| 2 | `heroes/cleric_monk` | atlas | aprovado (reconstruído do commit WIP) | guide_goblin | Monge Curandeiro (Clérigo), túnica laranja e contas, punhos enfaixados |
+| 3 | `heroes/cleric_bishop` | atlas | aprovado (reconstruído do commit WIP) | guide_orc | Bispo Guerreiro (Clérigo), mitra, armadura e maça pesada |
+| 4 | `heroes/cleric_druid` | atlas | aprovado (reconstruído do commit WIP) | guide_mage | Druida da Vida (Clérigo), coroa de galhos, capa verde, cajado com broto |
+| 5 | `heroes/cleric_oracle` | atlas | aprovado (reconstruído do commit WIP) | guide_mage | Oráculo (Clérigo), cabelo prateado, venda lunar, manto violeta |
+| 6 | `enemies/mummy_priest` | atlas | aprovado (reconstruído do commit WIP) | guide_mage, candle_skull | Sacerdote Mumificado (mago, andar 4), faixas, toucado azul e cajado |
+| 7 | `enemies/royal_mummy` | atlas | aprovado (reconstruído do commit WIP) | guide_orc, goblin_captain | Múmia Real (elite, andar 4), faraó com foice e faixa vermelha |
+| 8 | `portraits/heroes/clerigos` | portrait | aprovado (reconstruído do commit WIP) | king_ref | Retratos dos 4 clérigos (2x2, magenta): sacerdotisa, monge, bispo, druida |
+

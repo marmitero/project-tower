@@ -272,6 +272,96 @@
         "mud_toad"
       ],
       "verdict": "aprovado visual (métrica REFAZER: paleta 1221 e silhueta; o pack final tem 64 cores)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L4",
+      "asset": "heroes/cleric_aurora",
+      "kind": "atlas",
+      "prompt": "Sacerdotisa da Aurora (Clérigo), guia magenta de mago, capuz branco e dourado, maça",
+      "refs": [
+        "guide_mage"
+      ],
+      "verdict": "aprovado (reconstruído do commit WIP)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L4",
+      "asset": "heroes/cleric_monk",
+      "kind": "atlas",
+      "prompt": "Monge Curandeiro (Clérigo), túnica laranja e contas, punhos enfaixados",
+      "refs": [
+        "guide_goblin"
+      ],
+      "verdict": "aprovado (reconstruído do commit WIP)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L4",
+      "asset": "heroes/cleric_bishop",
+      "kind": "atlas",
+      "prompt": "Bispo Guerreiro (Clérigo), mitra, armadura e maça pesada",
+      "refs": [
+        "guide_orc"
+      ],
+      "verdict": "aprovado (reconstruído do commit WIP)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L4",
+      "asset": "heroes/cleric_druid",
+      "kind": "atlas",
+      "prompt": "Druida da Vida (Clérigo), coroa de galhos, capa verde, cajado com broto",
+      "refs": [
+        "guide_mage"
+      ],
+      "verdict": "aprovado (reconstruído do commit WIP)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L4",
+      "asset": "heroes/cleric_oracle",
+      "kind": "atlas",
+      "prompt": "Oráculo (Clérigo), cabelo prateado, venda lunar, manto violeta",
+      "refs": [
+        "guide_mage"
+      ],
+      "verdict": "aprovado (reconstruído do commit WIP)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L4",
+      "asset": "enemies/mummy_priest",
+      "kind": "atlas",
+      "prompt": "Sacerdote Mumificado (mago, andar 4), faixas, toucado azul e cajado",
+      "refs": [
+        "guide_mage",
+        "candle_skull"
+      ],
+      "verdict": "aprovado (reconstruído do commit WIP)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L4",
+      "asset": "enemies/royal_mummy",
+      "kind": "atlas",
+      "prompt": "Múmia Real (elite, andar 4), faraó com foice e faixa vermelha",
+      "refs": [
+        "guide_orc",
+        "goblin_captain"
+      ],
+      "verdict": "aprovado (reconstruído do commit WIP)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L4",
+      "asset": "portraits/heroes/clerigos",
+      "kind": "portrait",
+      "prompt": "Retratos dos 4 clérigos (2x2, magenta): sacerdotisa, monge, bispo, druida",
+      "refs": [
+        "king_ref"
+      ],
+      "verdict": "aprovado (reconstruído do commit WIP)"
     }
   ]
 }
