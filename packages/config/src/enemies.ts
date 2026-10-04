@@ -106,7 +106,7 @@ const attrs = (
 ): CharacterAttributes => ({ strength, dexterity, constitution, intelligence, wisdom, charisma: 4 });
 
 /**
- * Roster padrão — 23 inimigos (tank 5, dps 5, swift 4, caster 4, elite 5).
+ * Roster padrão — 25 inimigos (tank 5, dps 5, swift 4, caster 5, elite 6).
  * Fábrica dos DEFAULTS: o estado vivo é `enemies` (pode ser substituído por
  * um ContentPack, ver `content.ts`).
  */
@@ -172,6 +172,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "candle_skull", name: "Crânio Necrovela", role: "caster", damageType: "magic", statMultiplier: 0.9,
       attributes: attrs(6, 16, 10, 28, 16),
       assets: { sheets: charSheets("bat"), atlas: "enemies/candle_skull" } },
+    // Lote 4: mago do andar 4 — o Sacerdote das Catacumbas (cajado de ankh).
+    { id: "mummy_priest", name: "Sacerdote Mumificado", role: "caster", damageType: "magic", statMultiplier: 0.92,
+      attributes: attrs(6, 14, 14, 28, 18),
+      assets: { sheets: charSheets("mage"), atlas: "enemies/mummy_priest" } },
     { id: "fireorc", name: "Orc Flamejante", role: "caster", damageType: "magic", statMultiplier: 0.88,
       attributes: attrs(10, 8, 22, 32, 12),
       assets: { sheets: charSheets("fireorc") } },
@@ -191,6 +195,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "bone_knight", name: "Cavaleiro de Ossos", role: "elite", damageType: "physical", statMultiplier: 1.14,
       attributes: attrs(27, 20, 26, 6, 14),
       assets: { sheets: charSheets("skeleton"), atlas: "enemies/bone_knight" } },
+    // Lote 4: elite RARO do andar 4.
+    { id: "royal_mummy", name: "Múmia Real", role: "elite", damageType: "physical", statMultiplier: 1.12,
+      attributes: attrs(30, 14, 28, 10, 16),
+      assets: { sheets: charSheets("skeleton"), atlas: "enemies/royal_mummy" } },
     { id: "elitearcher", name: "Arqueiro de Elite", role: "elite", damageType: "physical", statMultiplier: 1.26,
       attributes: attrs(26, 32, 18, 8, 12),
       assets: { sheets: charSheets("elitearcher") } },

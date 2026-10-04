@@ -88,17 +88,17 @@ describe("criação de Rei e escolha de herói (§10, §19)", () => {
     expect(damageTypes.has("magic")).toBe(true);
   });
 
-  it("os 4 heróis não são mecanicamente iguais (§10 — proibido)", () => {
-    const defs = classes;
+  it("os heróis (4 iniciais + Clérigo) não são mecanicamente iguais (§10 — proibido)", () => {
+    const defs = classes; // 4 iniciais + Clérigo (ADR-038)
     // §10 exige "diferenças reais de função, atributos, skills, estilo de
     // combate e progressão". Um teste que só olha o sprite não prova nada;
     // este compara os números que realmente mudam o combate.
     const growthKeys = defs.map((c) => Object.entries(c.growth).filter(([, v]) => typeof v === "number"));
     const distinctGrowths = new Set(growthKeys.map((g) => JSON.stringify(g)));
-    expect(distinctGrowths.size).toBe(4);
+    expect(distinctGrowths.size).toBe(defs.length);
 
     const distinctSkills = new Set(defs.map((c) => c.activeSkillId));
-    expect(distinctSkills.size).toBe(4);
+    expect(distinctSkills.size).toBe(defs.length);
   });
 
   it("NENHUM herói entra na equipe sem o jogador colocar", () => {

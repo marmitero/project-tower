@@ -182,6 +182,101 @@ export const EXTRA_HEROES: HeroIdentityDef[] = [
     assets: { atlas: "heroes/guardian_borin" },
     attributeDelta: { constitution: 2, strength: -4, wisdom: 2 },
   },
+  // ---- Clérigo (ADR-038, Lote 4): a 5ª classe, 5 variações; todas obtidas pelo jogo ------------------
+  {
+    id: "hero_aurora",
+    classId: "cleric",
+    name: "Aurora",
+    epithet: "a Sacerdotisa da Primeira Luz",
+    lore:
+      "Aurora rezava no último templo que ainda via o amanhecer. Quando a Torre surgiu, ela subiu com a luz nas mãos: " +
+      "o que a luz toca fecha, o que ela abençoa volta a respirar.",
+    personality: ["serena", "generosa", "inflexível"],
+    voiceNotes: "Voz clara e morna, quase cantada; reza baixinho entre os golpes; nunca levanta o tom, só a mão.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_cure",
+    combatStyle: "Cura de peso — aguenta o golpe, reza e volta inteira.",
+    range: "ranged",
+    statPriority: ["specialDefense", "hp", "specialAttack"],
+    acquisition: { origin: "market", hint: "Mercado comum, caixas e invocações de Clérigo." },
+    assets: { portrait: "portraits/heroes/hero_sacerdotisa", atlas: "heroes/cleric_aurora" },
+  },
+  {
+    id: "hero_tobias",
+    classId: "cleric",
+    name: "Irmão Tobias",
+    epithet: "o Monge das Mãos Mansas",
+    lore:
+      "Tobias aprendeu que as mãos que quebram também sabem costurar. Move-se leve, reza curto e cura de novo antes " +
+      "que o inimigo termine de se gabar.",
+    personality: ["calmo", "ágil", "bem-humorado"],
+    voiceNotes: "Fala devagar e sorri com os olhos fechados; conta as respirações em voz alta.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_restoring_palm",
+    combatStyle: "Toques rápidos — cura pouco, mas o tempo todo.",
+    range: "melee",
+    statPriority: ["attackSpeed", "specialDefense", "hp"],
+    acquisition: { origin: "market", hint: "Mercado comum, caixas e eventos da Torre." },
+    assets: { portrait: "portraits/heroes/hero_monge_curandeiro", atlas: "heroes/cleric_monk" },
+    attributeDelta: { dexterity: 4, charisma: -4 },
+  },
+  {
+    id: "hero_bispo_gaspar",
+    classId: "cleric",
+    name: "Gaspar",
+    epithet: "o Bispo de Armadura",
+    lore:
+      "Gaspar trocou o báculo por uma maça no dia em que o rebanho precisou de um muro. Reza com a mão esquerda " +
+      "e castiga com a direita — e a Torre ainda não decidiu qual das duas dói mais.",
+    personality: ["severo", "protetor", "teimoso"],
+    voiceNotes: "Barítono de púlpito; cita salmos antes de cada golpe e se desculpa depois — às vezes.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_smite",
+    combatStyle: "Maça sagrada — o Clérigo que prefere punir a curar.",
+    range: "melee",
+    statPriority: ["specialAttack", "defense", "hp"],
+    acquisition: { origin: "boss", hint: "Fragmentos em Chefes da Arena e caixas de invocação." },
+    assets: { portrait: "portraits/heroes/hero_bispo", atlas: "heroes/cleric_bishop" },
+    attributeDelta: { strength: 6, wisdom: -4, intelligence: -2 },
+  },
+  {
+    id: "hero_druida_yara",
+    classId: "cleric",
+    name: "Yara",
+    epithet: "a Druida da Vida Longa",
+    lore:
+      "Yara não cura: ela planta. Onde pisa, a vida brota devagar e não pára mais — a ferida de hoje é a raiz de amanhã.",
+    personality: ["paciente", "selvagem", "acolhedora"],
+    voiceNotes: "Voz rouca e baixa, como folhas; fala com o cajado como se ele respondesse.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_bloom",
+    combatStyle: "Regeneração longa — vence quem a deixa respirar.",
+    range: "ranged",
+    statPriority: ["hp", "specialDefense", "specialAttack"],
+    acquisition: { origin: "summon", hint: "Caixas de invocação de Clérigo e eventos especiais." },
+    assets: { portrait: "portraits/heroes/hero_druida", atlas: "heroes/cleric_druid" },
+    attributeDelta: { constitution: 3, intelligence: -3 },
+  },
+  {
+    id: "hero_oraculo_nyra",
+    classId: "cleric",
+    name: "Nyra",
+    epithet: "a Oráculo da Lua Cega",
+    lore:
+      "Nyra entregou os olhos à lua em troca de ver o que vem. Cura antes de a ferida existir: na hora em que o golpe " +
+      "chega, ela já virou a página.",
+    personality: ["enigmática", "calma", "irônica"],
+    voiceNotes: "Sussurro com eco; termina as frases do inimigo antes dele; ri de piadas que ainda não foram contadas.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_prophecy",
+    combatStyle: "Cura preventiva — reza cedo, mesmo ferida de leve.",
+    range: "ranged",
+    statPriority: ["specialAttack", "specialDefense", "attackSpeed"],
+    acquisition: { origin: "event", hint: "Eventos especiais da Torre e caixas raras de Clérigo." },
+    // Retrato próprio: virá na folha de retratos do Lote 7 (até lá usa o retrato da classe).
+    assets: { atlas: "heroes/cleric_oracle" },
+    attributeDelta: { intelligence: 4, charisma: -2, constitution: -2 },
+  },
 ];
 
 /**

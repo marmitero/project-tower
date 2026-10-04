@@ -342,7 +342,7 @@ export function defaultBosses(): BossDef[] {
       rewards: {
         coinKills: 60, kingXpKills: 50, heroXpKills: 50, firstClearMultiplier: 3,
         equipment: { rolls: 2, minRarity: "uncommon" },
-        fragments: [frag("ranger", "rare", 2, 4), frag("any", "rare", 1, 2, 0.4)],
+        fragments: [frag("cleric", "rare", 2, 4), frag("any", "rare", 1, 2, 0.4)],
         firstClearFragments: [frag("any", "rare", 10, 10)],
       },
       assets: { sheets: charSheets("toxicbat") },

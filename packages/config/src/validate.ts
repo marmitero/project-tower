@@ -317,16 +317,15 @@ function collectCatalogErrors(): string[] {
   };
 
   // --- Heróis (§10 — 4 heróis, diferenças reais) ---------------------------
+  // ADR-038: 4 classes INICIAIS (§10) + classes extras obtidas pelo jogo (Clérigo). O que conta como
+  // inicial é `STARTER_HERO_CLASSES` (e `HEROES`); as demais só chegam por aquisição.
   check(
-    classes.length === 4,
-    `classes deve ter exatamente 4 heróis iniciais (§10), tem ${classes.length}`,
+    STARTER_HERO_CLASSES.length === 4,
+    `STARTER_HERO_CLASSES deve ter exatamente 4 classes iniciais (§10), tem ${STARTER_HERO_CLASSES.length}`,
   );
+  check(classes.length >= STARTER_HERO_CLASSES.length, "classes deve conter as classes iniciais");
   const classIds = new Set(classes.map((c) => c.id));
   check(classIds.size === classes.length, "classes[].id duplicado");
-  check(
-    STARTER_HERO_CLASSES.length === classes.length,
-    "STARTER_HERO_CLASSES deve cobrir exatamente as classes do catálogo",
-  );
   for (const id of STARTER_HERO_CLASSES) {
     check(classIds.has(id), `STARTER_HERO_CLASSES referencia classe inexistente: ${id}`);
   }
@@ -453,13 +452,21 @@ function collectCatalogErrors(): string[] {
     check(s.manaCost >= 0, `skills.${s.id}.manaCost não pode ser negativo`);
     if (s.kind === "active") {
       check(
-        (s.coefficient ?? 0) > 0,
-        `skills.${s.id} ativa precisa de coefficient > 0`,
+        (s.coefficient ?? 0) > 0 || (!!s.heal && s.heal.coefficient > 0),
+        `skills.${s.id} ativa precisa de coefficient > 0 (ou de um efeito de cura)`,
       );
       check(s.cooldownMs > 0, `skills.${s.id} ativa precisa de cooldownMs > 0`);
     }
     if (s.damageType !== "none") {
       check((s.coefficient ?? 0) > 0, `skills.${s.id} com dano precisa de coefficient`);
+    }
+    if (s.heal) {
+      check(s.damageType === "none", `skills.${s.id}: skill de cura deve ter damageType "none"`);
+      check(s.heal.coefficient > 0 && s.heal.thresholdFraction > 0 && s.heal.thresholdFraction <= 1, `skills.${s.id}.heal fora da faixa`);
+      if (s.heal.regen) {
+        const r = s.heal.regen;
+        check(r.totalFraction > 0 && r.totalFraction <= 1 && r.durationMs >= r.intervalMs && r.intervalMs > 0, `skills.${s.id}.heal.regen fora da faixa`);
+      }
     }
   }
 

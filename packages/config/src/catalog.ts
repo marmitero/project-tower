@@ -177,6 +177,20 @@ const classSeeds: Omit<HeroClassDef, "growth">[] = [
     activeSkillId: "skill_hex",
     passiveSkillIds: ["passive_venom", "passive_drain"],
   },
+  // ADR-038 (Lote 4): a 5ª classe. NÃO é inicial (§10: o jogador escolhe 1 dos 4); chega por aquisição.
+  {
+    id: "cleric",
+    name: "Clérigo",
+    role: "Suporte / sustain",
+    damageType: "magic",
+    affinityWeapon: "mace",
+    // Retrato e corpo da CLASSE (usados só se a identidade não tiver os próprios): a Sacerdotisa.
+    assets: { portrait: "portraits/heroes/hero_sacerdotisa", sheets: charSheets("mage") },
+    // Identidade: fé e vida — SAB alta (cura e defesa mágica), CON sólida, INT baixa (dano pequeno).
+    attributes: { strength: 10, dexterity: 10, constitution: 22, intelligence: 16, wisdom: 24, charisma: 18 },
+    activeSkillId: "skill_cure",
+    passiveSkillIds: ["passive_blessing", "passive_sanctuary"],
+  },
 ];
 
 /**
@@ -189,8 +203,8 @@ export const classes: HeroClassDef[] = classSeeds.map((seed) => ({
   growth: growthFromAttributes(seed.attributes),
 }));
 
-/** Os 4 heróis iniciais (§10 — o jogador ESCOLHE 1). */
-export const STARTER_HERO_CLASSES: readonly string[] = classes.map((c) => c.id);
+/** As 4 classes dos heróis iniciais (§10 — o jogador ESCOLHE 1). As outras classes vêm por aquisição. */
+export const STARTER_HERO_CLASSES: readonly string[] = ["guardian", "ranger", "arcanist", "shadowcaller"];
 
 // Inimigos da Torre: ver `enemies.ts` (ADR-021/022 — definidos por atributos).
 

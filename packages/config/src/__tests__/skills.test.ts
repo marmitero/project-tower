@@ -70,15 +70,15 @@ describe("catálogo de skills (§22 — 1 ativa + 2 passivas)", () => {
     }
   });
 
-  it("12 skills no roster: 4 ativas + 8 passivas, ids únicos", () => {
-    expect(skills).toHaveLength(12);
-    expect(skills.filter((s) => s.kind === "active")).toHaveLength(4);
-    expect(new Set(skills.map((s) => s.id)).size).toBe(12);
+  it("19 skills no roster: 9 ativas + 10 passivas, ids únicos (4 classes originais + Clérigo e suas assinaturas)", () => {
+    expect(skills).toHaveLength(19);
+    expect(skills.filter((s) => s.kind === "active")).toHaveLength(9);
+    expect(new Set(skills.map((s) => s.id)).size).toBe(19);
   });
 
-  it("toda skill ativa tem coeficiente e cooldown (§25 — dispara sozinha)", () => {
+  it("toda skill ativa tem coeficiente (ou cura) e cooldown (§25 — dispara sozinha)", () => {
     for (const s of skills.filter((x) => x.kind === "active")) {
-      expect(s.coefficient ?? 0, s.id).toBeGreaterThan(0);
+      expect((s.coefficient ?? 0) + (s.heal?.coefficient ?? 0), s.id).toBeGreaterThan(0);
       expect(s.cooldownMs, s.id).toBeGreaterThan(0);
     }
   });

@@ -19,10 +19,14 @@ import {
 } from "../index.js";
 
 describe("catálogo de heróis (§10)", () => {
-  it("tem exatamente 4 heróis iniciais", () => {
-    expect(classes).toHaveLength(4);
+  const starters = classes.filter((c) => STARTER_HERO_CLASSES.includes(c.id));
+
+  it("tem exatamente 4 heróis iniciais; o Clérigo (5ª classe, ADR-038) chega depois", () => {
     expect(STARTER_HERO_CLASSES).toHaveLength(4);
-    expect(new Set(STARTER_HERO_CLASSES)).toEqual(new Set(classes.map((c) => c.id)));
+    expect(starters).toHaveLength(4);
+    expect(classes).toHaveLength(5);
+    expect(classes.map((c) => c.id)).toContain("cleric");
+    expect(STARTER_HERO_CLASSES).not.toContain("cleric");
   });
 
   it("cobre físico × mágico (§18 — a escolha de herói é uma decisão)", () => {
@@ -32,8 +36,8 @@ describe("catálogo de heróis (§10)", () => {
   });
 
   it("papéis e perfis de atributo são REAIS — nada de clones disfarçados (§10)", () => {
-    expect(new Set(classes.map((c) => c.role)).size).toBe(4);
-    expect(new Set(classes.map((c) => JSON.stringify(c.growth))).size).toBe(4);
+    expect(new Set(classes.map((c) => c.role)).size).toBe(5);
+    expect(new Set(classes.map((c) => JSON.stringify(c.growth))).size).toBe(5);
   });
 
   it("todo herói tem retrato e as 6 folhas de animação não vazias", () => {
@@ -46,7 +50,8 @@ describe("catálogo de heróis (§10)", () => {
   });
 
   it("cada herói usa um corpo próprio — nenhum sprite compartilhado", () => {
-    const idles = classes.map((c) => c.assets.sheets.idle);
+    // O Clérigo reaproveita o corpo-base do mago na classe; cada identidade dele tem atlas próprio.
+    const idles = starters.map((c) => c.assets.sheets.idle);
     expect(new Set(idles).size).toBe(4);
   });
 

@@ -448,7 +448,7 @@ export class GameState {
       // com o HP atual do herói, não com o máximo. É isso que faz o andar
       // ter tensão. Recuperação é ato do jogador (restartHunt/restActiveHero).
       heroStartHp: hero.currentHp,
-      heroSkills: engineSkillsFor(hero.classId),
+      heroSkills: engineSkillsFor(hero.classId, hero.identityId),
       heroSprites: heroSpriteRecord(hero),
       // Físico × mágico importa (ADR-021): arcanist/shadowcaller batem em Def. Esp.
       heroBasicAttackType: classes.find((c) => c.id === hero.classId)?.damageType === "magic" ? "magic" : "physical",
@@ -1070,7 +1070,7 @@ export class GameState {
         hero,
         stats,
         effects: heroCombatEffects(hero, this.state.inventory),
-        skills: engineSkillsFor(hero.classId),
+        skills: engineSkillsFor(hero.classId, hero.identityId),
         sprites: heroSpriteRecord(hero),
         basicAttackType: (cls?.damageType === "magic" ? "magic" : "physical") as "physical" | "magic",
         startHp: full ? stats.hp : hero.currentHp,
@@ -1332,9 +1332,15 @@ export class GameState {
  * da mesma classe entram na batalha. Passivas/`damageType: "none"` ficam
  * para a Fase 9+ (efeitos de traço/armas).
  */
-export function engineSkillsFor(classId: string): EngineSkillDef[] {
+export function engineSkillsFor(classId: string, identityId?: string): EngineSkillDef[] {
+  // §22: UMA skill ativa por herói. É a assinatura da IDENTIDADE (ADR-038) quando ela pertence à classe;
+  // senão, a ativa da classe. (Antes: todas as ativas da classe — o Clérigo tem 5.)
+  const cls = classes.find((c) => c.id === classId);
+  const sig = identityId ? heroIdentityById[identityId]?.signatureSkillId : undefined;
+  const sigDef = sig ? skills.find((s) => s.id === sig && s.kind === "active" && s.classId === classId) : undefined;
+  const activeId = sigDef?.id ?? cls?.activeSkillId;
   return skills
-    .filter((s) => s.kind === "active" && s.classId === classId && (s.coefficient !== null || s.heal !== undefined))
+    .filter((s) => s.kind === "active" && s.classId === classId && s.id === activeId && (s.coefficient !== null || s.heal !== undefined))
     .map((s) => ({
       id: s.id,
       targeting:

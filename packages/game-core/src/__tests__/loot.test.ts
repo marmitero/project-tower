@@ -198,7 +198,8 @@ describe("stats do equipamento (valor = BASE(nível) × peso × RARIDADE × X)",
   });
 
   it("raridade maior com os mesmos X produz stat maior, na razão do multiplicador", () => {
-    const base = rollEquipmentOf(new Prng(2), CTX, { templateId: "weapon_sword", rarity: "common" });
+    // nível alto: o arredondamento inteiro some e a razão fica exata, qualquer que seja a semente
+    const base = rollEquipmentOf(new Prng(2), { ...CTX, sourceLevel: 2000 }, { templateId: "weapon_sword", rarity: "common" });
     const epic = { ...base, rarity: "epic" as const };
     const ratio = lineValue(epic, "attack") / lineValue(base, "attack");
     expect(ratio).toBeCloseTo(config.equipment.rarity.epic.multiplier / config.equipment.rarity.common.multiplier, 1);

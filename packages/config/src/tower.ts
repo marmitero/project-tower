@@ -159,11 +159,13 @@ export const DEFAULT_POOL_PLAN: ReadonlyArray<{
   { enemyId: "bone_hound", fromFloor: 3, toFloor: 3, weight: 3 },
   { enemyId: "candle_skull", fromFloor: 3, toFloor: 3, weight: 2 },
   { enemyId: "bone_knight", fromFloor: 3, toFloor: 3, weight: 1 },
-  // Andar 4 — Catacumbas Antigas (Lote 3; Sacerdote e Múmia Real chegam no Lote 4): Estátua Guardiã T · Orc D · Escaravelho V · (Morcego Tóxico M até o Sacerdote).
+  // Andar 4 — Catacumbas Antigas (Lotes 3–4): Estátua Guardiã T · Orc D · Escaravelho V · Sacerdote Mumificado M · Múmia Real E (raro).
   { enemyId: "guardian_statue", fromFloor: 4, toFloor: 4, weight: 4 },
   { enemyId: "orc", fromFloor: 4, toFloor: 4, weight: 4 },
   { enemyId: "tomb_scarab", fromFloor: 4, toFloor: 4, weight: 3 },
-  { enemyId: "toxicbat", fromFloor: 4, weight: 2 },
+  { enemyId: "mummy_priest", fromFloor: 4, toFloor: 4, weight: 2 },
+  { enemyId: "royal_mummy", fromFloor: 4, toFloor: 4, weight: 1 },
+  { enemyId: "toxicbat", fromFloor: 5, weight: 2 },
   // Andares 5+ — ainda com os inimigos de antes; trocam por andar a cada lote (docs/STYLIZATION_ROADMAP.md §3.1).
   { enemyId: "bat", fromFloor: 5, weight: 3 },
   { enemyId: "slime", fromFloor: 5, toFloor: 6, weight: 4 },

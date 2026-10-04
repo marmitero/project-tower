@@ -71,7 +71,7 @@ describe("andares — regra do usuário (2026-10-03)", () => {
 });
 
 describe("variedade de inimigos por andar", () => {
-  it("todo andar tem tanque, dano e veloz; mago a partir do 3; elite a partir do 9 (exceto os raros dos andares 1–3)", () => {
+  it("todo andar tem tanque, dano e veloz; mago a partir do 3; elite a partir do 9 (exceto os raros dos andares 1–4)", () => {
     for (const f of floors()) {
       const roles = new Set(f.pool.map((p) => roleOf(p.enemyId)));
       expect(roles.has("tank"), `andar ${f.index} tank`).toBe(true);
@@ -79,14 +79,14 @@ describe("variedade de inimigos por andar", () => {
       expect(roles.has("swift"), `andar ${f.index} swift`).toBe(true);
       if (f.index >= 3) expect(roles.has("caster"), `andar ${f.index} caster`).toBe(true);
       if (f.index >= 9) expect(roles.has("elite"), `andar ${f.index} elite`).toBe(true);
-      // Exceção de design (§3.1): os andares 1–3 têm um elite RARO (Capitão, Troll, Cavaleiro). Andares 4–8 não têm elite
-      // até o Lote 4+ (a Múmia Real, andar 4, ainda será um "elite raro" e este limite sobe).
-      if (f.index >= 4 && f.index < 9) expect(roles.has("elite"), `andar ${f.index} sem elite`).toBe(false);
+      // Exceção de design (§3.1): os andares 1–4 têm um elite RARO (Capitão, Troll, Cavaleiro, Múmia Real). Andares 5–8 não têm elite
+      // até os próximos lotes.
+      if (f.index >= 5 && f.index < 9) expect(roles.has("elite"), `andar ${f.index} sem elite`).toBe(false);
     }
   });
 
-  it("o roster usa todos os papéis e só sprites existentes (23 inimigos)", () => {
-    expect(enemies).toHaveLength(23);
+  it("o roster usa todos os papéis e só sprites existentes (25 inimigos)", () => {
+    expect(enemies).toHaveLength(25);
     // `balanced` é papel legado: o Esqueleto virou "dps" (§3.1); o tipo continua válido para packs editados.
     expect(new Set(enemies.map((e) => e.role))).toEqual(new Set(ENEMY_ROLES.filter((r) => r !== "balanced")));
   });
