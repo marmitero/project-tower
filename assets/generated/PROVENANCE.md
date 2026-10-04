@@ -31,3 +31,16 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 8 | `enemies/sewer_rat` | atlas | aprovado | guide_goblin, spark_imp | Rato de Esgoto Bruto (dps, andar 2), guia goblin magenta |
 | 9 | `enemies/goblin_captain` | atlas | aprovado | guide_orc, spark_imp | Refação do Goblin Capitão com 'NO special effects' (só o arco fino do guia) |
 
+## Lote L3 — 8/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `enemies/sewer_eel` | atlas | aprovado | guide_slime, mud_toad | Enguia Rastejante (veloz, andar 2), guia slime magenta |
+| 2 | `enemies/sewer_troll` | atlas | aprovado | guide_orc, goblin_captain | Troll do Esgoto (elite, andar 2), guia orc magenta, cinza-azulado com musgo e cano enferrujado |
+| 3 | `enemies/bone_golem` | atlas | aprovado | guide_orc, goblin_captain | Golem de Ossos (tanque, andar 3), guia orc magenta |
+| 4 | `enemies/bone_hound` | atlas | aprovado visual (métrica REFAZER: quadrúpede x guia bípede) | guide_goblin, mud_toad | Cão de Ossos (veloz, andar 3), guia goblin magenta |
+| 5 | `enemies/candle_skull` | atlas | aprovado | guide_bat, spark_imp | Crânio Necrovela (mago, andar 3), guia morcego magenta |
+| 6 | `enemies/bone_knight` | atlas | aprovado | guide_orc, goblin_captain | Cavaleiro de Ossos (elite, andar 3), guia orc magenta |
+| 7 | `enemies/guardian_statue` | atlas | aprovado | guide_orc, goblin_captain | Estátua Guardiã (tanque, andar 4), guia orc magenta |
+| 8 | `enemies/tomb_scarab` | atlas | aprovado visual (métrica REFAZER: paleta 1221 e silhueta; o pack final tem 64 cores) | guide_slime, mud_toad | Escaravelho de Tumba (veloz, andar 4), guia slime magenta |
+

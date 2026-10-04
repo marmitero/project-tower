@@ -176,6 +176,102 @@
         "spark_imp"
       ],
       "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L3",
+      "asset": "enemies/sewer_eel",
+      "kind": "atlas",
+      "prompt": "Enguia Rastejante (veloz, andar 2), guia slime magenta",
+      "refs": [
+        "guide_slime",
+        "mud_toad"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L3",
+      "asset": "enemies/sewer_troll",
+      "kind": "atlas",
+      "prompt": "Troll do Esgoto (elite, andar 2), guia orc magenta, cinza-azulado com musgo e cano enferrujado",
+      "refs": [
+        "guide_orc",
+        "goblin_captain"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L3",
+      "asset": "enemies/bone_golem",
+      "kind": "atlas",
+      "prompt": "Golem de Ossos (tanque, andar 3), guia orc magenta",
+      "refs": [
+        "guide_orc",
+        "goblin_captain"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L3",
+      "asset": "enemies/bone_hound",
+      "kind": "atlas",
+      "prompt": "Cão de Ossos (veloz, andar 3), guia goblin magenta",
+      "refs": [
+        "guide_goblin",
+        "mud_toad"
+      ],
+      "verdict": "aprovado visual (métrica REFAZER: quadrúpede x guia bípede)"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L3",
+      "asset": "enemies/candle_skull",
+      "kind": "atlas",
+      "prompt": "Crânio Necrovela (mago, andar 3), guia morcego magenta",
+      "refs": [
+        "guide_bat",
+        "spark_imp"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L3",
+      "asset": "enemies/bone_knight",
+      "kind": "atlas",
+      "prompt": "Cavaleiro de Ossos (elite, andar 3), guia orc magenta",
+      "refs": [
+        "guide_orc",
+        "goblin_captain"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L3",
+      "asset": "enemies/guardian_statue",
+      "kind": "atlas",
+      "prompt": "Estátua Guardiã (tanque, andar 4), guia orc magenta",
+      "refs": [
+        "guide_orc",
+        "goblin_captain"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-04",
+      "batch": "L3",
+      "asset": "enemies/tomb_scarab",
+      "kind": "atlas",
+      "prompt": "Escaravelho de Tumba (veloz, andar 4), guia slime magenta",
+      "refs": [
+        "guide_slime",
+        "mud_toad"
+      ],
+      "verdict": "aprovado visual (métrica REFAZER: paleta 1221 e silhueta; o pack final tem 64 cores)"
     }
   ]
 }

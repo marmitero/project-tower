@@ -929,3 +929,24 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 **Alternativas rejeitadas:** (a) regerar o piso do f03 (gasta geração; a correção é determinística); (b) liberar todos os retratos já (perde o papel de recompensa); (c) deixar o Capitão com o efeito (cobria o corpo — ilegível).
 
 **Consequências:** manifesto 632 arquivos; `REQUIRED` do build de assets e `requiredAssetIds()` exigem os 12 retratos; testes de torre ajustados (15 inimigos); ainda faltam as arenas dos andares 5–10 (L4+). Capturas em `docs/art-review/lote-02/`. **Como testar:** Debug Mode (`npm run play:debug`) → "Nível do Rei" libera as skins; "Ir ao andar" 2/3/4 mostra as arenas.
+
+---
+
+## ADR-037 — Lote 3 da arte: andares 2 e 3 completos e 2 inimigos novos no andar 4
+
+**Data:** 2026-10-04 · **Status:** ✅ Aceita (aguarda o "lote 03 aprovado") · **Tipo:** B (arte + dados) · **Pedido do usuário:** *"O lote 2 está aprovado, siga para o lote 3."*
+
+**Gerações: 8/10 (2 reservas).** Um atlas 4×5 por inimigo, todos com guia magenta + referência de estilo + "NO special effects" (receita do L2): **Enguia Rastejante** (V, andar 2), **Troll do Esgoto** (E, andar 2), **Golem de Ossos** (T, 3), **Cão de Ossos** (V, 3), **Crânio Necrovela** (M, 3), **Cavaleiro de Ossos** (E, 3), **Estátua Guardiã** (T, 4), **Escaravelho de Tumba** (V, 4). Nenhuma refação foi necessária.
+
+| Item | Decisão |
+|---|---|
+| Veredito da ferramenta | 5 APROVADO/REVISÃO (eel, troll, golem, necro, knight, statue) · **2 "REFAZER"** — Cão de Ossos e Escaravelho. A leitura visual da contact sheet aprovou os dois: o erro é de **morfologia** (quadrúpede/besouro largo comparado ao guia bípede/blob: movimento 24–26 % e IoU 0,3), e no Escaravelho também a paleta (1221 cores *antes* do empacotamento; o arquivo final tem 64 cores). Âncora 0 px, margem, chroma, 20 quadros e altura do tipo passaram. O `ART_PIPELINE.md` já diz que a decisão final é visual; os dois ficam registrados na procedência como "aprovado visual" |
+| Pool (`DEFAULT_POOL_PLAN`) | Andar 2: sapo 4 · rato 4 · enguia 3 · morcego tóxico 2 · troll 1. Andar 3: golem 4 · esqueleto 4 · cão 3 · necrovela 2 · cavaleiro 1. Andar 4: estátua 4 · orc 4 · escaravelho 3 · morcego tóxico 2 (provisório até o Sacerdote). Morcego comum e inimigos legados só voltam a partir do andar 5 |
+| Elites raros | Troll (andar 2) e Cavaleiro (3), peso 1 de 14 (≈ 7 %); o teste agora permite elite raro nos andares 1–3 e continua exigindo ≤ 12 % por andar |
+| Esqueleto | O papel `balanced` deixou de ser vaga (roadmap §3.1): **Esqueleto vira `dps`** para o andar 3 ter dano. O tipo `balanced` continua válido para packs editados; o teste de roster ignora-o |
+| Balanceamento | Primeira passada saiu fora: Troll 85 % e Cavaleiro 75 % da vida do Rei (alvo ≈ 60 %, Capitão 62 %), Estátua 46 %, Escaravelho 32 %. Segunda: super-corrigido (Troll 42 %). Final (`npm run report:balance`): **Troll 58 % · Cavaleiro 57 % · Golem 37 % · Estátua 39 % · Escaravelho 22 % · Enguia 23 % · Cão 22 % · Necrovela 20 %** — no mesmo nível dos pares (Sapo 38 %, Gosma 27 %, Morcego 19 %, Duende 13 %). Ritmo das 4 h inalterado |
+| Verificação no jogo | Chromium real com Debug Mode: andares 2, 3 e 4 sorteiam e desenham os 13 tipos esperados (inclusive o Cavaleiro), sem 404 nem erro de console. `docs/art-review/lote-03/` |
+
+**Alternativas rejeitadas:** (a) regerar Cão/Escaravelho — o resultado seria o mesmo tipo de silhueta e gastaria 2 gerações; (b) afrouxar os limiares globais — a métrica continua útil para bípedes; (c) manter o Esqueleto como `balanced` e deixar o andar 3 sem dano.
+
+**Consequências:** roster 23 inimigos; manifesto 640 arquivos; **melhoria futura sugerida:** guia por *plano corporal* (quadrúpede/inseto) para a métrica de movimento. Faltam no andar 4 o Sacerdote Mumificado (M) e a Múmia Real (E) → L4.

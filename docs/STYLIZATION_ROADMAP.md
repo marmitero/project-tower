@@ -1,6 +1,6 @@
 # Roadmap — Otimização e estilização
 
-**Versão:** 0.2 · **Data:** 2026-10-03 · **Estado:** ✅ Gate 0 aprovado · **F0 implementada** (ADR-033) · **Lote 1 aprovado** (ADR-034) · **Lote 2 aplicado** (ADR-036: 9/10 gerações, 1 reserva) — aguarda "lote 02 aprovado"
+**Versão:** 0.2 · **Data:** 2026-10-03 · **Estado:** ✅ Gate 0 aprovado · **F0 implementada** (ADR-033) · **Lote 1 aprovado** (ADR-034) · **Lote 2 aprovado** · **Lote 3 aplicado** (ADR-037: 8/10 gerações, 2 reservas) — aguarda "lote 03 aprovado"
 **Decisão:** [ADR-032](DECISIONS_LOG.md) · **Documento técnico irmão:** [`ART_PIPELINE.md`](ART_PIPELINE.md) (especificação medida dos sprites, prompts, chroma key, validação, integração)
 **Fonte do pedido:** mensagem do usuário de 2026-10-03 ("otimização e estilização") · **Regras superiores:** `Master-Prompt.md` §10, §22, §23, §59–§62, §105
 
@@ -218,7 +218,7 @@ Cada lote: **8 itens planejados + 2 reservas**. Resultado aplicado no jogo ao fi
 |---|---|---|
 | **L1 — UI, login e calibração** | 1 kit de botões GBA · 2 ícones (16) · 3 fundo do login · 4 logotipo · 5 **piloto de herói** (Guardião nº 2) · 6 **piloto de inimigo** (Duende de Faíscas, andar 1) · 7 **piloto de arena** (kit do andar 1) · 8 retratos do Rei A (4) | HUD/botões GBA, nova tela de criação, Rei com 4 retratos, 1 herói, 1 inimigo e a arena 1 de ponta a ponta. **Gate de calibração:** decide a **Opção A (1 geração por personagem)** ou **B (2 por personagem)** e ajusta os limiares de fidelidade (`ART_PIPELINE.md` §6.2) |
 | **L2** | 9 retratos do Rei B (4) · 10 retratos do Rei C (4) · 11 Goblin Capitão (E, andar 1) · 12–14 arenas dos andares 2, 3, 4 · 15–16 inimigos do andar 2 (2 de 4) | 12 retratos do Rei; andar 1 completo; arenas 2–4 · **[as-built L2, ADR-036]** entregue: 12 retratos, Capitão, arenas 2–4, Sapo-Lodo e Rato (2 de 4 do andar 2; os outros 2 vão ao L3) |
-| **L3** | Andar 2: 2 inimigos restantes · Andar 3: 4 inimigos · Andar 4: 2 inimigos (de 4) | Andares 2 e 3 completos |
+| **L3** | Andar 2: 2 inimigos restantes · Andar 3: 4 inimigos · Andar 4: 2 inimigos (de 4) | Andares 2 e 3 completos · **[as-built L3, ADR-037]** entregue: 8 inimigos (Enguia, Troll, Golem, Cão, Necrovela, Cavaleiro, Estátua, Escaravelho); o andar 4 fica com 2 de 4 novos (Sacerdote e Múmia Real no L4) |
 | **L4** | Andar 4: 2 restantes · **5 heróis do Clérigo** · 1 folha de retratos (4) | Andar 4 completo (cobre o Nv 1→100, ≈ 24 h) · Clérigo no jogo |
 | **L5** | 8 heróis (Guardião 3–5, Arqueiro 2–5, Arcanista 2) | +8 heróis |
 | **L6** | 7 heróis (Arcanista 3–5, Invocador 2–5) · 1 folha de retratos | +7 heróis |
