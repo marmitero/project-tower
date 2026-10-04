@@ -152,7 +152,8 @@ describe("rolagem de aquisição", () => {
     expect(a.next()).toBe(b.next());
     const seen = new Set<string>();
     for (let i = 0; i < 200; i++) seen.add(rollHeroAcquisition(new Prng(i + 1), "guardian").identityId!);
-    expect([...seen].sort()).toEqual(["hero_aldric", "hero_borin"]);
+    // 5 guardiões, todos alcançáveis e nenhum raro demais (ADR-040: a escolha usa a parte fracionária da qualidade)
+    expect([...seen].sort()).toEqual(["hero_aldric", "hero_borin", "hero_cavaleiro_rubro", "hero_lorde_cinzento", "hero_monge_ferro"]);
     const roll = { ...rollHeroAcquisition(new Prng(1), "guardian"), identityId: "hero_borin" };
     const hero = createAcquiredHero({ accountId: "acc" as never, name: "qualquer", roll, origin: "market", now: 0, index: 1 });
     expect(hero.name).toBe("Borin");
@@ -180,9 +181,9 @@ describe("herói adquirido", () => {
 
   it("dois heróis da mesma classe têm ids distintos e o códice conta as cópias", () => {
     const a = makeHero(0, 0);
-    const b = createAcquiredHero({ accountId: ACCOUNT, name: "Aldric II", roll: rollHeroAcquisition(new Prng(8), "guardian"), origin: "boss", now: 0, index: 1 });
+    const b = createAcquiredHero({ accountId: ACCOUNT, name: "Aldric II", roll: { ...rollHeroAcquisition(new Prng(8), "guardian"), identityId: "hero_aldric" }, origin: "boss", now: 0, index: 1 });
     expect(a.id).not.toBe(b.id);
-    const entry = heroCodex([a, b]).find((e) => e.identity.classId === "guardian")!;
+    const entry = heroCodex([a, b]).find((e) => e.identity.id === "hero_aldric")!;
     expect(entry.status).toBe("owned");
     expect(entry.copies).toBe(2);
     expect(heroCodex([a]).find((e) => e.identity.classId === "ranger")!.copies).toBe(0);

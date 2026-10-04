@@ -54,7 +54,10 @@ export function rollHeroAcquisition(rng: Prng, classId: string, forcedRarity?: R
     return u / samples;
   });
   const quality0 = (rolled.reduce((a, b) => a + b, 0) / rolled.length) * 100;
-  const identity = pickAcquiredIdentity(classId, quality0 / 100);
+  // `quality0` é a média de 6×samples uniformes: concentra-se perto de 50 %, então usá-la direto deixaria as
+  // pontas do elenco (1º e 5º) quase impossíveis (ADR-040). A parte FRACIONÁRIA de uma qualidade tão fina
+  // é uniforme e continua determinística — sem gastar PRNG.
+  const identity = pickAcquiredIdentity(classId, (quality0 * 10_000) % 1);
   const baseline = { ...cls.attributes };
   for (const [id, delta] of Object.entries(identity.attributeDelta ?? {})) baseline[id as keyof CharacterAttributes] += delta;
   const attributes = { ...cls.attributes };

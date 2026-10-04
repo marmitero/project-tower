@@ -109,7 +109,7 @@ export const HEROES: HeroIdentityDef[] = [
       hint: "Herói inicial; depois, fragmentos em eventos e caixas especiais.",
     },
     // ADR-035: a Kaia tem corpo PRÓPRIO (arqueira de capa verde, como no retrato). Antes ela herdava
-    // as folhas da classe — o Arqueiro Esquelético do pack — que agora é o Ossian (RESERVED_HEROES).
+    // as folhas da classe — o Arqueiro Esquelético do pack — que agora é o Ossian (liberado no Lote 5).
     assets: { atlas: "heroes/ranger_kaia" },
   },
   {
@@ -277,14 +277,140 @@ export const EXTRA_HEROES: HeroIdentityDef[] = [
     assets: { atlas: "heroes/cleric_oracle" },
     attributeDelta: { intelligence: 4, charisma: -2, constitution: -2 },
   },
-];
-
-/**
- * Identidades RESERVADAS para o futuro (ADR-035): já têm nome, lore e arte, mas ainda NÃO entram no
- * elenco — não são sorteadas na aquisição nem aparecem no códice. Para liberar uma, mova a entrada
- * para `EXTRA_HEROES` (e defina `attributeDelta` — a CI exige poder ±8 % — e uma skill própria).
- */
-export const RESERVED_HEROES: HeroIdentityDef[] = [
+  // ---- Lote 5 (ADR-040): 7 variações novas + Ossian liberado -----------------------------------------
+  {
+    id: "hero_cavaleiro_rubro",
+    classId: "guardian",
+    name: "Cavaleiro Rubro",
+    epithet: "o Rubro Implacável",
+    lore:
+      "Quando a guarnição de Ardenn foi massacrada, o capitão mandou tingir a armadura com o sangue dos caídos e jurou não limpar até " +
+      "a última muralha estar de pé. Ataca como quem aluga o campo de batalha: caro e de uma vez.",
+    personality: ["impetuoso", "honrado", "teimoso"],
+    voiceNotes: "Voz alta e ritmada, como quem puxa uma carga; ri curto antes de cada investida.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_crimson_charge",
+    combatStyle: "Tanque agressivo — aguenta menos, mas devolve o dobro.",
+    range: "melee",
+    statPriority: ["attack", "hp", "defense"],
+    acquisition: { origin: "market", hint: "Mercado comum, caixas e invocações de Guardião." },
+    assets: { atlas: "heroes/guardian_rubro" },
+    attributeDelta: { strength: 3, constitution: -2, charisma: -1 },
+  },
+  {
+    id: "hero_monge_ferro",
+    classId: "guardian",
+    name: "Mestre Hakon",
+    epithet: "o Monge de Ferro",
+    lore:
+      "Hakon quebrou a própria espada no dia em que percebeu que o punho já era a arma. Treinou até as mãos virarem bigorna " +
+      "e agora pergunta, com educação, quem quer ser o primeiro a ser martelado.",
+    personality: ["disciplinado", "irônico", "paciente"],
+    voiceNotes: "Voz de quem conta até dez; sussurra os golpes antes de dá-los.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_iron_fist",
+    combatStyle: "Punhos rápidos — três golpes em vez de um, sem arma para quebrar.",
+    range: "melee",
+    statPriority: ["attackSpeed", "defense", "hp"],
+    acquisition: { origin: "event", hint: "Eventos da Torre e caixas de Guardião." },
+    assets: { atlas: "heroes/guardian_monk" },
+    attributeDelta: { dexterity: 4, charisma: -4 },
+  },
+  {
+    id: "hero_lorde_cinzento",
+    classId: "guardian",
+    name: "Lorde Valdemar",
+    epithet: "o Lorde Cinzento",
+    lore:
+      "Valdemar governou um reino de cinzas e jurou que nenhum outro cairia como o dele. A armadura negra nunca foi tirada " +
+      "desde então; dizem que debaixo dela só existe o hábito de resistir.",
+    personality: ["gélido", "orgulhoso", "leal"],
+    voiceNotes: "Voz grave e sem eco; nunca repete uma ordem.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_grey_cleave",
+    combatStyle: "Muralha fria — resiste ao dano mágico e responde com um golpe só.",
+    range: "melee",
+    statPriority: ["specialDefense", "defense", "attack"],
+    acquisition: { origin: "boss", hint: "Fragmentos de Chefes de Guardião." },
+    assets: { atlas: "heroes/guardian_lord" },
+    attributeDelta: { wisdom: 3, strength: 2, constitution: -3, charisma: -2 },
+  },
+  {
+    id: "hero_cacador_furtivo",
+    classId: "ranger",
+    name: "Rik",
+    epithet: "o Caçador Furtivo",
+    lore:
+      "Rik nunca disse a ninguém de onde veio, e ninguém nunca o viu chegar. As duas adagas estão sempre onde o alvo " +
+      "não está olhando.",
+    personality: ["calado", "observador", "debochado"],
+    voiceNotes: "Sussurra; termina as frases com um estalo de língua.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_backstab",
+    combatStyle: "Emboscada — golpes rápidos e certeiros, vence antes de ser notado.",
+    range: "melee",
+    statPriority: ["critChance", "attackSpeed", "attack"],
+    acquisition: { origin: "market", hint: "Mercado comum e caixas de Arqueiro." },
+    assets: { atlas: "heroes/ranger_stalker" },
+    attributeDelta: { dexterity: 4, charisma: -4 },
+  },
+  {
+    id: "hero_besteiro_pesado",
+    classId: "ranger",
+    name: "Brutus",
+    epithet: "o Besteiro Pesado",
+    lore:
+      "Brutus carregou a besta de cerco da muralha de Orrin sozinho, porque ninguém queria dividir o peso. Dispara pouco, " +
+      "mas o que ele acerta não precisa ser acertado de novo.",
+    personality: ["resmungão", "firme", "generoso"],
+    voiceNotes: "Voz de barril; resmunga a contagem dos virotes.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_focus_strike",
+    combatStyle: "Artilharia — poucos tiros, cada um decisivo.",
+    range: "ranged",
+    statPriority: ["attack", "critChance", "hp"],
+    acquisition: { origin: "market", hint: "Mercado comum e invocações de Arqueiro." },
+    assets: { atlas: "heroes/ranger_crossbow" },
+    attributeDelta: { strength: 4, dexterity: -4 },
+  },
+  {
+    id: "hero_guardia_floresta",
+    classId: "ranger",
+    name: "Elora",
+    epithet: "a Guardiã da Floresta",
+    lore:
+      "Elora cresceu entre sentinelas de pinheiro e aprendeu a mirar com os olhos do falcão que a segue desde que o ovo rachou. " +
+      "Onde ela pisa, a floresta passa a guardar também.",
+    personality: ["atenta", "afetuosa", "feroz"],
+    voiceNotes: "Fala baixo, assobiando o fim das frases para o falcão.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_hawk_strike",
+    combatStyle: "Dupla de caça — o falcão faz o que a flecha não alcança.",
+    range: "ranged",
+    statPriority: ["specialDefense", "attack", "attackSpeed"],
+    acquisition: { origin: "summon", hint: "Invocações de Arqueiro e eventos da Torre." },
+    assets: { atlas: "heroes/ranger_warden" },
+    attributeDelta: { wisdom: 2, strength: -2 },
+  },
+  {
+    id: "hero_piromante_cinder",
+    classId: "arcanist",
+    name: "Cinder",
+    epithet: "o Piromante",
+    lore:
+      "Cinder foi expulso da Academia de Vhal por usar o fogo para aquecer a sala, mas quase queimou o prédio. Hoje só o chamam quando " +
+      "querem ver algo ficar em brasa — e ele aparece, sorrindo, com um dardo de fogo no bolso.",
+    personality: ["impulsivo", "caloroso", "competitivo"],
+    voiceNotes: "Fala rápido, estala os dedos para pontuar; ri das próprias faíscas.",
+    rarity: "uncommon",
+    signatureSkillId: "skill_fire_bolt",
+    combatStyle: "Brasa certeira — menos área, mais dano num só alvo.",
+    range: "ranged",
+    statPriority: ["specialAttack", "critChance", "attackSpeed"],
+    acquisition: { origin: "market", hint: "Mercado comum, caixas e summons de Arcanista." },
+    assets: { atlas: "heroes/arcanist_pyro" },
+    attributeDelta: { intelligence: 3, constitution: -2, charisma: -1 },
+  },
   {
     id: "hero_ossian",
     classId: "ranger",
@@ -296,20 +422,27 @@ export const RESERVED_HEROES: HeroIdentityDef[] = [
     personality: ["paciente", "sombrio", "leal"],
     voiceNotes: "Quase não fala; o estalar dos ossos faz o papel de risada; um suspiro seco antes de cada disparo.",
     rarity: "uncommon",
-    // Skill própria fica para quando o herói for liberado (só existem as 4 skills de classe até o L5).
-    signatureSkillId: "skill_volley",
+    signatureSkillId: "skill_sleepless_string",
     combatStyle: "Atirador paciente — não se cansa, não erra a distância, não recua.",
     range: "ranged",
     statPriority: ["attack", "critChance", "attackSpeed"],
     acquisition: {
       origin: "event",
-      hint: "Reservado: evento especial da Torre e caixas de invocação de Arqueiro (quando liberado).",
+      hint: "Eventos especiais da Torre e caixas de invocação de Arqueiro.",
     },
     // Retrato do pack (esqueleto); o corpo é o do Arqueiro Esquelético do pack (`characters/archer/*`),
-    // que a classe Arqueiro mantém como folha-padrão.
+    // que a classe Arqueiro mantém como folha-padrão. Liberado no Lote 5 (ADR-040).
     assets: { portrait: "portraits/skeleton" },
+    attributeDelta: { constitution: 1, strength: -3, dexterity: 2 },
   },
 ];
+
+/**
+ * Identidades RESERVADAS para o futuro (ADR-035): já têm nome, lore e arte, mas ainda NÃO entram no
+ * elenco — não são sorteadas na aquisição nem aparecem no códice. Para liberar uma, mova a entrada
+ * para `EXTRA_HEROES` (e defina `attributeDelta` — a CI exige poder ±8 % — e uma skill própria).
+ */
+export const RESERVED_HEROES: HeroIdentityDef[] = [];
 
 /** Elenco completo (iniciais + adicionais) — o que o códice e a aquisição enxergam. */
 export const HERO_ROSTER: HeroIdentityDef[] = [...HEROES, ...EXTRA_HEROES];

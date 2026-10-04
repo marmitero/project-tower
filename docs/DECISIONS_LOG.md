@@ -986,3 +986,26 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 **Alternativas rejeitadas:** gerar o retrato do Oráculo agora (estoura o lote e ele só aparece a partir do L7).
 
 **Consequências:** manifesto +atlas; os andares 5–10 e os demais heróis vêm nos lotes seguintes (§9: L5 = 8 heróis); a ferramenta de validação por plano corporal continua planejada antes de L5/L6.
+
+## ADR-040 — Lote 5 da arte: 7 heróis novos + Ossian liberado (18 heróis)
+
+**Data:** 2026-10-04 · **Status:** ✅ Aceita (aguarda o "lote 05 aprovado") · **Tipo:** B (arte + dados) · **Pedido do usuário:** *"Lote 4 está aprovado, prossiga para o Lote 5."*
+
+**Gerações: 10/10.** 8 pedidos paralelos (um atlas 4×5 por herói, guia magenta da classe + estilo de um herói já aprovado) e 2 refações. **Aprovados de primeira (5):** Cavaleiro Rubro, Monge de Ferro, Lorde Cinzento, Caçador Furtivo, Guardiã da Floresta. **Reprovados (3):** Besteiro Pesado, Arqueiro Nômade e Piromante vieram em folhas **16:9 com 8×4 / 6×4 quadros** (o gerador ignorou a grade 4×5; no Piromante os quadros *hurt/dead* eram de outra personagem). Refiz Besteiro e Piromante com o prompt reforçado (**"TALL PORTRAIT 4:5, EXACTLY 4 columns and 5 rows, same character in EVERY frame"**) — funcionou. O Arqueiro Nômade ficou sem refação (acabaram as 10 gerações) e vira o **6º arqueiro**, no próximo lote.
+
+| Item | Decisão |
+|---|---|
+| Elenco | Guardião: Aldric, Borin, **Cavaleiro Rubro, Mestre Hakon (Monge de Ferro), Lorde Valdemar (Cinzento)** = 5/5 · Arqueiro: Kaia, **Rik (Furtivo), Brutus (Besteiro), Elora (Guardiã), Ossian** = 5/5 · Clérigo 5/5 · Arcanista: Maelis, **Cinder (Piromante)** = 2/5 · Invocador 1/5 → **18 heróis** (meta 25 no L7) |
+| Ossian | O Arqueiro Esquelético já tinha nome, lore e corpo (pack Nika). Saiu de `RESERVED_HEROES` para `EXTRA_HEROES` com skill própria e `attributeDelta` — completa os 5 arqueiros **sem gastar geração**. A lista de reservados ficou vazia (continua como ponto de extensão) |
+| Skills assinatura (8 novas) | Cada herói novo tem a sua, todas dano com coeficiente/cooldown/golpes em `skills.ts`: *Investida Rubra* (1,6×/7 s), *Punhos de Ferro* (3×0,5/7 s), *Corte Cinzento* (1,4×/6 s), *Estocada pelas Costas* (2,0×/9 s), *Tiro Concentrado* (2,3×/11 s), *Mergulho do Falcão* (2×0,8/8 s), *Corda Insone* (3×0,6/9 s), *Seta de Fogo* (magia 1,1×/9 s). Teste novo: DPS 1×1 dentro de ±15 % da skill da classe (Arcanista só tem teto, pois a Nova é em área) |
+| Atributos | Deltas de soma zero, poder ±8 % do modelo (CI). Descoberta: o poder do Arqueiro é **muito** sensível a CON (+1 ≈ +7 %), então a identidade fica em FOR/DES/SAB/CAR; **CAR não entra em nenhuma fórmula** e serve de contrapeso |
+| **Correção de aquisição** | `pickAcquiredIdentity` recebia a *qualidade* (média de 6×N uniformes → concentrada perto de 50 %) como `u`: com 5 identidades, a 1ª e a 5ª quase nunca saíam. Agora `u` = parte fracionária de `qualidade × 10 000`: uniforme, determinística e **sem gastar PRNG**. Teste: os 5 guardiões saem em 200 rolagens. Também tirei do teste de aquisição a dependência de qual identidade a semente 8 sorteava |
+| Ferramenta nova | `normalizeKeyColour` (`tools/art/key.mjs`, embutida no `ingest`): o gerador devolveu o Besteiro com fundo **rosa-claro (253,142,252)** em vez de #FF00FF, deixando halo rosa em 7 % dos pixels. Se os 4 cantos concordam e a cor é rosada mas não magenta, essa cor vira #FF00FF antes da chave. Não toca em folhas corretas. 3 testes |
+| Debug Mode | Criar herói agora aceita **Identidade** (select por classe) — antes só dava a arte da classe; sem isso não dava para revisar o elenco. Teste novo |
+| Retratos | Nenhum retrato novo neste lote (folhas de retratos: L6/L7); os 7 usam o retrato da classe até lá |
+| Verificação no jogo | Chromium real, Debug Mode: Cavaleiro Rubro, Mestre Hakon, Lorde Valdemar, Rik, Brutus, Elora, Cinder (e Aurora) entram em batalha com atlas próprio e **a skill própria aparece no balão** (Punhos de Ferro, Corte Cinzento, Mergulho do Falcão, Seta de Fogo), sem 404 nem erro. `docs/art-review/lote-05/` |
+| Ressalvas visuais | Besteiro: na pose *hurt* segura um arco (não a besta); idle com a besta ao lado do corpo. Caçador Furtivo: IoU de idle 0,43 (capuz + adagas fogem do guia de arqueiro) — aprovado visualmente |
+
+**Alternativas rejeitadas:** (a) remendar à mão a folha 8×4 do Besteiro (fidelidade de movimento incerta, e os quadros *hurt/dead* eram inconsistentes); (b) usar uma 11ª geração (viola a regra de 10); (c) mudar a classe do Ossian para ter skill pronta (a skill nova é só dado).
+
+**Consequências:** manifesto +7 atlas; `skills` = 27 (17 ativas); `HERO_ROSTER` = 18; ferramenta de plano corporal continua adiada (todos os heróis até o L7 são bípedes).

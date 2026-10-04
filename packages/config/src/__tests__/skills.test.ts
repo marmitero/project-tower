@@ -70,10 +70,10 @@ describe("catálogo de skills (§22 — 1 ativa + 2 passivas)", () => {
     }
   });
 
-  it("19 skills no roster: 9 ativas + 10 passivas, ids únicos (4 classes originais + Clérigo e suas assinaturas)", () => {
-    expect(skills).toHaveLength(19);
-    expect(skills.filter((s) => s.kind === "active")).toHaveLength(9);
-    expect(new Set(skills.map((s) => s.id)).size).toBe(19);
+  it("27 skills no roster: 17 ativas + 10 passivas, ids únicos (4 classes originais + Clérigo + assinaturas dos Lotes 4 e 5)", () => {
+    expect(skills).toHaveLength(27);
+    expect(skills.filter((s) => s.kind === "active")).toHaveLength(17);
+    expect(new Set(skills.map((s) => s.id)).size).toBe(27);
   });
 
   it("toda skill ativa tem coeficiente (ou cura) e cooldown (§25 — dispara sozinha)", () => {

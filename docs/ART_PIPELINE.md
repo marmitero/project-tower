@@ -294,3 +294,5 @@ Todos em Node (`sharp` já é dependência), testados em `tests/integration/art-
 | **Arte** | **Nada utilizável**: o OpenRpg é um framework C#; a arte vem do pack Nika (referência de estilo/movimento) + gerações novas |
 
 **`--floor-gain` (Lote 2, ADR-036).** `node scripts/art.mjs kit <folha> --id <kit> --floor-gain 0.78` multiplica a luminância só dos 4 ladrilhos de piso, para quando o gerador devolve um piso mais claro que `ARENA.floorLuma` (0,10–0,55) — mais barato e determinístico que regerar. O valor usado fica na procedência. Receita contra efeitos inventados em inimigos: o prompt deve dizer "ABSOLUTELY NO special effects, only the guide's thin white slash arc".
+
+**Lote 5 (ADR-040) — armadilhas do gerador.** (1) Às vezes devolve a folha em **16:9 com 8×4 ou 6×4 quadros**: o `reflow` recusa (e deve) — refazer com "TALL PORTRAIT 4:5, EXACTLY 4 columns and 5 rows, same character in EVERY frame". (2) Às vezes o fundo vem **rosa-claro** (ex. 253,142,252) em vez de #FF00FF: o `ingest` agora normaliza (`normalizeKeyColour`) e avisa no log. (3) Peça sempre **uma folha por herói**, em paralelo, e confira o formato antes de ingerir.

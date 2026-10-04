@@ -4,7 +4,7 @@
  */
 import { useMemo, useState } from "react";
 import { ActionButton, Panel } from "@tia/ui";
-import { classes, config, RARITY_ORDER, type Rarity } from "@tia/config";
+import { classes, config, identitiesForClass, RARITY_ORDER, type Rarity } from "@tia/config";
 import { DEBUG_UNAVAILABLE, createDebugTools, type GameState } from "@tia/game-core";
 import type { HeroId } from "@tia/contracts";
 
@@ -20,6 +20,7 @@ export default function DebugPanel({ state }: Props) {
   const [heroId, setHeroId] = useState<string>("");
   const [level, setLevel] = useState(100);
   const [classId, setClassId] = useState(classes[0]!.id as string);
+  const [identityId, setIdentityId] = useState("");
   const [rarity, setRarity] = useState<Rarity>("rare");
   const [xValue, setXValue] = useState(2);
   const [floor, setFloor] = useState(1);
@@ -98,10 +99,21 @@ export default function DebugPanel({ state }: Props) {
           <div className="tia-debug__row">
             <label className="tia-debug__field">
               Classe
-              <select value={classId} onChange={(e) => setClassId(e.target.value)}>
+              <select value={classId} onChange={(e) => { setClassId(e.target.value); setIdentityId(""); }}>
                 {classes.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="tia-debug__field">
+              Identidade
+              <select value={identityId} onChange={(e) => setIdentityId(e.target.value)}>
+                <option value="">sorteada / da classe</option>
+                {identitiesForClass(classId).map((h) => (
+                  <option key={h.id} value={h.id}>
+                    {h.name}
                   </option>
                 ))}
               </select>
@@ -130,7 +142,7 @@ export default function DebugPanel({ state }: Props) {
             {num(xValue, setXValue, "X (0,5–2,5)")}
           </div>
           <div className="tia-debug__row">
-            <ActionButton label="Criar herói" onClick={() => run(() => tools.createHero(classId, rarity))} />
+            <ActionButton label="Criar herói" onClick={() => run(() => tools.createHero(classId, rarity, identityId || undefined))} />
             <ActionButton label="+ Fragmentos" onClick={() => run(() => tools.addFragments(classId, rarity, Math.max(1, Math.round(amount / 1000))))} />
             <ActionButton
               label="Criar equipamento"

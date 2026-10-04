@@ -80,6 +80,14 @@ describe("Debug Mode — criar coisas", () => {
     expect(() => tools.createHero("bardo", "epic")).toThrow(/Classe/);
   });
 
+  it("cria herói com uma identidade específica (arte própria) e recusa identidade de outra classe", () => {
+    const { tools } = make();
+    const h = tools.createHero("ranger", "rare", "hero_besteiro_pesado");
+    expect(h.identityId).toBe("hero_besteiro_pesado");
+    expect(h.name).toBe("Brutus");
+    expect(() => tools.createHero("guardian", "rare", "hero_besteiro_pesado")).toThrow(/Identidade/);
+  });
+
   it("fragmentos e consumíveis vão para a mochila da conta", () => {
     const { state, tools } = make();
     tools.addFragments("guardian", "rare", 7);

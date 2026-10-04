@@ -162,13 +162,15 @@ describe("arte própria por identidade de herói (ADR-035 — correção da Kaia
     expect(heroPortraitId({ classId: "ranger", identityId: "hero_kaia" })).toBe("portraits/archer");
   });
 
-  it("o Arqueiro Esquelético está reservado como outro herói (Ossian): fora do elenco, do sorteio e do códice", () => {
-    const ossian = RESERVED_HEROES.find((h) => h.id === "hero_ossian")!;
+  it("o Arqueiro Esquelético é o Ossian (liberado no Lote 5): 5º arqueiro, com o corpo legado do pack", () => {
+    const ossian = HERO_ROSTER.find((h) => h.id === "hero_ossian")!;
     expect(ossian.classId).toBe("ranger");
-    expect(HERO_ROSTER.some((h) => h.id === ossian.id)).toBe(false);
-    expect(identitiesForClass("ranger").map((h) => h.id)).toEqual(["hero_kaia"]);
-    for (let i = 0; i < 20; i++) expect(pickAcquiredIdentity("ranger", i / 20).id).toBe("hero_kaia");
+    expect(RESERVED_HEROES.some((h) => h.id === ossian.id)).toBe(false);
+    expect(identitiesForClass("ranger").map((h) => h.id)).toEqual([
+      "hero_kaia", "hero_cacador_furtivo", "hero_besteiro_pesado", "hero_guardia_floresta", "hero_ossian",
+    ]);
     expect(ossian.assets?.portrait).toBe("portraits/skeleton");
+    expect(ossian.assets?.atlas).toBeUndefined();
     // o corpo dele é a folha legada do arqueiro esquelético, que a classe mantém
     expect(classes.find((c) => c.id === "ranger")!.assets.sheets.idle).toContain("characters/archer/");
   });

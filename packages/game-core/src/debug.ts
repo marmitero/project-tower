@@ -14,7 +14,7 @@
  * aparecem em `DEBUG_UNAVAILABLE`, com o motivo, para o painel mostrá-los desligados.
  */
 
-import { classes, config, type BossDef } from "@tia/config";
+import { classes, config, heroById, type BossDef } from "@tia/config";
 import { RARITY_ORDER, type Rarity } from "@tia/config";
 import type { Equipment, EquipmentId, Hero, HeroId, SaveData } from "@tia/contracts";
 import { Prng } from "@tia/engine";
@@ -69,7 +69,8 @@ export interface DebugTools {
   setKingLevel(level: number): string;
   setHeroLevel(heroId: HeroId, level: number): string;
   setHeroStars(heroId: HeroId, stars: number): string;
-  createHero(classId: string, rarity: Rarity): Hero;
+  /** `identityId` (opcional): cria o herói com a identidade/arte própria (revisão de arte, Lote 5). */
+  createHero(classId: string, rarity: Rarity, identityId?: string): Hero;
   addFragments(classId: string, rarity: Rarity, amount: number): string;
   createEquipment(opts: { rarity: Rarity; templateId?: string; level?: number; x?: number }): Equipment;
   addConsumable(itemId: string, quantity: number): string;
@@ -141,15 +142,18 @@ export function createDebugTools(state: GameState): DebugTools {
       ctx.touch();
       return `${h.name}: ${h.stars} estrela(s) (P-015 provisório).`;
     },
-    createHero(classId, rarity) {
+    createHero(classId, rarity, identityId) {
       if (!classes.some((c) => c.id === classId)) throw new Error(`Classe desconhecida: ${classId}`);
+      const identity = identityId ? heroById[identityId] : undefined;
+      if (identityId && (!identity || identity.classId !== classId)) throw new Error(`Identidade desconhecida para ${classId}: ${identityId}`);
       let index = ctx.save.heroes.length;
       while (ctx.save.heroes.some((x) => x.id === createHero({ accountId: ctx.save.king.accountId as never, classId: classId as never, name: "x", now: 0, index }).id)) index += 1;
       const cls = classes.find((c) => c.id === classId)!;
       const h = createHero({
         accountId: ctx.save.king.accountId as never,
         classId: classId as never,
-        name: `${cls.name} (debug ${index})`,
+        name: identity ? identity.name : `${cls.name} (debug ${index})`,
+        ...(identity ? { identityId: identity.id } : {}),
         rarity,
         origin: "admin",
         now: ctx.now(),

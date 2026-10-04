@@ -15,7 +15,7 @@ import { ICON_NAMES as TOOL_ICONS, UIKIT, sliceButtons, sliceIcons } from "../..
 import { ATLAS, BUDGET, CHROMA, HEIGHT_BY_KIND, THRESHOLDS } from "../../tools/art/spec.mjs";
 import { bbox, blit, centroid, countColours, crop, newRaw, readRaw, resizeNearest, writePng } from "../../tools/art/image.mjs";
 import { atlasMeta, baselineFor, buildGuide, guideOnMagenta, normalizeAtlas, sliceGrid, targetHeightFor } from "../../tools/art/atlas.mjs";
-import { chromaKey, residualMagenta } from "../../tools/art/key.mjs";
+import { chromaKey, normalizeKeyColour, residualMagenta } from "../../tools/art/key.mjs";
 import { framesOf, iou, validateAtlas } from "../../tools/art/validate.mjs";
 import { makeSeamlessX, seamJump, stripTest } from "../../tools/art/seamless.mjs";
 import { dominantHue, hsvToRgb, recolor, rgbToHsv } from "../../tools/art/recolor.mjs";
@@ -485,5 +485,39 @@ describe("despeckle (Lote 4, ADR-039)", () => {
     expect(a.removedPixels).toBe(0);
     expect(Buffer.from(a.raw.data).equals(Buffer.from(b.raw.data))).toBe(true);
     expect(Buffer.from(a.raw.data).equals(Buffer.from(raw.data))).toBe(true);
+  });
+});
+
+describe("normalizeKeyColour (Lote 5, ADR-040)", () => {
+  const PINK = [253, 142, 252, 255];
+  const sheet = (bg: number[]) => {
+    const raw = newRaw(120, 120, bg) as Raw;
+    blit(raw, newRaw(30, 50, [90, 120, 80, 255]) as Raw, 40, 30);
+    return raw;
+  };
+  const alpha = (raw: Raw, x: number, y: number) => raw.data[(y * raw.w + x) * 4 + 3]!;
+
+  it("fundo rosa-claro dos 4 cantos vira magenta e o chroma key passa a limpar tudo", () => {
+    const raw = sheet(PINK);
+    const fixed = normalizeKeyColour(raw);
+    expect(fixed.colour).toEqual([253, 142, 252]);
+    expect(fixed.replaced).toBe(120 * 120 - 30 * 50);
+    const keyed = chromaKey(fixed.raw).raw as Raw;
+    expect(alpha(keyed, 5, 5)).toBe(0);
+    expect(alpha(keyed, 50, 50)).toBe(255);
+  });
+
+  it("não mexe em folha com magenta verdadeiro nem em fundo que não é rosado", () => {
+    const pure = sheet([255, 0, 255, 255]);
+    expect(normalizeKeyColour(pure).colour).toBeNull();
+    expect(normalizeKeyColour(pure).raw).toBe(pure);
+    const grey = sheet([128, 128, 128, 255]);
+    expect(normalizeKeyColour(grey).colour).toBeNull();
+  });
+
+  it("cantos que discordam (personagem encostado na borda) deixam a folha intacta", () => {
+    const raw = sheet(PINK);
+    blit(raw, newRaw(10, 10, [20, 20, 20, 255]) as Raw, 0, 0);
+    expect(normalizeKeyColour(raw).colour).toBeNull();
   });
 });
