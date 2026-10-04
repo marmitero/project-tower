@@ -144,20 +144,34 @@ export const DEFAULT_POOL_PLAN: ReadonlyArray<{
   // Andar 1 — Entrada da Torre (Lotes 1–2): Gosma T · Goblin D · Morcego V · Duende de Faíscas M · Goblin Capitão E (raro).
   { enemyId: "slime", fromFloor: 1, toFloor: 1, weight: 4 },
   { enemyId: "goblin", fromFloor: 1, toFloor: 1, weight: 4 },
-  { enemyId: "bat", fromFloor: 1, weight: 3 },
+  { enemyId: "bat", fromFloor: 1, toFloor: 1, weight: 3 },
   { enemyId: "spark_imp", fromFloor: 1, toFloor: 1, weight: 2 },
   { enemyId: "goblin_captain", fromFloor: 1, toFloor: 1, weight: 1 },
-  // Andar 2 — Porão Úmido (Lote 2): Sapo-Lodo T · Rato de Esgoto D · Morcego V (até a Enguia, Lote 3) · Morcego Tóxico M.
+  // Andar 2 — Porão Úmido (Lotes 2–3): Sapo-Lodo T · Rato de Esgoto D · Enguia V · Morcego Tóxico M · Troll do Esgoto E (raro).
   { enemyId: "mud_toad", fromFloor: 2, toFloor: 2, weight: 4 },
   { enemyId: "sewer_rat", fromFloor: 2, toFloor: 2, weight: 4 },
-  { enemyId: "toxicbat", fromFloor: 2, weight: 2 },
-  // Andares 3+ — ainda com os inimigos de antes; trocam por andar a cada lote (docs/STYLIZATION_ROADMAP.md §3.1).
-  { enemyId: "slime", fromFloor: 3, toFloor: 6, weight: 4 },
+  { enemyId: "sewer_eel", fromFloor: 2, toFloor: 2, weight: 3 },
+  { enemyId: "toxicbat", fromFloor: 2, toFloor: 2, weight: 2 },
+  { enemyId: "sewer_troll", fromFloor: 2, toFloor: 2, weight: 1 },
+  // Andar 3 — Galeria das Ossadas (Lote 3): Golem de Ossos T · Esqueleto D · Cão de Ossos V · Crânio Necrovela M · Cavaleiro de Ossos E (raro).
+  { enemyId: "bone_golem", fromFloor: 3, toFloor: 3, weight: 4 },
+  { enemyId: "skeleton", fromFloor: 3, toFloor: 3, weight: 4 },
+  { enemyId: "bone_hound", fromFloor: 3, toFloor: 3, weight: 3 },
+  { enemyId: "candle_skull", fromFloor: 3, toFloor: 3, weight: 2 },
+  { enemyId: "bone_knight", fromFloor: 3, toFloor: 3, weight: 1 },
+  // Andar 4 — Catacumbas Antigas (Lote 3; Sacerdote e Múmia Real chegam no Lote 4): Estátua Guardiã T · Orc D · Escaravelho V · (Morcego Tóxico M até o Sacerdote).
+  { enemyId: "guardian_statue", fromFloor: 4, toFloor: 4, weight: 4 },
+  { enemyId: "orc", fromFloor: 4, toFloor: 4, weight: 4 },
+  { enemyId: "tomb_scarab", fromFloor: 4, toFloor: 4, weight: 3 },
+  { enemyId: "toxicbat", fromFloor: 4, weight: 2 },
+  // Andares 5+ — ainda com os inimigos de antes; trocam por andar a cada lote (docs/STYLIZATION_ROADMAP.md §3.1).
+  { enemyId: "bat", fromFloor: 5, weight: 3 },
+  { enemyId: "slime", fromFloor: 5, toFloor: 6, weight: 4 },
   { enemyId: "slime", fromFloor: 7, weight: 2 },
-  { enemyId: "goblin", fromFloor: 3, toFloor: 8, weight: 4 },
+  { enemyId: "goblin", fromFloor: 5, toFloor: 8, weight: 4 },
   { enemyId: "goblin", fromFloor: 9, weight: 2 },
-  { enemyId: "skeleton", fromFloor: 3, weight: 3 },
-  { enemyId: "frostslime", fromFloor: 4, weight: 3 },
+  { enemyId: "skeleton", fromFloor: 5, weight: 3 },
+  { enemyId: "frostslime", fromFloor: 5, weight: 3 },
   { enemyId: "orc", fromFloor: 5, weight: 3 },
   { enemyId: "fireorc", fromFloor: 6, weight: 3 },
   { enemyId: "bloodskeleton", fromFloor: 7, weight: 3 },

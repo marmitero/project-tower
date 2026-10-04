@@ -106,7 +106,7 @@ const attrs = (
 ): CharacterAttributes => ({ strength, dexterity, constitution, intelligence, wisdom, charisma: 4 });
 
 /**
- * Roster padrão — 15 inimigos (tank 3, dps 4, swift 1, caster 3, balanced 1, elite 3).
+ * Roster padrão — 23 inimigos (tank 5, dps 5, swift 4, caster 4, elite 5).
  * Fábrica dos DEFAULTS: o estado vivo é `enemies` (pode ser substituído por
  * um ContentPack, ver `content.ts`).
  */
@@ -124,6 +124,13 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "mud_toad", name: "Sapo-Lodo Gigante", role: "tank", damageType: "physical", statMultiplier: 1.04,
       attributes: attrs(20, 4, 36, 4, 16),
       assets: { sheets: charSheets("slime"), atlas: "enemies/mud_toad" } },
+    // Lote 3 (ADR-037): tanques dos andares 3 e 4 — atlas próprio.
+    { id: "bone_golem", name: "Golem de Ossos", role: "tank", damageType: "physical", statMultiplier: 1.0,
+      attributes: attrs(24, 4, 38, 4, 14),
+      assets: { sheets: charSheets("skeleton"), atlas: "enemies/bone_golem" } },
+    { id: "guardian_statue", name: "Estátua Guardiã", role: "tank", damageType: "physical", statMultiplier: 1.04,
+      attributes: attrs(22, 4, 40, 4, 22),
+      assets: { sheets: charSheets("orc"), atlas: "enemies/guardian_statue" } },
     // --- dps ----------------------------------------------------------
     { id: "goblin", name: "Goblin", role: "dps", damageType: "physical", statMultiplier: 1.23,
       attributes: attrs(28, 20, 14, 6, 8),
@@ -142,6 +149,16 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "bat", name: "Morcego", role: "swift", damageType: "physical", statMultiplier: 1.12,
       attributes: attrs(14, 34, 10, 6, 8),
       assets: { sheets: charSheets("bat") } },
+    // Lote 3: velozes — a Enguia (andar 2), o Cão de Ossos (3) e o Escaravelho de Tumba (4).
+    { id: "sewer_eel", name: "Enguia Rastejante", role: "swift", damageType: "physical", statMultiplier: 1.1,
+      attributes: attrs(16, 32, 12, 4, 8),
+      assets: { sheets: charSheets("slime"), atlas: "enemies/sewer_eel" } },
+    { id: "bone_hound", name: "Cão de Ossos", role: "swift", damageType: "physical", statMultiplier: 1.12,
+      attributes: attrs(18, 34, 10, 4, 6),
+      assets: { sheets: charSheets("goblin"), atlas: "enemies/bone_hound" } },
+    { id: "tomb_scarab", name: "Escaravelho de Tumba", role: "swift", damageType: "physical", statMultiplier: 1.12,
+      attributes: attrs(16, 32, 18, 4, 10),
+      assets: { sheets: charSheets("slime"), atlas: "enemies/tomb_scarab" } },
     // --- caster -------------------------------------------------------
     { id: "toxicbat", name: "Morcego Tóxico", role: "caster", damageType: "magic", statMultiplier: 1.1,
       attributes: attrs(6, 24, 12, 28, 14),
@@ -151,11 +168,15 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "spark_imp", name: "Duende de Faíscas", role: "caster", damageType: "magic", statMultiplier: 0.78,
       attributes: attrs(6, 20, 10, 26, 12),
       assets: { sheets: charSheets("mage"), atlas: "enemies/spark_imp" } },
+    // Lote 3: mago do andar 3 (multiplicador baixo: ainda é o começo da Torre).
+    { id: "candle_skull", name: "Crânio Necrovela", role: "caster", damageType: "magic", statMultiplier: 0.9,
+      attributes: attrs(6, 16, 10, 28, 16),
+      assets: { sheets: charSheets("bat"), atlas: "enemies/candle_skull" } },
     { id: "fireorc", name: "Orc Flamejante", role: "caster", damageType: "magic", statMultiplier: 0.88,
       attributes: attrs(10, 8, 22, 32, 12),
       assets: { sheets: charSheets("fireorc") } },
-    // --- balanced -----------------------------------------------------
-    { id: "skeleton", name: "Esqueleto", role: "balanced", damageType: "physical", statMultiplier: 0.97,
+    // --- (legado) balanced — o Esqueleto virou "dps" no Lote 3 (§3.1: o papel balanced deixa de ser slot) ---
+    { id: "skeleton", name: "Esqueleto", role: "dps", damageType: "physical", statMultiplier: 0.97,
       attributes: attrs(24, 14, 24, 8, 14),
       assets: { portrait: "portraits/skeleton", sheets: charSheets("skeleton") } },
     // --- elite (raros; multiplicador de força) --------------------------
@@ -163,6 +184,13 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "goblin_captain", name: "Goblin Capitão", role: "elite", damageType: "physical", statMultiplier: 1.2,
       attributes: attrs(30, 22, 22, 8, 12),
       assets: { sheets: charSheets("orc"), atlas: "enemies/goblin_captain" } },
+    // Lote 3: elites RAROS dos andares 2 e 3.
+    { id: "sewer_troll", name: "Troll do Esgoto", role: "elite", damageType: "physical", statMultiplier: 1.22,
+      attributes: attrs(34, 12, 32, 6, 10),
+      assets: { sheets: charSheets("orc"), atlas: "enemies/sewer_troll" } },
+    { id: "bone_knight", name: "Cavaleiro de Ossos", role: "elite", damageType: "physical", statMultiplier: 1.24,
+      attributes: attrs(28, 20, 28, 6, 14),
+      assets: { sheets: charSheets("skeleton"), atlas: "enemies/bone_knight" } },
     { id: "elitearcher", name: "Arqueiro de Elite", role: "elite", damageType: "physical", statMultiplier: 1.26,
       attributes: attrs(26, 32, 18, 8, 12),
       assets: { sheets: charSheets("elitearcher") } },
