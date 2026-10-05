@@ -167,7 +167,8 @@ describe("arte própria por identidade de herói (ADR-035 — correção da Kaia
     expect(ossian.classId).toBe("ranger");
     expect(RESERVED_HEROES.some((h) => h.id === ossian.id)).toBe(false);
     expect(identitiesForClass("ranger").map((h) => h.id)).toEqual([
-      "hero_kaia", "hero_cacador_furtivo", "hero_besteiro_pesado", "hero_guardia_floresta", "hero_ossian",
+      // os 5 primeiros do roadmap + o Arqueiro Nômade (Lote 6), o sexto e extra da classe
+      "hero_kaia", "hero_cacador_furtivo", "hero_besteiro_pesado", "hero_guardia_floresta", "hero_ossian", "hero_arqueiro_nomade",
     ]);
     expect(ossian.assets?.portrait).toBe("portraits/skeleton");
     expect(ossian.assets?.atlas).toBeUndefined();

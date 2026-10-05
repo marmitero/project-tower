@@ -1,6 +1,6 @@
 # ART_HANDOFF — como continuar a fase de arte sem o histórico da conversa
 
-**Escrito em:** 2026-10-04 (após o Lote 5, ADR-040) · **Para quem:** um agente (ou pessoa) que abre o repositório do zero.
+**Escrito em:** 2026-10-04 (após o Lote 5, ADR-040) · **Atualizado em:** 2026-10-05 (após o Lote 6, ADR-042 — reverificado na branch `arena/01a106b8-project-tower`) · **Para quem:** um agente (ou pessoa) que abre o repositório do zero.
 **Leia antes:** [`../AI_STATE.md`](../AI_STATE.md) → este arquivo → [`STYLIZATION_ROADMAP.md`](STYLIZATION_ROADMAP.md) (planejamento) → [`ART_PIPELINE.md`](ART_PIPELINE.md) (especificação técnica).
 **Para ver a arte:** `docs/art-review/lote-NN/*.png` (capturas e contact sheets de cada lote) e `assets/generated/` (os atlas finais). **Olhe as imagens antes de gerar qualquer coisa nova** — o estilo é mantido por referência visual, não por descrição.
 
@@ -18,11 +18,11 @@
 6. **Instrução padrão ao fim de CADA etapa** (palavras do usuário): *"Prossiga com a próxima etapa. se possível, tome as decisões necessárias e relate-as para mim no final, sempre com arquitetura editável caso precisamos fazer alguma alteração posteriormente. ao final, diga qual o próximo passo, faça commit e push e estipule uma quantidade de etapas até o primeiro mvp jogável."* ⇒ o relato final de um lote traz: **o que foi gerado** (acertos, reprovações, refações), **decisões tomadas e por quê**, **verificação no jogo** (capturas), **ressalvas**, **próximo passo**, **estimativa de etapas restantes**, e como testar. Escrito em **PT-BR**, sem jargão desnecessário.
 7. **Autoridade delegada**: o usuário disse "você decide" para decisões de design/balanceamento; decida, registre em ADR (`docs/DECISIONS_LOG.md`), deixe tudo em config editável e relate. Só pare para decisão crítica de gameplay/economia sem regra no `Master-Prompt.md` (que prevalece sobre tudo), credencial ou ação externa.
 8. **Painel Admin (Fase 14) vem DEPOIS da arte.** Tudo que criar deve ser dado serializável e validável (config), para o painel editar sem código.
-9. Branch da sessão fixa (`arena/01a0f1f1-project-tower`); commit e push só nela. O usuário testa no Windows 10 baixando o zip da branch e abrindo `JOGAR.bat`; skins do Rei de nível ≥ 15 e heróis específicos só aparecem com `npm run play:debug` (Debug Mode).
+9. Branch da sessão fixa (`arena/01a106b8-project-tower`); commit e push só nela. O usuário testa no Windows 10 baixando o zip da branch e abrindo `JOGAR.bat`; skins do Rei de nível ≥ 15 e heróis específicos só aparecem com `npm run play:debug` (Debug Mode).
 
 ---
 
-## 2. Onde estamos (fim do Lote 5)
+## 2. Onde estamos (fim do Lote 6)
 
 | Lote | Entregue | Gerações | ADR | Status |
 |---|---|---:|---|---|
@@ -31,11 +31,16 @@
 | L2 | 8 retratos do Rei (12 skins), arenas f02–f04, Goblin Capitão, Sapo-Lodo, Rato | 9 | 036 | ✅ aprovado |
 | L3 | 8 inimigos (andares 2–4) | 8 | 037 | ✅ aprovado |
 | L4 | Andar 4 completo, **Clérigo** (5ª classe, engine de cura, 5 identidades, 4 retratos) | 8 | 038/039 | ✅ aprovado |
-| L5 | 7 heróis novos + Ossian liberado → **18 heróis**; 8 skills assinatura | 10 | 040 | ⏳ **aguarda "lote 05 aprovado"** |
+| L5 | 7 heróis novos + Ossian liberado → **18 heróis**; 8 skills assinatura | 10 | 040 | ✅ aprovado (2026-10-04) |
+| L6 | **Arcanista 5/5 e Invocador 5/5** + Arqueiro Nômade → **26 heróis**; 8 skills assinatura; 4 retratos próprios | 10 | 042 | ⏳ **aguarda "lote 06 aprovado"** |
 
-**Próximo: Lote 6** — só depois do "lote 05 aprovado". Plano detalhado em §9.
+**Próximo: Lote 7** — só depois do "lote 06 aprovado". Plano detalhado em §9.
 
-Metas numéricas (Onda 1): 25 heróis (hoje **18**) · 12 retratos do Rei (**feito**) · 10 arenas (hoje **4**) · 50 inimigos nos andares 1–10 (hoje **25 no roster**, andares 1–4 completos) · UI GBA + login (**feito**).
+> **Reverificação (2026-10-05):** o sandbox foi reciclado e o working tree voltou ao merge da `main` (Lote 5); a branch da sessão foi recuperada com `git fetch origin arena/01a106b8-project-tower && git reset --hard origin/arena/01a106b8-project-tower` (§4). `npm run check` verde — **783 testes + 28 de arquitetura**, assets/manifesto em dia e o bundle do preview com **681 requisições HTTP 200**. Se você abrir o repositório e `docs/art-review/lote-06/` não existir, é isso que aconteceu: recupere a branch antes de qualquer coisa.
+
+Metas numéricas (Onda 1): 25 heróis (**26 — meta batida no L6**) · 12 retratos do Rei (**feito**) · 10 arenas (hoje **4**) · 50 inimigos nos andares 1–10 (hoje **25 no roster**, andares 1–4 completos) · UI GBA + login (**feito**).
+
+Pendências de retrato (contam para o L7): **17 dos 26 heróis** ainda usam o retrato da classe — os 9 com retrato próprio são os 4 clérigos, Vorath, Criomante, Tempestuário, Mago Ancião e Ossian.
 
 ---
 
@@ -56,7 +61,7 @@ Metas numéricas (Onda 1): 25 heróis (hoje **18**) · 12 retratos do Rei (**fei
 ```bash
 cd /home/user/project-tower
 git status && git log --oneline -3          # se o HEAD estiver em "Master-prompt", o sandbox resetou:
-git fetch origin arena/01a0f1f1-project-tower && git reset --hard origin/arena/01a0f1f1-project-tower
+git fetch origin arena/01a106b8-project-tower && git reset --hard origin/arena/01a106b8-project-tower
 npm install
 node scripts/serve-preview.mjs              # preview na porta 5173 (use start_process); conferir com curl
 npm run art:refs                            # recria guias + referências de estilo em assets/_incoming/refs/ (gitignored)
@@ -111,7 +116,7 @@ Referência: `assets/_incoming/refs/kit_f0X_*.png` do andar mais parecido (a ord
 
 ### 5.3 Retratos (folha 2×2)
 
-Referência: `assets/_incoming/refs/king_ref.png` (ou um retrato de herói). 4 bustos descritos um a um, fundo magenta, enquadramento de busto igual ao do Rei. `node scripts/art.mjs portraits <folha> --ids a,b,c,d --dir portraits/heroes` (heróis) ou `--dir portraits/king` (Rei). Depois ligue `assets.portrait` na identidade (`heroes.ts`) — hoje 7 dos 18 heróis ainda usam o retrato da classe.
+Referência: `assets/_incoming/refs/king_ref.png` (ou um retrato de herói). 4 bustos descritos um a um, fundo magenta, enquadramento de busto igual ao do Rei. `node scripts/art.mjs portraits <folha> --ids a,b,c,d --dir portraits/heroes` (heróis) ou `--dir portraits/king` (Rei). Depois ligue `assets.portrait` na identidade (`heroes.ts`) — hoje **9 dos 26** heróis têm retrato próprio e 17 ainda usam o da classe (a fila está no §9, Lote 7).
 
 ---
 
@@ -136,7 +141,7 @@ Referência: `assets/_incoming/refs/king_ref.png` (ou um retrato de herói). 4 b
 
 ## 7. O que existe hoje (conferir sempre no config — a verdade está em `packages/config/src/*`)
 
-### 7.1 Heróis — 18 (`HERO_ROSTER` em `heroes.ts`)
+### 7.1 Heróis — 26 (`HERO_ROSTER` em `heroes.ts`)
 
 | id | classe | nome | skill assinatura | atlas | retrato |
 |---|---|---|---|---|---|
@@ -152,14 +157,26 @@ Referência: `assets/_incoming/refs/king_ref.png` (ou um retrato de herói). 4 b
 | `hero_ossian` | ranger | Ossian, Arqueiro Sem Sono | `skill_sleepless_string` | corpo da classe (arqueiro esquelético do pack) | `portraits/skeleton` |
 | `hero_maelis` | arcanist | Maelis (inicial) | `skill_nova` | corpo da classe | classe |
 | `hero_piromante_cinder` | arcanist | Cinder, Piromante | `skill_fire_bolt` | `heroes/arcanist_pyro` | classe |
-| `hero_vorath` | shadowcaller | Vorath (inicial) | `skill_hex` | corpo da classe | classe |
+| `hero_criomante` | arcanist | Sylas, o Criomante | `skill_ice_storm` | `heroes/arcanist_cryomancer` | `…/hero_criomante` |
+| `hero_tempestuario` | arcanist | Zephyr, o Tempestuário | `skill_chain_lightning` | `heroes/arcanist_stormcaller` | `…/hero_tempestuario` |
+| `hero_mago_anciao` | arcanist | Ordanis, o Mago Ancião | `skill_arcane_lance` | `heroes/arcanist_elder` | `…/hero_mago_anciao` |
+| `hero_vorath` | shadowcaller | Vorath (inicial) | `skill_hex` | corpo da classe | `portraits/heroes/hero_vorath` |
+| `hero_necromante_ossos` | shadowcaller | Vasko, o Necromante dos Ossos | `skill_bone_volley` | `heroes/shadowcaller_bones` | classe (retrato no L7) |
+| `hero_bruxa_pantano` | shadowcaller | Morcha, a Bruxa do Pântano | `skill_poison_blade` | `heroes/shadowcaller_witch` | classe (retrato no L7) |
+| `hero_ceifeira` | shadowcaller | Sylvara, a Ceifeira | `skill_soul_reap` | `heroes/shadowcaller_reaper` | classe (retrato no L7) |
+| `hero_demonologo` | shadowcaller | Baalor, o Demonólogo | `skill_demon_pact` | `heroes/shadowcaller_demon` | classe (retrato no L7) |
 | `hero_aurora` | cleric | Aurora, Sacerdotisa | `skill_cure` | `heroes/cleric_aurora` | `portraits/heroes/hero_sacerdotisa` |
 | `hero_tobias` | cleric | Irmão Tobias, Monge Curandeiro | `skill_restoring_palm` | `heroes/cleric_monk` | `…/hero_monge_curandeiro` |
 | `hero_bispo_gaspar` | cleric | Gaspar, Bispo Guerreiro | `skill_smite` | `heroes/cleric_bishop` | `…/hero_bispo` |
 | `hero_druida_yara` | cleric | Yara, Druida da Vida | `skill_bloom` | `heroes/cleric_druid` | `…/hero_druida` |
 | `hero_oraculo_nyra` | cleric | Nyra, Oráculo | `skill_prophecy` | `heroes/cleric_oracle` | classe (retrato no L7) |
+| `hero_arqueiro_nomade` | ranger | Amir, o Arqueiro Nômade (6º arqueiro) | `skill_nomad_shot` | `heroes/ranger_nomad` | classe (retrato no L7) |
 
-**Faltam 7 para 25:** Arcanista +3 (Criomante *Ice Storm*, Tempestuário, Mago Ancião), Invocador +4 (Necromante dos Ossos, Bruxa do Pântano *Poison Blade*, Ceifeira com roubo de vida, Demonólogo). **Extra planejado:** Arqueiro Nômade (atlas `heroes/ranger_nomad`; a 1ª geração veio em layout errado — refazer; seria o 6º arqueiro).
+**Meta da Onda 1 cumprida no L6 (26 ≥ 25)** — não falta nenhum herói. Cada classe fechou: Guardião 5 · Arqueiro **6** (o Nômade é o extra) · Arcanista 5 · Invocador 5 · Clérigo 5.
+
+**Fila de retratos (L7):** faltam retrato próprio para **14 heróis** — Borin, Cavaleiro Rubro, Mestre Hakon, Lorde Valdemar (Guardião) · Rik, Brutus, Elora, Amir (Arqueiro) · Cinder (Arcanista) · Vasko, Morcha, Sylvara, Baalor (Invocador) · Nyra, o Oráculo (Clérigo) — cabem em **4 folhas de 2×2 = 16 bustos** (os 2 lugares livres ficam de reserva para refação dentro do lote).
+
+**Ainda sem atlas próprio (corpo da classe):** Aldric, Maelis, Vorath (iniciais, arte do pack) e Ossian (arqueiro esquelético do pack) — decisão de arte pendente; hoje são 4 de 26.
 
 ### 7.2 Inimigos — 25 no roster (`enemies.ts`), pools por andar em `DEFAULT_POOL_PLAN` (`tower.ts`)
 
@@ -192,14 +209,14 @@ Depois de qualquer asset: `node scripts/build-assets.mjs` (regenera `apps/game-w
 
 ## 9. Próximo lote e o restante da fila (ajuste pelo roadmap §9, que é a fonte do plano)
 
-**Lote 6 (próximo, após "lote 05 aprovado"):** Arcanista 3–5 (Criomante, Tempestuário, Mago Ancião) + Invocador 2–5 (Necromante dos Ossos, Bruxa do Pântano, Ceifeira, Demonólogo) = 7 heróis, **+ Arqueiro Nômade refeito** (1) **+ 1 folha de 4 retratos** ⇒ 9 gerações, 1 de reserva. Skills novas para cada um (Criomante = *Tempestade de Gelo* mágica; Bruxa = veneno; Ceifeira = roubo de vida só se o engine suportar — senão dano; confira `SkillDef`). Guias: `mage` (arcanista), `necromancer` (invocador). Corpos humanoides — a ferramenta de validação **por plano corporal** ainda não é necessária.
-**Lote 7:** 4 folhas de retratos (heróis restantes, incluindo o Oráculo) + arena do andar 5 + 3 inimigos do andar 5 → **25 heróis completos**.
-**L8–L11:** andares 5–10 (arenas + inimigos conforme a tabela do roadmap §3.1: andar 5 Salão dos Ecos; 6 Fornalha; 7 Jardim Gélido; 8 Ninho das Sombras; 9 Corredor Sangrento; 10 Câmara dos Mil Passos) + 7 gerações de reserva. Cada andar novo: arena (1 geração) + 4–5 inimigos (1 cada) e uma passada de balanceamento.
+**Lote 7 (próximo, após "lote 06 aprovado"):** **4 folhas de retratos** (14 heróis sem retrato próprio — lista no §7.1; 2 lugares de reserva dentro das folhas) **+ arena do andar 5 (Salão de Cristal azul, colunas, mármore polido, lustres)** **+ 3 inimigos do andar 5** (Sentinela de Cristal · Duelista Fantasma · Espectro Sussurrante) = **8 gerações, 2 de reserva**. Guia dos inimigos: `orc`/`skeleton`/`bat` conforme a silhueta; skills novas para eles ainda não existem (inimigos usam ataque básico).
+**Lote 8:** 2 inimigos restantes do andar 5 (Cantor de Ecos, Maestro do Vazio) + arena 6 (Fornalha Esquecida) + 4 inimigos do andar 6 + arena 7 (Jardim Gélido) = 8.
+**L9:** 4 inimigos do andar 7 + arena 8 + 3 inimigos do andar 8 = 8.
+**L10:** 1 inimigo restante do andar 8 + arena 9 + 4 inimigos do andar 9 + 1 do andar 10 = 7.
+**L11:** 3 inimigos restantes do andar 10 (Guerreiro Eterno, Oráculo dos Passos, **Arqueiro de Elite**) + reservas para refação = **andares 1–10 completos**.
 **Ferramenta pendente (aprovada pelo usuário, momento a critério do agente):** validação de movimento **por plano corporal** (quadrúpede, inseto, rastejante) — perfil `--body` em `art.mjs ingest/validate` que relaxa limiares de movimento/IoU para corpos que não casam com o guia bípede/blob (hoje Cão de Ossos e Escaravelho foram aprovados à mão). Implemente **antes do primeiro lote com quadrúpedes/insetos** (andares 7–8, conforme a tabela do roadmap §3.1), com teste e ADR.
-**Depois da arte:** Fase 14 — Painel Admin (`ADMIN_PANEL.md`) e Fase Online (Google Auth, Supabase, Mercado da comunidade).
-**Estimativa dada ao usuário ao fim do L5:** ~6 lotes de arte (L6–L11) + Fase 14 ⇒ ~7 etapas até o primeiro MVP jogável completo (o MVP *local* já é jogável desde a Fase 13).
-
----
+**Depois da arte:** Fase 14 — Painel Admin (`docs/ADMIN_PANEL.md`) e Fase Online (Google Auth, Supabase, Mercado da comunidade).
+**Estimativa atual:** ~5 lotes de arte (L7–L11) + Fase 14 ⇒ ~6 etapas até a Onda 1 completa (o MVP *local* já é jogável desde a Fase 13).
 
 ## 10. Armadilhas (cada uma já custou tempo)
 
