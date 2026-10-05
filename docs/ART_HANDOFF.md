@@ -1,6 +1,6 @@
 # ART_HANDOFF — como continuar a fase de arte sem o histórico da conversa
 
-**Escrito em:** 2026-10-04 (após o Lote 5, ADR-040) · **Para quem:** um agente (ou pessoa) que abre o repositório do zero.
+**Escrito em:** 2026-10-04 (após o Lote 5, ADR-040) · **Atualizado em:** 2026-10-05 (após o Lote 6, ADR-042 — reverificado na branch `arena/01a106b8-project-tower`) · **Para quem:** um agente (ou pessoa) que abre o repositório do zero.
 **Leia antes:** [`../AI_STATE.md`](../AI_STATE.md) → este arquivo → [`STYLIZATION_ROADMAP.md`](STYLIZATION_ROADMAP.md) (planejamento) → [`ART_PIPELINE.md`](ART_PIPELINE.md) (especificação técnica).
 **Para ver a arte:** `docs/art-review/lote-NN/*.png` (capturas e contact sheets de cada lote) e `assets/generated/` (os atlas finais). **Olhe as imagens antes de gerar qualquer coisa nova** — o estilo é mantido por referência visual, não por descrição.
 
@@ -18,7 +18,7 @@
 6. **Instrução padrão ao fim de CADA etapa** (palavras do usuário): *"Prossiga com a próxima etapa. se possível, tome as decisões necessárias e relate-as para mim no final, sempre com arquitetura editável caso precisamos fazer alguma alteração posteriormente. ao final, diga qual o próximo passo, faça commit e push e estipule uma quantidade de etapas até o primeiro mvp jogável."* ⇒ o relato final de um lote traz: **o que foi gerado** (acertos, reprovações, refações), **decisões tomadas e por quê**, **verificação no jogo** (capturas), **ressalvas**, **próximo passo**, **estimativa de etapas restantes**, e como testar. Escrito em **PT-BR**, sem jargão desnecessário.
 7. **Autoridade delegada**: o usuário disse "você decide" para decisões de design/balanceamento; decida, registre em ADR (`docs/DECISIONS_LOG.md`), deixe tudo em config editável e relate. Só pare para decisão crítica de gameplay/economia sem regra no `Master-Prompt.md` (que prevalece sobre tudo), credencial ou ação externa.
 8. **Painel Admin (Fase 14) vem DEPOIS da arte.** Tudo que criar deve ser dado serializável e validável (config), para o painel editar sem código.
-9. Branch da sessão fixa (`arena/01a0f1f1-project-tower`); commit e push só nela. O usuário testa no Windows 10 baixando o zip da branch e abrindo `JOGAR.bat`; skins do Rei de nível ≥ 15 e heróis específicos só aparecem com `npm run play:debug` (Debug Mode).
+9. Branch da sessão fixa (`arena/01a106b8-project-tower`); commit e push só nela. O usuário testa no Windows 10 baixando o zip da branch e abrindo `JOGAR.bat`; skins do Rei de nível ≥ 15 e heróis específicos só aparecem com `npm run play:debug` (Debug Mode).
 
 ---
 
@@ -35,6 +35,8 @@
 | L6 | **Arcanista 5/5 e Invocador 5/5** + Arqueiro Nômade → **26 heróis**; 8 skills assinatura; 4 retratos próprios | 10 | 042 | ⏳ **aguarda "lote 06 aprovado"** |
 
 **Próximo: Lote 7** — só depois do "lote 06 aprovado". Plano detalhado em §9.
+
+> **Reverificação (2026-10-05):** o sandbox foi reciclado e o working tree voltou ao merge da `main` (Lote 5); a branch da sessão foi recuperada com `git fetch origin arena/01a106b8-project-tower && git reset --hard origin/arena/01a106b8-project-tower` (§4). `npm run check` verde — **783 testes + 28 de arquitetura**, assets/manifesto em dia e o bundle do preview com **681 requisições HTTP 200**. Se você abrir o repositório e `docs/art-review/lote-06/` não existir, é isso que aconteceu: recupere a branch antes de qualquer coisa.
 
 Metas numéricas (Onda 1): 25 heróis (**26 — meta batida no L6**) · 12 retratos do Rei (**feito**) · 10 arenas (hoje **4**) · 50 inimigos nos andares 1–10 (hoje **25 no roster**, andares 1–4 completos) · UI GBA + login (**feito**).
 
@@ -59,7 +61,7 @@ Pendências de retrato (contam para o L7): **17 dos 26 heróis** ainda usam o re
 ```bash
 cd /home/user/project-tower
 git status && git log --oneline -3          # se o HEAD estiver em "Master-prompt", o sandbox resetou:
-git fetch origin arena/01a0f1f1-project-tower && git reset --hard origin/arena/01a0f1f1-project-tower
+git fetch origin arena/01a106b8-project-tower && git reset --hard origin/arena/01a106b8-project-tower
 npm install
 node scripts/serve-preview.mjs              # preview na porta 5173 (use start_process); conferir com curl
 npm run art:refs                            # recria guias + referências de estilo em assets/_incoming/refs/ (gitignored)

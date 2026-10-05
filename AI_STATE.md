@@ -1,10 +1,10 @@
 # AI_STATE — handoff vivo do Tower Idle Adventure
 
-**Última atualização:** 2026-10-04 (Lote 6 da fase de arte entregue — ADR-042 — com capturas no jogo; aguarda o "lote 06 aprovado")
+**Última atualização:** 2026-10-05 (branch da sessão recuperada após reset do sandbox e Lote 6 **reverificado**: `npm run check` verde — 783 testes + 28 de arquitetura —, bundle do preview em dia com 681 requisições HTTP 200; aguarda o "lote 06 aprovado")
 **Estado:** **FASES 1–13 concluídas — MVP LOCAL JOGÁVEL** (ADR-028). **AGORA: fase de arte "otimização e estilização"** — Lotes 1–5 aprovados; **Lote 6 entregue, aguardando o usuário escrever "lote 06 aprovado"** (**26 heróis** — meta de 25 batida —, 25 inimigos, 4 arenas, 12 retratos do Rei; Arcanista 5/5 e Invocador 5/5). Depois da arte: **FASE 14 — Painel Admin** e a **Fase Online**. **Quem for continuar a arte: leia [`docs/ART_HANDOFF.md`](docs/ART_HANDOFF.md) (regras do usuário, receitas de prompt, fluxo, onde editar) e OLHE `docs/art-review/` antes de gerar.** Como jogar no Windows: [`docs/PLAY_LOCAL.md`](docs/PLAY_LOCAL.md) (`JOGAR.bat`).
 **Preview:** servidor estático autocontido (ADR-018) — `node scripts/serve-preview.mjs` (porta 5173). Se o ambiente resetar, subir UMA linha; não depende de `node_modules`.
 **Repositório:** `marmitero/project-tower`
-**Branch desta sessão:** `arena/01a0f1f1-project-tower`
+**Branch desta sessão:** `arena/01a106b8-project-tower`
 
 > **Este é o primeiro documento a ler em qualquer sessão nova.** Ele existe para que qualquer pessoa ou agente continue o projeto sem acesso a conversas anteriores.
 >
@@ -15,7 +15,7 @@
 ## 1. Regras obrigatórias para quem continuar
 
 1. **Leia este arquivo primeiro.** Depois `git status`, `git log`, e então o documento do sistema relevante. Uma anotação antiga não prevalece sobre o estado mais recente.
-2. **Trabalhe apenas na branch da sessão** (`arena/01a0f1f1-project-tower`) e faça push apenas para ela. Nunca troque ou crie outra branch.
+2. **Trabalhe apenas na branch da sessão** (`arena/01a106b8-project-tower`) e faça push apenas para ela. Nunca troque ou crie outra branch.
 3. **Aja primeiro, pergunte depois.** Faça tudo o que puder. Só interrompa o usuário para: decisão de gameplay/economia crítica não definida, credencial, ou ação externa que exija confirmação humana. **Nunca peça senha, token, service-role key ou código MFA.**
 4. **Nunca invente regra de economia ou gameplay** (§73). Registre como `PENDING` em [`docs/PENDING_RULES.md`](docs/PENDING_RULES.md) e peça decisão humana.
 5. **Nunca declare algo como testado, implementado ou implantado sem evidência.** Separe sempre: verificado no repositório / relato do usuário / proposta.
@@ -486,6 +486,7 @@ editar `config/src/heroes.ts`.
 - **Lote 4 (ADR-038/039):** andar 4 completo (Sacerdote Mumificado, Múmia Real); Clérigo = 5ª classe (engine de cura, 5 identidades, 4 retratos); roster 25 inimigos; 8/10 gerações. Aprovado.
 - **Lote 5 (ADR-040):** 7 heróis novos (Rubro, Monge de Ferro, Lorde Cinzento, Furtivo, Besteiro, Guardiã, Piromante) + Ossian liberado = 18 heróis; 8 skills assinatura; `normalizeKeyColour`; identidade no Debug; correção do sorteio de identidade; 10/10 gerações. **Aprovado pelo usuário em 2026-10-04.**
 - **Lote 6 (ADR-042):** **8 atlas** (Criomante, Tempestuário, Mago Ancião, Necromante dos Ossos, Bruxa do Pântano, Ceifeira, Demonólogo + o **Arqueiro Nômade** refeito, dívida do L5) e **1 folha 2×2 de retratos** (Criomante, Tempestuário, Mago Ancião, Vorath); 8 skills assinatura novas (régua de DPS estendida ao Invocador); 1 refação (o Necromante dos Ossos veio com *hurt/death* de outro personagem); 10/10 gerações. **Arcanista 5/5 · Invocador 5/5 · Arqueiro 6 · Guardião 5 · Clérigo 5 = 26 heróis — meta da Onda 1 batida.** Verificado no Chromium real (8/8 em batalha com atlas e skill próprios). **Aguarda "lote 06 aprovado".**
+- **Reverificação (2026-10-05):** o sandbox foi reciclado e voltou ao merge da `main` (Lote 5); a branch da sessão foi recuperada com `git reset --hard origin/arena/01a106b8-project-tower` — **nada se perdeu** (tudo estava commitado e no push). Confirmado com `npm run check`: **783 testes + 28 de arquitetura verdes**, assets e manifesto em dia, `check:preview` sem debug e com **681 requisições HTTP 200**. Corrigidos os links de zip/branch nos docs (apontavam para a branch antiga `arena/01a0f1f1-project-tower`, que ficou no Lote 5; agora apontam para `arena/01a106b8-project-tower`).
 - **Próximo:** **Lote 7** (4 folhas de retratos para os 14 heróis sem retrato próprio + arena do andar 5 + 3 inimigos do andar 5; ≈ 8 gerações) — **só após o usuário escrever "lote 06 aprovado"**; a ferramenta de validação por plano corporal vem antes do primeiro lote com quadrúpedes/insetos (andares 7–8). Fila completa e receitas em [`docs/ART_HANDOFF.md`](docs/ART_HANDOFF.md) §9; planejamento em `docs/STYLIZATION_ROADMAP.md` §9; fluxo por comando em `docs/ART_PIPELINE.md` §13. **`npm run art:refs`** recria os guias e as referências de estilo (a pasta `assets/_incoming/` não é versionada).
 - **Medido (muda o plano original):** pack com sombreado suave (31–620 cores significativas) → paleta de 64 cores só no empacotamento; `sharp` ignora `colours` → quantizador próprio; pixel ≈ 3 px; guia de validação = arquétipo dado ao gerador.
 - **Pendências registradas (ADR-033):** cura como efeito de skill (engine) antes do Clérigo; ~~obtenção por IDENTIDADE~~ (feita no L1); campos de arena landmark/iluminação/ambiente reservados.
