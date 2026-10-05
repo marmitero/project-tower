@@ -2,7 +2,7 @@
 
 > **Continuar a arte sem o histórico da conversa:** [`ART_HANDOFF.md`](ART_HANDOFF.md) (regras do usuário, receitas de prompt, fluxo por comando, onde editar, estado e fila de lotes).
 
-**Versão:** 0.3 · **Data:** 2026-10-04 · **Estado:** ✅ Gate 0 aprovado · **F0 implementada** (ADR-033) · **Lotes 1–5 aprovados** · **Lote 6 aplicado** (ADR-042: 26 heróis — meta M3 batida) — aguarda "lote 06 aprovado"
+**Versão:** 0.4 · **Data:** 2026-10-05 · **Estado:** ✅ Gate 0 aprovado · **F0 implementada** (ADR-033) · **Lotes 1–6 aprovados** (ADR-042: 26 heróis — meta M3 batida) · **Lote 7 solicitado; aguardando fontes de imagem em folhas compatíveis** (o formato e padrão existentes não serão alterados sem decisão do usuário).
 **Decisão:** [ADR-032](DECISIONS_LOG.md) · **Documento técnico irmão:** [`ART_PIPELINE.md`](ART_PIPELINE.md) (especificação medida dos sprites, prompts, chroma key, validação, integração)
 **Fonte do pedido:** mensagem do usuário de 2026-10-03 ("otimização e estilização") · **Regras superiores:** `Master-Prompt.md` §10, §22, §23, §59–§62, §105
 

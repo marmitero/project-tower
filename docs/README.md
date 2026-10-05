@@ -2,8 +2,8 @@
 
 **Repositório:** `marmitero/project-tower`
 **Especificação central:** [`../Master-Prompt.md`](../Master-Prompt.md) (125 seções, fonte de autoridade)
-**Última atualização:** 2026-10-04
-**Estado do projeto:** Fases 1–13 concluídas (MVP local jogável) · fase de arte em andamento (Lote 5 de ~11) · depois, Fase 14 (Painel Admin). Estado vivo: [`../AI_STATE.md`](../AI_STATE.md)
+**Última atualização:** 2026-10-05
+**Estado do projeto:** Fases 1–13 concluídas (MVP local jogável) · Lote 6 aprovado pelo usuário · Lote 7 solicitado, aguardando fontes de arte em folhas compatíveis com o pipeline · depois, Fase 14 (Painel Admin). Estado vivo: [`../AI_STATE.md`](../AI_STATE.md)
 
 ---
 
@@ -67,7 +67,7 @@ AI_STATE.md → GDD.md → GAME_SYSTEMS.md → documento do sistema específico 
 | [`UI_UX.md`](UI_UX.md) | HUD, telas, fluxos, responsividade, desktop-first e Android browser |
 | [`ART_GUIDELINES.md`](ART_GUIDELINES.md) | Direção de arte, pipeline, política de assets, placeholders e QA |
 | [`STYLIZATION_ROADMAP.md`](STYLIZATION_ROADMAP.md) | **Roadmap da fase "otimização e estilização"**: ondas, lotes de 10 gerações, metas M1–M10 (ADR-032) |
-| [`ART_HANDOFF.md`](ART_HANDOFF.md) | **Handoff da arte**: tudo para continuar a fase sem o histórico (regras do usuário, estilo, prompts, fluxo, onde editar, fila L6–L11) — ADR-041 |
+| [`ART_HANDOFF.md`](ART_HANDOFF.md) | **Handoff da arte**: tudo para continuar a fase sem o histórico (regras do usuário, estilo, prompts, fluxo, onde editar, fila L7–L11) — ADR-041 |
 | [`ART_PIPELINE.md`](ART_PIPELINE.md) | **Pipeline de arte**: spec medida dos sprites, `ita-atlas-v1`, prompts, chroma key, validação, integração |
 | [`ASSET_INVENTORY.md`](ASSET_INVENTORY.md) | Inventário do pack de sprites disponível, mapeamento de classes/inimigos e licenças |
 | [`AUDIO_GUIDELINES.md`](AUDIO_GUIDELINES.md) | Trilha, SFX, mixagem, acessibilidade e performance de áudio |

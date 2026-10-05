@@ -1,6 +1,6 @@
 # Log de Decisões (ADR) — Tower Idle Adventure
 
-**Última atualização:** 2026-10-03 (ADR-028)
+**Última atualização:** 2026-10-05 (ADR-042; aprovação do Lote 6)
 **Escopo:** registra decisões de arquitetura e as divergências entre o `Master-Prompt.md` e o repositório de referência `marmitero/tower-idle-adventure`.
 
 ---
@@ -1029,7 +1029,7 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 
 ## ADR-042 — Lote 6 da arte: Arcanista e Invocador fechados (26 heróis) e o Arqueiro Nômade
 
-**Data:** 2026-10-04 · **Status:** ✅ Aceita (aguarda o "lote 06 aprovado") · **Tipo:** B (arte + dados) · **Pedido do usuário:** *"considere o lote 5 validado e prossiga para o próximo lote."*
+**Data:** 2026-10-04 · **Status:** ✅ Aceita e aprovada explicitamente pelo usuário em 2026-10-05 · **Tipo:** B (arte + dados) · **Pedido original:** *"considere o lote 5 validado e prossiga para o próximo lote."*
 
 **Gerações: 10/10.** 8 heróis em paralelo (um atlas 4×5 cada: Arcanista 3–5 e Invocador 2–5 **+ o Arqueiro Nômade**, que ficou pendente no L5), 1 folha 2×2 de retratos e **1 refação** (Necromante dos Ossos — a 1ª folha trouxe *hurt/death* com outro personagem). Todos os atlas usam guia magenta + uma folha já aprovada como estilo; o prompt-modelo do `ART_HANDOFF.md` §5.1 foi repetido sem alteração.
 
@@ -1046,3 +1046,5 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 **Alternativas rejeitadas:** (a) trocar "roubo de vida" da Ceifeira por uma regra nova no engine antes do L7 (não é regra do `Master-Prompt.md` e o lote é de arte); (b) gerar 4 retratos de invocadores em vez do Nômade (deixaria uma dívida antiga aberta e o Nômade é jogável agora); (c) usar a 10ª geração para mais um retrato (a refação do Necromante era obrigatória).
 
 **Consequências:** `HERO_ROSTER` = 26; `skills` = 35 (25 ativas); manifesto +8 atlas e +8 retratos. **A meta de heróis da Onda 1 está cumprida** — o L7 fica só com retratos (4 folhas) + andar 5, e os lotes L8–L11 com os andares 6–10.
+
+**Registro de aprovação:** em 2026-10-05, o usuário aprovou explicitamente o Lote 6 e autorizou iniciar o Lote 7. A aprovação não altera o formato, o estilo ou as regras de geração dos lotes seguintes.

@@ -1,6 +1,6 @@
 # ART_HANDOFF — como continuar a fase de arte sem o histórico da conversa
 
-**Escrito em:** 2026-10-04 (após o Lote 5, ADR-040) · **Atualizado em:** 2026-10-05 (após o Lote 6, ADR-042 — reverificado na branch `arena/01a106b8-project-tower`) · **Para quem:** um agente (ou pessoa) que abre o repositório do zero.
+**Escrito em:** 2026-10-04 (após o Lote 5, ADR-040) · **Atualizado em:** 2026-10-05 (Lote 6 aprovado pelo usuário; investigação do método do Lote 7 — branch `arena/01a10c03-project-tower`) · **Para quem:** um agente (ou pessoa) que abre o repositório do zero.
 **Leia antes:** [`../AI_STATE.md`](../AI_STATE.md) → este arquivo → [`STYLIZATION_ROADMAP.md`](STYLIZATION_ROADMAP.md) (planejamento) → [`ART_PIPELINE.md`](ART_PIPELINE.md) (especificação técnica).
 **Para ver a arte:** `docs/art-review/lote-NN/*.png` (capturas e contact sheets de cada lote) e `assets/generated/` (os atlas finais). **Olhe as imagens antes de gerar qualquer coisa nova** — o estilo é mantido por referência visual, não por descrição.
 
@@ -16,9 +16,9 @@
 4. **Mesma arte do jogo**: pixel art de fantasia sombria (veja §3). Nunca mudar de estilo, nunca texto na arte (rótulos são HTML em PT-BR), nunca efeitos inventados (brilho, fogo, aura) nos sprites.
 5. **Autosuficiência do repo**: tudo que o jogo usa fica commitado em `marmitero/project-tower` com licença preservada (crédito "Assets by Nika Studio"). Nada depende de outro repositório.
 6. **Instrução padrão ao fim de CADA etapa** (palavras do usuário): *"Prossiga com a próxima etapa. se possível, tome as decisões necessárias e relate-as para mim no final, sempre com arquitetura editável caso precisamos fazer alguma alteração posteriormente. ao final, diga qual o próximo passo, faça commit e push e estipule uma quantidade de etapas até o primeiro mvp jogável."* ⇒ o relato final de um lote traz: **o que foi gerado** (acertos, reprovações, refações), **decisões tomadas e por quê**, **verificação no jogo** (capturas), **ressalvas**, **próximo passo**, **estimativa de etapas restantes**, e como testar. Escrito em **PT-BR**, sem jargão desnecessário.
-7. **Autoridade delegada**: o usuário disse "você decide" para decisões de design/balanceamento; decida, registre em ADR (`docs/DECISIONS_LOG.md`), deixe tudo em config editável e relate. Só pare para decisão crítica de gameplay/economia sem regra no `Master-Prompt.md` (que prevalece sobre tudo), credencial ou ação externa.
+7. **Autoridade delegada**: o usuário disse "você decide" para decisões de design/balanceamento; decida, registre em ADR (`docs/DECISIONS_LOG.md`), deixe tudo em config editável e relate. Só pare para decisão crítica de gameplay/economia sem regra no `Master-Prompt.md` (que prevalece sobre tudo), credencial ou ação externa. **Exceção operacional atual:** pendências PENDING ficam de lado até a etapa depender diretamente da resposta, conforme orientação do usuário de 2026-10-05.
 8. **Painel Admin (Fase 14) vem DEPOIS da arte.** Tudo que criar deve ser dado serializável e validável (config), para o painel editar sem código.
-9. Branch da sessão fixa (`arena/01a106b8-project-tower`); commit e push só nela. O usuário testa no Windows 10 baixando o zip da branch e abrindo `JOGAR.bat`; skins do Rei de nível ≥ 15 e heróis específicos só aparecem com `npm run play:debug` (Debug Mode).
+9. Branch da sessão fixa (`arena/01a10c03-project-tower`); commit e push só nela. O usuário testa no Windows 10 baixando o zip da branch e abrindo `JOGAR.bat`; skins do Rei de nível ≥ 15 e heróis específicos só aparecem com `npm run play:debug` (Debug Mode).
 
 ---
 
@@ -32,11 +32,12 @@
 | L3 | 8 inimigos (andares 2–4) | 8 | 037 | ✅ aprovado |
 | L4 | Andar 4 completo, **Clérigo** (5ª classe, engine de cura, 5 identidades, 4 retratos) | 8 | 038/039 | ✅ aprovado |
 | L5 | 7 heróis novos + Ossian liberado → **18 heróis**; 8 skills assinatura | 10 | 040 | ✅ aprovado (2026-10-04) |
-| L6 | **Arcanista 5/5 e Invocador 5/5** + Arqueiro Nômade → **26 heróis**; 8 skills assinatura; 4 retratos próprios | 10 | 042 | ⏳ **aguarda "lote 06 aprovado"** |
+| L6 | **Arcanista 5/5 e Invocador 5/5** + Arqueiro Nômade → **26 heróis**; 8 skills assinatura; 4 retratos próprios | 10 | 042 | ✅ **aprovado pelo usuário (2026-10-05)** |
+| L7 | 4 folhas de retratos + arena do andar 5 + 3 inimigos do andar 5 | 0 nesta sessão | — | ⏸ **solicitado, aguardando fontes em folhas compatíveis; ainda não iniciado** |
 
-**Próximo: Lote 7** — só depois do "lote 06 aprovado". Plano detalhado em §9.
+**Próximo: Lote 7** — o usuário autorizou prosseguir. O formato do Lote 7 permanece o do §9; o trabalho de geração só começa quando as fontes 2×2/4×4/4×5 puderem ser produzidas sem perder o padrão. Plano detalhado em §9.
 
-> **Reverificação (2026-10-05):** o sandbox foi reciclado e o working tree voltou ao merge da `main` (Lote 5); a branch da sessão foi recuperada com `git fetch origin arena/01a106b8-project-tower && git reset --hard origin/arena/01a106b8-project-tower` (§4). `npm run check` verde — **783 testes + 28 de arquitetura**, assets/manifesto em dia e o bundle do preview com **681 requisições HTTP 200**. Se você abrir o repositório e `docs/art-review/lote-06/` não existir, é isso que aconteceu: recupere a branch antes de qualquer coisa.
+> **Verificação da etapa (2026-10-05):** `npm run verify` passou após as atualizações documentais: 41 documentos, 783 testes em 54 arquivos + 28 de arquitetura, 141 fontes de arte, 0 placeholders proibidos, 422 sprites, 36 atlas, 4 kits de arena, 681 respostas HTTP 200 e build concluído. O contador de procedência continua sem L7; nenhuma geração foi feita nesta sessão. Checkout na branch fixa `arena/01a10c03-project-tower`; não use `reset --hard` para trocar de branch.
 
 Metas numéricas (Onda 1): 25 heróis (**26 — meta batida no L6**) · 12 retratos do Rei (**feito**) · 10 arenas (hoje **4**) · 50 inimigos nos andares 1–10 (hoje **25 no roster**, andares 1–4 completos) · UI GBA + login (**feito**).
 
@@ -60,10 +61,10 @@ Pendências de retrato (contam para o L7): **17 dos 26 heróis** ainda usam o re
 
 ```bash
 cd /home/user/project-tower
-git status && git log --oneline -3          # se o HEAD estiver em "Master-prompt", o sandbox resetou:
-git fetch origin arena/01a106b8-project-tower && git reset --hard origin/arena/01a106b8-project-tower
-npm install
-node scripts/serve-preview.mjs              # preview na porta 5173 (use start_process); conferir com curl
+git status --short --branch && git log --oneline -3
+# A branch fixa da sessão é arena/01a10c03-project-tower. Não faça checkout/reset para outra branch;
+# se ela não for a atual, pare e peça a restauração da sessão antes de modificar arquivos.
+npm ci
 npm run art:refs                            # recria guias + referências de estilo em assets/_incoming/refs/ (gitignored)
 node scripts/art.mjs provenance status      # quantas gerações cada lote já usou
 ```
@@ -209,7 +210,7 @@ Depois de qualquer asset: `node scripts/build-assets.mjs` (regenera `apps/game-w
 
 ## 9. Próximo lote e o restante da fila (ajuste pelo roadmap §9, que é a fonte do plano)
 
-**Lote 7 (próximo, após "lote 06 aprovado"):** **4 folhas de retratos** (14 heróis sem retrato próprio — lista no §7.1; 2 lugares de reserva dentro das folhas) **+ arena do andar 5 (Salão de Cristal azul, colunas, mármore polido, lustres)** **+ 3 inimigos do andar 5** (Sentinela de Cristal · Duelista Fantasma · Espectro Sussurrante) = **8 gerações, 2 de reserva**. Guia dos inimigos: `orc`/`skeleton`/`bat` conforme a silhueta; skills novas para eles ainda não existem (inimigos usam ataque básico).
+**Lote 7 (autorizado pelo usuário em 2026-10-05; fontes ainda não geradas):** **4 folhas de retratos** (14 heróis sem retrato próprio — lista no §7.1; 2 lugares de reserva dentro das folhas) **+ arena do andar 5 (Salão dos Ecos, salão de cristal azul, colunas, mármore polido, lustres)** **+ 3 inimigos do andar 5** (Sentinela de Cristal · Duelista Fantasma · Espectro Sussurrante) = **8 gerações planejadas, 2 de reserva**. Guia dos inimigos: `orc`/`skeleton`/`bat` conforme a silhueta; skills novas para eles ainda não existem (inimigos usam ataque básico). A interface de geração disponível nesta sessão não produz as folhas compostas; os scripts do repo são pós-processamento, não geradores. **Manter o formato, estilo e identidade; aguardar fontes em `assets/_incoming/lote-07/` ou outro fluxo compatível. Não registrar gerações até haver chamadas efetivamente feitas.**
 **Lote 8:** 2 inimigos restantes do andar 5 (Cantor de Ecos, Maestro do Vazio) + arena 6 (Fornalha Esquecida) + 4 inimigos do andar 6 + arena 7 (Jardim Gélido) = 8.
 **L9:** 4 inimigos do andar 7 + arena 8 + 3 inimigos do andar 8 = 8.
 **L10:** 1 inimigo restante do andar 8 + arena 9 + 4 inimigos do andar 9 + 1 do andar 10 = 7.
@@ -220,7 +221,7 @@ Depois de qualquer asset: `node scripts/build-assets.mjs` (regenera `apps/game-w
 
 ## 10. Armadilhas (cada uma já custou tempo)
 
-- **Estado do repo diverge da memória**: sempre `git log`/`git status`; o sandbox reseta e pode voltar ao commit "Master-prompt". Recupere com o `reset --hard origin/<branch>` (§4) e **commite/pushe cedo** durante o lote.
+- **Estado do repo diverge da memória**: sempre `git status`/`git branch --show-current`; a sessão é fixa em `arena/01a10c03-project-tower`. Não use `reset --hard` nem troque de branch. Preserve o trabalho com commit e push nessa branch ao final de cada etapa.
 - `read_file` de imagem **cacheia por caminho** — salve com nome novo para reinspecionar; e não rode `read_file` na imagem em paralelo com o `bash` que a cria.
 - `generate_image` devolve tamanho próprio (às vezes 1024×1024 ou 16:9): **não** pré-redimensione; o `ingest` faz reflow quando há exatamente 5 linhas e recusa quando não há.
 - Registre a geração no `provenance.json` **mesmo se reprovada** (o contador recusa a 11ª; a contagem real do lote é o que importa).

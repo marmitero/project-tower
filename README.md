@@ -34,15 +34,17 @@ FASE 14 · Painel Admin        ⬜  ← próxima (pós-MVP)
 Passo a passo ilustrado de texto, com solução de problemas: **[`docs/PLAY_LOCAL.md`](docs/PLAY_LOCAL.md)**.
 
 ```text
-https://github.com/marmitero/project-tower/archive/refs/heads/arena/01a106b8-project-tower.zip
+https://github.com/marmitero/project-tower/archive/refs/heads/arena/01a10c03-project-tower.zip
 ```
 
 Linux/macOS: `./jogar.sh` (ou `npm run play`). **Nunca** abra `index.html` direto (`file://`): não funciona.
 
-### Fase atual — arte "otimização e estilização" (Lote 6 de ~11; o mais recente)
+### Fase atual — arte "otimização e estilização" (Lote 7 de 11)
 
-- **Em andamento, em lotes de 10 imagens geradas** (o usuário aprova cada lote com "lote NN aprovado"). Feito: Lotes 1–5 aprovados e **Lote 6 entregue aguardando "lote 06 aprovado"** — **Arcanista 5/5 e Invocador 5/5** (a meta de 25 heróis foi batida) — **26 heróis** em 5 classes (a 5ª, Clérigo, cura) — **meta de 25 heróis batida** —, **25 inimigos** (andares 1–4 com 5 papéis cada), **4 arenas** próprias, **12 retratos do Rei**, botões/ícones no estilo GBA e tela de login com o logotipo. Cada herói novo traz **skill assinatura própria** (35 skills no catálogo).
-- Faltam ~5 lotes (L7–L11: retratos restantes e arenas/inimigos dos andares 5–10) e depois a **Fase 14 — Painel Admin**. Para continuar a arte sem o histórico: leia [`AI_STATE.md`](AI_STATE.md) → **[`docs/ART_HANDOFF.md`](docs/ART_HANDOFF.md)** e olhe as imagens em `docs/art-review/` e `assets/generated/`. `npm run art:refs` recria os guias e referências de estilo.
+- **Lote 6 aprovado pelo usuário em 2026-10-05.** O Lote 7 foi solicitado: 4 folhas 2×2 para 14 retratos de heróis, uma arena 4×4 do andar 5 e três atlas 4×5 de inimigos. A direção, a paleta e o padrão continuam os do handoff; não há autorização para mudar o formato.
+- **Lote 7 ainda não foi gerado nem aplicado.** Os lotes anteriores usaram `generate_image` com guias magenta e referências visuais aprovadas, seguidos pelo pipeline local `scripts/art.mjs`. Nesta sessão, a interface de geração disponível não consegue produzir essas folhas em grade, e o repositório não contém um gerador alternativo: seus scripts apenas processam imagens-fonte. Para preservar qualidade, identidade e animações, aguardar imagens-fonte compatíveis em `assets/_incoming/lote-07/` ou um fluxo de geração que produza as folhas exigidas; não improvisar sprites ou trocar o padrão.
+- O elenco atual permanece em 26 heróis, 25 inimigos, 4 arenas, 12 retratos do Rei e 35 skills. Depois do Lote 7, restam L8–L11 e então a **Fase 14 — Painel Admin**. As pendências de regras foram deixadas de lado por orientação do usuário e só devem voltar quando uma etapa depender delas.
+- Para continuar sem histórico: leia [`AI_STATE.md`](AI_STATE.md) → **[`docs/ART_HANDOFF.md`](docs/ART_HANDOFF.md)** e inspecione `docs/art-review/` e `assets/generated/`. `npm run art:refs` recria guias e referências de estilo.
 
 ### Pós-Fase 13 — Batalha visível
 

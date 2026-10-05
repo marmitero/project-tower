@@ -1,10 +1,10 @@
 # AI_STATE — handoff vivo do Tower Idle Adventure
 
-**Última atualização:** 2026-10-05 (branch da sessão recuperada após reset do sandbox e Lote 6 **reverificado**: `npm run check` verde — 783 testes + 28 de arquitetura —, bundle do preview em dia com 681 requisições HTTP 200; aguarda o "lote 06 aprovado")
-**Estado:** **FASES 1–13 concluídas — MVP LOCAL JOGÁVEL** (ADR-028). **AGORA: fase de arte "otimização e estilização"** — Lotes 1–5 aprovados; **Lote 6 entregue, aguardando o usuário escrever "lote 06 aprovado"** (**26 heróis** — meta de 25 batida —, 25 inimigos, 4 arenas, 12 retratos do Rei; Arcanista 5/5 e Invocador 5/5). Depois da arte: **FASE 14 — Painel Admin** e a **Fase Online**. **Quem for continuar a arte: leia [`docs/ART_HANDOFF.md`](docs/ART_HANDOFF.md) (regras do usuário, receitas de prompt, fluxo, onde editar) e OLHE `docs/art-review/` antes de gerar.** Como jogar no Windows: [`docs/PLAY_LOCAL.md`](docs/PLAY_LOCAL.md) (`JOGAR.bat`).
+**Última atualização:** 2026-10-05 (o usuário aprovou o Lote 6; método do Lote 7 investigado; documentação atualizada e `npm run verify` passou; nenhuma imagem do L7 gerada nesta sessão).
+**Estado:** **FASES 1–13 concluídas — MVP LOCAL JOGÁVEL** (ADR-028). **AGORA: Lote 7 da fase de arte, solicitado e aguardando fontes compatíveis.** Lotes 1–6 aprovados (ADR-042; aprovação do L6 registrada em 2026-10-05); elenco com 26 heróis, 25 inimigos, 4 arenas e 12 retratos do Rei. O L7 planeja 4 folhas 2×2 de retratos, 1 folha 4×4 de arena e 3 folhas 4×5 de inimigos. A interface de geração disponível nesta sessão não produz folhas em grade e o repositório não tem gerador alternativo; **não alterar formato, improvisar sprites nem registrar gerações L7 até haver fontes compatíveis**. Consulte [`docs/ART_HANDOFF.md`](docs/ART_HANDOFF.md), guias e imagens em `docs/art-review/` antes de prosseguir. Depois da arte: **FASE 14 — Painel Admin** e a **Fase Online**. Como jogar no Windows: [`docs/PLAY_LOCAL.md`](docs/PLAY_LOCAL.md) (`JOGAR.bat`).
 **Preview:** servidor estático autocontido (ADR-018) — `node scripts/serve-preview.mjs` (porta 5173). Se o ambiente resetar, subir UMA linha; não depende de `node_modules`.
 **Repositório:** `marmitero/project-tower`
-**Branch desta sessão:** `arena/01a106b8-project-tower`
+**Branch desta sessão:** `arena/01a10c03-project-tower`
 
 > **Este é o primeiro documento a ler em qualquer sessão nova.** Ele existe para que qualquer pessoa ou agente continue o projeto sem acesso a conversas anteriores.
 >
@@ -15,11 +15,11 @@
 ## 1. Regras obrigatórias para quem continuar
 
 1. **Leia este arquivo primeiro.** Depois `git status`, `git log`, e então o documento do sistema relevante. Uma anotação antiga não prevalece sobre o estado mais recente.
-2. **Trabalhe apenas na branch da sessão** (`arena/01a106b8-project-tower`) e faça push apenas para ela. Nunca troque ou crie outra branch.
+2. **Trabalhe apenas na branch fixa desta sessão** (`arena/01a10c03-project-tower`) e faça push apenas para ela. Nunca troque, crie ou envie para outra branch.
 3. **Aja primeiro, pergunte depois.** Faça tudo o que puder. Só interrompa o usuário para: decisão de gameplay/economia crítica não definida, credencial, ou ação externa que exija confirmação humana. **Nunca peça senha, token, service-role key ou código MFA.**
-4. **Nunca invente regra de economia ou gameplay** (§73). Registre como `PENDING` em [`docs/PENDING_RULES.md`](docs/PENDING_RULES.md) e peça decisão humana.
+4. **Nunca invente regra de economia ou gameplay** (§73). Pendências `PENDING` ficam de lado conforme orientação do usuário de 2026-10-05; só retome uma quando a etapa ativa depender diretamente dela. Nesse caso, apresente o bloqueio específico, sem antecipar a revisão do restante da lista.
 5. **Nunca declare algo como testado, implementado ou implantado sem evidência.** Separe sempre: verificado no repositório / relato do usuário / proposta.
-6. **Documentação antes do código**, e `AI_STATE` atualizado ao final de **toda** etapa, mesmo parcial.
+6. **Documentação antes do código**; ao final de cada etapa, inclusive parcial, atualize `AI_STATE.md`, `README.md` e os documentos específicos afetados; valide, faça commit e push na branch fixa antes de encerrar.
 7. **O `Master-Prompt.md` é a fonte de autoridade.** Em caso de conflito com qualquer outra fonte, ele vence. Ver [`docs/DECISIONS_LOG.md`](docs/DECISIONS_LOG.md) ADR-001.
 8. **Rode `node scripts/check-docs.mjs` antes de commitar.** Ele valida encoding, links e rastreabilidade de pendências.
 
@@ -472,7 +472,7 @@ editar `config/src/heroes.ts`.
 - Testes: `engine/boss-battle` (16), `game-core/boss` (33), `config/boss-content` (12), assets dos chefes (integração), migração de save v5→v6. Suíte completa verde.
 - **Cuidados:** a tentativa é consumida ao ENTRAR; `GameState.clock()` em toda marca de tempo; recalibrar chefes se mexer em IAS/equipamento/XP (`npm run report:balance -- --md`).
 
-### Fase de arte — "otimização e estilização" (ADR-032…042) — F0 + Lotes 1–5 aprovados; **Lote 6 entregue aguardando aprovação**
+### Fase de arte — "otimização e estilização" (ADR-032…042) — F0 + Lotes 1–6 aprovados; **Lote 7 solicitado, aguardando fontes de arte compatíveis**
 
 > **Playbook completo (regras do usuário, estilo, prompts que funcionaram, fluxo por comando, onde editar, tabelas do estado atual, fila L7–L11, armadilhas): [`docs/ART_HANDOFF.md`](docs/ART_HANDOFF.md).** Os itens abaixo são o histórico por lote.
 
@@ -485,9 +485,9 @@ editar `config/src/heroes.ts`.
 - **Lote 3 (ADR-037):** 8 inimigos novos (andar 2: Enguia, Troll do Esgoto; 3: Golem de Ossos, Cão de Ossos, Crânio Necrovela, Cavaleiro de Ossos; 4: Estátua Guardiã, Escaravelho de Tumba); andares 2 e 3 completos; roster 23; Esqueleto virou `dps`. 8/10 gerações (2 reservas).
 - **Lote 4 (ADR-038/039):** andar 4 completo (Sacerdote Mumificado, Múmia Real); Clérigo = 5ª classe (engine de cura, 5 identidades, 4 retratos); roster 25 inimigos; 8/10 gerações. Aprovado.
 - **Lote 5 (ADR-040):** 7 heróis novos (Rubro, Monge de Ferro, Lorde Cinzento, Furtivo, Besteiro, Guardiã, Piromante) + Ossian liberado = 18 heróis; 8 skills assinatura; `normalizeKeyColour`; identidade no Debug; correção do sorteio de identidade; 10/10 gerações. **Aprovado pelo usuário em 2026-10-04.**
-- **Lote 6 (ADR-042):** **8 atlas** (Criomante, Tempestuário, Mago Ancião, Necromante dos Ossos, Bruxa do Pântano, Ceifeira, Demonólogo + o **Arqueiro Nômade** refeito, dívida do L5) e **1 folha 2×2 de retratos** (Criomante, Tempestuário, Mago Ancião, Vorath); 8 skills assinatura novas (régua de DPS estendida ao Invocador); 1 refação (o Necromante dos Ossos veio com *hurt/death* de outro personagem); 10/10 gerações. **Arcanista 5/5 · Invocador 5/5 · Arqueiro 6 · Guardião 5 · Clérigo 5 = 26 heróis — meta da Onda 1 batida.** Verificado no Chromium real (8/8 em batalha com atlas e skill próprios). **Aguarda "lote 06 aprovado".**
-- **Reverificação (2026-10-05):** o sandbox foi reciclado e voltou ao merge da `main` (Lote 5); a branch da sessão foi recuperada com `git reset --hard origin/arena/01a106b8-project-tower` — **nada se perdeu** (tudo estava commitado e no push). Confirmado com `npm run check`: **783 testes + 28 de arquitetura verdes**, assets e manifesto em dia, `check:preview` sem debug e com **681 requisições HTTP 200**. Corrigidos os links de zip/branch nos docs (apontavam para a branch antiga `arena/01a0f1f1-project-tower`, que ficou no Lote 5; agora apontam para `arena/01a106b8-project-tower`).
-- **Próximo:** **Lote 7** (4 folhas de retratos para os 14 heróis sem retrato próprio + arena do andar 5 + 3 inimigos do andar 5; ≈ 8 gerações) — **só após o usuário escrever "lote 06 aprovado"**; a ferramenta de validação por plano corporal vem antes do primeiro lote com quadrúpedes/insetos (andares 7–8). Fila completa e receitas em [`docs/ART_HANDOFF.md`](docs/ART_HANDOFF.md) §9; planejamento em `docs/STYLIZATION_ROADMAP.md` §9; fluxo por comando em `docs/ART_PIPELINE.md` §13. **`npm run art:refs`** recria os guias e as referências de estilo (a pasta `assets/_incoming/` não é versionada).
+- **Lote 6 (ADR-042):** **8 atlas** (Criomante, Tempestuário, Mago Ancião, Necromante dos Ossos, Bruxa do Pântano, Ceifeira, Demonólogo + o **Arqueiro Nômade** refeito, dívida do L5) e **1 folha 2×2 de retratos** (Criomante, Tempestuário, Mago Ancião, Vorath); 8 skills assinatura novas (régua de DPS estendida ao Invocador); 1 refação (o Necromante dos Ossos veio com *hurt/death* de outro personagem); 10/10 gerações. **Arcanista 5/5 · Invocador 5/5 · Arqueiro 6 · Guardião 5 · Clérigo 5 = 26 heróis — meta da Onda 1 batida.** Verificado no Chromium real (8/8 em batalha com atlas e skill próprios). **Aprovado explicitamente pelo usuário em 2026-10-05.**
+- **Estado e método do L7 (2026-10-05):** L6 aprovado; checkout na branch fixa `arena/01a10c03-project-tower`. A documentação e a procedência mostram que L1–L6 usaram chamadas interativas de `generate_image` com referências visuais (guia magenta + arte aprovada), seguidas por `scripts/art.mjs` para chave, recorte/normalização, validação, empacotamento e integração. Os scripts locais **não geram** imagens. Nesta sessão foram recriadas 24 referências em `assets/_incoming/refs/` (pasta ignorada pelo Git), e inspecionadas as capturas/folhas de L5–L6. A ferramenta de geração disponível aqui aceita apenas imagens isoladas, incompatíveis com as folhas 2×2/4×4/4×5 do pipeline. Nenhuma imagem ou tentativa L7 foi feita; o contador continua sem L7. Para não perder identidade, animação ou qualidade, manter o formato e aguardar fontes compatíveis; não improvisar nem alterar o padrão sem autorização.
+- **Próximo:** Lote 7 está autorizado pelo usuário, mas ainda não pode ser produzido pelo fluxo disponível nesta sessão: faltam fontes 2×2/4×4/4×5, e não há gerador local que as crie. Aguardar o usuário fornecer imagens-fonte compatíveis ou indicar outro fluxo mantendo o padrão; então aplicar L7 conforme [`docs/ART_HANDOFF.md`](docs/ART_HANDOFF.md) §9, testes, capturas, docs e commit/push. Após L7, restam L8–L11; a ferramenta de validação por plano corporal deve estar pronta antes dos lotes com quadrúpedes/insetos (andares 7–8). Pendências de regras permanecem adiadas até uma etapa depender delas.
 - **Medido (muda o plano original):** pack com sombreado suave (31–620 cores significativas) → paleta de 64 cores só no empacotamento; `sharp` ignora `colours` → quantizador próprio; pixel ≈ 3 px; guia de validação = arquétipo dado ao gerador.
 - **Pendências registradas (ADR-033):** cura como efeito de skill (engine) antes do Clérigo; ~~obtenção por IDENTIDADE~~ (feita no L1); campos de arena landmark/iluminação/ambiente reservados.
 - **Cuidados:** nunca gravar rascunhos em `assets/generated/` (vai ao manifesto) — usar `assets/_incoming|_review` (gitignored); depois de `ingest` rodar `npm run assets:build` e commitar o `manifest.json`; UI gerada sem texto; contador de gerações no `provenance.json`.
@@ -526,13 +526,13 @@ editar `config/src/heroes.ts`.
 - **Revisão dos números (jogo real):** `docs/BALANCE_REPORT.md` ganhou "Ritmo das primeiras 4 horas" (Rei nv 10 em 18–24 min, nv 25 em ≈ 46–57 min, nv 50 em ≈ 1,7–2,1 h; 1º drop ≈ 11–15 min; Slot 2 (50 mil Coin) ≈ 1,4 h). **Nenhum número foi alterado**; riscos R-03/R-05 reconfirmados (Guardião é ≈ 30% mais lento). P-008/P-017/P-018/P-029/P-036 seguem provisórias — dependem de playtest humano.
 - **Cuidados:** rodar `npm run build:preview` e commitar `apps/game-web/preview/` SEMPRE que mudar `apps/game-web/src` ou `packages/*/src` (o `check` reprova); `.bat` só ASCII/CRLF; não usar `file://`; o save é por navegador+endereço (`localhost:5173`).
 
-**O que fazer:** **FASE 14 — Painel Admin** (`docs/ADMIN_PANEL.md`; ContentPack/`config` já são serializáveis e validados) e a **Fase Online** (Google Auth, Supabase, cloud save, Mercado da comunidade com taxa de 15%). Antes, **jogar o MVP** (`JOGAR.bat`) e ratificar os números provisórios.
+**O que fazer agora:** destravar as fontes de arte do Lote 7 mantendo o formato documentado; processar e integrar o lote, verificar o jogo, atualizar `README.md`, `AI_STATE.md` e os documentos de arte, então commitar e enviar para `arena/01a10c03-project-tower`. Só depois concluir L8–L11 e avançar à Fase 14/Online. As pendências de regras permanecem de lado até dependerem da resposta do usuário.
 
 **Estimativa até o 1º MVP jogável (FASE 13): 7 etapas — 7 concluídas ✅** —
 1) ✅ Fase 5+8, 2) ✅ Fase 6, 3) ✅ Fase 7, 4) ✅ Fase 9, 5) ✅ Fase 10+11,
 6) ✅ Fase 12 (Boss), 7) ✅ Fase 13 (MVP Local). **MVP local jogável entregue.**
 
-**O que perguntar ao usuário:** ratificar os números provisórios de Coin e de Boss (P-008/P-017/P-018/P-029) depois de jogar a Fase 13. Fora isso, seguir com autoridade delegada; ratificar preços do Market (P-008/P-036) quando houver playtest.
+**Pendências de regras:** por orientação explícita do usuário em 2026-10-05, não revisitar nem pedir definições preventivamente. Quando uma etapa depender de uma delas, explicar o bloqueio pontual e pedir apenas a resposta necessária. No momento, o bloqueio do L7 é técnico: disponibilidade de folhas de arte no formato existente, não uma decisão de gameplay/economia.
 
 **Como validar:**
 

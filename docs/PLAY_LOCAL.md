@@ -33,10 +33,10 @@ manifesto de assets** carregarem por completo.
 ## 3. Baixe o jogo (zip do GitHub)
 
 1. Abra este endereço (ele já começa a baixar o zip):
-   **https://github.com/marmitero/project-tower/archive/refs/heads/arena/01a106b8-project-tower.zip**
+   **https://github.com/marmitero/project-tower/archive/refs/heads/arena/01a10c03-project-tower.zip**
    - Se preferir pelo site: abra https://github.com/marmitero/project-tower , troque a branch (menu “main”) para
-     `arena/01a106b8-project-tower`, clique no botão verde **Code** → **Download ZIP**.
-2. O arquivo `project-tower-arena-01a106b8-project-tower.zip` fica na pasta **Downloads** (~100 MB; pode demorar um pouco).
+     `arena/01a10c03-project-tower`, clique no botão verde **Code** → **Download ZIP**.
+2. O arquivo `project-tower-arena-01a10c03-project-tower.zip` fica na pasta **Downloads** (~100 MB; pode demorar um pouco).
 
 ## 4. EXTRAIA o zip (passo que mais dá problema)
 
@@ -46,7 +46,7 @@ manifesto de assets** carregarem por completo.
 1. Em **Downloads**, clique com o **botão direito** no zip → **Extrair tudo…**
 2. Na janela, deixe o caminho como está (ou escolha, por exemplo, `C:\Jogos`) e clique **Extrair**.
    - Dica: caminhos **curtos** são melhores (`C:\Jogos\` é ótimo). Evite colocar dentro de pastas muito fundas.
-3. Abra a pasta criada: **`project-tower-arena-01a106b8-project-tower`**. Você deve ver, entre outros, os arquivos
+3. Abra a pasta criada: **`project-tower-arena-01a10c03-project-tower`**. Você deve ver, entre outros, os arquivos
    `JOGAR.bat`, `README.md` e as pastas `apps`, `assets`, `scripts`.
    - Se dentro dela houver só **outra** pasta com o mesmo nome, abra também — o `JOGAR.bat` fica na pasta que tem `apps` e `assets`.
 

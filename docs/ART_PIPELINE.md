@@ -2,7 +2,7 @@
 
 > **Continuar a arte sem o histórico da conversa:** [`ART_HANDOFF.md`](ART_HANDOFF.md) (regras do usuário, receitas de prompt, fluxo por comando, onde editar, estado e fila de lotes).
 
-**Versão:** 0.2 · **Data:** 2026-10-03 · **Estado:** ✅ **F0 IMPLEMENTADA** (ferramentas, formato e renderer prontos e testados; **0 imagens geradas** — o Lote 1 é o primeiro). As seções marcam **[medido]** (fato do pack) e **[as-built]** (como ficou no código)
+**Versão:** 0.3 · **Data:** 2026-10-05 · **Estado:** ✅ F0 implementada; Lotes 1–6 aplicados e Lote 6 aprovado pelo usuário. Lote 7 está solicitado, mas aguarda fontes em folhas 2×2/4×4/4×5: as ferramentas locais fazem o pós-processamento, não geram as imagens. Não alterar formato nem improvisar animação. As seções marcam **[medido]** (fato do pack) e **[as-built]** (como ficou no código).
 **Roadmap:** [`STYLIZATION_ROADMAP.md`](STYLIZATION_ROADMAP.md) · **Decisão:** [ADR-032](DECISIONS_LOG.md) · **Base:** [`ART_GUIDELINES.md`](ART_GUIDELINES.md), [`ASSET_INVENTORY.md`](ASSET_INVENTORY.md), [`ASSET_GAP.md`](ASSET_GAP.md), [`OPENRPG_REFERENCE.md`](OPENRPG_REFERENCE.md)
 
 > Tudo aqui foi **medido nos arquivos reais** do repositório (`assets/sprites/characters/*`, `render/BattleScene.ts`, `render/Arena*.ts`), não presumido. Onde um número é **proposta** (a calibrar no Lote 1), está marcado **(calibrar)**.
