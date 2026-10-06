@@ -139,6 +139,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "slag_golem", name: "Golem de Escória", role: "tank", damageType: "physical", statMultiplier: 1.01,
       attributes: attrs(24, 4, 38, 4, 16),
       assets: { sheets: charSheets("orc"), atlas: "enemies/slag_golem" } },
+    // Lote 9 (ADR-045): tanque do andar 8 (Ninho das Sombras) — atlas próprio.
+    { id: "giant_cocoon", name: "Casulo Gigante", role: "tank", damageType: "physical", statMultiplier: 0.98,
+      attributes: attrs(18, 6, 36, 4, 20),
+      assets: { sheets: charSheets("orc"), atlas: "enemies/giant_cocoon" } },
     // --- dps ----------------------------------------------------------
     { id: "goblin", name: "Goblin", role: "dps", damageType: "physical", statMultiplier: 1.23,
       attributes: attrs(28, 20, 14, 6, 8),
@@ -155,6 +159,14 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "possessed_smith", name: "Ferreiro Possuído", role: "dps", damageType: "physical", statMultiplier: 1.06,
       attributes: attrs(36, 12, 22, 4, 8),
       assets: { sheets: charSheets("hero"), atlas: "enemies/possessed_smith" } },
+    // Lote 9 (ADR-045): dano do andar 7 (Jardim Gélido) — atlas próprio.
+    { id: "frost_bear", name: "Urso Glacial", role: "dps", damageType: "physical", statMultiplier: 1.05,
+      attributes: attrs(36, 12, 22, 4, 10),
+      assets: { sheets: charSheets("orc"), atlas: "enemies/frost_bear" } },
+    // Lote 9 (ADR-045): dano do andar 8 (Ninho das Sombras) — atlas próprio.
+    { id: "blackfang_spider", name: "Aranha Presas-Negras", role: "dps", damageType: "physical", statMultiplier: 1.06,
+      attributes: attrs(32, 18, 20, 6, 8),
+      assets: { sheets: charSheets("orc"), atlas: "enemies/blackfang_spider" } },
     { id: "orc", name: "Orc", role: "dps", damageType: "physical", statMultiplier: 1.01,
       attributes: attrs(34, 10, 22, 4, 10),
       assets: { portrait: "portraits/orc", sheets: charSheets("orc") } },
@@ -183,6 +195,14 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "swift_salamander", name: "Salamandra Veloz", role: "swift", damageType: "physical", statMultiplier: 1.08,
       attributes: attrs(18, 34, 12, 4, 8),
       assets: { sheets: charSheets("goblin"), atlas: "enemies/swift_salamander" } },
+    // Lote 9 (ADR-045): veloz do andar 7 (Jardim Gélido) — atlas próprio.
+    { id: "boreal_fox", name: "Raposa Boreal", role: "swift", damageType: "physical", statMultiplier: 1.06,
+      attributes: attrs(16, 36, 10, 4, 8),
+      assets: { sheets: charSheets("goblin"), atlas: "enemies/boreal_fox" } },
+    // Lote 9 (ADR-045): veloz do andar 8 (Ninho das Sombras) — atlas próprio.
+    { id: "shadow_crawler", name: "Sombra Rastejante", role: "swift", damageType: "magic", statMultiplier: 1.05,
+      attributes: attrs(10, 34, 12, 20, 12),
+      assets: { sheets: charSheets("goblin"), atlas: "enemies/shadow_crawler" } },
     // --- caster -------------------------------------------------------
     { id: "toxicbat", name: "Morcego Tóxico", role: "caster", damageType: "magic", statMultiplier: 1.1,
       attributes: attrs(6, 24, 12, 28, 14),
@@ -204,6 +224,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "echo_singer", name: "Cantor de Ecos", role: "caster", damageType: "magic", statMultiplier: 0.88,
       attributes: attrs(6, 18, 12, 30, 16),
       assets: { sheets: charSheets("mage"), atlas: "enemies/echo_singer" } },
+    // Lote 9 (ADR-045): mago do andar 7 (Jardim Gélido) — atlas próprio.
+    { id: "frost_witch", name: "Feiticeira da Geada", role: "caster", damageType: "magic", statMultiplier: 0.88,
+      attributes: attrs(6, 18, 12, 32, 14),
+      assets: { sheets: charSheets("mage"), atlas: "enemies/frost_witch" } },
     { id: "fireorc", name: "Orc Flamejante", role: "caster", damageType: "magic", statMultiplier: 0.88,
       attributes: attrs(10, 8, 22, 32, 12),
       assets: { sheets: charSheets("fireorc") } },
@@ -235,6 +259,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "forge_master", name: "Mestre da Forja", role: "elite", damageType: "physical", statMultiplier: 1.08,
       attributes: attrs(34, 12, 32, 6, 12),
       assets: { sheets: charSheets("orc"), atlas: "enemies/forge_master" } },
+    // Lote 9 (ADR-045): elite RARO do andar 7 (Jardim Gélido).
+    { id: "winter_knight", name: "Cavaleiro do Inverno", role: "elite", damageType: "physical", statMultiplier: 1.08,
+      attributes: attrs(34, 14, 30, 6, 14),
+      assets: { sheets: charSheets("orc"), atlas: "enemies/winter_knight" } },
     { id: "elitearcher", name: "Arqueiro de Elite", role: "elite", damageType: "physical", statMultiplier: 1.26,
       attributes: attrs(26, 32, 18, 8, 12),
       assets: { sheets: charSheets("elitearcher") } },

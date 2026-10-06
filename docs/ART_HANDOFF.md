@@ -34,13 +34,14 @@
 | L5 | 7 heróis novos + Ossian liberado → **18 heróis**; 8 skills assinatura | 10 | 040 | ✅ aprovado (2026-10-04) |
 | L6 | **Arcanista 5/5 e Invocador 5/5** + Arqueiro Nômade → **26 heróis**; 8 skills assinatura; 4 retratos próprios | 10 | 042 | ✅ aprovado (2026-10-06) |
 | L7 | **16 retratos (26/26 heróis com retrato próprio)** + arena f05_ecos + 3 inimigos andar 5 (Sentinela, Duelista, Espectro) | 8 | 043 | ✅ aprovado |
-| L8 | **Andares 5 e 6 completos (6 inimigos novos)** + arenas `f06_fornalha` e `f07_jardim` | 10 | 044 | ⏳ **aguarda "lote 08 aprovado"** |
+| L8 | **Andares 5 e 6 completos (6 inimigos novos)** + arenas `f06_fornalha` e `f07_jardim` | 10 | 044 | ✅ aprovado |
+| L9 | **Andar 7 completo (4 novos) + arena `f08_sombras` + 3 novos andar 8** | 9 | 045 | ⏳ **aguarda "lote 09 aprovado"** |
 
-**Próximo: Lote 9** — só depois do "lote 08 aprovado". Plano detalhado em §9.
+**Próximo: Lote 10** — só depois do "lote 09 aprovado". Plano detalhado em §9.
 
-> **Atualização Lote 8 (2026-10-06):** Lote 7 aprovado; Lote 8 entregue com 10/10 gerações (6 inimigos novos + 2 kits de arena 4×4). Andares 1 a 6 agora possuem 100% dos seus elencos com arte original própria e kits de arena dedicados; arena do Andar 7 adiantada para o Lote 9. Roster de inimigos expandido para 34. `npm run check` verde — **786 testes**, preview atualizado com bundle autocontido.
+> **Atualização Lote 9 (2026-10-06):** Lote 8 aprovado; Lote 9 entregue com 9/10 gerações (1 reserva restante). 7 novos atlas de inimigos + 1 kit de arena 4×4 (`f08_sombras`). Andares 1 a 7 agora possuem 100% dos seus elencos com arte original própria e kits de arena dedicados; arena do Andar 8 operando com 3 novos inimigos dedicados. Roster de inimigos expandido para 41. `npm run check` verde — **783 testes + 28 de arquitetura**, preview atualizado com bundle de 793 requisições HTTP 200.
 
-Metas numéricas (Onda 1): 25 heróis (**26 — meta batida no L6, 100% com retrato no L7**) · 12 retratos do Rei (**feito**) · 10 arenas (hoje **7**: f01 a f07) · 50 inimigos nos andares 1–10 (hoje **34 no roster**, andares 1–6 com 5/5 completos) · UI GBA + login (**feito**).
+Metas numéricas (Onda 1): 25 heróis (**26 — meta batida no L6, 100% com retrato no L7**) · 12 retratos do Rei (**feito**) · 10 arenas (hoje **8**: f01 a f08) · 50 inimigos nos andares 1–10 (hoje **41 no roster**, andares 1–7 com 5/5 completos) · UI GBA + login (**feito**).
 
 Pendências de retrato: **0** — todos os 26 heróis agora possuem retrato próprio dedicado no jogo.
 
@@ -211,10 +212,9 @@ Depois de qualquer asset: `node scripts/build-assets.mjs` (regenera `apps/game-w
 
 ## 9. Próximo lote e o restante da fila (ajuste pelo roadmap §9, que é a fonte do plano)
 
-**Lote 8 (entregue, aguarda "lote 08 aprovado"):** 6 inimigos (fechando andar 5 e andar 6 com 5/5) + 2 arenas (`f06_fornalha`, `f07_jardim`) = **10 gerações usadas**.
-**Lote 9 (próximo, após "lote 08 aprovado"):** 4 inimigos do andar 7 (Gárgula de Gelo, Bruxa Invernal, Lobo Glacial, Monólito Gélido) + arena 8 (Salão das Sombras) + 3 inimigos do andar 8 = 8 gerações planejadas (+2 reservas).
-**L10:** 1 inimigo restante do andar 8 + arena 9 + 4 inimigos do andar 9 + 1 do andar 10 = 7.
-**L11:** 3 inimigos restantes do andar 10 (Guerreiro Eterno, Oráculo dos Passos, **Arqueiro de Elite**) + reservas para refação = **andares 1–10 completos**.
+**Lote 9 (entregue, aguarda "lote 09 aprovado"):** 7 inimigos (fechando andar 7 com 5/5 e 3 do andar 8) + arena 8 (`f08_sombras`) = **9 gerações usadas, 1 de reserva**.
+**Lote 10 (próximo, após "lote 09 aprovado"):** 1 inimigo restante do andar 8 (Tecelã de Pesadelos) + arena 9 (Corredor Sangrento) + 4 inimigos do andar 9 (Carrasco Encouraçado, Sanguessuga Alada, Bruxa de Sangue, Conde Carmesim) + 1 do andar 10 (Colosso de Obsidiana) = 7 gerações planejadas (+3 reservas).
+**L11:** 3 inimigos restantes do andar 10 (Guerreiro Eterno, Relógio Vivo, Oráculo dos Passos) + reservas para refação = **andares 1–10 completos**.
 **Ferramenta pendente (aprovada pelo usuário, momento a critério do agente):** validação de movimento **por plano corporal** (quadrúpede, inseto, rastejante) — perfil `--body` em `art.mjs ingest/validate` que relaxa limiares de movimento/IoU para corpos que não casam com o guia bípede/blob (hoje Cão de Ossos e Escaravelho foram aprovados à mão). Implemente **antes do primeiro lote com quadrúpedes/insetos** (andares 7–8, conforme a tabela do roadmap §3.1), com teste e ADR.
 **Depois da arte:** Fase 14 — Painel Admin (`docs/ADMIN_PANEL.md`) e Fase Online (Google Auth, Supabase, Mercado da comunidade).
 **Estimativa atual:** ~4 lotes de arte (L8–L11) + Fase 14 ⇒ ~5 etapas até a Onda 1 completa (o MVP *local* já é jogável desde a Fase 13).

@@ -78,15 +78,13 @@ describe("variedade de inimigos por andar", () => {
       expect(roles.has("dps"), `andar ${f.index} dps`).toBe(true);
       expect(roles.has("swift"), `andar ${f.index} swift`).toBe(true);
       if (f.index >= 3) expect(roles.has("caster"), `andar ${f.index} caster`).toBe(true);
-      if (f.index >= 9) expect(roles.has("elite"), `andar ${f.index} elite`).toBe(true);
-      // Exceção de design (§3.1): os andares 1–6 têm um elite RARO (Capitão, Troll, Cavaleiro, Múmia Real, Maestro do Vazio, Mestre da Forja). Andares 7–8 não têm elite
-      // até os próximos lotes.
-      if (f.index >= 7 && f.index < 9) expect(roles.has("elite"), `andar ${f.index} sem elite`).toBe(false);
+      // Todos os andares agora possuem elite (raros nos andares 1–8; comuns a partir do 9).
+      expect(roles.has("elite"), `andar ${f.index} elite`).toBe(true);
     }
   });
 
-  it("o roster usa todos os papéis e só sprites existentes (34 inimigos)", () => {
-    expect(enemies).toHaveLength(34);
+  it("o roster usa todos os papéis e só sprites existentes (41 inimigos)", () => {
+    expect(enemies).toHaveLength(41);
     // `balanced` é papel legado: o Esqueleto virou "dps" (§3.1); o tipo continua válido para packs editados.
     expect(new Set(enemies.map((e) => e.role))).toEqual(new Set(ENEMY_ROLES.filter((r) => r !== "balanced")));
   });

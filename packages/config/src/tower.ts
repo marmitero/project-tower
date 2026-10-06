@@ -106,8 +106,7 @@ const FIRST_FLOOR_NAMES: readonly string[] = [
 
 /** Tintura por grupo de andares (decorativa; editável por andar). */
 function tintForFloor(index: number): number | null {
-  if (index <= 7) return null;
-  if (index <= 8) return 0xb8d4ff;
+  if (index <= 8) return null;
   if (index <= 12) return 0xffc9a8;
   if (index <= 20) return 0xd2b4ff;
   if (index <= 30) return 0xffa8a8;
@@ -115,7 +114,7 @@ function tintForFloor(index: number): number | null {
 }
 
 function themeForFloor(index: number): string {
-  // Kits próprios gerados por andar (Lotes 1–2, 7, 8, ADR-033/036/043/044); os demais seguem nos grupos antigos.
+  // Kits próprios gerados por andar (Lotes 1–2, 7, 8, 9, ADR-033/036/043/044/045); os demais seguem nos grupos antigos.
   if (index === 1) return "f01_entrada";
   if (index === 2) return "f02_porao";
   if (index === 3) return "f03_ossadas";
@@ -123,7 +122,7 @@ function themeForFloor(index: number): string {
   if (index === 5) return "f05_ecos";
   if (index === 6) return "f06_fornalha";
   if (index === 7) return "f07_jardim";
-  if (index <= 8) return "gelo e sombra";
+  if (index === 8) return "f08_sombras";
   if (index <= 12) return "sangue e brasa";
   if (index <= 20) return "pináculo arcano";
   if (index <= 30) return "pináculo carmesim";
@@ -180,17 +179,26 @@ export const DEFAULT_POOL_PLAN: ReadonlyArray<{
   { enemyId: "swift_salamander", fromFloor: 6, toFloor: 6, weight: 3 },
   { enemyId: "fireorc", fromFloor: 6, toFloor: 6, weight: 2 },
   { enemyId: "forge_master", fromFloor: 6, toFloor: 6, weight: 1 },
-  // Andares 7+ — ainda com os inimigos de antes; trocam por andar a cada lote (docs/STYLIZATION_ROADMAP.md §3.1).
-  { enemyId: "toxicbat", fromFloor: 7, weight: 2 },
-  { enemyId: "bat", fromFloor: 7, weight: 3 },
-  { enemyId: "slime", fromFloor: 7, toFloor: 8, weight: 4 },
+  // Andar 7 — Jardim Gélido (Lote 9): Gosma Gélida T · Urso Glacial D · Raposa Boreal V · Feiticeira da Geada M · Cavaleiro do Inverno E (raro).
+  { enemyId: "frostslime", fromFloor: 7, toFloor: 7, weight: 4 },
+  { enemyId: "frost_bear", fromFloor: 7, toFloor: 7, weight: 4 },
+  { enemyId: "boreal_fox", fromFloor: 7, toFloor: 7, weight: 3 },
+  { enemyId: "frost_witch", fromFloor: 7, toFloor: 7, weight: 2 },
+  { enemyId: "winter_knight", fromFloor: 7, toFloor: 7, weight: 1 },
+  // Andar 8 — Ninho das Sombras (Lote 9): Casulo Gigante T · Aranha Presas-Negras D · Sombra Rastejante V · Morcego Tóxico M · Goblin Sombrio E (raro).
+  { enemyId: "giant_cocoon", fromFloor: 8, toFloor: 8, weight: 4 },
+  { enemyId: "blackfang_spider", fromFloor: 8, toFloor: 8, weight: 4 },
+  { enemyId: "shadow_crawler", fromFloor: 8, toFloor: 8, weight: 3 },
+  { enemyId: "toxicbat", fromFloor: 8, toFloor: 8, weight: 2 },
+  { enemyId: "shadowgoblin", fromFloor: 8, toFloor: 8, weight: 1 },
+  // Andares 9+ — ainda com os inimigos de antes; trocam por andar a cada lote (docs/STYLIZATION_ROADMAP.md §3.1).
+  { enemyId: "toxicbat", fromFloor: 9, weight: 2 },
+  { enemyId: "bat", fromFloor: 9, weight: 3 },
   { enemyId: "slime", fromFloor: 9, weight: 2 },
-  { enemyId: "goblin", fromFloor: 7, toFloor: 8, weight: 4 },
   { enemyId: "goblin", fromFloor: 9, weight: 2 },
-  { enemyId: "skeleton", fromFloor: 7, weight: 3 },
-  { enemyId: "frostslime", fromFloor: 7, weight: 3 },
-  { enemyId: "orc", fromFloor: 7, weight: 3 },
-  { enemyId: "bloodskeleton", fromFloor: 7, weight: 3 },
+  { enemyId: "skeleton", fromFloor: 9, weight: 3 },
+  { enemyId: "orc", fromFloor: 9, weight: 3 },
+  { enemyId: "bloodskeleton", fromFloor: 9, weight: 3 },
   { enemyId: "shadowgoblin", fromFloor: 9, weight: 1 },
   { enemyId: "elitearcher", fromFloor: 11, weight: 1 },
 ];

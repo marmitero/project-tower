@@ -1086,4 +1086,24 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 
 **Consequências:** Roster de inimigos sobe de 28 para 34 inimigos com atlas próprio; andares 1 a 6 agora possuem 100% dos seus elencos com arte original própria e kits de arena dedicados; arena do Andar 7 adiantada e pronta para receber os inimigos do Lote 9. Próximo passo: **Lote 9** (4 inimigos do andar 7 + arena 8 Salão das Sombras + 3 inimigos do andar 8).
 
+---
+
+## ADR-045 — Lote 9 da arte: fechamento do Andar 7 (Jardim Gélido), kit do Ninho das Sombras (andar 8) e 3 inimigos do andar 8
+
+**Data:** 2026-10-06 · **Status:** ✅ Aceita (aguarda o "lote 09 aprovado") · **Tipo:** B (arte + dados) · **Pedido do usuário:** *"Pode prosseguir"*
+
+**Gerações: 9/10 (1 reserva restante).** 7 atlas de inimigos (Urso Glacial, Raposa Boreal, Feiticeira da Geada, Cavaleiro do Inverno, Casulo Gigante, Aranha Presas-Negras, Sombra Rastejante) e 1 kit de arena 4×4 (`f08_sombras`). 1 refação necessária (Sombra Rastejante tentativa 1 trouxe névoa violeta que gerou resíduo de chroma rosa; refeita com paleta estrita de carvão/preto e olhos ciano-gélidos, aprovada com 0.000% rosa). Procedência registrada em `assets/generated/provenance.json` e `PROVENANCE.md`.
+
+| Item | Decisão |
+|---|---|
+| Fechamento do Andar 7 (Jardim Gélido) | **Urso Glacial** (dano, físico, mult 1,05; guia `orc`, estilo `goblin_captain`, 199 px, âncora 0 px, 100% verde) · **Raposa Boreal** (veloz, físico, mult 1,06; guia `goblin`, estilo `spark_imp`, 184 px, âncora 0 px, 100% verde) · **Feiticeira da Geada** (mago, mágico, mult 0,88; guia `mage`, estilo `spark_imp`, 184 px, âncora 0 px, paleta 770 cores) · **Cavaleiro do Inverno** (elite raro, físico, mult 1,08; guia `orc`, estilo `royal_mummy`, 199 px, âncora 0 px, 100% verde). Com a Gosma Gélida (`frostslime`), o Andar 7 completa 5/5 inimigos com elenco temático |
+| Arena do Andar 8 | `f08_sombras` (Ninho das Sombras): paredes de caverna negra cobertas de teias com olhos violetas nas fendas, tocha com fogo violeta, estandarte de teia e aranha, portão de ferro e teias, piso escuro com teias baixas. 16 ladrilhos fatiados, luminância do piso 0,12–0,16 dentro da faixa |
+| Inimigos do Andar 8 (3 novos) | **Casulo Gigante** (tanque, físico, mult 0,98; guia `orc`, estilo `mud_toad`, 199 px, âncora 0 px, 172 cores) · **Aranha Presas-Negras** (dano, físico, mult 1,06; guia `orc`, estilo `mud_toad`, 199 px, âncora 0 px, 662 cores) · **Sombra Rastejante** (veloz, mágico, mult 1,05; guia `goblin`, estilo `spark_imp`, 184 px, âncora 0 px, 100% verde). Morcego Tóxico e Goblin Sombrio atuam como mago/elite provisórios até o Lote 10 |
+| Balanceamento | `npm run report:balance` confirma perda de HP por combate perfeitamente calibrada: Casulo Gigante 30% / 31 s (alvo tanque ≈ 30–38%), Urso Glacial 42% / 20 s (alvo dano ≈ 35–44%), Aranha Presas-Negras 39% / 18 s (alvo dano ≈ 35–44%), Raposa Boreal 20% / 10 s (alvo veloz ≈ 20–24%), Sombra Rastejante 26% / 12 s (alvo veloz ≈ 22–26%), Feiticeira da Geada 26% / 10 s (alvo mago ≈ 20–27%), Cavaleiro do Inverno 58% / 29 s (alvo elite ≈ 58–62%). Progressão e sustentabilidade das 4 horas rigorosamente intactas |
+| Pools dos Andares 7 e 8 | Andar 7: Gosma Gélida (4), Urso Glacial (4), Raposa Boreal (3), Feiticeira da Geada (2), Cavaleiro do Inverno (1, elite raro). Andar 8: Casulo Gigante (4), Aranha Presas-Negras (4), Sombra Rastejante (3), Morcego Tóxico (2, mago), Goblin Sombrio (1, elite raro). Todos os andares de 1 a 8 agora contam com seus elites raros |
+| Verificação | `npm run check` verde (783 testes unitários/integração + 28 arquitetura), 793 requisições HTTP 200 no bundle do preview, contact sheets e fatias de arena organizados em `docs/art-review/lote-09/` |
+
+**Consequências:** Roster de inimigos sobe de 34 para 41 inimigos (todos os papéis cobertos); andares 1 a 7 agora possuem 100% dos seus elencos com arte original própria e kits de arena dedicados; arena do Andar 8 em funcionamento com 3 novos inimigos. Próximo passo: **Lote 10** (1 inimigo restante do andar 8: Tecelã de Pesadelos + arena 9 Corredor Sangrento + 4 inimigos do andar 9 + 1 do andar 10).
+
+
 

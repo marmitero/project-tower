@@ -115,3 +115,17 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 9 | `enemies/forge_master` | atlas | aprovado (paleta 337 cores, âncora 0px) | guide_orc.magenta, style_goblin_captain | Mestre da Forja (elite do andar 6): guerreiro colossal em armadura de placas de ferro negro com elmo de fornalha e marre |
 | 10 | `arenas/f07_jardim` | arena | aprovado (quadrado 1024x1024, floorGain 1.8) | kit_f01_entrada | Kit de arena 4x4 do andar 7 (Jardim Gélido): santuário congelado com geada azul e estalactites, tocha gélida, estandarte |
 
+## Lote L9 — 9/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `enemies/frost_bear` | atlas | aprovado (100% verde, âncora 0px, idle 199px) | guide_orc.magenta, style_goblin_captain | Urso Glacial (dano do andar 7): urso polar bípede guerreiro em armadura nórdica com runas gélidas empunhando machado pes |
+| 2 | `enemies/boreal_fox` | atlas | aprovado (100% verde, âncora 0px, idle 184px) | guide_goblin.magenta, style_spark_imp | Raposa Boreal (veloz do andar 7): ladina raposa ártica com pelagem branca espessa empunhando adagas curvas de gelo. Guia |
+| 3 | `enemies/frost_witch` | atlas | aprovado (revisão visual paleta 770 cores, âncora 0px, idle 184px) | guide_mage.magenta, style_spark_imp | Feiticeira da Geada (mago do andar 7): feiticeira com vestes gélidas azul-celeste e capuz com bordas de pelo branco segu |
+| 4 | `enemies/winter_knight` | atlas | aprovado (100% verde, âncora 0px, idle 199px) | guide_orc.magenta, style_royal_mummy | Cavaleiro do Inverno (elite do andar 7): colossal cavaleiro da morte congelado em armadura de placas com elmo de chifres |
+| 5 | `arenas/f08_sombras` | arena | aprovado (quadrado 1024x1024, 16 ladrilhos, luminância 0.12-0.16 ok) | kit_f01_entrada | Kit de arena 4x4 do andar 8 (Ninho das Sombras): paredes de caverna negra cobertas de teias com olhos violetas nas fenda |
+| 6 | `enemies/giant_cocoon` | atlas | aprovado (revisão visual silhueta casulo, 172 cores, âncora 0px) | guide_orc.magenta, style_mud_toad | Casulo Gigante (tanque do andar 8): casulo aracnídeo quitinoso defensivo com carapaça negra de obsidiana e patas espinho |
+| 7 | `enemies/blackfang_spider` | atlas | aprovado (revisão visual ataque 13%, 662 cores, âncora 0px) | guide_orc.magenta, style_mud_toad | Aranha Presas-Negras (dano do andar 8): guerreiro aracnídeo ereto monstruoso com múltiplos olhos vermelhos, presas venen |
+| 8 | `enemies/shadow_crawler#falha` | atlas | reprovado (resíduo de chroma 0.915% por névoa violeta próxima de magenta) -> refeito | guide_goblin.magenta, style_spark_imp | Sombra Rastejante (veloz do andar 8): tentativa 1 com névoa violeta que causou resíduo de chroma key. |
+| 9 | `enemies/shadow_crawler` | atlas | aprovado (100% verde, 0.000% rosa, 342 cores, âncora 0px) | guide_goblin.magenta, style_spark_imp | Sombra Rastejante (veloz do andar 8): espectro ágil em fumaça negra de carvão e olhos ciano-gélidos, empunhando adagas d |
+

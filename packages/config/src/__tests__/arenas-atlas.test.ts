@@ -80,8 +80,8 @@ describe("kits de arena como dado (ContentPack v5, ADR-032)", () => {
 
   it("pack sem kit para um andar (ou sem kit de chefe) é rejeitado", () => {
     const pack = defaultContentPack();
-    pack.arenas = pack.arenas.filter((k) => k.id !== "gelo e sombra");
-    expect(validateContentPack(pack).join()).toMatch(/kit inexistente "gelo e sombra"/);
+    pack.arenas = pack.arenas.filter((k) => k.id !== "sangue e brasa");
+    expect(validateContentPack(pack).join()).toMatch(/kit inexistente "sangue e brasa"/);
   });
 
   it("pack v4 (sem `arenas`) migra para v5 com os kits de fábrica", () => {

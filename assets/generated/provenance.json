@@ -808,6 +808,113 @@
         "kit_f01_entrada"
       ],
       "verdict": "aprovado (quadrado 1024x1024, floorGain 1.8)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L9",
+      "asset": "enemies/frost_bear",
+      "kind": "atlas",
+      "prompt": "Urso Glacial (dano do andar 7): urso polar bípede guerreiro em armadura nórdica com runas gélidas empunhando machado pesado de gelo. Guia orc magenta + estilo do Goblin Capitão.",
+      "refs": [
+        "guide_orc.magenta",
+        "style_goblin_captain"
+      ],
+      "verdict": "aprovado (100% verde, âncora 0px, idle 199px)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L9",
+      "asset": "enemies/boreal_fox",
+      "kind": "atlas",
+      "prompt": "Raposa Boreal (veloz do andar 7): ladina raposa ártica com pelagem branca espessa empunhando adagas curvas de gelo. Guia goblin magenta + estilo do Duende de Faíscas.",
+      "refs": [
+        "guide_goblin.magenta",
+        "style_spark_imp"
+      ],
+      "verdict": "aprovado (100% verde, âncora 0px, idle 184px)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L9",
+      "asset": "enemies/frost_witch",
+      "kind": "atlas",
+      "prompt": "Feiticeira da Geada (mago do andar 7): feiticeira com vestes gélidas azul-celeste e capuz com bordas de pelo branco segurando cajado de gelo. Guia mage magenta + estilo do Duende de Faíscas.",
+      "refs": [
+        "guide_mage.magenta",
+        "style_spark_imp"
+      ],
+      "verdict": "aprovado (revisão visual paleta 770 cores, âncora 0px, idle 184px)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L9",
+      "asset": "enemies/winter_knight",
+      "kind": "atlas",
+      "prompt": "Cavaleiro do Inverno (elite do andar 7): colossal cavaleiro da morte congelado em armadura de placas com elmo de chifres e montante rúnico de gelo. Guia orc magenta + estilo da Múmia Real.",
+      "refs": [
+        "guide_orc.magenta",
+        "style_royal_mummy"
+      ],
+      "verdict": "aprovado (100% verde, âncora 0px, idle 199px)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L9",
+      "asset": "arenas/f08_sombras",
+      "kind": "arena",
+      "prompt": "Kit de arena 4x4 do andar 8 (Ninho das Sombras): paredes de caverna negra cobertas de teias com olhos violetas nas fendas, tocha com fogo violeta, estandarte de teia e aranha, portão de ferro e teias, piso escuro com teias baixas.",
+      "refs": [
+        "kit_f01_entrada"
+      ],
+      "verdict": "aprovado (quadrado 1024x1024, 16 ladrilhos, luminância 0.12-0.16 ok)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L9",
+      "asset": "enemies/giant_cocoon",
+      "kind": "atlas",
+      "prompt": "Casulo Gigante (tanque do andar 8): casulo aracnídeo quitinoso defensivo com carapaça negra de obsidiana e patas espinhosas. Guia orc magenta + estilo do Sapo-Lodo.",
+      "refs": [
+        "guide_orc.magenta",
+        "style_mud_toad"
+      ],
+      "verdict": "aprovado (revisão visual silhueta casulo, 172 cores, âncora 0px)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L9",
+      "asset": "enemies/blackfang_spider",
+      "kind": "atlas",
+      "prompt": "Aranha Presas-Negras (dano do andar 8): guerreiro aracnídeo ereto monstruoso com múltiplos olhos vermelhos, presas venenosas e ferrões de quitina. Guia orc magenta + estilo do Sapo-Lodo.",
+      "refs": [
+        "guide_orc.magenta",
+        "style_mud_toad"
+      ],
+      "verdict": "aprovado (revisão visual ataque 13%, 662 cores, âncora 0px)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L9",
+      "asset": "enemies/shadow_crawler#falha",
+      "kind": "atlas",
+      "prompt": "Sombra Rastejante (veloz do andar 8): tentativa 1 com névoa violeta que causou resíduo de chroma key.",
+      "refs": [
+        "guide_goblin.magenta",
+        "style_spark_imp"
+      ],
+      "verdict": "reprovado (resíduo de chroma 0.915% por névoa violeta próxima de magenta) -> refeito"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L9",
+      "asset": "enemies/shadow_crawler",
+      "kind": "atlas",
+      "prompt": "Sombra Rastejante (veloz do andar 8): espectro ágil em fumaça negra de carvão e olhos ciano-gélidos, empunhando adagas de obsidiana. Guia goblin magenta + estilo do Duende de Faíscas.",
+      "refs": [
+        "guide_goblin.magenta",
+        "style_spark_imp"
+      ],
+      "verdict": "aprovado (100% verde, 0.000% rosa, 342 cores, âncora 0px)"
     }
   ]
 }
