@@ -100,3 +100,18 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 7 | `enemies/ghost_duelist` | atlas | aprovado (paleta 346 cores, âncora 0px) | guide_skeleton.magenta, style_royal_mummy | Duelista Fantasma (dano do andar 5): espectro nobre esguio de gibão azul e chapéu de pluma, empunhando florete espectral |
 | 8 | `enemies/whispering_wraith` | atlas | aprovado (voador 133px na faixa 125-140px) | guide_bat.magenta, style_spark_imp | Espectro Sussurrante (veloz/voador do andar 5): aparição flutuante em farrapos etéreos azul-frio com olhos brilhantes e  |
 
+## Lote L8 — 10/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `enemies/echo_singer` | atlas | aprovado (paleta 300 cores, âncora 0px) | guide_mage.magenta, style_spark_imp | Cantor de Ecos (mago do andar 5): mago arcano em vestes azul-índigo com bordados prateados e cajado ressonante de crista |
+| 2 | `enemies/void_maestro` | atlas | aprovado (elite 184px, âncora 0px) | guide_orc.magenta, style_royal_mummy | Maestro do Vazio (elite do andar 5): maestro de casaca azul-veludo e máscara com monóculo de cristal, empunhando batuta  |
+| 3 | `arenas/f06_fornalha#falha` | arena | reprovado (gerador devolveu 16:9 em 1376x768 em vez de quadrado 4x4) -> refeito | kit_f01_entrada | Kit de arena do andar 6 (Fornalha Esquecida): tentativa 1 em formato retangular, descartada. |
+| 4 | `arenas/f06_fornalha` | arena | aprovado (quadrado 1024x1024, floorGain 1.2) | kit_f01_entrada | Kit de arena 4x4 do andar 6 (Fornalha Esquecida): paredes de basalto e placas de ferro com fendas de lava, braseiro de f |
+| 5 | `enemies/slag_golem` | atlas | aprovado (paleta 521 cores, âncora 0px) | guide_orc.magenta, style_mud_toad | Golem de Escória (tanque do andar 6): golem de rocha vulcânica negra resfriada com fendas de magma laranja brilhante e p |
+| 6 | `enemies/possessed_smith` | atlas | aprovado (100% verde, IoU 0.82) | guide_hero.magenta, style_guardian_borin | Ferreiro Possuído (dano do andar 6): ferreiro demoníaco com pele de fuligem e avental de couro, empunhando martelo de fo |
+| 7 | `enemies/swift_salamander#falha` | atlas | reprovado (falha de API gemini: sem imagem gerada) -> refeito | guide_goblin.magenta, style_spark_imp | Salamandra Veloz (veloz do andar 6): tentativa 1 interrompida por erro temporário na API. |
+| 8 | `enemies/swift_salamander` | atlas | aprovado (100% verde cinemática e IoU) | guide_goblin.magenta, style_spark_imp | Salamandra Veloz (veloz do andar 6): lagarto bípede das chamas com escamas rubro-alaranjadas empunhando adagas de obsidi |
+| 9 | `enemies/forge_master` | atlas | aprovado (paleta 337 cores, âncora 0px) | guide_orc.magenta, style_goblin_captain | Mestre da Forja (elite do andar 6): guerreiro colossal em armadura de placas de ferro negro com elmo de fornalha e marre |
+| 10 | `arenas/f07_jardim` | arena | aprovado (quadrado 1024x1024, floorGain 1.8) | kit_f01_entrada | Kit de arena 4x4 do andar 7 (Jardim Gélido): santuário congelado com geada azul e estalactites, tocha gélida, estandarte |
+

@@ -1066,3 +1066,24 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 
 **Consequências:** Roster de heróis 100% ilustrado com retratos individuais (26/26); roster de inimigos cresce de 25 para 28; arenas geradas passam de 4 para 5. Próximo passo: **Lote 8** (Cantor de Ecos e Maestro do Vazio para fechar o andar 5 + arena 6 Fornalha Esquecida + 4 inimigos do andar 6 + arena 7 Jardim Gélido).
 
+---
+
+## ADR-044 — Lote 8 da arte: fechamento do Andar 5, kit da Fornalha Esquecida (andar 6), 4 inimigos do andar 6 e kit do Jardim Gélido (andar 7)
+
+**Data:** 2026-10-06 · **Status:** ✅ Aceita (aguarda o "lote 08 aprovado") · **Tipo:** B (arte + dados) · **Pedido do usuário:** *"prossiga com o lote 8"*
+
+**Gerações: 10/10.** 6 atlas de inimigos (Cantor de Ecos, Maestro do Vazio, Golem de Escória, Ferreiro Possuído, Salamandra Veloz, Mestre da Forja) e 2 kits de arena 4×4 (`f06_fornalha`, `f07_jardim`). 2 refações necessárias (tentativa 1 da arena f06 em formato retangular 16:9; tentativa 1 da Salamandra falhou por retorno vazio da API). Procedência registrada em `assets/generated/provenance.json` e `PROVENANCE.md`.
+
+| Item | Decisão |
+|---|---|
+| Fechamento do Andar 5 (Salão dos Ecos) | **Cantor de Ecos** (mago, mágico, mult 1,02; guia `mage`, estilo `spark_imp`, 184 px, âncora 0 px, paleta 300 cores) e **Maestro do Vazio** (elite raro, mágico, mult 1,08; guia `orc`, estilo `royal_mummy`, 184 px, âncora 0 px). Andar 5 agora conta com 5/5 inimigos exclusivos com atlas próprio (`crystal_sentry`, `ghost_duelist`, `whispering_wraith`, `echo_singer`, `void_maestro`) |
+| Arena do Andar 6 | `f06_fornalha` (Fornalha Esquecida): paredes de basalto negro e placas de ferro com fendas de lava brilhante, braseiro de forja, estandarte de bronze com martelo e piso de placas de ferro fundido. Calibrado deterministicamente com `floorGain: 1.2` |
+| Inimigos do Andar 6 (4 novos) | **Golem de Escória** (tanque, físico, mult 1,02; guia `orc`, estilo `mud_toad`, 184 px, âncora 0 px, paleta 521 cores) · **Ferreiro Possuído** (dano, físico, mult 1,08; guia `hero`, estilo `guardian_borin`, 184 px, âncora 0 px, 100% verde) · **Salamandra Veloz** (veloz, físico, mult 1,05; guia `goblin`, estilo `spark_imp`, 184 px, âncora 0 px, 100% verde) · **Mestre da Forja** (elite raro, físico, mult 1,08; guia `orc`, estilo `goblin_captain`, 184 px, âncora 0 px, paleta 337 cores). Com o Fireorc (mago já existente), o Andar 6 completa 5/5 inimigos |
+| Arena do Andar 7 | `f07_jardim` (Jardim Gélido): santuário ancestral de pedra congelada, estalactites de gelo translúcidas, tochas gélidas azuladas, estandarte com floco de neve e piso de lajotas gélidas. Piso calibrado deterministicamente com `floorGain: 1.8` |
+| Balanceamento | `npm run report:balance` confirma perda de HP por combate perfeitamente calibrada: Golem de Escória 40% (alvo tanque ≈ 38%), Ferreiro Possuído 42% (alvo dano ≈ 35–44%), Salamandra Veloz 25% (alvo veloz ≈ 22–24%), Cantor de Ecos 26% (alvo mago ≈ 20–27%), Maestro do Vazio 61% (alvo elite ≈ 58–62%), Mestre da Forja 61% (alvo elite ≈ 58–62%). Progressão e ritmo das 4 horas perfeitamente preservados |
+| Pools dos Andares 5 e 6 | Andar 5: Sentinela (4), Duelista (4), Espectro (3), Cantor (2), Maestro (1, elite raro). Andar 6: Golem de Escória (4), Ferreiro Possuído (4), Salamandra Veloz (3), Fireorc (2), Mestre da Forja (1, elite raro). A regra de teste unitário foi ajustada para cobrir a ausência de elites nos andares 7–8 |
+| Verificação | `npm run check` verde (todos os testes unitários e de arquitetura passam), bundle do preview atualizado, contact sheets e fatias de arena organizados em `docs/art-review/lote-08/` |
+
+**Consequências:** Roster de inimigos sobe de 28 para 34 inimigos com atlas próprio; andares 1 a 6 agora possuem 100% dos seus elencos com arte original própria e kits de arena dedicados; arena do Andar 7 adiantada e pronta para receber os inimigos do Lote 9. Próximo passo: **Lote 9** (4 inimigos do andar 7 + arena 8 Salão das Sombras + 3 inimigos do andar 8).
+
+

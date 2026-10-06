@@ -135,6 +135,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "crystal_sentry", name: "Sentinela de Cristal", role: "tank", damageType: "physical", statMultiplier: 1.02,
       attributes: attrs(22, 4, 38, 4, 18),
       assets: { sheets: charSheets("orc"), atlas: "enemies/crystal_sentry" } },
+    // Lote 8 (ADR-044): tanque do andar 6 (Fornalha Esquecida) — atlas próprio.
+    { id: "slag_golem", name: "Golem de Escória", role: "tank", damageType: "physical", statMultiplier: 1.01,
+      attributes: attrs(24, 4, 38, 4, 16),
+      assets: { sheets: charSheets("orc"), atlas: "enemies/slag_golem" } },
     // --- dps ----------------------------------------------------------
     { id: "goblin", name: "Goblin", role: "dps", damageType: "physical", statMultiplier: 1.23,
       attributes: attrs(28, 20, 14, 6, 8),
@@ -147,6 +151,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "ghost_duelist", name: "Duelista Fantasma", role: "dps", damageType: "physical", statMultiplier: 1.08,
       attributes: attrs(32, 16, 22, 6, 10),
       assets: { sheets: charSheets("skeleton"), atlas: "enemies/ghost_duelist" } },
+    // Lote 8 (ADR-044): dano do andar 6 (Fornalha Esquecida) — atlas próprio.
+    { id: "possessed_smith", name: "Ferreiro Possuído", role: "dps", damageType: "physical", statMultiplier: 1.06,
+      attributes: attrs(36, 12, 22, 4, 8),
+      assets: { sheets: charSheets("hero"), atlas: "enemies/possessed_smith" } },
     { id: "orc", name: "Orc", role: "dps", damageType: "physical", statMultiplier: 1.01,
       attributes: attrs(34, 10, 22, 4, 10),
       assets: { portrait: "portraits/orc", sheets: charSheets("orc") } },
@@ -171,6 +179,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "whispering_wraith", name: "Espectro Sussurrante", role: "swift", damageType: "magic", statMultiplier: 1.05,
       attributes: attrs(14, 28, 16, 12, 16),
       assets: { sheets: charSheets("bat"), atlas: "enemies/whispering_wraith" } },
+    // Lote 8 (ADR-044): veloz do andar 6 (Fornalha Esquecida) — atlas próprio.
+    { id: "swift_salamander", name: "Salamandra Veloz", role: "swift", damageType: "physical", statMultiplier: 1.08,
+      attributes: attrs(18, 34, 12, 4, 8),
+      assets: { sheets: charSheets("goblin"), atlas: "enemies/swift_salamander" } },
     // --- caster -------------------------------------------------------
     { id: "toxicbat", name: "Morcego Tóxico", role: "caster", damageType: "magic", statMultiplier: 1.1,
       attributes: attrs(6, 24, 12, 28, 14),
@@ -188,6 +200,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "mummy_priest", name: "Sacerdote Mumificado", role: "caster", damageType: "magic", statMultiplier: 0.92,
       attributes: attrs(6, 14, 14, 28, 18),
       assets: { sheets: charSheets("mage"), atlas: "enemies/mummy_priest" } },
+    // Lote 8 (ADR-044): mago do andar 5 (Salão dos Ecos) — atlas próprio.
+    { id: "echo_singer", name: "Cantor de Ecos", role: "caster", damageType: "magic", statMultiplier: 0.88,
+      attributes: attrs(6, 18, 12, 30, 16),
+      assets: { sheets: charSheets("mage"), atlas: "enemies/echo_singer" } },
     { id: "fireorc", name: "Orc Flamejante", role: "caster", damageType: "magic", statMultiplier: 0.88,
       attributes: attrs(10, 8, 22, 32, 12),
       assets: { sheets: charSheets("fireorc") } },
@@ -211,6 +227,14 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "royal_mummy", name: "Múmia Real", role: "elite", damageType: "physical", statMultiplier: 1.18,
       attributes: attrs(30, 14, 28, 10, 16),
       assets: { sheets: charSheets("skeleton"), atlas: "enemies/royal_mummy" } },
+    // Lote 8 (ADR-044): elite RARO do andar 5 (Salão dos Ecos).
+    { id: "void_maestro", name: "Maestro do Vazio", role: "elite", damageType: "magic", statMultiplier: 1.08,
+      attributes: attrs(18, 14, 26, 28, 18),
+      assets: { sheets: charSheets("orc"), atlas: "enemies/void_maestro" } },
+    // Lote 8 (ADR-044): elite RARO do andar 6 (Fornalha Esquecida).
+    { id: "forge_master", name: "Mestre da Forja", role: "elite", damageType: "physical", statMultiplier: 1.08,
+      attributes: attrs(34, 12, 32, 6, 12),
+      assets: { sheets: charSheets("orc"), atlas: "enemies/forge_master" } },
     { id: "elitearcher", name: "Arqueiro de Elite", role: "elite", damageType: "physical", statMultiplier: 1.26,
       attributes: attrs(26, 32, 18, 8, 12),
       assets: { sheets: charSheets("elitearcher") } },

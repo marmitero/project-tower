@@ -691,6 +691,123 @@
         "style_spark_imp"
       ],
       "verdict": "aprovado (voador 133px na faixa 125-140px)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L8",
+      "asset": "enemies/echo_singer",
+      "kind": "atlas",
+      "prompt": "Cantor de Ecos (mago do andar 5): mago arcano em vestes azul-índigo com bordados prateados e cajado ressonante de cristal. Guia mage magenta + estilo do Duende de Faíscas.",
+      "refs": [
+        "guide_mage.magenta",
+        "style_spark_imp"
+      ],
+      "verdict": "aprovado (paleta 300 cores, âncora 0px)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L8",
+      "asset": "enemies/void_maestro",
+      "kind": "atlas",
+      "prompt": "Maestro do Vazio (elite do andar 5): maestro de casaca azul-veludo e máscara com monóculo de cristal, empunhando batuta de cristal negro. Guia orc magenta + estilo da Múmia Real.",
+      "refs": [
+        "guide_orc.magenta",
+        "style_royal_mummy"
+      ],
+      "verdict": "aprovado (elite 184px, âncora 0px)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L8",
+      "asset": "arenas/f06_fornalha#falha",
+      "kind": "arena",
+      "prompt": "Kit de arena do andar 6 (Fornalha Esquecida): tentativa 1 em formato retangular, descartada.",
+      "refs": [
+        "kit_f01_entrada"
+      ],
+      "verdict": "reprovado (gerador devolveu 16:9 em 1376x768 em vez de quadrado 4x4) -> refeito"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L8",
+      "asset": "arenas/f06_fornalha",
+      "kind": "arena",
+      "prompt": "Kit de arena 4x4 do andar 6 (Fornalha Esquecida): paredes de basalto e placas de ferro com fendas de lava, braseiro de forja, estandarte de bronze e martelo, portão reforçado e piso de ferro fundido.",
+      "refs": [
+        "kit_f01_entrada"
+      ],
+      "verdict": "aprovado (quadrado 1024x1024, floorGain 1.2)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L8",
+      "asset": "enemies/slag_golem",
+      "kind": "atlas",
+      "prompt": "Golem de Escória (tanque do andar 6): golem de rocha vulcânica negra resfriada com fendas de magma laranja brilhante e punhos pesados. Guia orc magenta + estilo do Sapo-Lodo.",
+      "refs": [
+        "guide_orc.magenta",
+        "style_mud_toad"
+      ],
+      "verdict": "aprovado (paleta 521 cores, âncora 0px)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L8",
+      "asset": "enemies/possessed_smith",
+      "kind": "atlas",
+      "prompt": "Ferreiro Possuído (dano do andar 6): ferreiro demoníaco com pele de fuligem e avental de couro, empunhando martelo de forja pesado. Guia hero magenta + estilo do Borin.",
+      "refs": [
+        "guide_hero.magenta",
+        "style_guardian_borin"
+      ],
+      "verdict": "aprovado (100% verde, IoU 0.82)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L8",
+      "asset": "enemies/swift_salamander#falha",
+      "kind": "atlas",
+      "prompt": "Salamandra Veloz (veloz do andar 6): tentativa 1 interrompida por erro temporário na API.",
+      "refs": [
+        "guide_goblin.magenta",
+        "style_spark_imp"
+      ],
+      "verdict": "reprovado (falha de API gemini: sem imagem gerada) -> refeito"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L8",
+      "asset": "enemies/swift_salamander",
+      "kind": "atlas",
+      "prompt": "Salamandra Veloz (veloz do andar 6): lagarto bípede das chamas com escamas rubro-alaranjadas empunhando adagas de obsidiana. Guia goblin magenta + estilo do Duende de Faíscas.",
+      "refs": [
+        "guide_goblin.magenta",
+        "style_spark_imp"
+      ],
+      "verdict": "aprovado (100% verde cinemática e IoU)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L8",
+      "asset": "enemies/forge_master",
+      "kind": "atlas",
+      "prompt": "Mestre da Forja (elite do andar 6): guerreiro colossal em armadura de placas de ferro negro com elmo de fornalha e marreta rúnica. Guia orc magenta + estilo do Goblin Capitão.",
+      "refs": [
+        "guide_orc.magenta",
+        "style_goblin_captain"
+      ],
+      "verdict": "aprovado (paleta 337 cores, âncora 0px)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L8",
+      "asset": "arenas/f07_jardim",
+      "kind": "arena",
+      "prompt": "Kit de arena 4x4 do andar 7 (Jardim Gélido): santuário congelado com geada azul e estalactites, tocha gélida, estandarte de floco de neve e piso de pedra gélida.",
+      "refs": [
+        "kit_f01_entrada"
+      ],
+      "verdict": "aprovado (quadrado 1024x1024, floorGain 1.8)"
     }
   ]
 }

@@ -47,6 +47,8 @@ export function defaultArenaKits(): ArenaKitDef[] {
   const f03 = (n: string) => `arenas/f03_ossadas/${n}`;
   const f04 = (n: string) => `arenas/f04_catacumbas/${n}`;
   const f05 = (n: string) => `arenas/f05_ecos/${n}`;
+  const f06 = (n: string) => `arenas/f06_fornalha/${n}`;
+  const f07 = (n: string) => `arenas/f07_jardim/${n}`;
   return [
     {
       // Lote 1 (ADR-033): primeiro kit GERADO — a Entrada da Torre (andar 1). Pedra azul-acinzentada,
@@ -144,6 +146,46 @@ export function defaultArenaKits(): ArenaKitDef[] {
         { assetId: f05("prop_1"), weight: 3 },
         { assetId: f05("prop_2"), weight: 2 },
         { assetId: f05("prop_3"), weight: 2 },
+      ],
+      tint: 0xffffff,
+    },
+    {
+      // Lote 8: Fornalha Esquecida (andar 6). Basalto escuro e placas de ferro com fendas de lava,
+      // braseiro com chamas, estandarte de bronze e martelo, portão reforçado e piso escuro de ferro fundido.
+      id: "f06_fornalha",
+      name: "Fornalha Esquecida",
+      wall: [
+        f06("wall_0"), f06("wall_1"), f06("wall_2"), f06("wall_0"), f06("wall_4"), f06("wall_1"),
+        f06("banner"), f06("wall_2"), f06("wall_3"), f06("wall_0"), f06("wall_4"), f06("gate"),
+      ],
+      torch: f06("torch"),
+      torchEvery: 4,
+      floor: [f06("floor_0"), f06("floor_1"), f06("floor_2"), f06("floor_3"), f06("floor_0")],
+      props: [
+        { assetId: f06("prop_0"), weight: 3 },
+        { assetId: f06("prop_1"), weight: 3 },
+        { assetId: f06("prop_2"), weight: 2 },
+        { assetId: f06("prop_3"), weight: 2 },
+      ],
+      tint: 0xffffff,
+    },
+    {
+      // Lote 8: Jardim Gélido (andar 7). Pedra escura congelada com geada e estalactites de gelo,
+      // tocha de chama fria azul, estandarte com floco de neve, portão em arco de gelo e piso de pedra gélida.
+      id: "f07_jardim",
+      name: "Jardim Gélido",
+      wall: [
+        f07("wall_0"), f07("wall_1"), f07("wall_2"), f07("wall_0"), f07("wall_4"), f07("wall_1"),
+        f07("banner"), f07("wall_2"), f07("wall_3"), f07("wall_0"), f07("wall_4"), f07("gate"),
+      ],
+      torch: f07("torch"),
+      torchEvery: 4,
+      floor: [f07("floor_0"), f07("floor_1"), f07("floor_2"), f07("floor_3"), f07("floor_0")],
+      props: [
+        { assetId: f07("prop_0"), weight: 3 },
+        { assetId: f07("prop_1"), weight: 3 },
+        { assetId: f07("prop_2"), weight: 2 },
+        { assetId: f07("prop_3"), weight: 2 },
       ],
       tint: 0xffffff,
     },

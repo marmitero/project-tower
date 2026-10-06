@@ -106,7 +106,7 @@ const FIRST_FLOOR_NAMES: readonly string[] = [
 
 /** Tintura por grupo de andares (decorativa; editável por andar). */
 function tintForFloor(index: number): number | null {
-  if (index <= 5) return null;
+  if (index <= 7) return null;
   if (index <= 8) return 0xb8d4ff;
   if (index <= 12) return 0xffc9a8;
   if (index <= 20) return 0xd2b4ff;
@@ -115,12 +115,14 @@ function tintForFloor(index: number): number | null {
 }
 
 function themeForFloor(index: number): string {
-  // Kits próprios gerados por andar (Lotes 1–2, 7, ADR-033/036/043); os demais seguem nos grupos antigos.
+  // Kits próprios gerados por andar (Lotes 1–2, 7, 8, ADR-033/036/043/044); os demais seguem nos grupos antigos.
   if (index === 1) return "f01_entrada";
   if (index === 2) return "f02_porao";
   if (index === 3) return "f03_ossadas";
   if (index === 4) return "f04_catacumbas";
   if (index === 5) return "f05_ecos";
+  if (index === 6) return "f06_fornalha";
+  if (index === 7) return "f07_jardim";
   if (index <= 8) return "gelo e sombra";
   if (index <= 12) return "sangue e brasa";
   if (index <= 20) return "pináculo arcano";
@@ -166,22 +168,28 @@ export const DEFAULT_POOL_PLAN: ReadonlyArray<{
   { enemyId: "tomb_scarab", fromFloor: 4, toFloor: 4, weight: 3 },
   { enemyId: "mummy_priest", fromFloor: 4, toFloor: 4, weight: 2 },
   { enemyId: "royal_mummy", fromFloor: 4, toFloor: 4, weight: 1 },
-  // Andar 5 — Salão dos Ecos (Lote 7): Sentinela T · Duelista D · Espectro Sussurrante V · Crânio Necrovela M (Cantor de Ecos e Maestro no Lote 8).
+  // Andar 5 — Salão dos Ecos (Lotes 7–8): Sentinela T · Duelista D · Espectro Sussurrante V · Cantor de Ecos M · Maestro do Vazio E (raro).
   { enemyId: "crystal_sentry", fromFloor: 5, toFloor: 5, weight: 4 },
   { enemyId: "ghost_duelist", fromFloor: 5, toFloor: 5, weight: 4 },
   { enemyId: "whispering_wraith", fromFloor: 5, toFloor: 5, weight: 3 },
-  { enemyId: "candle_skull", fromFloor: 5, toFloor: 5, weight: 2 },
-  // Andares 6+ — ainda com os inimigos de antes; trocam por andar a cada lote (docs/STYLIZATION_ROADMAP.md §3.1).
-  { enemyId: "toxicbat", fromFloor: 6, weight: 2 },
-  { enemyId: "bat", fromFloor: 6, weight: 3 },
-  { enemyId: "slime", fromFloor: 6, toFloor: 6, weight: 4 },
-  { enemyId: "slime", fromFloor: 7, weight: 2 },
-  { enemyId: "goblin", fromFloor: 6, toFloor: 8, weight: 4 },
+  { enemyId: "echo_singer", fromFloor: 5, toFloor: 5, weight: 2 },
+  { enemyId: "void_maestro", fromFloor: 5, toFloor: 5, weight: 1 },
+  // Andar 6 — Fornalha Esquecida (Lote 8): Golem de Escória T · Ferreiro Possuído D · Salamandra Veloz V · Orc Flamejante M · Mestre da Forja E (raro).
+  { enemyId: "slag_golem", fromFloor: 6, toFloor: 6, weight: 4 },
+  { enemyId: "possessed_smith", fromFloor: 6, toFloor: 6, weight: 4 },
+  { enemyId: "swift_salamander", fromFloor: 6, toFloor: 6, weight: 3 },
+  { enemyId: "fireorc", fromFloor: 6, toFloor: 6, weight: 2 },
+  { enemyId: "forge_master", fromFloor: 6, toFloor: 6, weight: 1 },
+  // Andares 7+ — ainda com os inimigos de antes; trocam por andar a cada lote (docs/STYLIZATION_ROADMAP.md §3.1).
+  { enemyId: "toxicbat", fromFloor: 7, weight: 2 },
+  { enemyId: "bat", fromFloor: 7, weight: 3 },
+  { enemyId: "slime", fromFloor: 7, toFloor: 8, weight: 4 },
+  { enemyId: "slime", fromFloor: 9, weight: 2 },
+  { enemyId: "goblin", fromFloor: 7, toFloor: 8, weight: 4 },
   { enemyId: "goblin", fromFloor: 9, weight: 2 },
-  { enemyId: "skeleton", fromFloor: 6, weight: 3 },
-  { enemyId: "frostslime", fromFloor: 6, weight: 3 },
-  { enemyId: "orc", fromFloor: 6, weight: 3 },
-  { enemyId: "fireorc", fromFloor: 6, weight: 3 },
+  { enemyId: "skeleton", fromFloor: 7, weight: 3 },
+  { enemyId: "frostslime", fromFloor: 7, weight: 3 },
+  { enemyId: "orc", fromFloor: 7, weight: 3 },
   { enemyId: "bloodskeleton", fromFloor: 7, weight: 3 },
   { enemyId: "shadowgoblin", fromFloor: 9, weight: 1 },
   { enemyId: "elitearcher", fromFloor: 11, weight: 1 },
