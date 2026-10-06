@@ -87,3 +87,16 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 9 | `portraits/heroes (Criomante, Tempestuário, Mago Ancião, Vorath)` | portrait | ok | king_ref | Folha 2x2 de retratos de busto sobre magenta: Criomante (capuz azul-gelo), Tempestuário (jovem de violeta), Mago Ancião  |
 | 10 | `heroes/shadowcaller_bones#refacao` | atlas | reprovada (hurt/death fora do guia) -> refeita | guide_necromancer.magenta | 1ª tentativa do Necromante dos Ossos: quadros hurt/death não seguiam o guia (personagem diferente) — descartada e refeit |
 
+## Lote L7 — 8/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `portraits/heroes (Borin, Cavaleiro Rubro, Mestre Hakon, Lorde Valdemar)` | portrait | aprovado | king_ref | Folha 2x2 de retratos de busto sobre magenta: Borin (escudeiro leal), Cavaleiro Rubro (elmo e plumas rubras), Mestre Hak |
+| 2 | `portraits/heroes (Rik, Brutus, Elora, Amir)` | portrait | aprovado | king_ref | Folha 2x2 de retratos de busto sobre magenta: Rik (caçador furtivo mascarado), Brutus (besteiro veterano de couro tachad |
+| 3 | `portraits/heroes (Cinder, Vasko, Morcha, Sylvara)` | portrait | aprovado | king_ref | Folha 2x2 de retratos de busto sobre magenta: Cinder (piromante com capuz vermelho e brasas nos olhos), Vasko (necromant |
+| 4 | `portraits/heroes (Baalor, Nyra, Aldric, Maelis)` | portrait | aprovado | king_ref | Folha 2x2 de retratos de busto sobre magenta: Baalor (demonólogo com chifres e runas), Nyra (oráculo de venda estrelada  |
+| 5 | `arenas/f05_ecos` | arena | aprovado (floorGain 2.4) | kit_f04_catacumbas | Kit de arena 4x4 do andar 5 (Salão dos Ecos): paredes azul-marinho com cristais ciano, tocha de cristal, estandarte azul |
+| 6 | `enemies/crystal_sentry` | atlas | aprovado (IoU e cinemática 100% ok) | guide_orc.magenta, style_mud_toad | Sentinela de Cristal (tanque do andar 5): golem ancestral de quartzo azul e placas de pedra com núcleo de energia ciano  |
+| 7 | `enemies/ghost_duelist` | atlas | aprovado (paleta 346 cores, âncora 0px) | guide_skeleton.magenta, style_royal_mummy | Duelista Fantasma (dano do andar 5): espectro nobre esguio de gibão azul e chapéu de pluma, empunhando florete espectral |
+| 8 | `enemies/whispering_wraith` | atlas | aprovado (voador 133px na faixa 125-140px) | guide_bat.magenta, style_spark_imp | Espectro Sussurrante (veloz/voador do andar 5): aparição flutuante em farrapos etéreos azul-frio com olhos brilhantes e  |
+

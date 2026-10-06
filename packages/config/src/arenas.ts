@@ -46,6 +46,7 @@ export function defaultArenaKits(): ArenaKitDef[] {
   const f02 = (n: string) => `arenas/f02_porao/${n}`;
   const f03 = (n: string) => `arenas/f03_ossadas/${n}`;
   const f04 = (n: string) => `arenas/f04_catacumbas/${n}`;
+  const f05 = (n: string) => `arenas/f05_ecos/${n}`;
   return [
     {
       // Lote 1 (ADR-033): primeiro kit GERADO — a Entrada da Torre (andar 1). Pedra azul-acinzentada,
@@ -123,6 +124,26 @@ export function defaultArenaKits(): ArenaKitDef[] {
         { assetId: f04("prop_1"), weight: 2 },
         { assetId: f04("prop_2"), weight: 2 },
         { assetId: f04("prop_3"), weight: 2 },
+      ],
+      tint: 0xffffff,
+    },
+    {
+      // Lote 7: Salão dos Ecos (andar 5). Paredes azul-marinho com cristais ciano embutidos, tocha de cristal,
+      // estandarte azul e prata, portão em arco de cristal e piso de mármore escuro com veios azuis.
+      id: "f05_ecos",
+      name: "Salão dos Ecos",
+      wall: [
+        f05("wall_0"), f05("wall_1"), f05("wall_2"), f05("wall_0"), f05("wall_4"), f05("wall_1"),
+        f05("banner"), f05("wall_2"), f05("wall_3"), f05("wall_0"), f05("wall_4"), f05("gate"),
+      ],
+      torch: f05("torch"),
+      torchEvery: 4,
+      floor: [f05("floor_0"), f05("floor_1"), f05("floor_2"), f05("floor_3"), f05("floor_0")],
+      props: [
+        { assetId: f05("prop_0"), weight: 3 },
+        { assetId: f05("prop_1"), weight: 3 },
+        { assetId: f05("prop_2"), weight: 2 },
+        { assetId: f05("prop_3"), weight: 2 },
       ],
       tint: 0xffffff,
     },

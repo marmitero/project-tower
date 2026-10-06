@@ -88,6 +88,8 @@ export const HEROES: HeroIdentityDef[] = [
       origin: "starter",
       hint: "Herói inicial; depois, Mercado comum e recompensas especiais.",
     },
+    // Retrato próprio do Lote 7.
+    assets: { portrait: "portraits/heroes/hero_aldric" },
   },
   {
     id: "hero_kaia",
@@ -131,6 +133,8 @@ export const HEROES: HeroIdentityDef[] = [
       origin: "starter",
       hint: "Herói inicial; depois, fragmentos em Bosses e summons.",
     },
+    // Retrato próprio do Lote 7.
+    assets: { portrait: "portraits/heroes/hero_maelis" },
   },
   {
     id: "hero_vorath",
@@ -182,7 +186,7 @@ export const EXTRA_HEROES: HeroIdentityDef[] = [
       origin: "market",
       hint: "Mercado comum, caixas e invocações de Guardião.",
     },
-    assets: { atlas: "heroes/guardian_borin" },
+    assets: { portrait: "portraits/heroes/hero_borin", atlas: "heroes/guardian_borin" },
     attributeDelta: { constitution: 2, strength: -4, wisdom: 2 },
   },
   // ---- Clérigo (ADR-038, Lote 4): a 5ª classe, 5 variações; todas obtidas pelo jogo ------------------
@@ -276,8 +280,8 @@ export const EXTRA_HEROES: HeroIdentityDef[] = [
     range: "ranged",
     statPriority: ["specialAttack", "specialDefense", "attackSpeed"],
     acquisition: { origin: "event", hint: "Eventos especiais da Torre e caixas raras de Clérigo." },
-    // Retrato próprio: virá na folha de retratos do Lote 7 (até lá usa o retrato da classe).
-    assets: { atlas: "heroes/cleric_oracle" },
+    // Retrato próprio do Lote 7.
+    assets: { portrait: "portraits/heroes/hero_oraculo_nyra", atlas: "heroes/cleric_oracle" },
     attributeDelta: { intelligence: 4, charisma: -2, constitution: -2 },
   },
   // ---- Lote 5 (ADR-040): 7 variações novas + Ossian liberado -----------------------------------------
@@ -297,7 +301,7 @@ export const EXTRA_HEROES: HeroIdentityDef[] = [
     range: "melee",
     statPriority: ["attack", "hp", "defense"],
     acquisition: { origin: "market", hint: "Mercado comum, caixas e invocações de Guardião." },
-    assets: { atlas: "heroes/guardian_rubro" },
+    assets: { portrait: "portraits/heroes/hero_cavaleiro_rubro", atlas: "heroes/guardian_rubro" },
     attributeDelta: { strength: 3, constitution: -2, charisma: -1 },
   },
   {
@@ -316,7 +320,7 @@ export const EXTRA_HEROES: HeroIdentityDef[] = [
     range: "melee",
     statPriority: ["attackSpeed", "defense", "hp"],
     acquisition: { origin: "event", hint: "Eventos da Torre e caixas de Guardião." },
-    assets: { atlas: "heroes/guardian_monk" },
+    assets: { portrait: "portraits/heroes/hero_monge_ferro", atlas: "heroes/guardian_monk" },
     attributeDelta: { dexterity: 4, charisma: -4 },
   },
   {
@@ -335,7 +339,7 @@ export const EXTRA_HEROES: HeroIdentityDef[] = [
     range: "melee",
     statPriority: ["specialDefense", "defense", "attack"],
     acquisition: { origin: "boss", hint: "Fragmentos de Chefes de Guardião." },
-    assets: { atlas: "heroes/guardian_lord" },
+    assets: { portrait: "portraits/heroes/hero_lorde_cinzento", atlas: "heroes/guardian_lord" },
     attributeDelta: { wisdom: 3, strength: 2, constitution: -3, charisma: -2 },
   },
   {
@@ -354,7 +358,7 @@ export const EXTRA_HEROES: HeroIdentityDef[] = [
     range: "melee",
     statPriority: ["critChance", "attackSpeed", "attack"],
     acquisition: { origin: "market", hint: "Mercado comum e caixas de Arqueiro." },
-    assets: { atlas: "heroes/ranger_stalker" },
+    assets: { portrait: "portraits/heroes/hero_cacador_furtivo", atlas: "heroes/ranger_stalker" },
     attributeDelta: { dexterity: 4, charisma: -4 },
   },
   {
@@ -373,7 +377,7 @@ export const EXTRA_HEROES: HeroIdentityDef[] = [
     range: "ranged",
     statPriority: ["attack", "critChance", "hp"],
     acquisition: { origin: "market", hint: "Mercado comum e invocações de Arqueiro." },
-    assets: { atlas: "heroes/ranger_crossbow" },
+    assets: { portrait: "portraits/heroes/hero_besteiro_pesado", atlas: "heroes/ranger_crossbow" },
     attributeDelta: { strength: 4, dexterity: -4 },
   },
   {
@@ -392,7 +396,7 @@ export const EXTRA_HEROES: HeroIdentityDef[] = [
     range: "ranged",
     statPriority: ["specialDefense", "attack", "attackSpeed"],
     acquisition: { origin: "summon", hint: "Invocações de Arqueiro e eventos da Torre." },
-    assets: { atlas: "heroes/ranger_warden" },
+    assets: { portrait: "portraits/heroes/hero_guardia_floresta", atlas: "heroes/ranger_warden" },
     attributeDelta: { wisdom: 2, strength: -2 },
   },
   {
@@ -411,7 +415,7 @@ export const EXTRA_HEROES: HeroIdentityDef[] = [
     range: "ranged",
     statPriority: ["specialAttack", "critChance", "attackSpeed"],
     acquisition: { origin: "market", hint: "Mercado comum, caixas e summons de Arcanista." },
-    assets: { atlas: "heroes/arcanist_pyro" },
+    assets: { portrait: "portraits/heroes/hero_piromante_cinder", atlas: "heroes/arcanist_pyro" },
     attributeDelta: { intelligence: 3, constitution: -2, charisma: -1 },
   },
   {
@@ -519,8 +523,7 @@ export const EXTRA_HEROES: HeroIdentityDef[] = [
     range: "ranged",
     statPriority: ["specialAttack", "hp", "critChance"],
     acquisition: { origin: "boss", hint: "Fragmentos de Boss e caixas de invocação de Invocador." },
-    // Retrato próprio pendente (o lote estourou 1 geração): até o Lote 7 usa o retrato do Invocador (_class_).
-    assets: { atlas: "heroes/shadowcaller_bones" },
+    assets: { portrait: "portraits/heroes/hero_necromante_ossos", atlas: "heroes/shadowcaller_bones" },
     attributeDelta: { intelligence: 3, constitution: -1, strength: -2 },
   },
   {
@@ -539,8 +542,7 @@ export const EXTRA_HEROES: HeroIdentityDef[] = [
     range: "ranged",
     statPriority: ["specialAttack", "speed", "hp"],
     acquisition: { origin: "market", hint: "Mercado comum e caixas de invocação de Invocador." },
-    // Retrato próprio pendente (o lote estourou 1 geração): até o Lote 7 usa o retrato da classe.
-    assets: { atlas: "heroes/shadowcaller_witch" },
+    assets: { portrait: "portraits/heroes/hero_bruxa_pantano", atlas: "heroes/shadowcaller_witch" },
     attributeDelta: { wisdom: 3, dexterity: -1, intelligence: -2 },
   },
   {
@@ -559,8 +561,7 @@ export const EXTRA_HEROES: HeroIdentityDef[] = [
     range: "melee",
     statPriority: ["specialAttack", "critChance", "hp"],
     acquisition: { origin: "summon", hint: "Invocações de Invocador e eventos da Torre." },
-    // Retrato próprio pendente (o lote estourou 1 geração): até o Lote 7 usa o retrato da classe.
-    assets: { atlas: "heroes/shadowcaller_reaper" },
+    assets: { portrait: "portraits/heroes/hero_ceifeira", atlas: "heroes/shadowcaller_reaper" },
     attributeDelta: { strength: 5, intelligence: -3, charisma: -2 },
   },
   {
@@ -579,8 +580,7 @@ export const EXTRA_HEROES: HeroIdentityDef[] = [
     range: "ranged",
     statPriority: ["specialAttack", "critChance", "defense"],
     acquisition: { origin: "event", hint: "Eventos especiais da Torre e caixas de invocação de Invocador." },
-    // Retrato próprio pendente (o lote estourou 1 geração): até o Lote 7 usa o retrato da classe.
-    assets: { atlas: "heroes/shadowcaller_demon" },
+    assets: { portrait: "portraits/heroes/hero_demonologo", atlas: "heroes/shadowcaller_demon" },
     attributeDelta: { intelligence: 5, dexterity: -4, constitution: -1 },
   },
   {
@@ -599,8 +599,7 @@ export const EXTRA_HEROES: HeroIdentityDef[] = [
     range: "ranged",
     statPriority: ["attack", "attackSpeed", "critChance"],
     acquisition: { origin: "market", hint: "Mercado comum e invocações de Arqueiro." },
-    // Retrato próprio pendente (o lote estourou 1 geração): até o Lote 7 usa o retrato do Arqueiro (_class_).
-    assets: { atlas: "heroes/ranger_nomad" },
+    assets: { portrait: "portraits/heroes/hero_arqueiro_nomade", atlas: "heroes/ranger_nomad" },
     attributeDelta: { dexterity: 4, intelligence: -1, charisma: -3 },
   },
 ];

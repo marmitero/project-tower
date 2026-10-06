@@ -1046,3 +1046,23 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 **Alternativas rejeitadas:** (a) trocar "roubo de vida" da Ceifeira por uma regra nova no engine antes do L7 (não é regra do `Master-Prompt.md` e o lote é de arte); (b) gerar 4 retratos de invocadores em vez do Nômade (deixaria uma dívida antiga aberta e o Nômade é jogável agora); (c) usar a 10ª geração para mais um retrato (a refação do Necromante era obrigatória).
 
 **Consequências:** `HERO_ROSTER` = 26; `skills` = 35 (25 ativas); manifesto +8 atlas e +8 retratos. **A meta de heróis da Onda 1 está cumprida** — o L7 fica só com retratos (4 folhas) + andar 5, e os lotes L8–L11 com os andares 6–10.
+
+---
+
+## ADR-043 — Lote 7 da arte: 16 retratos (26/26 heróis com retrato próprio), arena do andar 5 e 3 inimigos do andar 5
+
+**Data:** 2026-10-06 · **Status:** ✅ Aceita (aguarda o "lote 07 aprovado") · **Tipo:** B (arte + dados) · **Pedido do usuário:** *"prossiga com o lote 7"*
+
+**Gerações: 8/10 (2 de reserva).** 4 folhas 2×2 de retratos de busto (16 retratos), 1 kit de arena 4×4 (`f05_ecos`) e 3 atlas de inimigos (Sentinela de Cristal, Duelista Fantasma, Espectro Sussurrante). Procedência registrada em `assets/generated/provenance.json` e `PROVENANCE.md`.
+
+| Item | Decisão |
+|---|---|
+| Retratos dos heróis | 4 folhas 2×2 (16 retratos): Folha A (Borin, Cavaleiro Rubro, Mestre Hakon, Lorde Valdemar); Folha B (Rik, Brutus, Elora, Amir); Folha C (Cinder, Vasko, Morcha, Sylvara); Folha D (Baalor, Nyra, Aldric, Maelis). **100% dos 26 heróis do jogo agora possuem retrato próprio dedicado**, zerando a dívida visual herdada dos lotes anteriores |
+| Arena do Andar 5 | `f05_ecos` (Salão dos Ecos): paredes azul-marinho com cristais ciano embutidos, tocha de cristal, estandarte azul e prata, portão em arco de cristal e piso de mármore escuro. O piso gerado com luminância 0,05 foi corrigido deterministicamente com `floorGain: 2.4` (luminância 0,10–0,11, dentro da faixa 0,10–0,55 e emenda em X contínua) |
+| Inimigos do Andar 5 (3 de 5) | **Sentinela de Cristal** (tanque, físico, mult 1,02; guia `orc`, estilo `mud_toad`, 184 px, âncora 0 px, cinemática e IoU 100% ok) · **Duelista Fantasma** (dano, físico, mult 1,08; guia `skeleton`, estilo `royal_mummy`, 184 px, âncora 0 px, paleta 346 cores) · **Espectro Sussurrante** (veloz/voador, mágico, mult 1,05; guia `bat`, estilo `spark_imp`, 133 px na faixa 125–140 px de flyer) |
+| Balanceamento | `npm run report:balance` confirma perda de HP por combate dentro dos alvos ideais: Sentinela de Cristal 37% (alvo tanque ≈ 38%), Duelista Fantasma 44% (alvo dano ≈ 35–44%), Espectro Sussurrante 23% (alvo veloz ≈ 22–24%). Ritmo das 4 horas e progressão inalterados |
+| Pool do Andar 5 | Sentinela de Cristal (peso 4), Duelista Fantasma (peso 4), Espectro Sussurrante (peso 3) e Crânio Necrovela (peso 2, mago provisório até o Lote 8). Sem elite no andar 5 até o Maestro do Vazio (Lote 8), respeitando a regra de ausência de elite nos andares 5–8 |
+| Verificação | Testes verdes (783 testes + 28 de arquitetura), 732 requisições HTTP 200 no bundle de preview, capturas no Chromium real em `docs/art-review/lote-07/` |
+
+**Consequências:** Roster de heróis 100% ilustrado com retratos individuais (26/26); roster de inimigos cresce de 25 para 28; arenas geradas passam de 4 para 5. Próximo passo: **Lote 8** (Cantor de Ecos e Maestro do Vazio para fechar o andar 5 + arena 6 Fornalha Esquecida + 4 inimigos do andar 6 + arena 7 Jardim Gélido).
+

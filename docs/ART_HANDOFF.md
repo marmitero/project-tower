@@ -32,15 +32,16 @@
 | L3 | 8 inimigos (andares 2–4) | 8 | 037 | ✅ aprovado |
 | L4 | Andar 4 completo, **Clérigo** (5ª classe, engine de cura, 5 identidades, 4 retratos) | 8 | 038/039 | ✅ aprovado |
 | L5 | 7 heróis novos + Ossian liberado → **18 heróis**; 8 skills assinatura | 10 | 040 | ✅ aprovado (2026-10-04) |
-| L6 | **Arcanista 5/5 e Invocador 5/5** + Arqueiro Nômade → **26 heróis**; 8 skills assinatura; 4 retratos próprios | 10 | 042 | ⏳ **aguarda "lote 06 aprovado"** |
+| L6 | **Arcanista 5/5 e Invocador 5/5** + Arqueiro Nômade → **26 heróis**; 8 skills assinatura; 4 retratos próprios | 10 | 042 | ✅ aprovado (2026-10-06) |
+| L7 | **16 retratos (26/26 heróis com retrato próprio)** + arena f05_ecos + 3 inimigos andar 5 (Sentinela, Duelista, Espectro) | 8 | 043 | ⏳ **aguarda "lote 07 aprovado"** |
 
-**Próximo: Lote 7** — só depois do "lote 06 aprovado". Plano detalhado em §9.
+**Próximo: Lote 8** — só depois do "lote 07 aprovado". Plano detalhado em §9.
 
-> **Reverificação (2026-10-05):** o sandbox foi reciclado e o working tree voltou ao merge da `main` (Lote 5); a branch da sessão foi recuperada com `git fetch origin arena/01a106b8-project-tower && git reset --hard origin/arena/01a106b8-project-tower` (§4). `npm run check` verde — **783 testes + 28 de arquitetura**, assets/manifesto em dia e o bundle do preview com **681 requisições HTTP 200**. Se você abrir o repositório e `docs/art-review/lote-06/` não existir, é isso que aconteceu: recupere a branch antes de qualquer coisa.
+> **Atualização Lote 7 (2026-10-06):** Lote 6 aprovado pelo usuário; Lote 7 entregue com 8 gerações (2 reservas restantes). Roster de heróis 100% coberto com retratos dedicados (26/26); Andar 5 implementado com kit `f05_ecos` e 3 novos inimigos com atlas próprio (`crystal_sentry`, `ghost_duelist`, `whispering_wraith`). `npm run check` verde — **783 testes + 28 de arquitetura**, preview com **732 requisições HTTP 200**.
 
-Metas numéricas (Onda 1): 25 heróis (**26 — meta batida no L6**) · 12 retratos do Rei (**feito**) · 10 arenas (hoje **4**) · 50 inimigos nos andares 1–10 (hoje **25 no roster**, andares 1–4 completos) · UI GBA + login (**feito**).
+Metas numéricas (Onda 1): 25 heróis (**26 — meta batida no L6, 100% com retrato no L7**) · 12 retratos do Rei (**feito**) · 10 arenas (hoje **5**) · 50 inimigos nos andares 1–10 (hoje **28 no roster**, andares 1–4 completos, andar 5 com 3 atlas novos) · UI GBA + login (**feito**).
 
-Pendências de retrato (contam para o L7): **17 dos 26 heróis** ainda usam o retrato da classe — os 9 com retrato próprio são os 4 clérigos, Vorath, Criomante, Tempestuário, Mago Ancião e Ossian.
+Pendências de retrato: **0** — todos os 26 heróis agora possuem retrato próprio dedicado no jogo.
 
 ---
 
@@ -209,14 +210,14 @@ Depois de qualquer asset: `node scripts/build-assets.mjs` (regenera `apps/game-w
 
 ## 9. Próximo lote e o restante da fila (ajuste pelo roadmap §9, que é a fonte do plano)
 
-**Lote 7 (próximo, após "lote 06 aprovado"):** **4 folhas de retratos** (14 heróis sem retrato próprio — lista no §7.1; 2 lugares de reserva dentro das folhas) **+ arena do andar 5 (Salão de Cristal azul, colunas, mármore polido, lustres)** **+ 3 inimigos do andar 5** (Sentinela de Cristal · Duelista Fantasma · Espectro Sussurrante) = **8 gerações, 2 de reserva**. Guia dos inimigos: `orc`/`skeleton`/`bat` conforme a silhueta; skills novas para eles ainda não existem (inimigos usam ataque básico).
-**Lote 8:** 2 inimigos restantes do andar 5 (Cantor de Ecos, Maestro do Vazio) + arena 6 (Fornalha Esquecida) + 4 inimigos do andar 6 + arena 7 (Jardim Gélido) = 8.
+**Lote 7 (entregue, aguarda "lote 07 aprovado"):** **4 folhas de retratos** (16 retratos, 26/26 heróis com retrato próprio) **+ arena do andar 5 (`f05_ecos`, Salão dos Ecos)** **+ 3 inimigos do andar 5** (Sentinela de Cristal · Duelista Fantasma · Espectro Sussurrante) = **8 gerações usadas, 2 de reserva**.
+**Lote 8 (próximo, após "lote 07 aprovado"):** 2 inimigos restantes do andar 5 (Cantor de Ecos, Maestro do Vazio) + arena 6 (Fornalha Esquecida) + 4 inimigos do andar 6 + arena 7 (Jardim Gélido) = 8.
 **L9:** 4 inimigos do andar 7 + arena 8 + 3 inimigos do andar 8 = 8.
 **L10:** 1 inimigo restante do andar 8 + arena 9 + 4 inimigos do andar 9 + 1 do andar 10 = 7.
 **L11:** 3 inimigos restantes do andar 10 (Guerreiro Eterno, Oráculo dos Passos, **Arqueiro de Elite**) + reservas para refação = **andares 1–10 completos**.
 **Ferramenta pendente (aprovada pelo usuário, momento a critério do agente):** validação de movimento **por plano corporal** (quadrúpede, inseto, rastejante) — perfil `--body` em `art.mjs ingest/validate` que relaxa limiares de movimento/IoU para corpos que não casam com o guia bípede/blob (hoje Cão de Ossos e Escaravelho foram aprovados à mão). Implemente **antes do primeiro lote com quadrúpedes/insetos** (andares 7–8, conforme a tabela do roadmap §3.1), com teste e ADR.
 **Depois da arte:** Fase 14 — Painel Admin (`docs/ADMIN_PANEL.md`) e Fase Online (Google Auth, Supabase, Mercado da comunidade).
-**Estimativa atual:** ~5 lotes de arte (L7–L11) + Fase 14 ⇒ ~6 etapas até a Onda 1 completa (o MVP *local* já é jogável desde a Fase 13).
+**Estimativa atual:** ~4 lotes de arte (L8–L11) + Fase 14 ⇒ ~5 etapas até a Onda 1 completa (o MVP *local* já é jogável desde a Fase 13).
 
 ## 10. Armadilhas (cada uma já custou tempo)
 

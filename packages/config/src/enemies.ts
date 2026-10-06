@@ -131,6 +131,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "guardian_statue", name: "Estátua Guardiã", role: "tank", damageType: "physical", statMultiplier: 1.0,
       attributes: attrs(21, 4, 38, 4, 21),
       assets: { sheets: charSheets("orc"), atlas: "enemies/guardian_statue" } },
+    // Lote 7 (ADR-043): tanque do andar 5 (Salão dos Ecos) — atlas próprio.
+    { id: "crystal_sentry", name: "Sentinela de Cristal", role: "tank", damageType: "physical", statMultiplier: 1.02,
+      attributes: attrs(22, 4, 38, 4, 18),
+      assets: { sheets: charSheets("orc"), atlas: "enemies/crystal_sentry" } },
     // --- dps ----------------------------------------------------------
     { id: "goblin", name: "Goblin", role: "dps", damageType: "physical", statMultiplier: 1.23,
       attributes: attrs(28, 20, 14, 6, 8),
@@ -139,6 +143,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "sewer_rat", name: "Rato de Esgoto Bruto", role: "dps", damageType: "physical", statMultiplier: 1.12,
       attributes: attrs(32, 16, 16, 4, 8),
       assets: { sheets: charSheets("goblin"), atlas: "enemies/sewer_rat" } },
+    // Lote 7 (ADR-043): dano do andar 5 (Salão dos Ecos) — atlas próprio.
+    { id: "ghost_duelist", name: "Duelista Fantasma", role: "dps", damageType: "physical", statMultiplier: 1.08,
+      attributes: attrs(32, 16, 22, 6, 10),
+      assets: { sheets: charSheets("skeleton"), atlas: "enemies/ghost_duelist" } },
     { id: "orc", name: "Orc", role: "dps", damageType: "physical", statMultiplier: 1.01,
       attributes: attrs(34, 10, 22, 4, 10),
       assets: { portrait: "portraits/orc", sheets: charSheets("orc") } },
@@ -159,6 +167,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "tomb_scarab", name: "Escaravelho de Tumba", role: "swift", damageType: "physical", statMultiplier: 1.0,
       attributes: attrs(15, 31, 16, 4, 9),
       assets: { sheets: charSheets("slime"), atlas: "enemies/tomb_scarab" } },
+    // Lote 7 (ADR-043): veloz do andar 5 (Salão dos Ecos) — atlas próprio.
+    { id: "whispering_wraith", name: "Espectro Sussurrante", role: "swift", damageType: "magic", statMultiplier: 1.05,
+      attributes: attrs(14, 28, 16, 12, 16),
+      assets: { sheets: charSheets("bat"), atlas: "enemies/whispering_wraith" } },
     // --- caster -------------------------------------------------------
     { id: "toxicbat", name: "Morcego Tóxico", role: "caster", damageType: "magic", statMultiplier: 1.1,
       attributes: attrs(6, 24, 12, 28, 14),

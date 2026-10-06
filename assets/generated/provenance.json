@@ -600,6 +600,97 @@
         "guide_necromancer.magenta"
       ],
       "verdict": "reprovada (hurt/death fora do guia) -> refeita"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L7",
+      "asset": "portraits/heroes (Borin, Cavaleiro Rubro, Mestre Hakon, Lorde Valdemar)",
+      "kind": "portrait",
+      "prompt": "Folha 2x2 de retratos de busto sobre magenta: Borin (escudeiro leal), Cavaleiro Rubro (elmo e plumas rubras), Mestre Hakon (monge marcial com contas de ferro) e Lorde Valdemar (armadura negra e manto de pele) — 512 px + 256 px.",
+      "refs": [
+        "king_ref"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L7",
+      "asset": "portraits/heroes (Rik, Brutus, Elora, Amir)",
+      "kind": "portrait",
+      "prompt": "Folha 2x2 de retratos de busto sobre magenta: Rik (caçador furtivo mascarado), Brutus (besteiro veterano de couro tachado), Elora (guardiã elfa com coroa de folhas) e Amir (arqueiro nômade com turbante e óculos de bronze) — 512 px + 256 px.",
+      "refs": [
+        "king_ref"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L7",
+      "asset": "portraits/heroes (Cinder, Vasko, Morcha, Sylvara)",
+      "kind": "portrait",
+      "prompt": "Folha 2x2 de retratos de busto sobre magenta: Cinder (piromante com capuz vermelho e brasas nos olhos), Vasko (necromante com máscara de crânio), Morcha (bruxa do pântano de olhos amarelos) e Sylvara (ceifeira sombria sob capuz) — 512 px + 256 px.",
+      "refs": [
+        "king_ref"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L7",
+      "asset": "portraits/heroes (Baalor, Nyra, Aldric, Maelis)",
+      "kind": "portrait",
+      "prompt": "Folha 2x2 de retratos de busto sobre magenta: Baalor (demonólogo com chifres e runas), Nyra (oráculo de venda estrelada e tiara), Aldric (cavaleiro campeão de elmo com pluma azul) e Maelis (maga estelar de cabelo índigo) — 512 px + 256 px.",
+      "refs": [
+        "king_ref"
+      ],
+      "verdict": "aprovado"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L7",
+      "asset": "arenas/f05_ecos",
+      "kind": "arena",
+      "prompt": "Kit de arena 4x4 do andar 5 (Salão dos Ecos): paredes azul-marinho com cristais ciano, tocha de cristal, estandarte azul e prata, portão em arco de cristal, piso de mármore polido escuro e adereços baixos de cristal.",
+      "refs": [
+        "kit_f04_catacumbas"
+      ],
+      "verdict": "aprovado (floorGain 2.4)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L7",
+      "asset": "enemies/crystal_sentry",
+      "kind": "atlas",
+      "prompt": "Sentinela de Cristal (tanque do andar 5): golem ancestral de quartzo azul e placas de pedra com núcleo de energia ciano no peito. Guia orc magenta + estilo do Sapo-Lodo.",
+      "refs": [
+        "guide_orc.magenta",
+        "style_mud_toad"
+      ],
+      "verdict": "aprovado (IoU e cinemática 100% ok)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L7",
+      "asset": "enemies/ghost_duelist",
+      "kind": "atlas",
+      "prompt": "Duelista Fantasma (dano do andar 5): espectro nobre esguio de gibão azul e chapéu de pluma, empunhando florete espectral. Guia skeleton magenta + estilo da Múmia Real.",
+      "refs": [
+        "guide_skeleton.magenta",
+        "style_royal_mummy"
+      ],
+      "verdict": "aprovado (paleta 346 cores, âncora 0px)"
+    },
+    {
+      "date": "2026-10-06",
+      "batch": "L7",
+      "asset": "enemies/whispering_wraith",
+      "kind": "atlas",
+      "prompt": "Espectro Sussurrante (veloz/voador do andar 5): aparição flutuante em farrapos etéreos azul-frio com olhos brilhantes e garras fantasmagóricas. Guia bat magenta + estilo do Duende de Faíscas.",
+      "refs": [
+        "guide_bat.magenta",
+        "style_spark_imp"
+      ],
+      "verdict": "aprovado (voador 133px na faixa 125-140px)"
     }
   ]
 }
