@@ -129,7 +129,8 @@ function themeForFloor(index: number): string {
   if (index >= 21 && index <= 25) return "p03_jade";
   if (index >= 26 && index <= 30) return "p04_obsidiana";
   if (index >= 31 && index <= 35) return "p05_celeste";
-  return "pináculo de jade";
+  if (index >= 36 && index <= 40) return "p06_vazio";
+  return "p06_vazio";
 }
 
 /**
@@ -236,15 +237,12 @@ export const DEFAULT_POOL_PLAN: ReadonlyArray<{
   { enemyId: "dawn_stalker", fromFloor: 31, toFloor: 35, weight: 3 },
   { enemyId: "solar_hierophant", fromFloor: 31, toFloor: 35, weight: 2 },
   { enemyId: "celestial_archon", fromFloor: 31, toFloor: 35, weight: 1 },
-  // Andares 36+ — ainda com os inimigos de antes; trocam por bioma nos lotes futuros (docs/STYLIZATION_ROADMAP.md §3.3).
-  { enemyId: "toxicbat", fromFloor: 36, weight: 2 },
-  { enemyId: "bat", fromFloor: 36, weight: 3 },
-  { enemyId: "slime", fromFloor: 36, weight: 2 },
-  { enemyId: "goblin", fromFloor: 36, weight: 2 },
-  { enemyId: "skeleton", fromFloor: 36, weight: 3 },
-  { enemyId: "orc", fromFloor: 36, weight: 3 },
-  { enemyId: "shadowgoblin", fromFloor: 36, weight: 1 },
-  { enemyId: "elitearcher", fromFloor: 36, weight: 1 },
+  // Andares 36–40 — Pináculo do Vazio (Lote 17, Bioma 6 da Onda 2 — fechamento dos 40 andares): Colosso do Vazio T · Retalhador da Fenda D · Rastejador Astral V · Tecedor da Nebulosa M · Monarca do Vazio E (raro).
+  { enemyId: "void_colossus", fromFloor: 36, weight: 4 },
+  { enemyId: "rift_slayer", fromFloor: 36, weight: 4 },
+  { enemyId: "astral_crawler", fromFloor: 36, weight: 3 },
+  { enemyId: "nebula_weaver", fromFloor: 36, weight: 2 },
+  { enemyId: "void_monarch", fromFloor: 36, weight: 1 },
 ];
 
 function poolForFloor(index: number): FloorPoolEntry[] {

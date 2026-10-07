@@ -57,6 +57,7 @@ export function defaultArenaKits(): ArenaKitDef[] {
   const p03 = (n: string) => `arenas/p03_jade/${n}`;
   const p04 = (n: string) => `arenas/p04_obsidiana/${n}`;
   const p05 = (n: string) => `arenas/p05_celeste/${n}`;
+  const p06 = (n: string) => `arenas/p06_vazio/${n}`;
   return [
     {
       // Lote 1 (ADR-033): primeiro kit GERADO — a Entrada da Torre (andar 1). Pedra azul-acinzentada,
@@ -360,6 +361,27 @@ export function defaultArenaKits(): ArenaKitDef[] {
         { assetId: p05("prop_1"), weight: 3 },
         { assetId: p05("prop_2"), weight: 2 },
         { assetId: p05("prop_3"), weight: 2 },
+      ],
+      tint: 0xffffff,
+    },
+    {
+      // Lote 17 (ADR-054): Pináculo do Vazio (andares 36–40, Bioma 6 da Onda 2 — fechamento dos 40 andares).
+      // Alvenaria de pedra cósmica escura com fendas estelares luminescentes, tocha de chama cósmica astral,
+      // estandarte de seda do vazio com runas celestes, portão cósmico e piso de lajes de meteoro com veios astrais.
+      id: "p06_vazio",
+      name: "Pináculo do Vazio",
+      wall: [
+        p06("wall_0"), p06("wall_1"), p06("wall_2"), p06("wall_0"), p06("wall_4"), p06("wall_1"),
+        p06("banner"), p06("wall_2"), p06("wall_3"), p06("wall_0"), p06("wall_4"), p06("gate"),
+      ],
+      torch: p06("torch"),
+      torchEvery: 4,
+      floor: [p06("floor_0"), p06("floor_1"), p06("floor_2"), p06("floor_3"), p06("floor_0")],
+      props: [
+        { assetId: p06("prop_0"), weight: 3 },
+        { assetId: p06("prop_1"), weight: 3 },
+        { assetId: p06("prop_2"), weight: 2 },
+        { assetId: p06("prop_3"), weight: 2 },
       ],
       tint: 0xffffff,
     },

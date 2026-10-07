@@ -1253,7 +1253,27 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 | Roster de Inimigos | O roster atinge **75 inimigos** (50 da Onda 1 + 5 do Bioma 1 + 5 do Bioma 2 + 5 do Bioma 3 + 5 do Bioma 4 + 5 do Bioma 5 da Onda 2), todos com sprites/atlas reais e zero placeholders |
 | Verificação | `npm run check` verde (783 testes unitários/integração + 28 testes de arquitetura), 939 requisições HTTP 200 no bundle de preview (18,26 MB em arte gerada, dentro do orçamento de 25 MB), contact sheets e fatias em `docs/art-review/lote-16/` |
 
-**Consequências:** Quinto bioma da Onda 2 (Pináculo Celeste, andares 31–35) entregue com kit de arena e família de 5 inimigos exclusiva. Próxima etapa após aprovação do usuário: **Lote 17** — Bioma 6 da Onda 2 (Pináculo do Vazio, andares 36–40: pedra flutuante, cosmos, névoa estelar, kit de arena e 5 inimigos da família do vazio, completando todos os 40 andares da Torre com arenas e famílias dedicadas).
+**Consequências:** Quinto bioma da Onda 2 (Pináculo Celeste, andares 31–35) entregue com kit de arena e família de 5 inimigos exclusiva. Aprovado pelo usuário em 2026-10-07.
+
+---
+
+## ADR-054 — Lote 17 da arte: Onda 2 — Bioma 6 (Pináculo do Vazio, andares 36 a 40), kit de arena p06_vazio e 5 inimigos da família do Vazio — FECHAMENTO DA ONDA 2 E DOS 40 ANDARES DA TORRE (2026-10-07)
+
+**Data:** 2026-10-07 · **Status:** ✅ Aceita (aguarda o "lote 17 aprovado") · **Tipo:** B (arte + dados) · **Gatilho:** Aprovação do Lote 16 e fechamento da Onda 2 (Pináculos em famílias, andares 11–40).
+
+**Gerações: 10/10 (0 reservas restantes, teto estrito de 10 gerações por sessão rigorosamente respeitado).** 1 kit de arena 4×4 (`p06_vazio`) e 5 atlas de inimigos (`void_colossus`, `rift_slayer`, `astral_crawler`, `nebula_weaver`, `void_monarch`) + 4 refações do colosso por margem, proporção e reflow (corrigido com arquétipo `guide_orc` e paleta contrastante carvão/ciano sem sangramento para o magenta de fundo). Procedência registrada em `assets/generated/provenance.json` e `PROVENANCE.md`.
+
+| Item | Decisão |
+|---|---|
+| Arena do Pináculo do Vazio (Andares 36–40) | `p06_vazio`: alvenaria de pedra cósmica escura com fendas estelares e runas astrais luminescentes, tocha de chama cósmica astral em ferro negro, estandarte de seda do vazio azul-meia-noite com constelações, portão cósmico em arco de meteorito revelando o espaço estelar e piso de lajes de meteorito com veios astrais. 16 ladrilhos fatiados, 0 magenta, emenda de parede 0.0 ok, emenda de piso 0.0 ok, luminância de piso 0.14 ok, tamanho 84.6 KB |
+| Inimigos do Pináculo do Vazio (5 novos) | **Colosso do Vazio** (tanque, físico, mult 0,96; guia `orc`, estilo `guardian_borin`, 199 px, âncora 0 px, 0.000% chroma, 349 cores, armadura monolítica de meteorito e fendas ciano) · **Retalhador da Fenda** (dano, físico, mult 1,05; guia `hero`, estilo `guardian_borin`, 184 px, âncora 0 px, 0.000% chroma, 566 cores, espada de aço negro com fio ciano sem arcos de corte) · **Rastejador Astral** (veloz, físico, mult 1,05; guia `slime`, estilo `mud_toad`, 115 px, âncora 0 px, 0.000% chroma, carapaça cósmica lisa sem partículas soltas, hurt ajustado a 10.4% de erro) · **Tecedor da Nebulosa** (mago, mágico, mult 0,90; guia `mage`, estilo `cleric_aurora`, 184 px, âncora 0 px, 0.011% chroma, 585 cores, cajado com cristal estelar ciano, 100% verde nos 5 movimentos) · **Monarca do Vazio** (elite raro, físico, mult 1,10; guia `orc`, estilo `goblin_captain`, 199 px, âncora 0 px, 0.000% chroma, 480 cores, coroa de espinhos de meteorito e greatsword física). Família do vazio cobre 5/5 papéis dos andares 36 a 40 |
+| Pool dos Andares 36 a 40 | Colosso do Vazio (4), Retalhador da Fenda (4), Rastejador Astral (3), Tecedor da Nebulosa (2), Monarca do Vazio (1, elite raro). TODOS os 40 andares da Torre agora possuem arena exclusiva e família dedicada de 5 inimigos |
+| Roster de Inimigos | O roster atinge **80 inimigos** (50 da Onda 1 + 30 da Onda 2 nos 6 biomas de Pináculos), 100% com sprites/atlas reais e zero placeholders |
+| Kits de Arena | **16 kits de arena dedicados** (10 da Onda 1 cobrindo andares 1 a 10 + 6 da Onda 2 cobrindo andares 11 a 40) |
+| Verificação | `npm run check` verde (783 testes unitários/integração + 28 testes de arquitetura), 960 requisições HTTP 200 no bundle de preview (19,29 MB em arte gerada, dentro do orçamento de 25 MB), contact sheets e fatias em `docs/art-review/lote-17/` |
+
+**Consequências:** Sexto e último bioma da Onda 2 (Pináculo do Vazio, andares 36–40) entregue. **ONDA 2 DE ARTE CONCLUÍDA COM ÊXITO TOTAL!** A Torre inteira (andares 1 a 40) possui identidade visual própria, arenas sem emendas e pools balanceados em 5 papéis. Próximas etapas após validação do usuário: **FASE 14 — Painel Admin** (`docs/ADMIN_PANEL.md`) e Fase Online.
+
 
 
 

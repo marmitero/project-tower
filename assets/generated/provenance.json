@@ -1406,6 +1406,86 @@
       "kind": "enemy",
       "prompt": "Sprite sheet in 16-bit dark fantasy pixel art of Celestial Archon (winged holy champion, heavy gold armor, greatsword)",
       "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L17",
+      "asset": "kit_p06_vazio",
+      "kind": "arena",
+      "prompt": "A 4x4 grid of 16 pixel art arena tiles for Pináculo do Vazio (cosmic void spire, midnight stone, astral flames, 1024x1024 square)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L17",
+      "asset": "void_colossus",
+      "kind": "enemy",
+      "prompt": "Sprite sheet in 16-bit dark fantasy pixel art of Void Colossus (attempt 1, failed on margins in hurt/death)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L17",
+      "asset": "void_colossus",
+      "kind": "enemy",
+      "prompt": "Sprite sheet in 16-bit dark fantasy pixel art of Void Colossus (attempt 2, failed on 2-row reflow)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L17",
+      "asset": "void_colossus",
+      "kind": "enemy",
+      "prompt": "Sprite sheet in 16-bit dark fantasy pixel art of Void Colossus (attempt 3, failed on chroma bleed)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L17",
+      "asset": "void_colossus",
+      "kind": "enemy",
+      "prompt": "Sprite sheet in 16-bit dark fantasy pixel art of Void Colossus (attempt 4, failed on 16:9 ratio)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L17",
+      "asset": "void_colossus",
+      "kind": "enemy",
+      "prompt": "Sprite sheet in 16-bit dark fantasy pixel art of Void Colossus (attempt 5, dark stone golem, cyan fissures, 4x5 portrait)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L17",
+      "asset": "rift_slayer",
+      "kind": "enemy",
+      "prompt": "Sprite sheet in 16-bit dark fantasy pixel art of Rift Slayer (cosmic dark warrior, cyan edged sword, 4x5 portrait)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L17",
+      "asset": "astral_crawler",
+      "kind": "enemy",
+      "prompt": "Sprite sheet in 16-bit dark fantasy pixel art of Astral Crawler (swift 4-legged cosmic beast, cyan claws, 4x5 portrait)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L17",
+      "asset": "nebula_weaver",
+      "kind": "enemy",
+      "prompt": "Sprite sheet in 16-bit dark fantasy pixel art of Nebula Weaver (cosmic void sorcerer, hooded robes, cyan crystal staff, 4x5 portrait)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L17",
+      "asset": "void_monarch",
+      "kind": "enemy",
+      "prompt": "Sprite sheet in 16-bit dark fantasy pixel art of Void Monarch (spiked cosmic sovereign, dark greatsword, cyan blade edge, 4x5 portrait)",
+      "refs": []
     }
   ]
 }

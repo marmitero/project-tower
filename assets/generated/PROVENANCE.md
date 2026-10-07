@@ -207,3 +207,18 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 5 | `solar_hierophant` | enemy | — | — | Sprite sheet in 16-bit dark fantasy pixel art of Solar Hierophant (sun priest, white liturgical robes, golden sun staff) |
 | 6 | `celestial_archon` | enemy | — | — | Sprite sheet in 16-bit dark fantasy pixel art of Celestial Archon (winged holy champion, heavy gold armor, greatsword) |
 
+## Lote L17 — 10/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `kit_p06_vazio` | arena | — | — | A 4x4 grid of 16 pixel art arena tiles for Pináculo do Vazio (cosmic void spire, midnight stone, astral flames, 1024x102 |
+| 2 | `void_colossus` | enemy | — | — | Sprite sheet in 16-bit dark fantasy pixel art of Void Colossus (attempt 1, failed on margins in hurt/death) |
+| 3 | `void_colossus` | enemy | — | — | Sprite sheet in 16-bit dark fantasy pixel art of Void Colossus (attempt 2, failed on 2-row reflow) |
+| 4 | `void_colossus` | enemy | — | — | Sprite sheet in 16-bit dark fantasy pixel art of Void Colossus (attempt 3, failed on chroma bleed) |
+| 5 | `void_colossus` | enemy | — | — | Sprite sheet in 16-bit dark fantasy pixel art of Void Colossus (attempt 4, failed on 16:9 ratio) |
+| 6 | `void_colossus` | enemy | — | — | Sprite sheet in 16-bit dark fantasy pixel art of Void Colossus (attempt 5, dark stone golem, cyan fissures, 4x5 portrait |
+| 7 | `rift_slayer` | enemy | — | — | Sprite sheet in 16-bit dark fantasy pixel art of Rift Slayer (cosmic dark warrior, cyan edged sword, 4x5 portrait) |
+| 8 | `astral_crawler` | enemy | — | — | Sprite sheet in 16-bit dark fantasy pixel art of Astral Crawler (swift 4-legged cosmic beast, cyan claws, 4x5 portrait) |
+| 9 | `nebula_weaver` | enemy | — | — | Sprite sheet in 16-bit dark fantasy pixel art of Nebula Weaver (cosmic void sorcerer, hooded robes, cyan crystal staff,  |
+| 10 | `void_monarch` | enemy | — | — | Sprite sheet in 16-bit dark fantasy pixel art of Void Monarch (spiked cosmic sovereign, dark greatsword, cyan blade edge |
+
