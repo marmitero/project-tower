@@ -1598,6 +1598,62 @@
       "kind": "humanoid",
       "prompt": "Pixel art sprite sheet of a solar emperor celestial boss (Imperador Solar)",
       "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_3",
+      "asset": "enemies/boss_ceifador_vazio",
+      "kind": "humanoid",
+      "prompt": "Pixel art sprite sheet of a void reaper wraith boss (Ceifador do Vazio)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_3",
+      "asset": "enemies/boss_monolito_cristal",
+      "kind": "elite",
+      "prompt": "Pixel art sprite sheet of an ancient crystal monolith titan boss (Monólito de Cristal)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_3",
+      "asset": "enemies/boss_behemoth_infernal",
+      "kind": "elite",
+      "prompt": "Pixel art sprite sheet of a volcanic titan behemoth boss (Behemoth Infernal)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_3",
+      "asset": "enemies/boss_behemoth_infernal",
+      "kind": "elite",
+      "prompt": "Full vertical 1024x1280 pixel art sprite sheet of a volcanic titan behemoth boss",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_3",
+      "asset": "enemies/boss_couraceiro_astral",
+      "kind": "elite",
+      "prompt": "Full vertical 1024x1280 pixel art sprite sheet of an astral dreadnought juggernaut boss",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_3",
+      "asset": "enemies/boss_arauto_pesadelo",
+      "kind": "humanoid",
+      "prompt": "Full vertical 1024x1280 pixel art sprite sheet of a nightmare harbinger aberration boss",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_3",
+      "asset": "enemies/boss_tecedor_tempo",
+      "kind": "humanoid",
+      "prompt": "Full vertical 1024x1280 pixel art sprite sheet of a temporal chronomancer boss",
+      "refs": []
     }
   ]
 }

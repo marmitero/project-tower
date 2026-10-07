@@ -1340,6 +1340,30 @@ Proveniência auditada e registrada em `assets/generated/provenance.json` e `PRO
 Catálogo estendido `BOSS_EXPANDED_CATALOG` exportado em `packages/config/src/boss.ts` e atlas do Lorde das Sombras e Colosso integrados.
 `npm run check` verde: 783 testes + 28 arquitetura, 984 requisições HTTP 200.
 
+---
+
+## ADR-058 — Lote Boss 3: Chefes 13 a 18 (Atlas e Retratos Dedicados) (2026-10-07)
+
+**Data:** 2026-10-07 · **Status:** ✅ Aceita (aguarda "lote boss 3 aprovado") · **Tipo:** B (arte + dados) · **Gatilho:** Continuação da produção de arte da Etapa 13.1 (Lote Boss 3).
+
+**Gerações: 7/10 (3 reservas restantes, orçamento respeitado).**
+6 novos atlas completos `ita-atlas-v1` (1024×1280, 20 quadros) e 6 retratos 128×128 correspondentes em `assets/generated/portraits/bosses/`:
+1. **Ceifador do Vazio (`boss_ceifador_vazio`)** — Espectro da Extinção (Nv 5000, Físico · guia `mage`, escala 184 px, âncora 0 px, 0.055% chroma, espectro encapuzado de vestes escuras rasgadas com foice de matéria escura).
+2. **Monólito de Cristal (`boss_monolito_cristal`)** — Núcleo Geométrico Vivo (Nv 6000, Mágico · guia `orc`, escala 199 px, âncora 0 px, 0.000% chroma, núcleo prismático de basalto e cristais turquesa flutuantes).
+3. **Behemoth Infernal (`boss_behemoth_infernal`)** — Titã Vulcânico Quádruplo (Nv 7000, Físico · guia `boss`, escala 199 px, âncora 0 px, 0.000% chroma, colosso com placas de rocha vulcânica e veias de magma âmbar).
+4. **Couraceiro Astral (`boss_couraceiro_astral`)** — Fortaleza Móvel de Matéria Estelar (Nv 8000, Físico · guia `orc`, escala 199 px, âncora 0 px, 0.001% chroma, encouraçado de aço estelar com escudo de torre e maça com runas cósmicas).
+5. **Arauto do Pesadelo (`boss_arauto_pesadelo`)** — Aberração Onírica (Nv 9000, Mágico · guia `mage`, escala 184 px, âncora 0 px, 0.115% chroma, aparição com coroa de galhadas, múltiplos olhos de pesadelo e lanterna profana).
+6. **Tecedor do Tempo (`boss_tecedor_tempo`)** — Entidade Cronológica (Nv 10000, Mágico · guia `mage`, escala 184 px, âncora 0 px, 0.002% chroma, entidade cronomante com aros de bronze, engrenagens e cajado de pêndulo temporal).
+
+**Controle de Qualidade e Reprovações no Orçamento:**
+- Tentativa 1 de `boss_behemoth_infernal`: reprovada por renderização wide (1376×768 com 1 linha de conteúdo); descartada.
+- Tentativa 2 de `boss_behemoth_infernal`: re-executada com reforço de layout vertical 4×5; aprovada com escala 199 px, âncora 0 px e 0.000% chroma.
+
+Contact sheets gerados em `docs/art-review/lote-boss-3/*.contact.png`.
+Proveniência auditada e registrada em `assets/generated/provenance.json` e `PROVENANCE.md`.
+Catálogo estendido `BOSS_EXPANDED_CATALOG` em `packages/config/src/boss.ts` expandido para 10 chefes adicionais.
+`npm run check` verde: 783 testes + 28 arquitetura, 996 requisições HTTP 200.
+
 
 
 

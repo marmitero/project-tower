@@ -246,3 +246,15 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 7 | `enemies/boss_solar_emperor` | humanoid | — | — | Pixel art sprite sheet of a solar emperor celestial boss (Imperador Solar) |
 | 8 | `enemies/boss_solar_emperor` | humanoid | — | — | Pixel art sprite sheet of a solar emperor celestial boss (Imperador Solar) |
 
+## Lote L_BOSS_3 — 7/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `enemies/boss_ceifador_vazio` | humanoid | — | — | Pixel art sprite sheet of a void reaper wraith boss (Ceifador do Vazio) |
+| 2 | `enemies/boss_monolito_cristal` | elite | — | — | Pixel art sprite sheet of an ancient crystal monolith titan boss (Monólito de Cristal) |
+| 3 | `enemies/boss_behemoth_infernal` | elite | — | — | Pixel art sprite sheet of a volcanic titan behemoth boss (Behemoth Infernal) |
+| 4 | `enemies/boss_behemoth_infernal` | elite | — | — | Full vertical 1024x1280 pixel art sprite sheet of a volcanic titan behemoth boss |
+| 5 | `enemies/boss_couraceiro_astral` | elite | — | — | Full vertical 1024x1280 pixel art sprite sheet of an astral dreadnought juggernaut boss |
+| 6 | `enemies/boss_arauto_pesadelo` | humanoid | — | — | Full vertical 1024x1280 pixel art sprite sheet of a nightmare harbinger aberration boss |
+| 7 | `enemies/boss_tecedor_tempo` | humanoid | — | — | Full vertical 1024x1280 pixel art sprite sheet of a temporal chronomancer boss |
+
