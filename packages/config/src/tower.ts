@@ -125,8 +125,7 @@ function themeForFloor(index: number): string {
   if (index === 9) return "f09_sangrento";
   if (index === 10) return "f10_passos";
   if (index >= 11 && index <= 15) return "p01_arcano";
-  if (index <= 18) return "sangue e brasa";
-  if (index <= 20) return "pináculo arcano";
+  if (index >= 16 && index <= 20) return "p02_carmesim";
   if (index <= 30) return "pináculo carmesim";
   return "pináculo de jade";
 }
@@ -211,15 +210,21 @@ export const DEFAULT_POOL_PLAN: ReadonlyArray<{
   { enemyId: "arcane_wisp", fromFloor: 11, toFloor: 15, weight: 3 },
   { enemyId: "astral_sorcerer", fromFloor: 11, toFloor: 15, weight: 2 },
   { enemyId: "rift_stalker", fromFloor: 11, toFloor: 15, weight: 1 },
-  // Andares 16+ — ainda com os inimigos de antes; trocam por bioma nos lotes futuros (docs/STYLIZATION_ROADMAP.md §3.3).
-  { enemyId: "toxicbat", fromFloor: 16, weight: 2 },
-  { enemyId: "bat", fromFloor: 16, weight: 3 },
-  { enemyId: "slime", fromFloor: 16, weight: 2 },
-  { enemyId: "goblin", fromFloor: 16, weight: 2 },
-  { enemyId: "skeleton", fromFloor: 16, weight: 3 },
-  { enemyId: "orc", fromFloor: 16, weight: 3 },
-  { enemyId: "shadowgoblin", fromFloor: 16, weight: 1 },
-  { enemyId: "elitearcher", fromFloor: 16, weight: 1 },
+  // Andares 16–20 — Pináculo Carmesim (Lote 13, Bioma 2 da Onda 2): Gárgula de Sangue T · Retalhador Carmesim D · Cão de Carne V · Cultista do Sangue M · Abominação Sanguínea E (raro).
+  { enemyId: "blood_gargoyle", fromFloor: 16, toFloor: 20, weight: 4 },
+  { enemyId: "crimson_slayer", fromFloor: 16, toFloor: 20, weight: 4 },
+  { enemyId: "flesh_hound", fromFloor: 16, toFloor: 20, weight: 3 },
+  { enemyId: "blood_cultist", fromFloor: 16, toFloor: 20, weight: 2 },
+  { enemyId: "sanguine_abomination", fromFloor: 16, toFloor: 20, weight: 1 },
+  // Andares 21+ — ainda com os inimigos de antes; trocam por bioma nos lotes futuros (docs/STYLIZATION_ROADMAP.md §3.3).
+  { enemyId: "toxicbat", fromFloor: 21, weight: 2 },
+  { enemyId: "bat", fromFloor: 21, weight: 3 },
+  { enemyId: "slime", fromFloor: 21, weight: 2 },
+  { enemyId: "goblin", fromFloor: 21, weight: 2 },
+  { enemyId: "skeleton", fromFloor: 21, weight: 3 },
+  { enemyId: "orc", fromFloor: 21, weight: 3 },
+  { enemyId: "shadowgoblin", fromFloor: 21, weight: 1 },
+  { enemyId: "elitearcher", fromFloor: 21, weight: 1 },
 ];
 
 function poolForFloor(index: number): FloorPoolEntry[] {

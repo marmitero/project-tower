@@ -62,6 +62,40 @@ function cleanTileBorders(tile) {
   }
 }
 
+function unifyHorizontalSeams(tilesList, margin = 14) {
+  if (!tilesList || tilesList.length === 0) return;
+  const base = tilesList[0];
+  const { w, h } = base;
+  const edge = new Uint8Array(h * 4);
+  for (let y = 0; y < h; y++) {
+    const il = (y * w + 0) * 4;
+    const ir = (y * w + w - 1) * 4;
+    for (let c = 0; c < 3; c++) {
+      edge[y * 4 + c] = Math.round((base.data[il + c] + base.data[ir + c]) / 2);
+    }
+    edge[y * 4 + 3] = 255;
+  }
+  for (const tile of tilesList) {
+    for (let y = 0; y < h; y++) {
+      const eIdx = y * 4;
+      for (let x = 0; x < margin; x++) {
+        const wt = x / margin;
+        const idx = (y * w + x) * 4;
+        for (let c = 0; c < 3; c++) {
+          tile.data[idx + c] = Math.round(edge[eIdx + c] * (1 - wt) + tile.data[idx + c] * wt);
+        }
+      }
+      for (let x = w - margin; x < w; x++) {
+        const wt = (w - 1 - x) / margin;
+        const idx = (y * w + x) * 4;
+        for (let c = 0; c < 3; c++) {
+          tile.data[idx + c] = Math.round(edge[eIdx + c] * (1 - wt) + tile.data[idx + c] * wt);
+        }
+      }
+    }
+  }
+}
+
 /** @returns {{tiles: Record<string, {w:number,h:number,data:Uint8Array}>, report: object}} */
 export function sliceKit(sheet, { seamless = false, floorGain = 1 } = {}) {
   const cell = sheet.w / 4;
@@ -137,9 +171,14 @@ export function sliceKit(sheet, { seamless = false, floorGain = 1 } = {}) {
   });
   const group = (prefix) => KIT_LAYOUT.filter((n) => n.startsWith(prefix)).map((n) => tiles[n]);
   const walls = [...group("wall_"), tiles.torch, tiles.banner, tiles.gate];
+  const floors = group("floor_");
+  if (seamless) {
+    unifyHorizontalSeams(walls, 14);
+    unifyHorizontalSeams(floors, 14);
+  }
   const wallStrip = stripTest(walls, 24);
-  const floorStrip = stripTest(group("floor_"), 24);
-  const luma = group("floor_").map(meanLuma);
+  const floorStrip = stripTest(floors, 24);
+  const luma = floors.map(meanLuma);
   return {
     tiles,
     wallStrip: wallStrip.strip,

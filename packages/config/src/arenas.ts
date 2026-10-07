@@ -53,6 +53,7 @@ export function defaultArenaKits(): ArenaKitDef[] {
   const f09 = (n: string) => `arenas/f09_sangrento/${n}`;
   const f10 = (n: string) => `arenas/f10_passos/${n}`;
   const p01 = (n: string) => `arenas/p01_arcano/${n}`;
+  const p02 = (n: string) => `arenas/p02_carmesim/${n}`;
   return [
     {
       // Lote 1 (ADR-033): primeiro kit GERADO — a Entrada da Torre (andar 1). Pedra azul-acinzentada,
@@ -272,6 +273,27 @@ export function defaultArenaKits(): ArenaKitDef[] {
         { assetId: p01("prop_1"), weight: 3 },
         { assetId: p01("prop_2"), weight: 2 },
         { assetId: p01("prop_3"), weight: 2 },
+      ],
+      tint: 0xffffff,
+    },
+    {
+      // Lote 13 (ADR-050): Pináculo Carmesim (andares 16–20, Bioma 2 da Onda 2). Alvenaria de pedra escura
+      // manchada de carmesim com correntes de ferro negro, tocha de fogo vermelho, estandarte rubro heráldico,
+      // portão em arco ogival reforçado e piso de obsidiana e lajes avermelhadas.
+      id: "p02_carmesim",
+      name: "Pináculo Carmesim",
+      wall: [
+        p02("wall_0"), p02("wall_1"), p02("wall_2"), p02("wall_0"), p02("wall_4"), p02("wall_1"),
+        p02("banner"), p02("wall_2"), p02("wall_3"), p02("wall_0"), p02("wall_4"), p02("gate"),
+      ],
+      torch: p02("torch"),
+      torchEvery: 4,
+      floor: [p02("floor_0"), p02("floor_1"), p02("floor_2"), p02("floor_3"), p02("floor_0")],
+      props: [
+        { assetId: p02("prop_0"), weight: 3 },
+        { assetId: p02("prop_1"), weight: 3 },
+        { assetId: p02("prop_2"), weight: 2 },
+        { assetId: p02("prop_3"), weight: 2 },
       ],
       tint: 0xffffff,
     },

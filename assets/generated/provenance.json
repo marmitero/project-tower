@@ -1118,6 +1118,78 @@
         "style_royal_mummy"
       ],
       "verdict": "aprovado (115px, âncora 0px, 0.000% chroma, 513 cores, margem 4px livre, IoU idle 0.61, walk 0.57, attack 0.53, death 0.54)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L13",
+      "asset": "arenas/p02_carmesim",
+      "kind": "arena",
+      "prompt": "Kit de arena do Pináculo Carmesim (andares 16-20, Bioma 2 da Onda 2): alvenaria de pedra escura manchada de carmesim, correntes, tocha de fogo vermelho, estandarte rubro heráldico, portão em arco ogival reforçado, piso de obsidiana e lajes avermelhadas, 4x4",
+      "refs": [
+        "kit_f09_sangrento",
+        "kit_f01_entrada"
+      ],
+      "verdict": "aprovado (emenda parede 0.0, emenda piso 0.0, luma 0.18-0.19 ok, 83 KB)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L13",
+      "asset": "enemies/blood_gargoyle",
+      "kind": "atlas",
+      "prompt": "Gárgula de Sangue (tanque dos andares 16-20): gárgula colossal esculpida em obsidiana carmesim com chifres grossos e asas de pedra fechadas, postura defensiva pesada sem efeitos desenhados de ataque",
+      "refs": [
+        "guide_boss.magenta",
+        "style_guardian_borin"
+      ],
+      "verdict": "aprovado (199px, âncora 0px, 0.000% chroma, 126 cores, margem 4px livre, revisão visual aprovada)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L13",
+      "asset": "enemies/crimson_slayer",
+      "kind": "atlas",
+      "prompt": "Retalhador Carmesim (dano dos andares 16-20): guerreiro de execução gótica em cota de malha negra e carmesim com lâmina dentada de carmesim pesado, postura física de ataque sem arcos desenhados de corte",
+      "refs": [
+        "guide_hero.magenta",
+        "style_guardian_borin"
+      ],
+      "verdict": "aprovado (184px, âncora 0px, 0.001% chroma, 314 cores, margem 4px livre, silhueta idle 0.58, walk 0.62, hurt 0.47)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L13",
+      "asset": "enemies/flesh_hound",
+      "kind": "atlas",
+      "prompt": "Cão de Carne (veloz dos andares 16-20): fera quadrúpede carmesim com espigões ósseos nas costas e mandíbulas caninas afiadas, 4 patas sem membros extras ou rastros de corte",
+      "refs": [
+        "guide_slime.magenta",
+        "style_mud_toad"
+      ],
+      "verdict": "aprovado (115px, âncora 0px, 0.000% chroma, 419 cores, margem 4px livre, silhueta idle 0.55, attack 0.49, death 0.55)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L13",
+      "asset": "enemies/blood_cultist",
+      "kind": "atlas",
+      "prompt": "Cultista do Sangue (mago dos andares 16-20): taumaturgo em mantos cerimoniais bordô e negro com cajado encimado por crânio com chifres, sem raios mágicos ou explosões desenhadas no sprite",
+      "refs": [
+        "guide_mage.magenta",
+        "style_candle_skull"
+      ],
+      "verdict": "aprovado (184px, âncora 0px, 0.001% chroma, 321 cores, margem 4px livre, silhueta idle 0.57, walk 0.57, hurt 0.51, death 0.50)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L13",
+      "asset": "enemies/sanguine_abomination",
+      "kind": "atlas",
+      "prompt": "Abominação Sanguínea (elite dos andares 16-20): monstro gigante bípede de carne crua e placas ósseas com correntes de ferro negro nos ombros e garras brutais, sem membros duplicados ou efeitos de impacto desenhados",
+      "refs": [
+        "guide_boss.magenta",
+        "style_goblin_captain"
+      ],
+      "verdict": "aprovado (199px, âncora 0px, 0.001% chroma, 494 cores, margem 4px livre, revisão visual aprovada)"
     }
   ]
 }

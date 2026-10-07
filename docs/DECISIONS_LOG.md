@@ -1181,7 +1181,25 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 | Balanceamento | `npm run report:balance` e `tower-balance.test.ts` atestam combates on-curve perfeitos no Andar 11: guardian × Golem de Cristal (42% vida / 33 s), Espadachim Rúnico (36% vida / 16 s), Fogo-Fátuo Arcano (29% vida / 12 s), Feiticeiro Astral (29% vida / 11 s), Rastreador da Fenda (35% vida / 25 s). Sustain idle e ritmo de 759 h para 20.000 níveis totalmente intactos |
 | Verificação | `npm run check` verde (783 testes unitários/integração + 28 testes de arquitetura), 855 requisições HTTP 200 no bundle de preview (14,18 MB em arte gerada, dentro do orçamento de 25 MB), contact sheets e fatias em `docs/art-review/lote-12/` |
 
-**Consequências:** Primeiro bioma da Onda 2 (Pináculo Arcano, andares 11–15) entregue com kit de arena e família de 5 inimigos exclusiva. Próxima etapa após aprovação do usuário: **Lote 13** — Bioma 2 da Onda 2 (Pináculo Carmesim, andares 16–20: kit de arena e 5 inimigos da família carmesim).
+**Consequências:** Primeiro bioma da Onda 2 (Pináculo Arcano, andares 11–15) entregue com kit de arena e família de 5 inimigos exclusiva. Aprovado pelo usuário em 2026-10-07.
+
+---
+
+## ADR-050 — Lote 13 da arte: Onda 2 — Bioma 2 (Pináculo Carmesim, andares 16 a 20), kit de arena p02_carmesim e 5 inimigos da família Carmesim (2026-10-07)
+
+**Data:** 2026-10-07 · **Status:** ✅ Aceita (aguarda o "lote 13 aprovado") · **Tipo:** B (arte + dados) · **Gatilho:** Aprovação do Lote 12 e continuidade da Onda 2 (Pináculos em famílias, andares 11–40).
+
+**Gerações: 6/10 (4 reservas restantes).** 1 kit de arena 4×4 (`p02_carmesim`) e 5 atlas de inimigos (`blood_gargoyle`, `crimson_slayer`, `flesh_hound`, `blood_cultist`, `sanguine_abomination`). 100% de aproveitamento sem refações necessárias em 6 chamadas com margens amplas sem cortes e sem efeitos/arcos desenhados de ataque. Procedência registrada em `assets/generated/provenance.json` e `PROVENANCE.md`.
+
+| Item | Decisão |
+|---|---|
+| Arena do Pináculo Carmesim (Andares 16–20) | `p02_carmesim`: alvenaria de pedra escura manchada de carmesim com correntes de ferro negro, tocha de fogo vermelho, estandarte rubro heráldico com insígnias góticas, portão em arco ogival reforçado e piso de obsidiana e lajes avermelhadas. 16 ladrilhos fatiados, 0 magenta, emenda de parede 0.0 ok, emenda de piso 0.0 ok, luminância de piso 0.18–0.19 ok, tamanho 83 KB |
+| Inimigos do Pináculo Carmesim (5 novos) | **Gárgula de Sangue** (tanque, físico, mult 0,97; guia `boss`, estilo `guardian_borin`, 199 px, âncora 0 px, 0.000% chroma, 126 cores) · **Retalhador Carmesim** (dano, físico, mult 1,05; guia `hero`, estilo `guardian_borin`, 184 px, âncora 0 px, 0.001% chroma, 314 cores, IoU walk 0.62, hurt 0.47) · **Cão de Carne** (veloz, físico, mult 1,05; guia `slime`, estilo `mud_toad`, 115 px, âncora 0 px, 0.000% chroma, 419 cores, 4 patas sem cortes, IoU idle 0.55, attack 0.49, death 0.55) · **Cultista do Sangue** (mago, mágico, mult 0,90; guia `mage`, estilo `candle_skull`, 184 px, âncora 0 px, 0.001% chroma, 321 cores, IoU idle 0.57, walk 0.57, hurt 0.51, death 0.50) · **Abominação Sanguínea** (elite raro, físico, mult 1,10; guia `boss`, estilo `goblin_captain`, 199 px, âncora 0 px, 0.001% chroma, 494 cores, 20 quadros completos). Família carmesim cobre 5/5 papéis dos andares 16 a 20 |
+| Pool dos Andares 16 a 20 | Gárgula de Sangue (4), Retalhador Carmesim (4), Cão de Carne (3), Cultista do Sangue (2), Abominação Sanguínea (1, elite raro). Andares 21+ seguem nos grupos anteriores até os próximos biomas da Onda 2 |
+| Roster de Inimigos | O roster atinge **60 inimigos** (50 da Onda 1 + 5 do Bioma 1 + 5 do Bioma 2 da Onda 2), todos com sprites/atlas reais e zero placeholders |
+| Verificação | `npm run check` verde (783 testes unitários/integração + 28 testes de arquitetura), 876 requisições HTTP 200 no bundle de preview (15,18 MB em arte gerada, dentro do orçamento de 25 MB), contact sheets e fatias em `docs/art-review/lote-13/` |
+
+**Consequências:** Segundo bioma da Onda 2 (Pináculo Carmesim, andares 16–20) entregue com kit de arena e família de 5 inimigos exclusiva. Próxima etapa após aprovação do usuário: **Lote 14** — Bioma 3 da Onda 2 (Pináculo de Jade, andares 21–25: musgo, bambu de pedra, lanternas verdes, kit de arena e 5 inimigos da família de jade).
 
 
 

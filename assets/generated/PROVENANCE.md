@@ -161,3 +161,14 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 5 | `enemies/astral_sorcerer` | atlas | aprovado (184px, âncora 0px, 0.000% chroma, margem 4px livre, IoU idle 0.63, walk 0.62, attack 0.48) | guide_mage.magenta, style_spark_imp | Feiticeiro Astral (mago dos andares 11-15, revisado sem raios mágicos ou cortes de cajado): mago em mantos índigo com ca |
 | 6 | `enemies/rift_stalker` | atlas | aprovado (115px, âncora 0px, 0.000% chroma, 513 cores, margem 4px livre, IoU idle 0.61, walk 0.57, attack 0.53, death 0.54) | guide_slime.magenta, style_royal_mummy | Rastreador da Fenda (elite dos andares 11-15, revisado quadrúpede compacto sem cortes): fera arcana de quitina índigo co |
 
+## Lote L13 — 6/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `arenas/p02_carmesim` | arena | aprovado (emenda parede 0.0, emenda piso 0.0, luma 0.18-0.19 ok, 83 KB) | kit_f09_sangrento, kit_f01_entrada | Kit de arena do Pináculo Carmesim (andares 16-20, Bioma 2 da Onda 2): alvenaria de pedra escura manchada de carmesim, co |
+| 2 | `enemies/blood_gargoyle` | atlas | aprovado (199px, âncora 0px, 0.000% chroma, 126 cores, margem 4px livre, revisão visual aprovada) | guide_boss.magenta, style_guardian_borin | Gárgula de Sangue (tanque dos andares 16-20): gárgula colossal esculpida em obsidiana carmesim com chifres grossos e asa |
+| 3 | `enemies/crimson_slayer` | atlas | aprovado (184px, âncora 0px, 0.001% chroma, 314 cores, margem 4px livre, silhueta idle 0.58, walk 0.62, hurt 0.47) | guide_hero.magenta, style_guardian_borin | Retalhador Carmesim (dano dos andares 16-20): guerreiro de execução gótica em cota de malha negra e carmesim com lâmina  |
+| 4 | `enemies/flesh_hound` | atlas | aprovado (115px, âncora 0px, 0.000% chroma, 419 cores, margem 4px livre, silhueta idle 0.55, attack 0.49, death 0.55) | guide_slime.magenta, style_mud_toad | Cão de Carne (veloz dos andares 16-20): fera quadrúpede carmesim com espigões ósseos nas costas e mandíbulas caninas afi |
+| 5 | `enemies/blood_cultist` | atlas | aprovado (184px, âncora 0px, 0.001% chroma, 321 cores, margem 4px livre, silhueta idle 0.57, walk 0.57, hurt 0.51, death 0.50) | guide_mage.magenta, style_candle_skull | Cultista do Sangue (mago dos andares 16-20): taumaturgo em mantos cerimoniais bordô e negro com cajado encimado por crân |
+| 6 | `enemies/sanguine_abomination` | atlas | aprovado (199px, âncora 0px, 0.001% chroma, 494 cores, margem 4px livre, revisão visual aprovada) | guide_boss.magenta, style_goblin_captain | Abominação Sanguínea (elite dos andares 16-20): monstro gigante bípede de carne crua e placas ósseas com correntes de fe |
+
