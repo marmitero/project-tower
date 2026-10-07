@@ -83,8 +83,8 @@ describe("variedade de inimigos por andar", () => {
     }
   });
 
-  it("o roster usa todos os papéis e só sprites existentes (41 inimigos)", () => {
-    expect(enemies).toHaveLength(41);
+  it("o roster usa todos os papéis e só sprites existentes (47 inimigos)", () => {
+    expect(enemies).toHaveLength(47);
     // `balanced` é papel legado: o Esqueleto virou "dps" (§3.1); o tipo continua válido para packs editados.
     expect(new Set(enemies.map((e) => e.role))).toEqual(new Set(ENEMY_ROLES.filter((r) => r !== "balanced")));
   });

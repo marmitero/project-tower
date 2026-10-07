@@ -143,6 +143,14 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "giant_cocoon", name: "Casulo Gigante", role: "tank", damageType: "physical", statMultiplier: 0.98,
       attributes: attrs(18, 6, 36, 4, 20),
       assets: { sheets: charSheets("orc"), atlas: "enemies/giant_cocoon" } },
+    // Lote 10: tanque do andar 9 (Corredor Sangrento).
+    { id: "armored_executioner", name: "Carrasco Encouraçado", role: "tank", damageType: "physical", statMultiplier: 1.02,
+      attributes: attrs(24, 8, 36, 6, 12),
+      assets: { sheets: charSheets("orc"), atlas: "enemies/armored_executioner" } },
+    // Lote 10: tanque do andar 10 (Câmara dos Mil Passos).
+    { id: "obsidian_colossus", name: "Colosso de Obsidiana", role: "tank", damageType: "physical", statMultiplier: 1.0,
+      attributes: attrs(26, 6, 38, 8, 14),
+      assets: { sheets: charSheets("orc"), atlas: "enemies/obsidian_colossus" } },
     // --- dps ----------------------------------------------------------
     { id: "goblin", name: "Goblin", role: "dps", damageType: "physical", statMultiplier: 1.23,
       attributes: attrs(28, 20, 14, 6, 8),
@@ -203,6 +211,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "shadow_crawler", name: "Sombra Rastejante", role: "swift", damageType: "magic", statMultiplier: 1.05,
       attributes: attrs(10, 34, 12, 20, 12),
       assets: { sheets: charSheets("goblin"), atlas: "enemies/shadow_crawler" } },
+    // Lote 10: veloz do andar 9 (Corredor Sangrento) — atlas próprio.
+    { id: "winged_leech", name: "Sanguessuga Alada", role: "swift", damageType: "physical", statMultiplier: 1.05,
+      attributes: attrs(14, 34, 12, 10, 8),
+      assets: { sheets: charSheets("bat"), atlas: "enemies/winged_leech" } },
     // --- caster -------------------------------------------------------
     { id: "toxicbat", name: "Morcego Tóxico", role: "caster", damageType: "magic", statMultiplier: 1.1,
       attributes: attrs(6, 24, 12, 28, 14),
@@ -228,6 +240,14 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "frost_witch", name: "Feiticeira da Geada", role: "caster", damageType: "magic", statMultiplier: 0.88,
       attributes: attrs(6, 18, 12, 32, 14),
       assets: { sheets: charSheets("mage"), atlas: "enemies/frost_witch" } },
+    // Lote 10: mago do andar 8 (Ninho das Sombras) — atlas próprio.
+    { id: "nightmare_weaver", name: "Tecelã de Pesadelos", role: "caster", damageType: "magic", statMultiplier: 0.9,
+      attributes: attrs(6, 16, 14, 32, 16),
+      assets: { sheets: charSheets("mage"), atlas: "enemies/nightmare_weaver" } },
+    // Lote 10: mago do andar 9 (Corredor Sangrento) — atlas próprio.
+    { id: "blood_witch", name: "Bruxa de Sangue", role: "caster", damageType: "magic", statMultiplier: 0.9,
+      attributes: attrs(6, 16, 14, 32, 18),
+      assets: { sheets: charSheets("mage"), atlas: "enemies/blood_witch" } },
     { id: "fireorc", name: "Orc Flamejante", role: "caster", damageType: "magic", statMultiplier: 0.88,
       attributes: attrs(10, 8, 22, 32, 12),
       assets: { sheets: charSheets("fireorc") } },
@@ -263,6 +283,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "winter_knight", name: "Cavaleiro do Inverno", role: "elite", damageType: "physical", statMultiplier: 1.08,
       attributes: attrs(34, 14, 30, 6, 14),
       assets: { sheets: charSheets("orc"), atlas: "enemies/winter_knight" } },
+    // Lote 10: elite RARO do andar 9 (Corredor Sangrento).
+    { id: "crimson_count", name: "Conde Carmesim", role: "elite", damageType: "magic", statMultiplier: 1.08,
+      attributes: attrs(24, 22, 28, 26, 18),
+      assets: { sheets: charSheets("orc"), atlas: "enemies/crimson_count" } },
     { id: "elitearcher", name: "Arqueiro de Elite", role: "elite", damageType: "physical", statMultiplier: 1.26,
       attributes: attrs(26, 32, 18, 8, 12),
       assets: { sheets: charSheets("elitearcher") } },

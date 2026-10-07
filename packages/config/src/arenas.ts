@@ -50,6 +50,7 @@ export function defaultArenaKits(): ArenaKitDef[] {
   const f06 = (n: string) => `arenas/f06_fornalha/${n}`;
   const f07 = (n: string) => `arenas/f07_jardim/${n}`;
   const f08 = (n: string) => `arenas/f08_sombras/${n}`;
+  const f09 = (n: string) => `arenas/f09_sangrento/${n}`;
   return [
     {
       // Lote 1 (ADR-033): primeiro kit GERADO — a Entrada da Torre (andar 1). Pedra azul-acinzentada,
@@ -207,6 +208,26 @@ export function defaultArenaKits(): ArenaKitDef[] {
         { assetId: f08("prop_1"), weight: 3 },
         { assetId: f08("prop_2"), weight: 2 },
         { assetId: f08("prop_3"), weight: 2 },
+      ],
+      tint: 0xffffff,
+    },
+    {
+      // Lote 10: Corredor Sangrento (andar 9). Paredes de fortaleza de pedra cinza-escura com tapeçarias
+      // rubras rasgadas e correntes de ferro, tocha carmesim, estandarte de cálice dourado e piso escuro com veios rubros.
+      id: "f09_sangrento",
+      name: "Corredor Sangrento",
+      wall: [
+        f09("wall_0"), f09("wall_1"), f09("wall_2"), f09("wall_0"), f09("wall_4"), f09("wall_1"),
+        f09("banner"), f09("wall_2"), f09("wall_3"), f09("wall_0"), f09("wall_4"), f09("gate"),
+      ],
+      torch: f09("torch"),
+      torchEvery: 4,
+      floor: [f09("floor_0"), f09("floor_1"), f09("floor_2"), f09("floor_3"), f09("floor_0")],
+      props: [
+        { assetId: f09("prop_0"), weight: 3 },
+        { assetId: f09("prop_1"), weight: 3 },
+        { assetId: f09("prop_2"), weight: 2 },
+        { assetId: f09("prop_3"), weight: 2 },
       ],
       tint: 0xffffff,
     },

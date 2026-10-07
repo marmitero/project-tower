@@ -1128,5 +1128,25 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 - **Referências (`scripts/art-refs.mjs`):** Ladrilhos de parede, fixtures e piso agora são ampliados 2× para preencher a célula 256×256 completa na folha de referência (apenas adereços `prop_` permanecem sobre magenta centralizados).
 - **Verificação:** Todas as 8 arenas (128 arquivos PNG) verificadas com 0 pixels de magenta opaco. 783 testes + 28 testes de arquitetura aprovados; bundle de preview regenerado e validado.
 
+---
+
+## ADR-047 — Lote 10 da arte: fechamento do Andar 8 (Ninho das Sombras), kit do Corredor Sangrento (andar 9), 4 inimigos do andar 9 e abertura do andar 10 (2026-10-07)
+
+**Data:** 2026-10-07 · **Status:** ✅ Aceita (aguarda o "lote 10 aprovado") · **Tipo:** B (arte + dados) · **Pedido do usuário:** *"ok, inicie o lote 10"*
+
+**Gerações: 7/10 (3 reservas restantes).** 6 atlas de inimigos (Tecelã de Pesadelos, Carrasco Encouraçado, Sanguessuga Alada, Bruxa de Sangue, Conde Carmesim, Colosso de Obsidiana) e 1 kit de arena 4×4 (`f09_sangrento`). Nenhuma refação necessária: 100% de aproveitamento das 7 gerações planejadas no primeiro disparo com zero magenta nos assets finais. Procedência registrada em `assets/generated/provenance.json` e `PROVENANCE.md`.
+
+| Item | Decisão |
+|---|---|
+| Fechamento do Andar 8 (Ninho das Sombras) | **Tecelã de Pesadelos** (mago, mágico, mult 0,90; guia `mage`, estilo `spark_imp`, 184 px, âncora 0 px, paleta 446 cores). O Andar 8 atinge 5/5 inimigos com elenco 100% temático próprio (`giant_cocoon`, `blackfang_spider`, `shadow_crawler`, `nightmare_weaver`, `shadowgoblin`) |
+| Arena do Andar 9 | `f09_sangrento` (Corredor Sangrento): paredes de fortaleza em pedra cinza-escura com tapeçarias rubras e correntes, tocha carmesim, estandarte de cálice dourado, portão de grades de ferro forjado e piso com veios rubros. 16 ladrilhos fatiados, 0 magenta, luminância 0,21–0,22 |
+| Inimigos do Andar 9 (4 novos) | **Carrasco Encouraçado** (tanque, físico, mult 1,02; guia `orc`, estilo `mud_toad`, 199 px, âncora 0 px, 100% verde) · **Sanguessuga Alada** (veloz/voador, físico, mult 1,05; guia `bat`, estilo `spark_imp`, 133 px, âncora 0 px, 362 cores) · **Bruxa de Sangue** (mago, mágico, mult 0,90; guia `mage`, estilo `spark_imp`, 184 px, âncora 0 px, 100% verde) · **Conde Carmesim** (elite raro, mágico, mult 1,08; guia `orc`, estilo `royal_mummy`, 199 px, âncora 0 px, 100% verde). Com o Esqueleto Sangrento (`bloodskeleton`, dps já existente), o Andar 9 completa 5/5 inimigos |
+| Abertura do Andar 10 (Câmara dos Mil Passos) | **Colosso de Obsidiana** (tanque, físico, mult 1,0; guia `orc`, estilo `candle_skull`, 199 px, âncora 0 px, 419 cores). Primeiro defensor da Câmara dos Mil Passos |
+| Balanceamento | `npm run report:balance` confirma perda de HP por combate perfeitamente calibrada: Carrasco Encouraçado 39% / 31 s (alvo tanque ≈ 38%), Colosso de Obsidiana 42% / 32 s (alvo tanque ≈ 38–42%), Sanguessuga Alada 21% / 11 s (alvo veloz ≈ 20–24%), Tecelã de Pesadelos 28% / 11 s (alvo mago ≈ 20–28%), Bruxa de Sangue 29% / 11 s (alvo mago ≈ 20–28%), Conde Carmesim 64% / 27 s (alvo elite ≈ 58–64%). Ritmo das 4 horas rigorosamente intacto |
+| Pools dos Andares 8 e 9 | Andar 8: Casulo Gigante (4), Aranha Presas-Negras (4), Sombra Rastejante (3), Tecelã de Pesadelos (2), Goblin Sombrio (1, elite raro). Andar 9: Carrasco Encouraçado (4), Esqueleto Sangrento (4), Sanguessuga Alada (3), Bruxa de Sangue (2), Conde Carmesim (1, elite raro). Andar 10: Colosso de Obsidiana (4)... |
+| Verificação | `npm run check` verde (783 testes unitários/integração + 28 arquitetura), 815 requisições HTTP 200 no bundle do preview, contact sheets e fatias de arena organizados em `docs/art-review/lote-10/` |
+
+**Consequências:** Roster de inimigos sobe de 41 para 47 inimigos (todos os papéis cobertos); andares 1 a 9 agora possuem 100% dos seus elencos com arte original própria e kits de arena dedicados (9 kits de arena ativos); Andar 10 iniciado com seu tanque. Próximo passo: **Lote 11 (último lote da Onda 1)**: kit de arena do Andar 10 (Câmara dos Mil Passos) + 3 inimigos restantes do andar 10 (Guerreiro Eterno, Relógio Vivo, Oráculo dos Passos) + fechamento completo da Onda 1 de arte.
+
 
 

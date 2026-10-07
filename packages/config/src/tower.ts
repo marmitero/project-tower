@@ -123,6 +123,7 @@ function themeForFloor(index: number): string {
   if (index === 6) return "f06_fornalha";
   if (index === 7) return "f07_jardim";
   if (index === 8) return "f08_sombras";
+  if (index === 9) return "f09_sangrento";
   if (index <= 12) return "sangue e brasa";
   if (index <= 20) return "pináculo arcano";
   if (index <= 30) return "pináculo carmesim";
@@ -185,21 +186,28 @@ export const DEFAULT_POOL_PLAN: ReadonlyArray<{
   { enemyId: "boreal_fox", fromFloor: 7, toFloor: 7, weight: 3 },
   { enemyId: "frost_witch", fromFloor: 7, toFloor: 7, weight: 2 },
   { enemyId: "winter_knight", fromFloor: 7, toFloor: 7, weight: 1 },
-  // Andar 8 — Ninho das Sombras (Lote 9): Casulo Gigante T · Aranha Presas-Negras D · Sombra Rastejante V · Morcego Tóxico M · Goblin Sombrio E (raro).
+  // Andar 8 — Ninho das Sombras (Lotes 9–10): Casulo Gigante T · Aranha Presas-Negras D · Sombra Rastejante V · Tecelã de Pesadelos M · Goblin Sombrio E (raro).
   { enemyId: "giant_cocoon", fromFloor: 8, toFloor: 8, weight: 4 },
   { enemyId: "blackfang_spider", fromFloor: 8, toFloor: 8, weight: 4 },
   { enemyId: "shadow_crawler", fromFloor: 8, toFloor: 8, weight: 3 },
-  { enemyId: "toxicbat", fromFloor: 8, toFloor: 8, weight: 2 },
+  { enemyId: "nightmare_weaver", fromFloor: 8, toFloor: 8, weight: 2 },
   { enemyId: "shadowgoblin", fromFloor: 8, toFloor: 8, weight: 1 },
-  // Andares 9+ — ainda com os inimigos de antes; trocam por andar a cada lote (docs/STYLIZATION_ROADMAP.md §3.1).
-  { enemyId: "toxicbat", fromFloor: 9, weight: 2 },
-  { enemyId: "bat", fromFloor: 9, weight: 3 },
-  { enemyId: "slime", fromFloor: 9, weight: 2 },
-  { enemyId: "goblin", fromFloor: 9, weight: 2 },
-  { enemyId: "skeleton", fromFloor: 9, weight: 3 },
-  { enemyId: "orc", fromFloor: 9, weight: 3 },
-  { enemyId: "bloodskeleton", fromFloor: 9, weight: 3 },
-  { enemyId: "shadowgoblin", fromFloor: 9, weight: 1 },
+  // Andar 9 — Corredor Sangrento (Lote 10): Carrasco Encouraçado T · Esqueleto Sangrento D · Sanguessuga Alada V · Bruxa de Sangue M · Conde Carmesim E (raro).
+  { enemyId: "armored_executioner", fromFloor: 9, toFloor: 9, weight: 4 },
+  { enemyId: "bloodskeleton", fromFloor: 9, toFloor: 9, weight: 4 },
+  { enemyId: "winged_leech", fromFloor: 9, toFloor: 9, weight: 3 },
+  { enemyId: "blood_witch", fromFloor: 9, toFloor: 9, weight: 2 },
+  { enemyId: "crimson_count", fromFloor: 9, toFloor: 9, weight: 1 },
+  // Andar 10 — Câmara dos Mil Passos (Lote 10+): Colosso de Obsidiana T entra aqui.
+  { enemyId: "obsidian_colossus", fromFloor: 10, toFloor: 10, weight: 4 },
+  // Andares 10+ — ainda com os inimigos de antes; trocam por andar a cada lote (docs/STYLIZATION_ROADMAP.md §3.1).
+  { enemyId: "toxicbat", fromFloor: 10, weight: 2 },
+  { enemyId: "bat", fromFloor: 10, weight: 3 },
+  { enemyId: "slime", fromFloor: 10, weight: 2 },
+  { enemyId: "goblin", fromFloor: 10, weight: 2 },
+  { enemyId: "skeleton", fromFloor: 10, weight: 3 },
+  { enemyId: "orc", fromFloor: 10, weight: 3 },
+  { enemyId: "shadowgoblin", fromFloor: 10, weight: 1 },
   { enemyId: "elitearcher", fromFloor: 11, weight: 1 },
 ];
 

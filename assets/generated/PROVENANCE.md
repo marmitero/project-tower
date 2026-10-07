@@ -129,3 +129,15 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 8 | `enemies/shadow_crawler#falha` | atlas | reprovado (resíduo de chroma 0.915% por névoa violeta próxima de magenta) -> refeito | guide_goblin.magenta, style_spark_imp | Sombra Rastejante (veloz do andar 8): tentativa 1 com névoa violeta que causou resíduo de chroma key. |
 | 9 | `enemies/shadow_crawler` | atlas | aprovado (100% verde, 0.000% rosa, 342 cores, âncora 0px) | guide_goblin.magenta, style_spark_imp | Sombra Rastejante (veloz do andar 8): espectro ágil em fumaça negra de carvão e olhos ciano-gélidos, empunhando adagas d |
 
+## Lote L10 — 7/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `enemies/nightmare_weaver` | atlas | aprovado (paleta 446 cores, âncora 0px, idle 184px) | guide_mage.magenta,  style_spark_imp | Tecelã de Pesadelos (mago do andar 8): bruxa aracnídea ancestral tecendo fios de escuridão e runas violetas, empunhando  |
+| 2 | `arenas/f09_sangrento` | arena | aprovado (quadrado 1024x1024, 16 ladrilhos, 0 magenta, luminância 0.21-0.22 ok) | kit_f01_entrada | Kit de arena 4x4 do andar 9 (Corredor Sangrento): paredes de fortaleza de pedra cinza-escura com tapeçarias rubras e cor |
+| 3 | `enemies/armored_executioner` | atlas | aprovado (100% verde cinemática e IoU, 421 cores, âncora 0px, idle 199px) | guide_orc.magenta,  style_mud_toad | Carrasco Encouraçado (tanque do andar 9): executor colossal em armadura de placas de ferro pesado enferrujado, capuz neg |
+| 4 | `enemies/winged_leech` | atlas | aprovado (voador 133px na faixa 125-140px, 362 cores, âncora 0px) | guide_bat.magenta,  style_spark_imp | Sanguessuga Alada (veloz/voador do andar 9): criatura vampiresca alada aberrante com carapaça segmentada carmesim, bico  |
+| 5 | `enemies/blood_witch` | atlas | aprovado (100% verde cinemática e IoU, 480 cores, âncora 0px, idle 184px) | guide_mage.magenta,  style_spark_imp | Bruxa de Sangue (mago do andar 9): feiticeira sombria em vestes rasgadas de seda carmesim e capuz pontiagudo, levitando  |
+| 6 | `enemies/crimson_count` | atlas | aprovado (100% verde cinemática e IoU, 573 cores, âncora 0px, idle 199px) | guide_orc.magenta,  style_royal_mummy | Conde Carmesim (elite do andar 9): nobre vampiro em casaca carmesim de gola alta, capa negra com forro rubro, empunhando |
+| 7 | `enemies/obsidian_colossus` | atlas | aprovado (revisão visual silhueta monolito, 419 cores, âncora 0px, idle 199px) | guide_orc.magenta,  style_candle_skull | Colosso de Obsidiana (tanque do andar 10): monólito ancestral de pedra vulcânica negra polida com runas douradas cravada |
+

@@ -915,6 +915,89 @@
         "style_spark_imp"
       ],
       "verdict": "aprovado (100% verde, 0.000% rosa, 342 cores, âncora 0px)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L10",
+      "asset": "enemies/nightmare_weaver",
+      "kind": "atlas",
+      "prompt": "Tecelã de Pesadelos (mago do andar 8): bruxa aracnídea ancestral tecendo fios de escuridão e runas violetas, empunhando fuso espectral com ponta venenosa",
+      "refs": [
+        "guide_mage.magenta",
+        " style_spark_imp"
+      ],
+      "verdict": "aprovado (paleta 446 cores, âncora 0px, idle 184px)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L10",
+      "asset": "arenas/f09_sangrento",
+      "kind": "arena",
+      "prompt": "Kit de arena 4x4 do andar 9 (Corredor Sangrento): paredes de fortaleza de pedra cinza-escura com tapeçarias rubras e correntes, tocha carmesim, estandarte de cálice, portão de ferro e piso com veios rubros",
+      "refs": [
+        "kit_f01_entrada"
+      ],
+      "verdict": "aprovado (quadrado 1024x1024, 16 ladrilhos, 0 magenta, luminância 0.21-0.22 ok)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L10",
+      "asset": "enemies/armored_executioner",
+      "kind": "atlas",
+      "prompt": "Carrasco Encouraçado (tanque do andar 9): executor colossal em armadura de placas de ferro pesado enferrujado, capuz negro e machado pesado de duas mãos",
+      "refs": [
+        "guide_orc.magenta",
+        " style_mud_toad"
+      ],
+      "verdict": "aprovado (100% verde cinemática e IoU, 421 cores, âncora 0px, idle 199px)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L10",
+      "asset": "enemies/winged_leech",
+      "kind": "atlas",
+      "prompt": "Sanguessuga Alada (veloz/voador do andar 9): criatura vampiresca alada aberrante com carapaça segmentada carmesim, bico circular dentado e asas de morcego",
+      "refs": [
+        "guide_bat.magenta",
+        " style_spark_imp"
+      ],
+      "verdict": "aprovado (voador 133px na faixa 125-140px, 362 cores, âncora 0px)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L10",
+      "asset": "enemies/blood_witch",
+      "kind": "atlas",
+      "prompt": "Bruxa de Sangue (mago do andar 9): feiticeira sombria em vestes rasgadas de seda carmesim e capuz pontiagudo, levitando orbe de rubi e adaga ritualística",
+      "refs": [
+        "guide_mage.magenta",
+        " style_spark_imp"
+      ],
+      "verdict": "aprovado (100% verde cinemática e IoU, 480 cores, âncora 0px, idle 184px)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L10",
+      "asset": "enemies/crimson_count",
+      "kind": "atlas",
+      "prompt": "Conde Carmesim (elite do andar 9): nobre vampiro em casaca carmesim de gola alta, capa negra com forro rubro, empunhando florete ornamentado e máscara de prata",
+      "refs": [
+        "guide_orc.magenta",
+        " style_royal_mummy"
+      ],
+      "verdict": "aprovado (100% verde cinemática e IoU, 573 cores, âncora 0px, idle 199px)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L10",
+      "asset": "enemies/obsidian_colossus",
+      "kind": "atlas",
+      "prompt": "Colosso de Obsidiana (tanque do andar 10): monólito ancestral de pedra vulcânica negra polida com runas douradas cravadas, engrenagens de bronze nos ombros e punhos colossais",
+      "refs": [
+        "guide_orc.magenta",
+        " style_candle_skull"
+      ],
+      "verdict": "aprovado (revisão visual silhueta monolito, 419 cores, âncora 0px, idle 199px)"
     }
   ]
 }
