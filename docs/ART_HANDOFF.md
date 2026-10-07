@@ -40,13 +40,14 @@
 | L11 | **Andar 10 completo (3 novos) + arena `f10_passos` (Câmara dos Mil Passos) — ONDA 1 CONCLUÍDA** | 4 | 048 | ✅ aprovado |
 | L12 | **Onda 2 (Bioma 1: Pináculo Arcano, andares 11–15): kit de arena `p01_arcano` + 5 novos inimigos da família Arcana** | 8 | 049 | ✅ aprovado |
 | L13 | **Onda 2 (Bioma 2: Pináculo Carmesim, andares 16–20): kit de arena `p02_carmesim` + 5 novos inimigos da família Carmesim** | 6 | 050 | ✅ aprovado |
-| L14 | **Onda 2 (Bioma 3: Pináculo de Jade, andares 21–25): kit de arena `p03_jade` + 5 novos inimigos da família de Jade** | 6 | 051 | ⏳ **aguarda "lote 14 aprovado"** |
+| L14 | **Onda 2 (Bioma 3: Pináculo de Jade, andares 21–25): kit de arena `p03_jade` + 5 novos inimigos da família de Jade** | 6 | 051 | ✅ aprovado |
+| L15 | **Onda 2 (Bioma 4: Pináculo de Obsidiana, andares 26–30): kit de arena `p04_obsidiana` + 5 novos inimigos da família de Obsidiana** | 8 | 052 | ⏳ **aguarda "lote 15 aprovado"** |
 
-**Próximo: Lote 15 (Bioma 4 da Onda 2: Pináculo de Obsidiana, andares 26–30)** — só depois do "lote 14 aprovado".
+**Próximo: Lote 16 (Bioma 5 da Onda 2: Pináculo de Gelo Eterno, andares 31–35)** — só depois do "lote 15 aprovado".
 
-> **Atualização Lote 14 (2026-10-07):** Lote 13 aprovado! Lote 14 entregue completando o Bioma 3 da Onda 2 com 6/10 gerações usadas (4 reservas restantes). 5 novos atlas de inimigos (`jade_colossus`, `jade_bladesman`, `jade_serpent`, `jade_geomancer`, `jade_dragonkin`) + 1 kit de arena 4×4 (`p03_jade`, Pináculo de Jade). Andares 21 a 25 agora possuem arena dedicada e família temática própria de 5 papéis. Roster expandido para **65 inimigos** e 13 arenas. `npm run check` verde — **783 testes + 28 de arquitetura**, preview com bundle de 897 requisições HTTP 200.
+> **Atualização Lote 15 (2026-10-07):** Lote 14 aprovado! Lote 15 entregue completando o Bioma 4 da Onda 2 com 8/10 gerações usadas (2 reservas restantes). 5 novos atlas de inimigos (`obsidian_dreadnought`, `lava_reaver`, `ash_stalker`, `magma_channeler`, `obsidian_warlord`) + 1 kit de arena 4×4 (`p04_obsidiana`, Pináculo de Obsidiana). Andares 26 a 30 agora possuem arena dedicada e família temática própria de 5 papéis. Roster expandido para **70 inimigos** e 14 arenas. `npm run check` verde — **783 testes + 28 de arquitetura**, preview com bundle de 918 requisições HTTP 200.
 
-Metas numéricas: Onda 1 **100% batida** (26 heróis, 12 skins do Rei, 10 arenas, 50 inimigos nos andares 1–10). Onda 2 em andamento: 3/6 biomas de Pináculos concluídos (andares 11–25 com kits próprios e 15 inimigos; roster total = 65).
+Metas numéricas: Onda 1 **100% batida** (26 heróis, 12 skins do Rei, 10 arenas, 50 inimigos nos andares 1–10). Onda 2 em andamento: 4/6 biomas de Pináculos concluídos (andares 11–30 com kits próprios e 20 inimigos; roster total = 70).
 
 Pendências de retrato: **0** — todos os 26 heróis agora possuem retrato próprio dedicado no jogo.
 
@@ -219,8 +220,9 @@ Depois de qualquer asset: `node scripts/build-assets.mjs` (regenera `apps/game-w
 
 **Lote 12 (aprovado):** arena do Pináculo Arcano (`p01_arcano`, andares 11–15) + 5 inimigos da família Arcana (`crystal_golem`, `rune_blade`, `arcane_wisp`, `astral_sorcerer`, `rift_stalker`) = **8 gerações usadas, 2 reservas restantes** ⇒ **Bioma 1 da Onda 2 COMPLETO**.
 **Lote 13 (aprovado):** arena do Pináculo Carmesim (`p02_carmesim`, andares 16–20) + 5 inimigos da família Carmesim (`blood_gargoyle`, `crimson_slayer`, `flesh_hound`, `blood_cultist`, `sanguine_abomination`) = **6 gerações usadas, 4 reservas restantes** ⇒ **Bioma 2 da Onda 2 COMPLETO**.
-**Lote 14 (entregue, aguarda "lote 14 aprovado"):** arena do Pináculo de Jade (`p03_jade`, andares 21–25) + 5 inimigos da família de Jade (`jade_colossus`, `jade_bladesman`, `jade_serpent`, `jade_geomancer`, `jade_dragonkin`) = **6 gerações usadas, 4 reservas restantes** ⇒ **Bioma 3 da Onda 2 COMPLETO**.
-**Próximo lote (Lote 15, após "lote 14 aprovado"):** Bioma 4 da Onda 2: Pináculo de Obsidiana (andares 26–30: vidro negro, veios de lava, ferro, kit de arena e 5 inimigos da família de obsidiana).
+**Lote 14 (aprovado):** arena do Pináculo de Jade (`p03_jade`, andares 21–25) + 5 inimigos da família de Jade (`jade_colossus`, `jade_bladesman`, `jade_serpent`, `jade_geomancer`, `jade_dragonkin`) = **6 gerações usadas, 4 reservas restantes** ⇒ **Bioma 3 da Onda 2 COMPLETO**.
+**Lote 15 (entregue, aguarda "lote 15 aprovado"):** arena do Pináculo de Obsidiana (`p04_obsidiana`, andares 26–30) + 5 inimigos da família de Obsidiana (`obsidian_dreadnought`, `lava_reaver`, `ash_stalker`, `magma_channeler`, `obsidian_warlord`) = **8 gerações usadas, 2 reservas restantes** ⇒ **Bioma 4 da Onda 2 COMPLETO**.
+**Próximo lote (Lote 16, após "lote 15 aprovado"):** Bioma 5 da Onda 2: Pináculo de Gelo Eterno (andares 31–35: alvenaria de gelo azul translúcido, geada, tochas gélidas, kit de arena e 5 inimigos da família de gelo).
 **Depois da arte:** Fase 14 — Painel Admin (`docs/ADMIN_PANEL.md`) e Fase Online (Google Auth, Supabase, Mercado da comunidade).
 **Estimativa atual:** ~4 lotes de arte (L8–L11) + Fase 14 ⇒ ~5 etapas até a Onda 1 completa (o MVP *local* já é jogável desde a Fase 13).
 

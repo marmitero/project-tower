@@ -55,6 +55,7 @@ export function defaultArenaKits(): ArenaKitDef[] {
   const p01 = (n: string) => `arenas/p01_arcano/${n}`;
   const p02 = (n: string) => `arenas/p02_carmesim/${n}`;
   const p03 = (n: string) => `arenas/p03_jade/${n}`;
+  const p04 = (n: string) => `arenas/p04_obsidiana/${n}`;
   return [
     {
       // Lote 1 (ADR-033): primeiro kit GERADO — a Entrada da Torre (andar 1). Pedra azul-acinzentada,
@@ -316,6 +317,27 @@ export function defaultArenaKits(): ArenaKitDef[] {
         { assetId: p03("prop_1"), weight: 3 },
         { assetId: p03("prop_2"), weight: 2 },
         { assetId: p03("prop_3"), weight: 2 },
+      ],
+      tint: 0xffffff,
+    },
+    {
+      // Lote 15 (ADR-052): Pináculo de Obsidiana (andares 26–30, Bioma 4 da Onda 2). Alvenaria de obsidiana
+      // negra com veios de lava incandescente, tocha com chama de magma, estandarte reforçado com ferro,
+      // portão em arco ogival reforçado e piso de basalto escuro com veios sutis de magma.
+      id: "p04_obsidiana",
+      name: "Pináculo de Obsidiana",
+      wall: [
+        p04("wall_0"), p04("wall_1"), p04("wall_2"), p04("wall_0"), p04("wall_4"), p04("wall_1"),
+        p04("banner"), p04("wall_2"), p04("wall_3"), p04("wall_0"), p04("wall_4"), p04("gate"),
+      ],
+      torch: p04("torch"),
+      torchEvery: 4,
+      floor: [p04("floor_0"), p04("floor_1"), p04("floor_2"), p04("floor_3"), p04("floor_0")],
+      props: [
+        { assetId: p04("prop_0"), weight: 3 },
+        { assetId: p04("prop_1"), weight: 3 },
+        { assetId: p04("prop_2"), weight: 2 },
+        { assetId: p04("prop_3"), weight: 2 },
       ],
       tint: 0xffffff,
     },

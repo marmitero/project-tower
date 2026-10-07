@@ -183,3 +183,16 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 5 | `enemies/jade_geomancer` | atlas | aprovado (184px, âncora 0px, 0.001% chroma, 709 cores, margem 4px livre, silhueta idle 0.56, walk 0.61, attack 0.58, hurt 0.60, death 0.55) | guide_mage.magenta, style_cleric_aurora | Geomante de Jade (mago dos andares 21-25): eremita em mantos verde-musgo e chapéu cônico de bambu, com cajado de madeira |
 | 6 | `enemies/jade_dragonkin` | atlas | aprovado (199px, âncora 0px, 0.000% chroma, 435 cores, margem 4px livre, revisão visual aprovada) | guide_boss.magenta, style_goblin_captain | Draconiano de Jade (elite dos andares 21-25): guerreiro draconiano bípede de escamas de jade esmeralda com cristas ponti |
 
+## Lote L15 — 8/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `arenas/p04_obsidiana#refacao` | arena | reprovada (proporção 16:9 em vez de 1:1 quadrado) -> refeita | kit_f06_fornalha, kit_f10_passos | 1ª tentativa do kit de arena p04_obsidiana: gerada em proporção 16:9 em vez de 1:1 quadrado |
+| 2 | `arenas/p04_obsidiana` | arena | aprovado (emenda parede 0.0, emenda piso 0.0, luma 0.12-0.14 ok, 72.5 KB) | kit_p02_carmesim, kit_f01_entrada | Kit de arena do Pináculo de Obsidiana (andares 26-30, Bioma 4 da Onda 2): alvenaria de pedra de obsidiana negra com veio |
+| 3 | `enemies/obsidian_dreadnought` | atlas | aprovado (199px, âncora 0px, 0.000% chroma, 421 cores, margem 4px livre, erro de idle 1.0%) | guide_boss.magenta, style_guardian_borin | Encouraçado de Obsidiana (tanque dos andares 26-30): colossal juggernaut de vidro vulcânico negro e placas de ferro cham |
+| 4 | `enemies/lava_reaver` | atlas | aprovado (184px, âncora 0px, 0.001% chroma, 393 cores, margem 4px livre, IoU idle 0.58, walk 0.56, death 0.50) | guide_hero.magenta, style_guardian_borin | Retalhador de Lava (dano dos andares 26-30): berserker em armadura de ferro chamuscado com espigões de obsidiana e espad |
+| 5 | `enemies/ash_stalker#refacao` | atlas | reprovada (nuvens de partículas de cinzas soltas) -> refeita | guide_slime.magenta, style_mud_toad | 1ª tentativa do Predador das Cinzas: nuvens de fumaça e cinzas desenhadas ao redor do sprite causaram 46k pixels soltos |
+| 6 | `enemies/ash_stalker` | atlas | aprovado (115px, âncora 0px, 0.001% chroma, 284 cores, margem 4px livre, silhueta idle 0.55, death 0.49) | guide_slime.magenta, style_mud_toad | Predador das Cinzas (veloz dos andares 26-30): cão quadrúpede de obsidiana e cinzas vulcânicas com 4 patas ágeis, silhue |
+| 7 | `enemies/magma_channeler` | atlas | aprovado (184px, âncora 0px, 0.000% chroma, 292 cores, margem 4px livre, 100% verde nos 5 movimentos e silhuetas) | guide_mage.magenta, style_arcanist_pyro | Canalizador de Magma (mago dos andares 26-30): ocultista piromante em mantos negros chamuscados e máscara de ferro com f |
+| 8 | `enemies/obsidian_warlord` | atlas | aprovado (199px, âncora 0px, 0.001% chroma, 150 cores, margem 4px livre, IoU attack 0.53, death 0.50) | guide_orc.magenta, style_goblin_captain | Senhor da Obsidiana (elite dos andares 26-30): titânico senhor da guerra em armadura completa de placas de obsidiana ang |
+

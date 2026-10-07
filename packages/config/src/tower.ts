@@ -127,7 +127,7 @@ function themeForFloor(index: number): string {
   if (index >= 11 && index <= 15) return "p01_arcano";
   if (index >= 16 && index <= 20) return "p02_carmesim";
   if (index >= 21 && index <= 25) return "p03_jade";
-  if (index <= 30) return "pináculo carmesim";
+  if (index >= 26 && index <= 30) return "p04_obsidiana";
   return "pináculo de jade";
 }
 
@@ -223,15 +223,21 @@ export const DEFAULT_POOL_PLAN: ReadonlyArray<{
   { enemyId: "jade_serpent", fromFloor: 21, toFloor: 25, weight: 3 },
   { enemyId: "jade_geomancer", fromFloor: 21, toFloor: 25, weight: 2 },
   { enemyId: "jade_dragonkin", fromFloor: 21, toFloor: 25, weight: 1 },
-  // Andares 26+ — ainda com os inimigos de antes; trocam por bioma nos lotes futuros (docs/STYLIZATION_ROADMAP.md §3.3).
-  { enemyId: "toxicbat", fromFloor: 26, weight: 2 },
-  { enemyId: "bat", fromFloor: 26, weight: 3 },
-  { enemyId: "slime", fromFloor: 26, weight: 2 },
-  { enemyId: "goblin", fromFloor: 26, weight: 2 },
-  { enemyId: "skeleton", fromFloor: 26, weight: 3 },
-  { enemyId: "orc", fromFloor: 26, weight: 3 },
-  { enemyId: "shadowgoblin", fromFloor: 26, weight: 1 },
-  { enemyId: "elitearcher", fromFloor: 26, weight: 1 },
+  // Andares 26–30 — Pináculo de Obsidiana (Lote 15, Bioma 4 da Onda 2): Encouraçado de Obsidiana T · Retalhador de Lava D · Predador das Cinzas V · Canalizador de Magma M · Senhor da Obsidiana E (raro).
+  { enemyId: "obsidian_dreadnought", fromFloor: 26, toFloor: 30, weight: 4 },
+  { enemyId: "lava_reaver", fromFloor: 26, toFloor: 30, weight: 4 },
+  { enemyId: "ash_stalker", fromFloor: 26, toFloor: 30, weight: 3 },
+  { enemyId: "magma_channeler", fromFloor: 26, toFloor: 30, weight: 2 },
+  { enemyId: "obsidian_warlord", fromFloor: 26, toFloor: 30, weight: 1 },
+  // Andares 31+ — ainda com os inimigos de antes; trocam por bioma nos lotes futuros (docs/STYLIZATION_ROADMAP.md §3.3).
+  { enemyId: "toxicbat", fromFloor: 31, weight: 2 },
+  { enemyId: "bat", fromFloor: 31, weight: 3 },
+  { enemyId: "slime", fromFloor: 31, weight: 2 },
+  { enemyId: "goblin", fromFloor: 31, weight: 2 },
+  { enemyId: "skeleton", fromFloor: 31, weight: 3 },
+  { enemyId: "orc", fromFloor: 31, weight: 3 },
+  { enemyId: "shadowgoblin", fromFloor: 31, weight: 1 },
+  { enemyId: "elitearcher", fromFloor: 31, weight: 1 },
 ];
 
 function poolForFloor(index: number): FloorPoolEntry[] {

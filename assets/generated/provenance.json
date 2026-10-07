@@ -1262,6 +1262,102 @@
         "style_goblin_captain"
       ],
       "verdict": "aprovado (199px, âncora 0px, 0.000% chroma, 435 cores, margem 4px livre, revisão visual aprovada)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L15",
+      "asset": "arenas/p04_obsidiana#refacao",
+      "kind": "arena",
+      "prompt": "1ª tentativa do kit de arena p04_obsidiana: gerada em proporção 16:9 em vez de 1:1 quadrado",
+      "refs": [
+        "kit_f06_fornalha",
+        "kit_f10_passos"
+      ],
+      "verdict": "reprovada (proporção 16:9 em vez de 1:1 quadrado) -> refeita"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L15",
+      "asset": "arenas/p04_obsidiana",
+      "kind": "arena",
+      "prompt": "Kit de arena do Pináculo de Obsidiana (andares 26-30, Bioma 4 da Onda 2): alvenaria de pedra de obsidiana negra com veios de lava incandescente, tocha com chama de magma, estandarte reforçado com ferro, portão em arco ogival reforçado e piso de basalto escuro com veios sutis de magma, 4x4",
+      "refs": [
+        "kit_p02_carmesim",
+        "kit_f01_entrada"
+      ],
+      "verdict": "aprovado (emenda parede 0.0, emenda piso 0.0, luma 0.12-0.14 ok, 72.5 KB)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L15",
+      "asset": "enemies/obsidian_dreadnought",
+      "kind": "atlas",
+      "prompt": "Encouraçado de Obsidiana (tanque dos andares 26-30): colossal juggernaut de vidro vulcânico negro e placas de ferro chamuscadas com fendas de magma no peito, punhos pesados de pedra sem efeitos desenhados de ataque",
+      "refs": [
+        "guide_boss.magenta",
+        "style_guardian_borin"
+      ],
+      "verdict": "aprovado (199px, âncora 0px, 0.000% chroma, 421 cores, margem 4px livre, erro de idle 1.0%)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L15",
+      "asset": "enemies/lava_reaver",
+      "kind": "atlas",
+      "prompt": "Retalhador de Lava (dano dos andares 26-30): berserker em armadura de ferro chamuscado com espigões de obsidiana e espada de execução de duas mãos, postura de ataque físico sem arcos de corte",
+      "refs": [
+        "guide_hero.magenta",
+        "style_guardian_borin"
+      ],
+      "verdict": "aprovado (184px, âncora 0px, 0.001% chroma, 393 cores, margem 4px livre, IoU idle 0.58, walk 0.56, death 0.50)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L15",
+      "asset": "enemies/ash_stalker#refacao",
+      "kind": "atlas",
+      "prompt": "1ª tentativa do Predador das Cinzas: nuvens de fumaça e cinzas desenhadas ao redor do sprite causaram 46k pixels soltos",
+      "refs": [
+        "guide_slime.magenta",
+        "style_mud_toad"
+      ],
+      "verdict": "reprovada (nuvens de partículas de cinzas soltas) -> refeita"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L15",
+      "asset": "enemies/ash_stalker",
+      "kind": "atlas",
+      "prompt": "Predador das Cinzas (veloz dos andares 26-30): cão quadrúpede de obsidiana e cinzas vulcânicas com 4 patas ágeis, silhueta compacta pura sem nuvens de cinzas soltas ou membros duplicados",
+      "refs": [
+        "guide_slime.magenta",
+        "style_mud_toad"
+      ],
+      "verdict": "aprovado (115px, âncora 0px, 0.001% chroma, 284 cores, margem 4px livre, silhueta idle 0.55, death 0.49)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L15",
+      "asset": "enemies/magma_channeler",
+      "kind": "atlas",
+      "prompt": "Canalizador de Magma (mago dos andares 26-30): ocultista piromante em mantos negros chamuscados e máscara de ferro com fenda incandescente, cajado de ferro com orbe de rocha vulcânica, sem rajadas de fogo desenhadas no sprite",
+      "refs": [
+        "guide_mage.magenta",
+        "style_arcanist_pyro"
+      ],
+      "verdict": "aprovado (184px, âncora 0px, 0.000% chroma, 292 cores, margem 4px livre, 100% verde nos 5 movimentos e silhuetas)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L15",
+      "asset": "enemies/obsidian_warlord",
+      "kind": "atlas",
+      "prompt": "Senhor da Obsidiana (elite dos andares 26-30): titânico senhor da guerra em armadura completa de placas de obsidiana angular com elmo de chifres e martelo de guerra de duas mãos, sem membros duplicados ou efeitos de impacto desenhados",
+      "refs": [
+        "guide_orc.magenta",
+        "style_goblin_captain"
+      ],
+      "verdict": "aprovado (199px, âncora 0px, 0.001% chroma, 150 cores, margem 4px livre, IoU attack 0.53, death 0.50)"
     }
   ]
 }

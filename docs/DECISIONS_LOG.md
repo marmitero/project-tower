@@ -1217,7 +1217,26 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 | Roster de Inimigos | O roster atinge **65 inimigos** (50 da Onda 1 + 5 do Bioma 1 + 5 do Bioma 2 + 5 do Bioma 3 da Onda 2), todos com sprites/atlas reais e zero placeholders |
 | Verificação | `npm run check` verde (783 testes unitários/integração + 28 testes de arquitetura), 897 requisições HTTP 200 no bundle de preview (16,21 MB em arte gerada, dentro do orçamento de 25 MB), contact sheets e fatias em `docs/art-review/lote-14/` |
 
-**Consequências:** Terceiro bioma da Onda 2 (Pináculo de Jade, andares 21–25) entregue com kit de arena e família de 5 inimigos exclusiva. Próxima etapa após aprovação do usuário: **Lote 15** — Bioma 4 da Onda 2 (Pináculo de Obsidiana, andares 26–30: vidro negro, veios de lava, ferro, kit de arena e 5 inimigos da família de obsidiana).
+**Consequências:** Terceiro bioma da Onda 2 (Pináculo de Jade, andares 21–25) entregue com kit de arena e família de 5 inimigos exclusiva. Aprovado pelo usuário em 2026-10-07.
+
+---
+
+## ADR-052 — Lote 15 da arte: Onda 2 — Bioma 4 (Pináculo de Obsidiana, andares 26 a 30), kit de arena p04_obsidiana e 5 inimigos da família de Obsidiana (2026-10-07)
+
+**Data:** 2026-10-07 · **Status:** ✅ Aceita (aguarda o "lote 15 aprovado") · **Tipo:** B (arte + dados) · **Gatilho:** Aprovação do Lote 14 e continuidade da Onda 2 (Pináculos em famílias, andares 11–40).
+
+**Gerações: 8/10 (2 reservas restantes).** 1 kit de arena 4×4 (`p04_obsidiana`) e 5 atlas de inimigos (`obsidian_dreadnought`, `lava_reaver`, `ash_stalker`, `magma_channeler`, `obsidian_warlord`) + 2 refações (kit gerado em 16:9 corrigido para 1:1 estrito na 2ª tentativa; predador das cinzas com névoas de fumaça corrigido para corpo sólido puro na 2ª tentativa). Zero cortes de margem e sem efeitos/arcos desenhados de ataque. Procedência registrada em `assets/generated/provenance.json` e `PROVENANCE.md`.
+
+| Item | Decisão |
+|---|---|
+| Arena do Pináculo de Obsidiana (Andares 26–30) | `p04_obsidiana`: alvenaria de vidro vulcânico negro com veios incandescentes de lava fundida e braçadeiras de ferro negro, tocha com chama de fogo vivo alaranjado, estandarte de malha de ferro e brasa vulcânica, portão em arco de obsidiana pontiaguda com grelha de ferro fundido e piso de basalto escuro com veios de lava resfriada. 16 ladrilhos fatiados, 0 magenta, emenda de parede 0.0 ok, emenda de piso 0.0 ok, luminância de piso 0.12–0.14 ok (com `floorGain: 1.1`), tamanho 72.5 KB |
+| Inimigos do Pináculo de Obsidiana (5 novos) | **Couraçado de Obsidiana** (tanque, físico, mult 0,96; guia `boss`, estilo `guardian_borin`, 199 px, âncora 0 px, 0.000% chroma, 421 cores, armadura monolítica de vidro negro) · **Espoliador de Lava** (dano, físico, mult 1,05; guia `hero`, estilo `guardian_borin`, 184 px, âncora 0 px, 0.001% chroma, 393 cores, lâmina de basalto incandescente sem arcos de corte) · **Predador das Cinzas** (veloz, físico, mult 1,05; guia `slime`, estilo `mud_toad`, 115 px, âncora 0 px, 0.001% chroma, 284 cores, quadrúpede sólido de obsidiana e brasas sem partículas soltas, IoU hurt 0.54, death 0.53) · **Canalizador de Magma** (mago, mágico, mult 0,90; guia `mage`, estilo `arcanist_pyro`, 184 px, âncora 0 px, 0.000% chroma, 292 cores, cajado de basalto vulcânico, 100% verde nos 5 movimentos) · **Senhor da Obsidiana** (elite raro, físico, mult 1,10; guia `orc`, estilo `goblin_captain`, 199 px, âncora 0 px, 0.001% chroma, 150 cores, placa pesada com núcleo incandescente, 20 quadros completos sem projéteis). Família de obsidiana cobre 5/5 papéis dos andares 26 a 30 |
+| Pool dos Andares 26 a 30 | Couraçado de Obsidiana (4), Espoliador de Lava (4), Predador das Cinzas (3), Canalizador de Magma (2), Senhor da Obsidiana (1, elite raro). Andares 31+ seguem nos grupos anteriores até os próximos biomas da Onda 2 |
+| Roster de Inimigos | O roster atinge **70 inimigos** (50 da Onda 1 + 5 do Bioma 1 + 5 do Bioma 2 + 5 do Bioma 3 + 5 do Bioma 4 da Onda 2), todos com sprites/atlas reais e zero placeholders |
+| Verificação | `npm run check` verde (783 testes unitários/integração + 28 testes de arquitetura), 918 requisições HTTP 200 no bundle de preview (17,25 MB em arte gerada, dentro do orçamento de 25 MB), contact sheets e fatias em `docs/art-review/lote-15/` |
+
+**Consequências:** Quarto bioma da Onda 2 (Pináculo de Obsidiana, andares 26–30) entregue com kit de arena e família de 5 inimigos exclusiva. Próxima etapa após aprovação do usuário: **Lote 16** — Bioma 5 da Onda 2 (Pináculo de Gelo Eterno, andares 31–35: alvenaria de gelo azul translúcido, geada, tochas gélidas, kit de arena e 5 inimigos da família de gelo).
+
 
 
 
