@@ -145,6 +145,7 @@ export {
 export {
   defaultBossConfig,
   defaultBosses,
+  BOSS_EXPANDED_CATALOG,
   bossErrors,
   BOSS_STATUS_IDS,
   BOSS_STATUS_LABELS,

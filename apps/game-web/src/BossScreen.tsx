@@ -9,7 +9,7 @@
 import { useState } from "react";
 import { ActionButton, Panel, ProgressBar, StatPill } from "@tia/ui";
 import { BOSS_STATUS_LABELS, classes, config, type BossDef, type BossFragmentDrop, type Rarity } from "@tia/config";
-import { GameState, bossBaseRewards, bossStats, fragmentSummary, type BossResult } from "@tia/game-core";
+import { GameState, allBosses, bossBaseRewards, bossStats, fragmentSummary, type BossResult } from "@tia/game-core";
 import { formatCompact, formatInt } from "./format.js";
 import { assetUrl } from "./render/assets.js";
 
@@ -319,7 +319,7 @@ export function BossScreen({ state }: { state: GameState }) {
 
       {/* Grade de 4 em 4 de Bosses */}
       <ul className="tia-boss-grid" aria-label="Chefes">
-        {config.boss.bosses.map((def) => (
+        {allBosses().map((def) => (
           <BossGridCard
             key={def.id}
             state={state}

@@ -13,6 +13,7 @@
 import type { BattleState, BossRecord, BossProgress, CombatStats, Equipment, Hero, RewardBundle } from "@tia/contracts";
 import { asAccountId } from "@tia/contracts";
 import {
+  BOSS_EXPANDED_CATALOG,
   RARITY_ORDER,
   classes,
   config,
@@ -58,11 +59,17 @@ export class BossBlockedError extends Error {
 // ---------------------------------------------------------------------------
 
 export function allBosses(): readonly BossDef[] {
-  return config.boss.bosses;
+  const merged = [...config.boss.bosses];
+  for (const exp of BOSS_EXPANDED_CATALOG) {
+    if (!merged.some((b) => b.id === exp.id)) {
+      merged.push(exp);
+    }
+  }
+  return merged.sort((a, b) => a.level - b.level);
 }
 
 export function bossById(id: string): BossDef | undefined {
-  return config.boss.bosses.find((b) => b.id === id);
+  return config.boss.bosses.find((b) => b.id === id) ?? BOSS_EXPANDED_CATALOG.find((b) => b.id === id);
 }
 
 /** Id da skill no engine: nunca colide com as skills de heróis. */

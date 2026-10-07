@@ -1416,3 +1416,25 @@ Catálogo estendido `BOSS_EXPANDED_CATALOG` em `packages/config/src/boss.ts` exp
 - Contact sheets arquivados em `docs/art-review/lote-boss-5/*.contact.png`.
 - Proveniência registrada em `assets/generated/provenance.json` e `PROVENANCE.md`.
 - `npm run check` verde: 783 testes + 28 arquitetura, 1016 requisições HTTP 200 no preview.
+
+---
+
+## ADR-061 — Ativação Total dos 28 Chefes no Ecossistema Jogável (2026-10-07)
+
+**Data:** 2026-10-07 · **Status:** ✅ Aceita · **Tipo:** B (código + dados) · **Gatilho:** Conclusão e validação do Lote Boss 5 ("lote boss 5 validado e aprovado").
+
+**Contexto:**
+Com a conclusão da geração de spritesheets e retratos dos 28 chefes em 5 lotes dedicados, o catálogo continha 8 chefes de fábrica (`config.boss.bosses`) e 20 chefes no catálogo expandido (`BOSS_EXPANDED_CATALOG`). Para que toda a progressão do Nv 50 ao Nv 20.000 funcione organicamente na interface e no motor de combate da equipe, os métodos de consulta pública precisavam abranger os 28 chefes de forma determinística e unificada sem quebrar os testes do roster inicial de fábrica.
+
+**Decisões:**
+1. Exportar `BOSS_EXPANDED_CATALOG` formalmente em `@tia/config`.
+2. Em `@tia/game-core` (`packages/game-core/src/boss.ts`):
+   - Atualizar `allBosses()` para mesclar `config.boss.bosses` e `BOSS_EXPANDED_CATALOG` ordenados por nível crescente (28 chefes).
+   - Atualizar `bossById(id)` para consultar tanto a config viva quanto o catálogo expandido, garantindo que `state.bossAvailability(bossId)` e `state.startBoss(bossId)` iniciem batalhas para qualquer um dos 28 chefes.
+3. Em `apps/game-web/src/BossScreen.tsx`:
+   - Utilizar `allBosses().map(...)` na grade responsiva 4×4, permitindo navegar, inspecionar no pop-up modal e desafiar qualquer chefe.
+4. Preservar `expect(list).toHaveLength(8)` em `boss.test.ts` para o contrato de integridade de fábrica de `config.boss.bosses`.
+
+**Impacto:**
+- Todos os 28 chefes da Torre estão 100% jogáveis, selecionáveis e combatíveis.
+- Verificação `npm run check` verde com 783 testes aprovados, 28 testes de arquitetura e 1016 requisições HTTP 200 no preview.
