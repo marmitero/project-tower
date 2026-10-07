@@ -151,6 +151,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "obsidian_colossus", name: "Colosso de Obsidiana", role: "tank", damageType: "physical", statMultiplier: 1.0,
       attributes: attrs(26, 6, 38, 8, 14),
       assets: { sheets: charSheets("orc"), atlas: "enemies/obsidian_colossus" } },
+    // Lote 12 (ADR-049): tanque dos andares 11–15 (Pináculo Arcano) — atlas próprio.
+    { id: "crystal_golem", name: "Golem de Cristal Arcano", role: "tank", damageType: "physical", statMultiplier: 0.96,
+      attributes: attrs(24, 6, 38, 8, 14),
+      assets: { sheets: charSheets("orc"), atlas: "enemies/crystal_golem" } },
     // --- dps ----------------------------------------------------------
     { id: "goblin", name: "Goblin", role: "dps", damageType: "physical", statMultiplier: 1.23,
       attributes: attrs(28, 20, 14, 6, 8),
@@ -185,6 +189,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "eternal_warrior", name: "Guerreiro Eterno", role: "dps", damageType: "physical", statMultiplier: 1.05,
       attributes: attrs(30, 20, 20, 6, 10),
       assets: { sheets: charSheets("hero"), atlas: "enemies/eternal_warrior" } },
+    // Lote 12 (ADR-049): dano dos andares 11–15 (Pináculo Arcano) — atlas próprio.
+    { id: "rune_blade", name: "Espadachim Rúnico", role: "dps", damageType: "physical", statMultiplier: 1.05,
+      attributes: attrs(30, 22, 18, 8, 10),
+      assets: { sheets: charSheets("hero"), atlas: "enemies/rune_blade" } },
     // --- swift --------------------------------------------------------
     { id: "bat", name: "Morcego", role: "swift", damageType: "physical", statMultiplier: 1.12,
       attributes: attrs(14, 34, 10, 6, 8),
@@ -223,6 +231,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "living_clock", name: "Relógio Vivo", role: "swift", damageType: "physical", statMultiplier: 1.05,
       attributes: attrs(16, 36, 12, 6, 8),
       assets: { sheets: charSheets("hero"), atlas: "enemies/living_clock" } },
+    // Lote 12 (ADR-049): veloz dos andares 11–15 (Pináculo Arcano) — atlas próprio.
+    { id: "arcane_wisp", name: "Fogo-Fátuo Arcano", role: "swift", damageType: "magic", statMultiplier: 1.05,
+      attributes: attrs(8, 36, 12, 22, 12),
+      assets: { sheets: charSheets("slime"), atlas: "enemies/arcane_wisp" } },
     // --- caster -------------------------------------------------------
     { id: "toxicbat", name: "Morcego Tóxico", role: "caster", damageType: "magic", statMultiplier: 1.1,
       attributes: attrs(6, 24, 12, 28, 14),
@@ -260,6 +272,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "steps_oracle", name: "Oráculo dos Passos", role: "caster", damageType: "magic", statMultiplier: 0.9,
       attributes: attrs(6, 16, 14, 32, 18),
       assets: { sheets: charSheets("mage"), atlas: "enemies/steps_oracle" } },
+    // Lote 12 (ADR-049): mago dos andares 11–15 (Pináculo Arcano) — atlas próprio.
+    { id: "astral_sorcerer", name: "Feiticeiro Astral", role: "caster", damageType: "magic", statMultiplier: 0.9,
+      attributes: attrs(6, 16, 12, 34, 18),
+      assets: { sheets: charSheets("mage"), atlas: "enemies/astral_sorcerer" } },
     { id: "fireorc", name: "Orc Flamejante", role: "caster", damageType: "magic", statMultiplier: 0.88,
       attributes: attrs(10, 8, 22, 32, 12),
       assets: { sheets: charSheets("fireorc") } },
@@ -299,6 +315,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "crimson_count", name: "Conde Carmesim", role: "elite", damageType: "magic", statMultiplier: 1.08,
       attributes: attrs(24, 22, 28, 26, 18),
       assets: { sheets: charSheets("orc"), atlas: "enemies/crimson_count" } },
+    // Lote 12 (ADR-049): elite RARO dos andares 11–15 (Pináculo Arcano).
+    { id: "rift_stalker", name: "Rastreador da Fenda", role: "elite", damageType: "magic", statMultiplier: 1.1,
+      attributes: attrs(26, 26, 26, 14, 12),
+      assets: { sheets: charSheets("orc"), atlas: "enemies/rift_stalker" } },
     { id: "elitearcher", name: "Arqueiro de Elite", role: "elite", damageType: "physical", statMultiplier: 1.26,
       attributes: attrs(26, 32, 18, 8, 12),
       assets: { sheets: charSheets("elitearcher") } },

@@ -150,3 +150,16 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 3 | `enemies/living_clock` | atlas | aprovado (revisão visual silhueta pêndulos/engrenagens, 0.000% chroma, âncora 0px, idle 184px, 52 cores) | guide_hero.magenta, style_obsidian_colossus | Relógio Vivo (swift do andar 10): autômato esguio feito de pêndulos dourados e engrenagens giratórias de bronze polido,  |
 | 4 | `enemies/steps_oracle` | atlas | aprovado (revisão visual silhueta ampulheta/manto, 0.000% chroma, âncora 0px, idle 184px, 51 cores) | guide_hero.magenta, style_obsidian_colossus | Oráculo dos Passos (caster do andar 10): sábio ancestral envolto em túnica de seda branca com bordados dourados de ampul |
 
+## Lote L12 — 8/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `arenas/p01_arcano` | arena-kit | aprovado (16 ladrilhos fatiados, 0 magenta, luminância 0.11-0.22, 83 KB) | ref_arena_f01_entrada, ref_arena_f10_passos | Pináculo Arcano (arena kit dos andares 11-15): alvenaria de pedra índigo com cristais arcanos e runas ciano reluzentes,  |
+| 2 | `enemies/crystal_golem_raw1` | atlas | rejeitado (formato 16:9 em vez de 4:5) | guide_orc.magenta, style_mud_toad | Golem de Cristal Arcano (tanque dos andares 11-15): tentativa 1 descartada por proporção 16:9 |
+| 3 | `enemies/crystal_golem` | atlas | revisão visual (199px, âncora 0px, 0.000% chroma, 709 cores, aprovado) | guide_orc.magenta, style_mud_toad | Golem de Cristal Arcano (tanque dos andares 11-15): construto colossal de blocos angulares de pedra índigo e cristais de |
+| 4 | `enemies/rune_blade` | atlas | aprovado (184px, âncora 0px, 0.004% chroma, 489 cores, IoU walk 0.57, hurt 0.48) | guide_hero.magenta, style_guardian_borin | Espadachim Rúnico (dano dos andares 11-15): guerreiro em armadura de aço meia-noite com espada larga de duas mãos entalh |
+| 5 | `enemies/arcane_wisp` | atlas | aprovado (115px, âncora 0px, 0.001% chroma, 630 cores, IoU walk 0.51, hurt 0.45) | guide_bat.magenta, style_spark_imp | Fogo-Fátuo Arcano (veloz dos andares 11-15): criatura mágica flutuante, esfera de mana índigo multifacetada com olho de  |
+| 6 | `enemies/astral_sorcerer` | atlas | aprovado (184px, âncora 0px, 0.001% chroma, IoU idle 0.61, walk 0.59, attack 0.46, hurt 0.58) | guide_mage.magenta, style_spark_imp | Feiticeiro Astral (mago dos andares 11-15): conjurador arcano em mantos índigo sobrepostos e capuz pontiagudo com cajado |
+| 7 | `enemies/rift_stalker_raw1` | atlas | rejeitado (formato 16:9 em vez de 4:5) | guide_orc.magenta, style_royal_mummy | Rastreador da Fenda (elite dos andares 11-15): tentativa 1 descartada por proporção 16:9 |
+| 8 | `enemies/rift_stalker` | atlas | revisão visual (184px, âncora 0px, 0.016% chroma, 714 cores, aprovado) | guide_orc.magenta, style_royal_mummy | Rastreador da Fenda (elite dos andares 11-15): predador arcano feroz de quitina obsidiana-índigo com espinhos de cristal |
+

@@ -1162,9 +1162,26 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 | Balanceamento | `npm run report:balance` atesta combate ideal no Andar 10: guardian × Colosso de Obsidiana (42% de vida, 40,1 s, 29% peso), guardian × Guerreiro Eterno (33% de vida, 20,1 s, 29% peso), guardian × Relógio Vivo (19% de vida, 12,8 s, 21% peso), guardian × Oráculo dos Passos (27% de vida, 11,4 s, 14% peso), guardian × Arqueiro de Elite (52% de vida, 23,4 s, 7% peso). Progressão de 4 horas perfeitamente preservada |
 | Verificação | `npm run check` verde (783 testes unitários/integração + 28 testes arquiteturais), 834 requisições HTTP 200 no bundle de preview (13,26 MB em arte gerada, dentro do orçamento de 25 MB), contact sheets e fatias em `docs/art-review/lote-11/` |
 
-**Consequências:** Meta da Onda 1 de arte atingida com êxito! 10 andares completos, 10 arenas completas, 50 inimigos com sprites/atlas reais. Próxima etapa após aprovação do usuário: Planejamento e execução da Onda 2 (Chefes da Arena, Heróis jogáveis com 5 classes e kits visuais de evolução).
+**Consequências:** Meta da Onda 1 de arte atingida com êxito! 10 andares completos, 10 arenas completas, 50 inimigos com sprites/atlas reais. Aprovada pelo usuário em 2026-10-07.
 
-**Consequências:** Roster de inimigos sobe de 41 para 47 inimigos (todos os papéis cobertos); andares 1 a 9 agora possuem 100% dos seus elencos com arte original própria e kits de arena dedicados (9 kits de arena ativos); Andar 10 iniciado com seu tanque. Próximo passo: **Lote 11 (último lote da Onda 1)**: kit de arena do Andar 10 (Câmara dos Mil Passos) + 3 inimigos restantes do andar 10 (Guerreiro Eterno, Relógio Vivo, Oráculo dos Passos) + fechamento completo da Onda 1 de arte.
+---
+
+## ADR-049 — Lote 12 da arte: Abertura da Onda 2 — Bioma 1 (Pináculo Arcano, andares 11 a 15), kit de arena p01_arcano e 5 inimigos da família Arcana (2026-10-07)
+
+**Data:** 2026-10-07 · **Status:** ✅ Aceita (aguarda o "lote 12 aprovado") · **Tipo:** B (arte + dados) · **Gatilho:** Aprovação da Onda 1 pelo usuário e início da Onda 2 (Pináculos em famílias, andares 11–40).
+
+**Gerações: 8/10 (2 reservas restantes).** 1 kit de arena 4×4 (`p01_arcano`) e 5 atlas de inimigos (`crystal_golem`, `rune_blade`, `arcane_wisp`, `astral_sorcerer`, `rift_stalker`) + 2 refações por proporção (golem e rastreador vieram inicialmente em 16:9 e foram corrigidos na 2ª tentativa para 4:5 retrato). Procedência registrada em `assets/generated/provenance.json` e `PROVENANCE.md`.
+
+| Item | Decisão |
+|---|---|
+| Arena do Pináculo Arcano (Andares 11–15) | `p01_arcano`: alvenaria de pedra índigo com cristais arcanos e runas ciano reluzentes, tocha com chama ciano mística, estandarte com constelações astrais, portão em arco de cristal arcano e piso de lajes escuras com veios de energia mágica. 16 ladrilhos fatiados, 0 magenta, luminância do piso 0.11–0.22 (com `floorGain: 1.15`), orçamento 83 KB |
+| Inimigos do Pináculo Arcano (5 novos) | **Golem de Cristal Arcano** (tanque, físico, mult 0,96; guia `orc`, estilo `mud_toad`, 199 px, âncora 0 px, 0.000% chroma, 709 cores) · **Espadachim Rúnico** (dano, físico, mult 1,05; guia `hero`, estilo `guardian_borin`, 184 px, âncora 0 px, 0.004% chroma, 489 cores, IoU walk 0.57, hurt 0.48) · **Fogo-Fátuo Arcano** (veloz, mágico, mult 1,05; guia `slime`/`bat`, estilo `spark_imp`, 115 px, âncora 0 px, 0.001% chroma, 630 cores, IoU walk 0.51, hurt 0.45) · **Feiticeiro Astral** (mago, mágico, mult 0,90; guia `mage`, estilo `spark_imp`, 184 px, âncora 0 px, 0.001% chroma, IoU idle 0.61, walk 0.59, attack 0.46, hurt 0.58) · **Rastreador da Fenda** (elite raro, mágico, mult 1,10; guia `orc`, estilo `royal_mummy`, 184 px, âncora 0 px, 0.016% chroma, 714 cores). Família arcana cobre 5/5 papéis dos andares 11 a 15 |
+| Pool dos Andares 11 a 15 | Golem de Cristal Arcano (4), Espadachim Rúnico (4), Fogo-Fátuo Arcano (3), Feiticeiro Astral (2), Rastreador da Fenda (1, elite raro). Andares 16+ seguem nos grupos anteriores até os próximos biomas |
+| Roster de Inimigos | O roster atinge **55 inimigos** (50 da Onda 1 + 5 do Bioma 1 da Onda 2), todos com sprites/atlas reais e zero placeholders |
+| Balanceamento | `npm run report:balance` e `tower-balance.test.ts` atestam combates on-curve perfeitos no Andar 11: guardian × Golem de Cristal (42% vida / 33 s), Espadachim Rúnico (36% vida / 16 s), Fogo-Fátuo Arcano (29% vida / 12 s), Feiticeiro Astral (29% vida / 11 s), Rastreador da Fenda (35% vida / 25 s). Sustain idle e ritmo de 759 h para 20.000 níveis totalmente intactos |
+| Verificação | `npm run check` verde (783 testes unitários/integração + 28 testes de arquitetura), 855 requisições HTTP 200 no bundle de preview (14,18 MB em arte gerada, dentro do orçamento de 25 MB), contact sheets e fatias em `docs/art-review/lote-12/` |
+
+**Consequências:** Primeiro bioma da Onda 2 (Pináculo Arcano, andares 11–15) entregue com kit de arena e família de 5 inimigos exclusiva. Próxima etapa após aprovação do usuário: **Lote 13** — Bioma 2 da Onda 2 (Pináculo Carmesim, andares 16–20: kit de arena e 5 inimigos da família carmesim).
 
 
 

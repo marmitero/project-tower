@@ -52,6 +52,7 @@ export function defaultArenaKits(): ArenaKitDef[] {
   const f08 = (n: string) => `arenas/f08_sombras/${n}`;
   const f09 = (n: string) => `arenas/f09_sangrento/${n}`;
   const f10 = (n: string) => `arenas/f10_passos/${n}`;
+  const p01 = (n: string) => `arenas/p01_arcano/${n}`;
   return [
     {
       // Lote 1 (ADR-033): primeiro kit GERADO — a Entrada da Torre (andar 1). Pedra azul-acinzentada,
@@ -250,6 +251,27 @@ export function defaultArenaKits(): ArenaKitDef[] {
         { assetId: f10("prop_1"), weight: 3 },
         { assetId: f10("prop_2"), weight: 2 },
         { assetId: f10("prop_3"), weight: 2 },
+      ],
+      tint: 0xffffff,
+    },
+    {
+      // Lote 12 (ADR-049): Pináculo Arcano (andares 11–15, Bioma 1 da Onda 2). Alvenaria de pedra índigo
+      // com cristais arcanos e runas ciano reluzentes, tocha com chama ciano mística, estandarte com
+      // constelações astrais, portão em arco de cristal arcano e piso de lajes escuras com veios de energia mágica.
+      id: "p01_arcano",
+      name: "Pináculo Arcano",
+      wall: [
+        p01("wall_0"), p01("wall_1"), p01("wall_2"), p01("wall_0"), p01("wall_4"), p01("wall_1"),
+        p01("banner"), p01("wall_2"), p01("wall_3"), p01("wall_0"), p01("wall_4"), p01("gate"),
+      ],
+      torch: p01("torch"),
+      torchEvery: 4,
+      floor: [p01("floor_0"), p01("floor_1"), p01("floor_2"), p01("floor_3"), p01("floor_0")],
+      props: [
+        { assetId: p01("prop_0"), weight: 3 },
+        { assetId: p01("prop_1"), weight: 3 },
+        { assetId: p01("prop_2"), weight: 2 },
+        { assetId: p01("prop_3"), weight: 2 },
       ],
       tint: 0xffffff,
     },

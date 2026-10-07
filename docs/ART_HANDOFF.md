@@ -37,13 +37,14 @@
 | L8 | **Andares 5 e 6 completos (6 inimigos novos)** + arenas `f06_fornalha` e `f07_jardim` | 10 | 044 | ✅ aprovado |
 | L9 | **Andar 7 completo (4 novos) + arena `f08_sombras` + 3 novos andar 8** | 9 | 045 | ✅ aprovado |
 | L10 | **Andares 8 e 9 completos (5 novos) + arena `f09_sangrento` + 1 novo andar 10** | 7 | 047 | ✅ aprovado |
-| L11 | **Andar 10 completo (3 novos) + arena `f10_passos` (Câmara dos Mil Passos) — ONDA 1 CONCLUÍDA** | 4 | 048 | ⏳ **aguarda "lote 11 aprovado"** |
+| L11 | **Andar 10 completo (3 novos) + arena `f10_passos` (Câmara dos Mil Passos) — ONDA 1 CONCLUÍDA** | 4 | 048 | ✅ aprovado |
+| L12 | **Onda 2 (Bioma 1: Pináculo Arcano, andares 11–15): kit de arena `p01_arcano` + 5 novos inimigos da família Arcana** | 8 | 049 | ⏳ **aguarda "lote 12 aprovado"** |
 
-**Próximo: Onda 2 (Chefes da Arena e Heróis jogáveis)** — só depois do "lote 11 aprovado".
+**Próximo: Lote 13 (Bioma 2 da Onda 2: Pináculo Carmesim, andares 16–20)** — só depois do "lote 12 aprovado".
 
-> **Atualização Lote 11 (2026-10-07):** Lote 10 aprovado; Lote 11 entregue com 4/10 gerações (6 reservas restantes). 3 novos atlas de inimigos (`eternal_warrior`, `living_clock`, `steps_oracle`) + 1 kit de arena 4×4 (`f10_passos`, Câmara dos Mil Passos). Todos os 10 primeiros andares agora possuem 100% de arenas geradas dedicadas e 5/5 inimigos temáticos próprios (50 inimigos no total no roster vivo). Meta da Onda 1 de arte 100% batida! `npm run check` verde — **783 testes + 28 de arquitetura**, preview atualizado com bundle de 834 requisições HTTP 200.
+> **Atualização Lote 12 (2026-10-07):** Onda 1 (Lote 11) aprovada! Lote 12 entregue iniciando a Onda 2 com 8/10 gerações usadas (2 reservas restantes). 5 novos atlas de inimigos (`crystal_golem`, `rune_blade`, `arcane_wisp`, `astral_sorcerer`, `rift_stalker`) + 1 kit de arena 4×4 (`p01_arcano`, Pináculo Arcano). Andares 11 a 15 agora possuem arena dedicada e família temática própria de 5 papéis. Roster expandido para **55 inimigos** e 11 arenas. `npm run check` verde — **783 testes + 28 de arquitetura**, preview com bundle de 855 requisições HTTP 200.
 
-Metas numéricas (Onda 1): 25 heróis (**26 — meta batida no L6, 100% com retrato no L7**) · 12 retratos do Rei (**feito**) · 10 arenas (**10/10 completas: f01 a f10**) · 50 inimigos nos andares 1–10 (**50/50 completos no roster**) · UI GBA + login (**feito**). ONDA 1 100% CONCLUÍDA.
+Metas numéricas: Onda 1 **100% batida** (26 heróis, 12 skins do Rei, 10 arenas, 50 inimigos nos andares 1–10). Onda 2 em andamento: 1/6 biomas de Pináculos concluído (andares 11–15 com kit próprio e 5 inimigos; roster total = 55).
 
 Pendências de retrato: **0** — todos os 26 heróis agora possuem retrato próprio dedicado no jogo.
 
@@ -214,8 +215,8 @@ Depois de qualquer asset: `node scripts/build-assets.mjs` (regenera `apps/game-w
 
 ## 9. Próximo lote e o restante da fila (ajuste pelo roadmap §9, que é a fonte do plano)
 
-**Lote 11 (entregue, aguarda "lote 11 aprovado"):** arena 10 (`f10_passos`, Câmara dos Mil Passos) + 3 inimigos do andar 10 (`eternal_warrior`, `living_clock`, `steps_oracle`) = **4 gerações usadas, 6 reservas restantes** ⇒ **Onda 1 100% COMPLETA**.
-**Próximo lote (Onda 2, após "lote 11 aprovado"):** Chefes da Arena (8 chefes com sprites próprios gigantes/imponentes) e Heróis jogáveis com evolução visual (5 classes).
+**Lote 12 (entregue, aguarda "lote 12 aprovado"):** arena do Pináculo Arcano (`p01_arcano`, andares 11–15) + 5 inimigos da família Arcana (`crystal_golem`, `rune_blade`, `arcane_wisp`, `astral_sorcerer`, `rift_stalker`) = **8 gerações usadas, 2 reservas restantes** ⇒ **Bioma 1 da Onda 2 COMPLETO**.
+**Próximo lote (Lote 13, após "lote 12 aprovado"):** Bioma 2 da Onda 2: Pináculo Carmesim (andares 16–20: kit de arena e 5 inimigos da família carmesim).
 **Depois da arte:** Fase 14 — Painel Admin (`docs/ADMIN_PANEL.md`) e Fase Online (Google Auth, Supabase, Mercado da comunidade).
 **Estimativa atual:** ~4 lotes de arte (L8–L11) + Fase 14 ⇒ ~5 etapas até a Onda 1 completa (o MVP *local* já é jogável desde a Fase 13).
 

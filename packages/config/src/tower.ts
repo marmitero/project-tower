@@ -106,15 +106,14 @@ const FIRST_FLOOR_NAMES: readonly string[] = [
 
 /** Tintura por grupo de andares (decorativa; editável por andar). */
 function tintForFloor(index: number): number | null {
-  if (index <= 10) return null;
-  if (index <= 12) return 0xffc9a8;
+  if (index <= 15) return null;
   if (index <= 20) return 0xd2b4ff;
   if (index <= 30) return 0xffa8a8;
   return 0xa8ffd0;
 }
 
 function themeForFloor(index: number): string {
-  // Kits próprios gerados por andar (Lotes 1–2, 7, 8, 9, 10, 11, ADR-033/036/043/044/045/047/048); os demais seguem nos grupos antigos.
+  // Kits próprios gerados por andar e bioma (Lotes 1–2, 7, 8, 9, 10, 11, 12, ADR-033/036/043/044/045/047/048/049); os demais seguem nos grupos antigos.
   if (index === 1) return "f01_entrada";
   if (index === 2) return "f02_porao";
   if (index === 3) return "f03_ossadas";
@@ -125,7 +124,8 @@ function themeForFloor(index: number): string {
   if (index === 8) return "f08_sombras";
   if (index === 9) return "f09_sangrento";
   if (index === 10) return "f10_passos";
-  if (index <= 12) return "sangue e brasa";
+  if (index >= 11 && index <= 15) return "p01_arcano";
+  if (index <= 18) return "sangue e brasa";
   if (index <= 20) return "pináculo arcano";
   if (index <= 30) return "pináculo carmesim";
   return "pináculo de jade";
@@ -205,15 +205,21 @@ export const DEFAULT_POOL_PLAN: ReadonlyArray<{
   { enemyId: "living_clock", fromFloor: 10, toFloor: 10, weight: 3 },
   { enemyId: "steps_oracle", fromFloor: 10, toFloor: 10, weight: 2 },
   { enemyId: "elitearcher", fromFloor: 10, toFloor: 10, weight: 1 },
-  // Andares 11+ — ainda com os inimigos de antes; trocam por andar nos lotes futuros (docs/STYLIZATION_ROADMAP.md §3.1).
-  { enemyId: "toxicbat", fromFloor: 11, weight: 2 },
-  { enemyId: "bat", fromFloor: 11, weight: 3 },
-  { enemyId: "slime", fromFloor: 11, weight: 2 },
-  { enemyId: "goblin", fromFloor: 11, weight: 2 },
-  { enemyId: "skeleton", fromFloor: 11, weight: 3 },
-  { enemyId: "orc", fromFloor: 11, weight: 3 },
-  { enemyId: "shadowgoblin", fromFloor: 11, weight: 1 },
-  { enemyId: "elitearcher", fromFloor: 11, weight: 1 },
+  // Andares 11–15 — Pináculo Arcano (Lote 12, Bioma 1 da Onda 2): Golem de Cristal Arcano T · Espadachim Rúnico D · Fogo-Fátuo Arcano V · Feiticeiro Astral M · Rastreador da Fenda E (raro).
+  { enemyId: "crystal_golem", fromFloor: 11, toFloor: 15, weight: 4 },
+  { enemyId: "rune_blade", fromFloor: 11, toFloor: 15, weight: 4 },
+  { enemyId: "arcane_wisp", fromFloor: 11, toFloor: 15, weight: 3 },
+  { enemyId: "astral_sorcerer", fromFloor: 11, toFloor: 15, weight: 2 },
+  { enemyId: "rift_stalker", fromFloor: 11, toFloor: 15, weight: 1 },
+  // Andares 16+ — ainda com os inimigos de antes; trocam por bioma nos lotes futuros (docs/STYLIZATION_ROADMAP.md §3.3).
+  { enemyId: "toxicbat", fromFloor: 16, weight: 2 },
+  { enemyId: "bat", fromFloor: 16, weight: 3 },
+  { enemyId: "slime", fromFloor: 16, weight: 2 },
+  { enemyId: "goblin", fromFloor: 16, weight: 2 },
+  { enemyId: "skeleton", fromFloor: 16, weight: 3 },
+  { enemyId: "orc", fromFloor: 16, weight: 3 },
+  { enemyId: "shadowgoblin", fromFloor: 16, weight: 1 },
+  { enemyId: "elitearcher", fromFloor: 16, weight: 1 },
 ];
 
 function poolForFloor(index: number): FloorPoolEntry[] {
