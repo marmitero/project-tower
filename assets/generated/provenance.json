@@ -1758,6 +1758,70 @@
       "kind": "elite",
       "prompt": "Full vertical 1024x1280 pixel art sprite sheet of the ultimate apex Tower Apotheosis titan boss",
       "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_UI_2",
+      "asset": "ui/mannequin_silhouette",
+      "kind": "ui",
+      "prompt": "Dark fantasy pixel art UI anatomical armor mannequin paper doll silhouette for equipment screen",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_UI_2",
+      "asset": "ui/pedestal_stone",
+      "kind": "ui",
+      "prompt": "Dark fantasy pixel art UI carved stone battle plinth pedestal dais for team screen",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_UI_2",
+      "asset": "ui/portcullis_lock",
+      "kind": "ui",
+      "prompt": "Dark fantasy pixel art UI forged iron portcullis dungeon gate grate with skull padlock",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_UI_2",
+      "asset": "ui/parchment_scroll",
+      "kind": "ui",
+      "prompt": "Dark fantasy pixel art UI vertical antique grimoire parchment scroll sheet for tooltips",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_UI_2",
+      "asset": "ui/chat_header_scroll",
+      "kind": "ui",
+      "prompt": "Dark fantasy pixel art UI horizontal medieval tavern ribbon scroll banner",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_UI_2",
+      "asset": "ui/class_crest_warrior",
+      "kind": "ui",
+      "prompt": "Dark fantasy pixel art UI heraldic class crest medallion for Warrior champion",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_UI_2",
+      "asset": "ui/class_crest_cleric",
+      "kind": "ui",
+      "prompt": "Dark fantasy pixel art UI heraldic class crest medallion for Cleric champion",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_UI_2",
+      "asset": "ui/class_crest_mage",
+      "kind": "ui",
+      "prompt": "Dark fantasy pixel art UI heraldic class crest medallion for Mage champion",
+      "refs": []
     }
   ]
 }

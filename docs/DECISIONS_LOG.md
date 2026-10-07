@@ -1467,3 +1467,28 @@ A interface web do jogo necessitava de uma transição completa de layout genér
 - O jogo agora apresenta acabamento visual autêntico de RPG Dark Fantasy em toda a interface.
 - 100% de compatibilidade desktop-first e mobile-ready preservada (alvos de toque ≥44px, acessibilidade intacta).
 - `npm run check` verde: 783 testes aprovados, 28 testes de arquitetura e 1016 requisições HTTP 200 no preview.
+
+
+---
+
+## ADR-063 — Produção do Lote UI 2 e Implementação de Paper Doll, Pedestais e Crônicas (2026-10-07)
+
+**Data:** 2026-10-07 · **Status:** ✅ Aceita · **Tipo:** B (código + assets + CSS) · **Gatilho:** Aprovação e validação do Master Plan de UI/UX Game-First ("planejamento validado! inicie a execução").
+
+**Contexto:**
+Após a aprovação do plano de transformação visual, iniciamos a Fase 1 e Fase 2 da execução: geração dos 8 assets dedicados em pixel art Dark Fantasy para o Lote UI 2 (`mannequin_silhouette`, `pedestal_stone`, `portcullis_lock`, `parchment_scroll`, `chat_header_scroll`, `class_crest_warrior`, `class_crest_cleric`, `class_crest_mage`), e integração visual nas telas de Inventário, Equipe e Chat.
+
+**Decisões:**
+1. Gerar e ingerir os 8 assets de UI via `scripts/ingest-lote-ui-2.mjs` com chroma key, despill residual, remoção de ilhas e recorte inteligente de bounding box.
+2. Atualizar `packages/config/src/uitheme.ts` expandindo `DARK_FANTASY_UI_ASSETS` para incluir os 8 novos assets.
+3. Atualizar `manifest.json` com `node scripts/build-assets.mjs` mapeando 1017 arquivos sem pendências.
+4. Em `apps/game-web/src/styles.css`:
+   - Paper Doll: silhueta do herói (`--ui-mannequin-silhouette`) com moldura 9-slice de pedra e slots anatômicos (`--ui-slot-frame-*`).
+   - Grade de Baú da Mochila: matriz de slots de veludo/ferro com anéis iluminados de raridade.
+   - Sala de Guerra: pedestais de pedra rúnica (`--ui-pedestal-stone`) para heróis ativos e portcullis de ferro (`--ui-portcullis-lock`) para slots bloqueados.
+   - Crônicas da Taverna: flâmula heráldica, mensagens em pergaminho antigo e entradas de log decoradas.
+   - Tipografia Dark Fantasy lapidada em títulos e placas de nome (*Cinzel / Georgia* com relevo sombreado duplo).
+
+**Impacto:**
+- O jogo ganha profundidade física diegética e materiais táteis em todas as áreas principais.
+- 100% dos testes e checagens continuam verdes: 783 testes unitários/integração/UI, 28 testes de arquitetura e 1024 requisições HTTP 200 no preview.

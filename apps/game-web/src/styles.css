@@ -1727,6 +1727,25 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
+.tia-gba .tia-eqslot {
+  background: #110f1a;
+  border-style: solid;
+  border-width: 12px;
+  border-image: var(--ui-frame-9slice-stone) 24 fill / 12px / 0 stretch;
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.7);
+  padding: 8px 12px;
+}
+
+.tia-gba .tia-eqslot--empty {
+  border-image: var(--ui-frame-9slice-dark) 24 fill / 12px / 0 stretch;
+  opacity: 0.7;
+}
+
+.tia-gba .tia-eqslot:not(.tia-eqslot--empty) {
+  border-image: var(--ui-frame-9slice-brick) 24 fill / 12px / 0 stretch;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 8px rgba(212, 175, 55, 0.25);
+}
+
 /* --- Divisores e Adornos Visuais --- */
 .tia-gba hr,
 .tia-gba .tia-divider {
@@ -1736,4 +1755,261 @@ body {
   background: center / contain no-repeat var(--ui-divider-gold);
   border: none;
 }
+
+/* --- Tipografia Dark Fantasy Lapidada (Chiseled Stone & Gilded Gold) --- */
+.tia-gba h1,
+.tia-gba h2,
+.tia-gba h3,
+.tia-gba .tia-panel__title,
+.tia-gba .tia-overlay__head h2,
+.tia-gba .tia-boss-card__name,
+.tia-gba .tia-side__head h2 {
+  font-family: "Cinzel", "Georgia", "Times New Roman", "Palatino", serif;
+  letter-spacing: 0.05em;
+}
+
+/* --- Paper Doll: Manequim Anatômico e Armaria do Inventário --- */
+.tia-paperdoll-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+  margin-top: 10px;
+}
+
+.tia-paperdoll {
+  position: relative;
+  width: 220px;
+  height: 310px;
+  flex-shrink: 0;
+  background: #0d0b14 radial-gradient(circle at center, rgba(30, 24, 45, 0.8) 0%, rgba(13, 11, 20, 0.95) 75%);
+  border-style: solid;
+  border-width: 14px;
+  border-image: var(--ui-frame-9slice-stone) 24 fill / 14px / 0 stretch;
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.8), 0 4px 14px rgba(0, 0, 0, 0.6);
+  image-rendering: pixelated;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tia-paperdoll__silhouette {
+  position: absolute;
+  width: 90px;
+  height: auto;
+  opacity: 0.35;
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.9));
+  pointer-events: none;
+}
+
+.tia-paperdoll__slot {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  background: #09080e;
+  border-style: solid;
+  border-width: 8px;
+  border-image: var(--ui-slot-frame-gear) 8 fill / 8px / 0 stretch;
+  image-rendering: pixelated;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 100ms ease, box-shadow 100ms ease;
+}
+
+.tia-paperdoll__slot:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+.tia-paperdoll__slot--head   { top: 14px; left: 50%; transform: translateX(-50%); }
+.tia-paperdoll__slot--chest  { top: 76px; left: 50%; transform: translateX(-50%); }
+.tia-paperdoll__slot--weapon { top: 90px; left: 16px; border-image: var(--ui-slot-frame-sword) 8 fill / 8px / 0 stretch; }
+.tia-paperdoll__slot--shield { top: 90px; right: 16px; border-image: var(--ui-slot-frame-shield) 8 fill / 8px / 0 stretch; }
+.tia-paperdoll__slot--relic  { top: 22px; right: 18px; border-image: var(--ui-slot-frame-potion) 8 fill / 8px / 0 stretch; }
+.tia-paperdoll__slot--boots  { bottom: 18px; left: 50%; transform: translateX(-50%); }
+
+.tia-paperdoll__slot-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.tia-paperdoll__slot-empty-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #6d6480;
+  text-shadow: 1px 1px 0 #000;
+}
+
+/* --- Baú do Tesouro / Grade de Mochila (Chest Grid) --- */
+.tia-chestgrid-wrapper {
+  flex: 1;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tia-chestgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: 6px;
+  padding: 10px;
+  background: #0d0b14;
+  border-style: solid;
+  border-width: 14px;
+  border-image: var(--ui-frame-9slice-dark) 24 fill / 14px / 0 stretch;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.85);
+}
+
+.tia-chestslot {
+  width: 100%;
+  aspect-ratio: 1;
+  min-width: 44px;
+  min-height: 44px;
+  background: #15121e;
+  border: 2px solid #2e283d;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  image-rendering: pixelated;
+  transition: transform 100ms ease, border-color 100ms ease, box-shadow 100ms ease;
+}
+
+.tia-chestslot:hover {
+  transform: translateY(-2px);
+  border-color: #d4af37;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7), 0 0 8px rgba(212, 175, 55, 0.4);
+}
+
+.tia-chestslot--selected {
+  border-color: #ffdf94;
+  box-shadow: 0 0 12px rgba(255, 223, 148, 0.6);
+}
+
+.tia-chestslot__img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.tia-chestslot__quality {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  font-size: 9px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 1px 1px 0 #000;
+  background: rgba(0, 0, 0, 0.65);
+  padding: 0 3px;
+  border-radius: 3px;
+}
+
+/* Tooltip / Detalhes de Item em Pergaminho Antigo */
+.tia-parchment-card {
+  padding: 14px;
+  background: #1a1622 radial-gradient(circle at center, rgba(32, 26, 42, 0.95) 0%, rgba(18, 14, 25, 0.98) 100%);
+  border-style: solid;
+  border-width: 16px;
+  border-image: var(--ui-panel-ornate) 40 fill / 16px / 0 stretch;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.75);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* --- Sala de Guerra: Pedestais da Equipe (TeamPanel) --- */
+.tia-gba .tia-teampanel .tia-slotcard {
+  position: relative;
+  background: #14121e;
+  border-style: solid;
+  border-width: 14px;
+  border-image: var(--ui-frame-9slice-stone) 24 fill / 14px / 0 stretch;
+  border-radius: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+  padding: 10px;
+}
+
+.tia-gba .tia-teampanel .tia-slotcard--active {
+  border-image: var(--ui-frame-9slice-brick) 24 fill / 14px / 0 stretch;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.8), 0 0 12px rgba(212, 175, 55, 0.35);
+}
+
+.tia-gba .tia-teampanel .tia-slotcard--active::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 24px;
+  background: center / contain no-repeat var(--ui-pedestal-stone);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.tia-gba .tia-teampanel .tia-slotcard--locked {
+  background: #0f0d16 url("/assets/ui/portcullis_lock.png") center / 64px no-repeat;
+  border-style: dashed;
+  border-color: #3b344d;
+  opacity: 0.8;
+}
+
+/* --- Crônicas da Taverna (ChatPanel) --- */
+.tia-gba .tia-chat {
+  background: #12101a;
+  border-style: solid;
+  border-width: 16px;
+  border-image: var(--ui-frame-9slice-stone) 24 fill / 16px / 0 stretch;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.75);
+}
+
+.tia-gba .tia-chat .tia-side__head {
+  padding-bottom: 6px;
+  border-bottom: 2px solid #332a48;
+}
+
+.tia-gba .tia-chat__list {
+  background: rgba(14, 12, 20, 0.6);
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #282236;
+}
+
+.tia-gba .tia-chat__msg--system {
+  background: rgba(212, 175, 55, 0.08);
+  border-left: 2px solid #d4af37;
+  padding: 3px 6px;
+  color: #ffdf94;
+}
+
+.tia-gba .tia-chat__author {
+  color: #ffdf94;
+  font-weight: 700;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.tia-gba .tia-chat__input {
+  background: #0a0812;
+  border: 2px solid #38304c;
+  color: #f7edd7;
+  border-radius: 4px;
+}
+
+.tia-gba .tia-chat__input:focus {
+  border-color: #d4af37;
+  outline: none;
+  box-shadow: 0 0 6px rgba(212, 175, 55, 0.35);
+}
+
 

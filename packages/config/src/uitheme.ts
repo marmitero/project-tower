@@ -14,7 +14,7 @@ export const ICON_NAMES = [
   "potion", "rest", "enter", "back", "mute", "chat", "close", "data",
 ] as const;
 
-/** Assets visuais Dark Fantasy para molduras 9-slice, barras, divisores e brasões (Etapa 13.2). */
+/** Assets visuais Dark Fantasy para molduras 9-slice, barras, divisores e brasões (Etapa 13.2 / Lotes UI 1 & 2). */
 export const DARK_FANTASY_UI_ASSETS = [
   "ui/frame_9slice_stone",
   "ui/frame_9slice_brick",
@@ -42,6 +42,14 @@ export const DARK_FANTASY_UI_ASSETS = [
   "ui/slot_frame_potion",
   "ui/slot_frame_bag",
   "ui/slot_frame_gear",
+  "ui/mannequin_silhouette",
+  "ui/pedestal_stone",
+  "ui/portcullis_lock",
+  "ui/parchment_scroll",
+  "ui/chat_header_scroll",
+  "ui/class_crest_warrior",
+  "ui/class_crest_cleric",
+  "ui/class_crest_mage",
 ] as const;
 
 /** Todos os ids de asset do tema (para o manifesto e para os testes). */
