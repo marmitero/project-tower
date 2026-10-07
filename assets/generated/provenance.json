@@ -1358,6 +1358,54 @@
         "style_goblin_captain"
       ],
       "verdict": "aprovado (199px, âncora 0px, 0.001% chroma, 150 cores, margem 4px livre, IoU attack 0.53, death 0.50)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L16",
+      "asset": "kit_p05_celeste",
+      "kind": "arena",
+      "prompt": "A 4x4 grid of 16 pixel art arena tiles for Pináculo Celeste (white marble, gold filigree, solar motifs, 1024x1024 square)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L16",
+      "asset": "celestial_sentinel",
+      "kind": "enemy",
+      "prompt": "Sprite sheet in 16-bit dark fantasy pixel art of Celestial Sentinel (white marble, gold armor, solar tower shield)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L16",
+      "asset": "radiant_bladesman",
+      "kind": "enemy",
+      "prompt": "Sprite sheet in 16-bit dark fantasy pixel art of Radiant Bladesman (agile holy warrior, gold plate, solar longsword)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L16",
+      "asset": "dawn_stalker",
+      "kind": "enemy",
+      "prompt": "Sprite sheet in 16-bit dark fantasy pixel art of Dawn Stalker (swift quadruped celestial beast, white and gold fur)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L16",
+      "asset": "solar_hierophant",
+      "kind": "enemy",
+      "prompt": "Sprite sheet in 16-bit dark fantasy pixel art of Solar Hierophant (sun priest, white liturgical robes, golden sun staff)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L16",
+      "asset": "celestial_archon",
+      "kind": "enemy",
+      "prompt": "Sprite sheet in 16-bit dark fantasy pixel art of Celestial Archon (winged holy champion, heavy gold armor, greatsword)",
+      "refs": []
     }
   ]
 }

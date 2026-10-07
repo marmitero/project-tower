@@ -167,6 +167,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "obsidian_dreadnought", name: "Encouraçado de Obsidiana", role: "tank", damageType: "physical", statMultiplier: 0.96,
       attributes: attrs(26, 6, 38, 8, 14),
       assets: { sheets: charSheets("orc"), atlas: "enemies/obsidian_dreadnought" } },
+    // Lote 16 (ADR-053): tanque dos andares 31–35 (Pináculo Celeste) — atlas próprio.
+    { id: "celestial_sentinel", name: "Sentinela Celeste", role: "tank", damageType: "physical", statMultiplier: 0.96,
+      attributes: attrs(24, 6, 40, 8, 14),
+      assets: { sheets: charSheets("orc"), atlas: "enemies/celestial_sentinel" } },
     // --- dps ----------------------------------------------------------
     { id: "goblin", name: "Goblin", role: "dps", damageType: "physical", statMultiplier: 1.23,
       attributes: attrs(28, 20, 14, 6, 8),
@@ -217,6 +221,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "lava_reaver", name: "Retalhador de Lava", role: "dps", damageType: "physical", statMultiplier: 1.05,
       attributes: attrs(30, 22, 18, 8, 10),
       assets: { sheets: charSheets("hero"), atlas: "enemies/lava_reaver" } },
+    // Lote 16 (ADR-053): dano dos andares 31–35 (Pináculo Celeste) — atlas próprio.
+    { id: "radiant_bladesman", name: "Espadachim Radiante", role: "dps", damageType: "physical", statMultiplier: 1.05,
+      attributes: attrs(30, 24, 16, 8, 10),
+      assets: { sheets: charSheets("hero"), atlas: "enemies/radiant_bladesman" } },
     // --- swift --------------------------------------------------------
     { id: "bat", name: "Morcego", role: "swift", damageType: "physical", statMultiplier: 1.12,
       attributes: attrs(14, 34, 10, 6, 8),
@@ -271,6 +279,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "ash_stalker", name: "Predador das Cinzas", role: "swift", damageType: "physical", statMultiplier: 1.05,
       attributes: attrs(16, 36, 12, 6, 8),
       assets: { sheets: charSheets("slime"), atlas: "enemies/ash_stalker" } },
+    // Lote 16 (ADR-053): veloz dos andares 31–35 (Pináculo Celeste) — atlas próprio.
+    { id: "dawn_stalker", name: "Predador da Alvorada", role: "swift", damageType: "physical", statMultiplier: 1.05,
+      attributes: attrs(18, 36, 10, 6, 8),
+      assets: { sheets: charSheets("slime"), atlas: "enemies/dawn_stalker" } },
     // --- caster -------------------------------------------------------
     { id: "toxicbat", name: "Morcego Tóxico", role: "caster", damageType: "magic", statMultiplier: 1.1,
       attributes: attrs(6, 24, 12, 28, 14),
@@ -324,6 +336,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "magma_channeler", name: "Canalizador de Magma", role: "caster", damageType: "magic", statMultiplier: 0.9,
       attributes: attrs(6, 16, 12, 34, 18),
       assets: { sheets: charSheets("mage"), atlas: "enemies/magma_channeler" } },
+    // Lote 16 (ADR-053): mago dos andares 31–35 (Pináculo Celeste) — atlas próprio.
+    { id: "solar_hierophant", name: "Hierofante Solar", role: "caster", damageType: "magic", statMultiplier: 0.9,
+      attributes: attrs(6, 16, 12, 34, 18),
+      assets: { sheets: charSheets("mage"), atlas: "enemies/solar_hierophant" } },
     { id: "fireorc", name: "Orc Flamejante", role: "caster", damageType: "magic", statMultiplier: 0.88,
       attributes: attrs(10, 8, 22, 32, 12),
       assets: { sheets: charSheets("fireorc") } },
@@ -379,6 +395,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "obsidian_warlord", name: "Senhor da Obsidiana", role: "elite", damageType: "physical", statMultiplier: 1.1,
       attributes: attrs(32, 18, 28, 8, 14),
       assets: { sheets: charSheets("orc"), atlas: "enemies/obsidian_warlord" } },
+    // Lote 16 (ADR-053): elite RARO dos andares 31–35 (Pináculo Celeste).
+    { id: "celestial_archon", name: "Arconte Celeste", role: "elite", damageType: "physical", statMultiplier: 1.1,
+      attributes: attrs(30, 20, 28, 10, 14),
+      assets: { sheets: charSheets("orc"), atlas: "enemies/celestial_archon" } },
     { id: "elitearcher", name: "Arqueiro de Elite", role: "elite", damageType: "physical", statMultiplier: 1.26,
       attributes: attrs(26, 32, 18, 8, 12),
       assets: { sheets: charSheets("elitearcher") } },

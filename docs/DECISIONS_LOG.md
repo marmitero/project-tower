@@ -1235,7 +1235,26 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 | Roster de Inimigos | O roster atinge **70 inimigos** (50 da Onda 1 + 5 do Bioma 1 + 5 do Bioma 2 + 5 do Bioma 3 + 5 do Bioma 4 da Onda 2), todos com sprites/atlas reais e zero placeholders |
 | Verificação | `npm run check` verde (783 testes unitários/integração + 28 testes de arquitetura), 918 requisições HTTP 200 no bundle de preview (17,25 MB em arte gerada, dentro do orçamento de 25 MB), contact sheets e fatias em `docs/art-review/lote-15/` |
 
-**Consequências:** Quarto bioma da Onda 2 (Pináculo de Obsidiana, andares 26–30) entregue com kit de arena e família de 5 inimigos exclusiva. Próxima etapa após aprovação do usuário: **Lote 16** — Bioma 5 da Onda 2 (Pináculo de Gelo Eterno, andares 31–35: alvenaria de gelo azul translúcido, geada, tochas gélidas, kit de arena e 5 inimigos da família de gelo).
+**Consequências:** Quarto bioma da Onda 2 (Pináculo de Obsidiana, andares 26–30) entregue com kit de arena e família de 5 inimigos exclusiva. Aprovado pelo usuário em 2026-10-07.
+
+---
+
+## ADR-053 — Lote 16 da arte: Onda 2 — Bioma 5 (Pináculo Celeste, andares 31 a 35), kit de arena p05_celeste e 5 inimigos da família Celeste (2026-10-07)
+
+**Data:** 2026-10-07 · **Status:** ✅ Aceita (aguarda o "lote 16 aprovado") · **Tipo:** B (arte + dados) · **Gatilho:** Aprovação do Lote 15 e continuidade da Onda 2 (Pináculos em famílias, andares 11–40).
+
+**Gerações: 6/10 (4 reservas restantes).** 1 kit de arena 4×4 (`p05_celeste`) e 5 atlas de inimigos (`celestial_sentinel`, `radiant_bladesman`, `dawn_stalker`, `solar_hierophant`, `celestial_archon`). 100% de aproveitamento em 6 chamadas sem refações, com margens amplas sem cortes e sem efeitos/arcos desenhados de ataque. Procedência registrada em `assets/generated/provenance.json` e `PROVENANCE.md`.
+
+| Item | Decisão |
+|---|---|
+| Arena do Pináculo Celeste (Andares 31–35) | `p05_celeste`: alvenaria de mármore branco com arabescos de ouro reluzente e runas sagradas douradas, tocha dourada com chama sagrada solar, estandarte celestial de seda branca com brasão solar em ouro, portão majestoso com relevos de asas douradas e piso de mármore claro com veios dourados sutis. 16 ladrilhos fatiados, 0 magenta, emenda de parede 0.0 ok, emenda de piso 0.0 ok, luminância de piso 0.28–0.29 ok (com `floorGain: 0.35` para contraste ideal de sprites), tamanho 79.1 KB |
+| Inimigos do Pináculo Celeste (5 novos) | **Sentinela Celeste** (tanque, físico, mult 0,96; guia `boss`, estilo `guardian_borin`, 199 px, âncora 0 px, 0.000% chroma, 721 cores, escudo solar maciço) · **Espadachim Radiante** (dano, físico, mult 1,05; guia `hero`, estilo `guardian_borin`, 184 px, âncora 0 px, 0.000% chroma, 572 cores, espada solar física sem arcos de corte) · **Predador da Alvorada** (veloz, físico, mult 1,05; guia `slime`, estilo `mud_toad`, 115 px, âncora 0 px, 0.001% chroma, 521 cores, quadrúpede sólido branco e ouro sem partículas soltas, IoU idle 0.58, walk 0.57, attack 0.55, death 0.61) · **Hierofante Solar** (mago, mágico, mult 0,90; guia `mage`, estilo `cleric_aurora`, 184 px, âncora 0 px, 0.001% chroma, 540 cores, báculo do sol, IoU idle 0.61, walk 0.59, attack 0.47, hurt 0.58, death 0.48) · **Arconte Celeste** (elite raro, físico, mult 1,10; guia `orc`, estilo `goblin_captain`, 199 px, âncora 0 px, 0.001% chroma, 558 cores, placas douradas, asas recolhidas e grande espada física). Família celeste cobre 5/5 papéis dos andares 31 a 35 |
+| Pool dos Andares 31 a 35 | Sentinela Celeste (4), Espadachim Radiante (4), Predador da Alvorada (3), Hierofante Solar (2), Arconte Celeste (1, elite raro). Andares 36+ seguem nos grupos anteriores até o próximo bioma da Onda 2 |
+| Roster de Inimigos | O roster atinge **75 inimigos** (50 da Onda 1 + 5 do Bioma 1 + 5 do Bioma 2 + 5 do Bioma 3 + 5 do Bioma 4 + 5 do Bioma 5 da Onda 2), todos com sprites/atlas reais e zero placeholders |
+| Verificação | `npm run check` verde (783 testes unitários/integração + 28 testes de arquitetura), 939 requisições HTTP 200 no bundle de preview (18,26 MB em arte gerada, dentro do orçamento de 25 MB), contact sheets e fatias em `docs/art-review/lote-16/` |
+
+**Consequências:** Quinto bioma da Onda 2 (Pináculo Celeste, andares 31–35) entregue com kit de arena e família de 5 inimigos exclusiva. Próxima etapa após aprovação do usuário: **Lote 17** — Bioma 6 da Onda 2 (Pináculo do Vazio, andares 36–40: pedra flutuante, cosmos, névoa estelar, kit de arena e 5 inimigos da família do vazio, completando todos os 40 andares da Torre com arenas e famílias dedicadas).
+
 
 
 

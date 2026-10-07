@@ -56,6 +56,7 @@ export function defaultArenaKits(): ArenaKitDef[] {
   const p02 = (n: string) => `arenas/p02_carmesim/${n}`;
   const p03 = (n: string) => `arenas/p03_jade/${n}`;
   const p04 = (n: string) => `arenas/p04_obsidiana/${n}`;
+  const p05 = (n: string) => `arenas/p05_celeste/${n}`;
   return [
     {
       // Lote 1 (ADR-033): primeiro kit GERADO — a Entrada da Torre (andar 1). Pedra azul-acinzentada,
@@ -338,6 +339,27 @@ export function defaultArenaKits(): ArenaKitDef[] {
         { assetId: p04("prop_1"), weight: 3 },
         { assetId: p04("prop_2"), weight: 2 },
         { assetId: p04("prop_3"), weight: 2 },
+      ],
+      tint: 0xffffff,
+    },
+    {
+      // Lote 16 (ADR-053): Pináculo Celeste (andares 31–35, Bioma 5 da Onda 2). Alvenaria de mármore
+      // branco com arabescos de ouro reluzente, tocha dourada com chama sagrada solar, estandarte celestial,
+      // portão majestoso com relevos de asas e piso de mármore claro com veios dourados sutis.
+      id: "p05_celeste",
+      name: "Pináculo Celeste",
+      wall: [
+        p05("wall_0"), p05("wall_1"), p05("wall_2"), p05("wall_0"), p05("wall_4"), p05("wall_1"),
+        p05("banner"), p05("wall_2"), p05("wall_3"), p05("wall_0"), p05("wall_4"), p05("gate"),
+      ],
+      torch: p05("torch"),
+      torchEvery: 4,
+      floor: [p05("floor_0"), p05("floor_1"), p05("floor_2"), p05("floor_3"), p05("floor_0")],
+      props: [
+        { assetId: p05("prop_0"), weight: 3 },
+        { assetId: p05("prop_1"), weight: 3 },
+        { assetId: p05("prop_2"), weight: 2 },
+        { assetId: p05("prop_3"), weight: 2 },
       ],
       tint: 0xffffff,
     },

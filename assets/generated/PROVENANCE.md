@@ -196,3 +196,14 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 7 | `enemies/magma_channeler` | atlas | aprovado (184px, âncora 0px, 0.000% chroma, 292 cores, margem 4px livre, 100% verde nos 5 movimentos e silhuetas) | guide_mage.magenta, style_arcanist_pyro | Canalizador de Magma (mago dos andares 26-30): ocultista piromante em mantos negros chamuscados e máscara de ferro com f |
 | 8 | `enemies/obsidian_warlord` | atlas | aprovado (199px, âncora 0px, 0.001% chroma, 150 cores, margem 4px livre, IoU attack 0.53, death 0.50) | guide_orc.magenta, style_goblin_captain | Senhor da Obsidiana (elite dos andares 26-30): titânico senhor da guerra em armadura completa de placas de obsidiana ang |
 
+## Lote L16 — 6/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `kit_p05_celeste` | arena | — | — | A 4x4 grid of 16 pixel art arena tiles for Pináculo Celeste (white marble, gold filigree, solar motifs, 1024x1024 square |
+| 2 | `celestial_sentinel` | enemy | — | — | Sprite sheet in 16-bit dark fantasy pixel art of Celestial Sentinel (white marble, gold armor, solar tower shield) |
+| 3 | `radiant_bladesman` | enemy | — | — | Sprite sheet in 16-bit dark fantasy pixel art of Radiant Bladesman (agile holy warrior, gold plate, solar longsword) |
+| 4 | `dawn_stalker` | enemy | — | — | Sprite sheet in 16-bit dark fantasy pixel art of Dawn Stalker (swift quadruped celestial beast, white and gold fur) |
+| 5 | `solar_hierophant` | enemy | — | — | Sprite sheet in 16-bit dark fantasy pixel art of Solar Hierophant (sun priest, white liturgical robes, golden sun staff) |
+| 6 | `celestial_archon` | enemy | — | — | Sprite sheet in 16-bit dark fantasy pixel art of Celestial Archon (winged holy champion, heavy gold armor, greatsword) |
+
