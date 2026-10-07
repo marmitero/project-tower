@@ -1105,5 +1105,28 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 
 **Consequências:** Roster de inimigos sobe de 34 para 41 inimigos (todos os papéis cobertos); andares 1 a 7 agora possuem 100% dos seus elencos com arte original própria e kits de arena dedicados; arena do Andar 8 em funcionamento com 3 novos inimigos. Próximo passo: **Lote 10** (1 inimigo restante do andar 8: Tecelã de Pesadelos + arena 9 Corredor Sangrento + 4 inimigos do andar 9 + 1 do andar 10).
 
+---
+
+## ADR-046 — Auditoria e cura visual dos kits de arena dos andares 5 a 8: eliminação de cortes secos, resíduos magenta e composição de fixtures (2026-10-06)
+
+**Data:** 2026-10-06 · **Status:** ✅ Implementada e verificada · **Tipo:** B (arte + pipeline; zero consumo de gerações) · **Gatilho:** Apontamento do usuário de cortes secos, magenta exposto e objetos truncados nos cenários dos andares 5 em diante.
+
+**Auditoria nos primeiros andares (f01–f04) vs andares 5 a 8:**
+1. **Andares 1 a 4 (padrão de referência):** Ladrilhos de parede e piso preenchem 100% da área 128×128 (linhas 0 a 127), sem margens magenta. Fixtures (`torch`, `banner`, `gate`) foram desenhados já montados sobre a própria textura de parede de pedra, garantindo emenda contínua com os ladrilhos vizinhos. Zero pixels magenta em paredes, fixtures e pisos.
+2. **Andar 5 (`f05_ecos`):** Linha de grade de 1 px de magenta sólido no topo (linha 0) e rodapé (linha 127) dos ladrilhos, criando linhas rosadas cortando as junções da parede e do piso.
+3. **Andares 6 e 7 (`f06_fornalha`, `f07_jardim`):** As células de parede e fixtures geraram uma barra horizontal de 32 px de magenta sólido no topo (linhas 0 a 31), com a alvenaria existindo apenas nas linhas 32 a 127. Como o `sliceKit` original forçava alfa opaco sem cortar a margem superior, gerava uma faixa magenta choque no teto da arena e corte seco no topo da parede.
+4. **Andar 8 (`f08_sombras`):** Paredes e pisos limpos, mas `torch`, `banner` e `gate` foram gerados como objetos isolados com 32 px de magenta no topo e base, e o `sliceKit` não aplicava chroma key nessas fixtures (apenas em `prop_`), deixando blocos 50% magenta no meio das paredes com objetos cortados.
+5. **Referência `scripts/art-refs.mjs`:** O script compunha os ladrilhos 128 centralizados em células 256 sobre magenta com 64 px de margem vazia, induzindo o gerador a reproduzir margens de magenta nas novas folhas de arena.
+
+**Soluções aplicadas (zero geração):**
+- **Cura dos assets (`assets/generated/arenas/`):**
+  - `f05_ecos`: Bordas de 1 px de magenta substituídas por repetição das linhas válidas adjacentes + emenda X refeita. Total de magenta: 0 px.
+  - `f06_fornalha`: Conteúdo útil das paredes e fixtures (linhas 32 a 127) recortado e reamostrado com interpolação nearest para 128×128, preenchendo a altura completa da parede sem perda de detalhe. Total de magenta: 0 px.
+  - `f07_jardim`: Conteúdo útil recortado (linhas 32 a 126) e reamostrado para 128×128; piso corrigido na linha 0. Total de magenta: 0 px.
+  - `f08_sombras`: Fixtures (`torch`, `banner`, `gate`) compostas sobre o ladrilho base `wall_0` com transição vertical suave (2 px) e despill dos resíduos rosados. As peças agora surgem integradas à rocha cavernosa. Total de magenta: 0 px.
+- **Pipeline (`tools/art/kit.mjs`):** `sliceKit` agora detecta automaticamente margens de magenta no topo/base de paredes/fixtures, recorta o conteúdo útil, limpa bordas residuais e compõe fixtures sobre `wall_0` caso possuam fundo magenta residual.
+- **Referências (`scripts/art-refs.mjs`):** Ladrilhos de parede, fixtures e piso agora são ampliados 2× para preencher a célula 256×256 completa na folha de referência (apenas adereços `prop_` permanecem sobre magenta centralizados).
+- **Verificação:** Todas as 8 arenas (128 arquivos PNG) verificadas com 0 pixels de magenta opaco. 783 testes + 28 testes de arquitetura aprovados; bundle de preview regenerado e validado.
+
 
 

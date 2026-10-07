@@ -20,7 +20,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildGuide, guideOnMagenta } from "../tools/art/atlas.mjs";
 import { KIT_LAYOUT } from "../tools/art/kit.mjs";
-import { blit, newRaw, readRaw, writePng } from "../tools/art/image.mjs";
+import { blit, newRaw, readRaw, resizeSmart, writePng } from "../tools/art/image.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(ROOT, "assets/_incoming/refs");
@@ -42,15 +42,24 @@ for (const s of STYLES) {
   if (existsSync(src)) copyFileSync(src, join(OUT, `style_${s.split("/")[1]}.png`));
 }
 
-// kit de arena 4×4 (cada ladrilho 128 → célula 256 sobre magenta; é só referência de estilo/disposição)
+// kit de arena 4×4 (ladrilhos 128 ampliados 2× para 256x256, preenchendo a célula; props sobre magenta)
 const arenaDir = join(GEN, "arenas");
 for (const floor of readdirSync(arenaDir)) {
   const sheet = newRaw(1024, 1024, [255, 0, 255, 255]);
   for (let i = 0; i < KIT_LAYOUT.length; i += 1) {
-    const f = join(arenaDir, floor, `${KIT_LAYOUT[i]}.png`);
+    const name = KIT_LAYOUT[i];
+    const f = join(arenaDir, floor, `${name}.png`);
     if (!existsSync(f)) continue;
     const tile = await readRaw(f);
-    blit(sheet, tile, (i % 4) * 256 + 64, Math.floor(i / 4) * 256 + 64);
+    const isProp = name.startsWith("prop_");
+    if (isProp) {
+      // Adereço centralizado sobre magenta
+      blit(sheet, tile, (i % 4) * 256 + 64, Math.floor(i / 4) * 256 + 64);
+    } else {
+      // Parede, fixture e piso preenchem toda a célula 256×256 (2× nearest) sem margem de magenta
+      const scaled = resizeSmart(tile, 256, 256);
+      blit(sheet, scaled, (i % 4) * 256, Math.floor(i / 4) * 256);
+    }
   }
   await writePng(sheet, join(OUT, `kit_${floor}.png`));
 }
