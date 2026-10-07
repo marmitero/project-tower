@@ -14,6 +14,36 @@ export const ICON_NAMES = [
   "potion", "rest", "enter", "back", "mute", "chat", "close", "data",
 ] as const;
 
+/** Assets visuais Dark Fantasy para molduras 9-slice, barras, divisores e brasões (Etapa 13.2). */
+export const DARK_FANTASY_UI_ASSETS = [
+  "ui/frame_9slice_stone",
+  "ui/frame_9slice_brick",
+  "ui/frame_9slice_dark",
+  "ui/panel_ornate",
+  "ui/divider_gold",
+  "ui/divider_stone",
+  "ui/divider_diamond",
+  "ui/divider_scroll",
+  "ui/bar_track",
+  "ui/bar_fill_hp",
+  "ui/bar_fill_mp",
+  "ui/bar_fill_xp",
+  "ui/bar_cap_left_heart",
+  "ui/bar_cap_left_orb",
+  "ui/bar_cap_right",
+  "ui/crest_gold",
+  "ui/crest_steel",
+  "ui/crest_blue",
+  "ui/crest_red",
+  "ui/plaque_wide",
+  "ui/plaque_narrow",
+  "ui/slot_frame_sword",
+  "ui/slot_frame_shield",
+  "ui/slot_frame_potion",
+  "ui/slot_frame_bag",
+  "ui/slot_frame_gear",
+] as const;
+
 /** Todos os ids de asset do tema (para o manifesto e para os testes). */
 export function gbaAssetIds(): string[] {
   const ids: string[] = [];

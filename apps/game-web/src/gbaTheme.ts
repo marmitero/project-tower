@@ -7,7 +7,7 @@
  *
  * Tudo aqui é DADO editável: para trocar o kit, regenere `ui/gba/*` e mexa só nestas listas.
  */
-import { ICON_NAMES, BUTTON_COLOURS, BUTTON_STATES, GBA_PREFIX } from "@tia/config";
+import { ICON_NAMES, BUTTON_COLOURS, BUTTON_STATES, GBA_PREFIX, DARK_FANTASY_UI_ASSETS } from "@tia/config";
 
 export const GBA_CLASS = "tia-gba";
 
@@ -29,6 +29,10 @@ export function buildGbaTheme(resolve: (assetId: string) => string | undefined):
   for (const colour of BUTTON_COLOURS) for (const state of BUTTON_STATES) put(`--gba-${colour}-${state}`, `${GBA_PREFIX}${colour}_${state}`);
   for (const icon of ICON_NAMES) put(`--gba-icon-${icon}`, `${GBA_PREFIX}icon_${icon}`);
   for (const part of ["round_normal", "round_pressed", "toggle_off", "toggle_on", "tab_on", "tab_off"]) put(`--gba-${part.replace("_", "-")}`, `${GBA_PREFIX}${part}`);
+  for (const assetId of DARK_FANTASY_UI_ASSETS) {
+    const varName = "--" + assetId.replace(/\//g, "-").replace(/_/g, "-");
+    put(varName, assetId);
+  }
   return { vars, missing };
 }
 

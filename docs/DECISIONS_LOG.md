@@ -1438,3 +1438,32 @@ Com a conclusão da geração de spritesheets e retratos dos 28 chefes em 5 lote
 **Impacto:**
 - Todos os 28 chefes da Torre estão 100% jogáveis, selecionáveis e combatíveis.
 - Verificação `npm run check` verde com 783 testes aprovados, 28 testes de arquitetura e 1016 requisições HTTP 200 no preview.
+
+
+---
+
+## ADR-062 — Implementação da Etapa 13.2: UI/UX Game-First Dark Fantasy (2026-10-07)
+
+**Data:** 2026-10-07 · **Status:** ✅ Aceita · **Tipo:** B (código + CSS + UI) · **Gatilho:** Execução da Etapa 13.2 solicitada pelo usuário.
+
+**Contexto:**
+A interface web do jogo necessitava de uma transição completa de layout genérico/plano ("estética de dashboard/site") para uma experiência imersiva de jogo RPG Dark Fantasy em pixel art, utilizando os 33 assets aprovados em `assets/generated/ui/`.
+
+**Decisões:**
+1. Em `@tia/config` (`packages/config/src/uitheme.ts`):
+   - Definir `DARK_FANTASY_UI_ASSETS` contendo todas as peças de moldura 9-slice (`frame_9slice_stone`, `frame_9slice_brick`, `frame_9slice_dark`, `panel_ornate`), barras e calhas (`bar_track`, `bar_fill_*`, `bar_cap_*`), divisores (`divider_gold`, `divider_stone`) e brasões (`crest_gold`).
+2. Em `apps/game-web/src/gbaTheme.ts`:
+   - Integrar `DARK_FANTASY_UI_ASSETS` à geração de variáveis CSS `--ui-*`.
+3. Em `apps/game-web/src/styles.css`:
+   - `.tia-panel`: moldura tátil 9-slice em pedra/ferro forjado (`border-image: var(--ui-frame-9slice-stone) 24 fill / 18px / 0 stretch`) com profundidade, vinheta e tipografia dourada.
+   - `.tia-modal__card`, `.tia-overlay` e `.tia-boss-detail-modal`: acabamento de tomo arcano antigo (`border-image: var(--ui-panel-ornate) 40 fill / 24px / 0 stretch`).
+   - `.tia-bar`: calha esculpida em metal (`border-image: var(--ui-bar-track) 12 fill / 8px / 0 stretch`), preenchimento líquido 3D com destaque cilíndrico e texto em alto contraste.
+   - `.tia-hud`: avatar do Rei com borda de brasão heráldico (`#d4af37`), contadores metálicos.
+   - `.tia-nav`: console de comando inferior estilizado estilo RPG retro com abas ativas iluminadas.
+   - `.tia-boss-card`: cartas táteis de monstro com bordas 9-slice e realce dourado ao passar o cursor.
+   - `.tia-slotcard` e `.tia-itemcard`: slots de inventário e equipamentos com moldura de ferro escuro.
+
+**Impacto:**
+- O jogo agora apresenta acabamento visual autêntico de RPG Dark Fantasy em toda a interface.
+- 100% de compatibilidade desktop-first e mobile-ready preservada (alvos de toque ≥44px, acessibilidade intacta).
+- `npm run check` verde: 783 testes aprovados, 28 testes de arquitetura e 1016 requisições HTTP 200 no preview.
