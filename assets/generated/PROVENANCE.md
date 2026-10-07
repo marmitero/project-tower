@@ -270,3 +270,13 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 6 | `enemies/boss_cavaleiro_esquecimento` | humanoid | — | — | Full vertical 1024x1280 pixel art sprite sheet of an oblivion dark knight paladin boss |
 | 7 | `enemies/boss_serpente_cosmica` | elite | — | — | Full vertical 1024x1280 pixel art sprite sheet of a cosmic constellation serpent dragon boss |
 
+## Lote L_BOSS_5 — 6/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `enemies/boss_arconte_infinidade` | humanoid | — | — | Full vertical 1024x1280 pixel art sprite sheet of an infinity archon sorcerer boss |
+| 2 | `enemies/boss_caos_primordial` | elite | — | — | Full vertical 1024x1280 pixel art sprite sheet of a primordial chaos amorphous entity boss |
+| 3 | `enemies/boss_caos_primordial` | elite | — | — | Full vertical 1024x1280 pixel art sprite sheet of a primordial chaos amorphous entity boss |
+| 4 | `enemies/boss_caos_primordial` | elite | — | — | Full vertical 1024x1280 pixel art sprite sheet of a compact amorphous chaos blob boss |
+| 5 | `enemies/boss_demiurgo_vazio` | humanoid | — | — | Full vertical 1024x1280 pixel art sprite sheet of a void demiurge architect boss |
+| 6 | `enemies/boss_apoteose_torre` | elite | — | — | Full vertical 1024x1280 pixel art sprite sheet of the ultimate apex Tower Apotheosis titan boss |

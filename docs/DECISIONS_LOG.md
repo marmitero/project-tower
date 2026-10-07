@@ -1392,3 +1392,27 @@ Catálogo estendido `BOSS_EXPANDED_CATALOG` em `packages/config/src/boss.ts` exp
 
 
 
+---
+
+## ADR-060 — Lote Boss 5: Chefes 25 a 28 (O Fechamento dos 28 Chefes da Torre) (2026-10-07)
+
+**Data:** 2026-10-07 · **Status:** ✅ Aceita (aguarda "lote boss 5 aprovado") · **Tipo:** B (arte + dados) · **Gatilho:** Conclusão da produção de arte dos 28 chefes da Torre (Etapa 13.1 — Lote Boss 5).
+
+**Gerações: 6/10 (4 reservas restantes, orçamento respeitado).**
+4 novos atlas completos `ita-atlas-v1` (1024×1280, 20 quadros) e 4 retratos 128×128 correspondentes em `assets/generated/portraits/bosses/`, completando 100% dos 28 chefes planejados:
+1. **Arconte da Infinidade (`boss_arconte_infinidade`)** — Guardião do Fim do Tempo (Nv 17.000, Mágico · guia `mage`, escala 184 px, âncora 0 px, 0.004% chroma, sábio etéreo transcendental em vestes douradas e platina com orbe temporal).
+2. **Caos Primordial (`boss_caos_primordial`)** — Matéria Amorfa Pré-Criacional (Nv 18.000, Físico · guia `slime`, escala 199 px, 0.000% chroma, massa titânica de trevas vivas e pseudópodes amorfos com olhos vermelhos cósmicos).
+3. **Demiurgo do Vazio (`boss_demiurgo_vazio`)** — Arquiteto dos Espaços Não-Criados (Nv 19.000, Mágico · guia `mage`, escala 184 px, âncora 0 px, 0.000% chroma, entidade régia de manto sacerdotal violeta/dourado e báculo criador).
+4. **Apoteose da Torre (`boss_apoteose_torre`)** — O Titã Supremo e Encarne da Torre Suprema (Nv 20.000, Físico · guia `boss`, escala 199 px, âncora 0 px, 0.000% chroma, 20 quadros perfeitos, colosso monumental de rocha viva ancestral com coroa de luz celestial e maça destruidora).
+
+**Controle de Qualidade e Reprovações no Orçamento:**
+- Tentativa 1 de `boss_caos_primordial`: reprovada no teste de margem externa celular (250 px opacos nas bordas devido à expansão amorfa dos tentáculos).
+- Tentativa 2 de `boss_caos_primordial`: re-executada com prompt delimitando silhueta compacta e margem vazia mínima de 20px; aprovada com 15/15 verificações perfeitas, IoU 0.77/0.63 e 0.000% chroma.
+- Tentativa 3 (teste comparativo de silhueta): registrada e descartada do pipeline principal em favor da Tentativa 2.
+
+**Impacto:**
+- 100% dos 28 chefes da Torre agora possuem spritesheets completos (`ita-atlas-v1`) e retratos pixel art 128×128 dedicados integrados ao jogo.
+- `BOSS_EXPANDED_CATALOG` em `packages/config/src/boss.ts` agora conta com todos os 20 chefes adicionais (totalizando 28 chefes ativos com assets próprios).
+- Contact sheets arquivados em `docs/art-review/lote-boss-5/*.contact.png`.
+- Proveniência registrada em `assets/generated/provenance.json` e `PROVENANCE.md`.
+- `npm run check` verde: 783 testes + 28 arquitetura, 1016 requisições HTTP 200 no preview.

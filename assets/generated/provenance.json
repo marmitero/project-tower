@@ -1710,6 +1710,54 @@
       "kind": "elite",
       "prompt": "Full vertical 1024x1280 pixel art sprite sheet of a cosmic constellation serpent dragon boss",
       "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_5",
+      "asset": "enemies/boss_arconte_infinidade",
+      "kind": "humanoid",
+      "prompt": "Full vertical 1024x1280 pixel art sprite sheet of an infinity archon sorcerer boss",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_5",
+      "asset": "enemies/boss_caos_primordial",
+      "kind": "elite",
+      "prompt": "Full vertical 1024x1280 pixel art sprite sheet of a primordial chaos amorphous entity boss",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_5",
+      "asset": "enemies/boss_caos_primordial",
+      "kind": "elite",
+      "prompt": "Full vertical 1024x1280 pixel art sprite sheet of a primordial chaos amorphous entity boss",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_5",
+      "asset": "enemies/boss_caos_primordial",
+      "kind": "elite",
+      "prompt": "Full vertical 1024x1280 pixel art sprite sheet of a compact amorphous chaos blob boss",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_5",
+      "asset": "enemies/boss_demiurgo_vazio",
+      "kind": "humanoid",
+      "prompt": "Full vertical 1024x1280 pixel art sprite sheet of a void demiurge architect boss",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_5",
+      "asset": "enemies/boss_apoteose_torre",
+      "kind": "elite",
+      "prompt": "Full vertical 1024x1280 pixel art sprite sheet of the ultimate apex Tower Apotheosis titan boss",
+      "refs": []
     }
   ]
 }

@@ -228,9 +228,10 @@ Depois de qualquer asset: `node scripts/build-assets.mjs` (regenera `apps/game-w
 **Lote Boss 1 (aprovado):** 6 chefes de fábrica (`boss_rei_gosma`, `boss_sentinela`, `boss_matriarca_gelida`, `boss_carrasco_abissal`, `boss_senhor_forja`, `boss_rainha_morcegos`) = **6 gerações usadas, 4 reservas restantes** ⇒ **6 chefes com arte dedicada e retratos**.
 **Lote Boss 2 (aprovado):** 6 chefes intermediários (`boss_ancestry_ent`, `boss_carrasco_rubro`, `boss_lorde_sombras`, `boss_colosso_torre`, `boss_leviathan_rift`, `boss_solar_emperor`) = **8 gerações usadas, 2 reservas restantes** ⇒ **6 chefes com arte dedicada e retratos**.
 **Lote Boss 3 (aprovado):** 6 chefes avançados (`boss_ceifador_vazio`, `boss_monolito_cristal`, `boss_behemoth_infernal`, `boss_couraceiro_astral`, `boss_arauto_pesadelo`, `boss_tecedor_tempo`) = **7 gerações usadas, 3 reservas restantes** ⇒ **6 chefes com arte dedicada e retratos**.
-**Lote Boss 4 (entregue, aguarda "lote boss 4 aprovado"):** 6 chefes endgame (`boss_soberano_abissal`, `boss_julgamento_celeste`, `boss_hidra_plasma`, `boss_nucleo_singularidade`, `boss_cavaleiro_esquecimento`, `boss_serpente_cosmica`) = **7 gerações usadas, 3 reservas restantes** ⇒ **6 chefes com arte dedicada e retratos**.
-**Próximo lote Boss:** Lote Boss 5 (Chefes 25 a 28: `boss_arconte_infinidade`, `boss_caos_primordial`, `boss_demiurgo_vazio`, `boss_apoteose_torre`).
-**Estimativa atual:** ~4 lotes de arte (L8–L11) + 1 lote de Boss (Boss 5) + Fase 14 ⇒ ~6 etapas.
+**Lote Boss 4 (aprovado):** 6 chefes endgame (`boss_soberano_abissal`, `boss_julgamento_celeste`, `boss_hidra_plasma`, `boss_nucleo_singularidade`, `boss_cavaleiro_esquecimento`, `boss_serpente_cosmica`) = **7 gerações usadas, 3 reservas restantes** ⇒ **6 chefes com arte dedicada e retratos**.
+**Lote Boss 5 (entregue, aguarda "lote boss 5 aprovado"):** 4 chefes supremos (`boss_arconte_infinidade`, `boss_caos_primordial`, `boss_demiurgo_vazio`, `boss_apoteose_torre`) = **6 gerações usadas, 4 reservas restantes** ⇒ **4 chefes com arte dedicada e retratos — 100% DOS 28 CHEFES DA TORRE CONCLUÍDOS COM ARTE DEDICADA!**.
+**Próximo lote:** Lotes da Onda 1 pendentes (L8–L11: Biomas Pantano, Cripta, Ruínas, Magma) ou Fase 14 / UI Dark Fantasy.
+**Estimativa atual:** ~4 lotes de arte (L8–L11) + Fase 14 / UI Dark Fantasy ⇒ ~5 etapas.
 
 ## 10. Armadilhas (cada uma já custou tempo)
 

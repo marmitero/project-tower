@@ -64,8 +64,10 @@ Seguindo estritamente a **Regra do Teto de 10 Chamadas por Lote**:
 - Os 28 chefes serão gerados em lotes dedicados de Chefes.
 - Cada chefe consome 1 chamada de geração de atlas (1024×1280 em fundo `#FF00FF`) e seu retrato correspondente é extraído deterministicamente pelo pipeline (`art.mjs portraits`).
 - Planejamento de lotes:
-  * **Lote Boss 1 (Chefes 1 a 6):** 6 chefes de progressão inicial (6 chamadas + 4 reservas).
-  * **Lote Boss 2 (Chefes 7 a 12):** 6 chefes intermediários (6 chamadas + 4 reservas).
-  * **Lote Boss 3 (Chefes 13 a 18):** 6 chefes avançados (6 chamadas + 4 reservas).
-  * **Lote Boss 4 (Chefes 19 a 24):** 6 chefes endgame (6 chamadas + 4 reservas).
-  * **Lote Boss 5 (Chefes 25 a 28):** 4 chefes supremos épicos (4 chamadas + 6 reservas).
+  * **Lote Boss 1 (Chefes 1 a 6):** Concluído ✅ (6 chamadas).
+  * **Lote Boss 2 (Chefes 7 a 12):** Concluído ✅ (8 chamadas).
+  * **Lote Boss 3 (Chefes 13 a 18):** Concluído ✅ (7 chamadas).
+  * **Lote Boss 4 (Chefes 19 a 24):** Concluído ✅ (7 chamadas).
+  * **Lote Boss 5 (Chefes 25 a 28):** Concluído ✅ (6 chamadas).
+
+**Status Geral:** 100% dos 28 chefes criados, gerados em pixel art Dark Fantasy com spritesheets e retratos próprios, e ativos na Torre!
