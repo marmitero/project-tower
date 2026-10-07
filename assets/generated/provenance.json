@@ -1190,6 +1190,78 @@
         "style_goblin_captain"
       ],
       "verdict": "aprovado (199px, âncora 0px, 0.001% chroma, 494 cores, margem 4px livre, revisão visual aprovada)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L14",
+      "asset": "arenas/p03_jade",
+      "kind": "arena",
+      "prompt": "Kit de arena do Pináculo de Jade (andares 21-25, Bioma 3 da Onda 2): alvenaria de pedra antiga com musgo, relevos de jade, lanterna verde de jade, estandarte de seda esmeralda, portão em arco trabalhado em pedra de jade e piso de lajes polidas com veios verdes, 4x4",
+      "refs": [
+        "kit_f07_jardim",
+        "kit_f01_entrada"
+      ],
+      "verdict": "aprovado (emenda parede 0.0, emenda piso 0.0, luma 0.22-0.29 ok, 86 KB)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L14",
+      "asset": "enemies/jade_colossus",
+      "kind": "atlas",
+      "prompt": "Colosso de Jade (tanque dos andares 21-25): construto esculpido em blocos de jade verde escuro e pedra antiga com musgo, ombros largos e punhos maciços de rocha, sem efeitos desenhados de ataque",
+      "refs": [
+        "guide_boss.magenta",
+        "style_guardian_borin"
+      ],
+      "verdict": "aprovado (199px, âncora 0px, 0.000% chroma, 359 cores, margem 4px livre, erro de idle 0.6%)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L14",
+      "asset": "enemies/jade_bladesman",
+      "kind": "atlas",
+      "prompt": "Espadachim de Jade (dano dos andares 21-25): guerreiro oriental em armadura laqueada verde-musgo com placas de jade, empunhando sabre dao de jade em duas mãos, postura física sem arcos desenhados de corte",
+      "refs": [
+        "guide_hero.magenta",
+        "style_guardian_borin"
+      ],
+      "verdict": "aprovado (184px, âncora 0px, 0.000% chroma, 538 cores, margem 4px livre)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L14",
+      "asset": "enemies/jade_serpent",
+      "kind": "atlas",
+      "prompt": "Serpente de Jade (veloz dos andares 21-25): réptil colossal de escamas de jade esmeralda com presas afiadas e corpo sinuoso, silhueta compacta sem membros extras ou cortes de cauda",
+      "refs": [
+        "guide_slime.magenta",
+        "style_mud_toad"
+      ],
+      "verdict": "aprovado (115px, âncora 0px, 0.000% chroma, 537 cores, margem 4px livre, silhueta idle 0.68, hurt 0.65, death 0.62)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L14",
+      "asset": "enemies/jade_geomancer",
+      "kind": "atlas",
+      "prompt": "Geomante de Jade (mago dos andares 21-25): eremita em mantos verde-musgo e chapéu cônico de bambu, com cajado de madeira e orbe de jade bruto, postura de invocação sem raios desenhados no sprite",
+      "refs": [
+        "guide_mage.magenta",
+        "style_cleric_aurora"
+      ],
+      "verdict": "aprovado (184px, âncora 0px, 0.001% chroma, 709 cores, margem 4px livre, silhueta idle 0.56, walk 0.61, attack 0.58, hurt 0.60, death 0.55)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L14",
+      "asset": "enemies/jade_dragonkin",
+      "kind": "atlas",
+      "prompt": "Draconiano de Jade (elite dos andares 21-25): guerreiro draconiano bípede de escamas de jade esmeralda com cristas pontiagudas, cauda espinhosa e garras afiadas, sem membros extras ou projéteis desenhados",
+      "refs": [
+        "guide_boss.magenta",
+        "style_goblin_captain"
+      ],
+      "verdict": "aprovado (199px, âncora 0px, 0.000% chroma, 435 cores, margem 4px livre, revisão visual aprovada)"
     }
   ]
 }

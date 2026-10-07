@@ -172,3 +172,14 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 5 | `enemies/blood_cultist` | atlas | aprovado (184px, âncora 0px, 0.001% chroma, 321 cores, margem 4px livre, silhueta idle 0.57, walk 0.57, hurt 0.51, death 0.50) | guide_mage.magenta, style_candle_skull | Cultista do Sangue (mago dos andares 16-20): taumaturgo em mantos cerimoniais bordô e negro com cajado encimado por crân |
 | 6 | `enemies/sanguine_abomination` | atlas | aprovado (199px, âncora 0px, 0.001% chroma, 494 cores, margem 4px livre, revisão visual aprovada) | guide_boss.magenta, style_goblin_captain | Abominação Sanguínea (elite dos andares 16-20): monstro gigante bípede de carne crua e placas ósseas com correntes de fe |
 
+## Lote L14 — 6/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `arenas/p03_jade` | arena | aprovado (emenda parede 0.0, emenda piso 0.0, luma 0.22-0.29 ok, 86 KB) | kit_f07_jardim, kit_f01_entrada | Kit de arena do Pináculo de Jade (andares 21-25, Bioma 3 da Onda 2): alvenaria de pedra antiga com musgo, relevos de jad |
+| 2 | `enemies/jade_colossus` | atlas | aprovado (199px, âncora 0px, 0.000% chroma, 359 cores, margem 4px livre, erro de idle 0.6%) | guide_boss.magenta, style_guardian_borin | Colosso de Jade (tanque dos andares 21-25): construto esculpido em blocos de jade verde escuro e pedra antiga com musgo, |
+| 3 | `enemies/jade_bladesman` | atlas | aprovado (184px, âncora 0px, 0.000% chroma, 538 cores, margem 4px livre) | guide_hero.magenta, style_guardian_borin | Espadachim de Jade (dano dos andares 21-25): guerreiro oriental em armadura laqueada verde-musgo com placas de jade, emp |
+| 4 | `enemies/jade_serpent` | atlas | aprovado (115px, âncora 0px, 0.000% chroma, 537 cores, margem 4px livre, silhueta idle 0.68, hurt 0.65, death 0.62) | guide_slime.magenta, style_mud_toad | Serpente de Jade (veloz dos andares 21-25): réptil colossal de escamas de jade esmeralda com presas afiadas e corpo sinu |
+| 5 | `enemies/jade_geomancer` | atlas | aprovado (184px, âncora 0px, 0.001% chroma, 709 cores, margem 4px livre, silhueta idle 0.56, walk 0.61, attack 0.58, hurt 0.60, death 0.55) | guide_mage.magenta, style_cleric_aurora | Geomante de Jade (mago dos andares 21-25): eremita em mantos verde-musgo e chapéu cônico de bambu, com cajado de madeira |
+| 6 | `enemies/jade_dragonkin` | atlas | aprovado (199px, âncora 0px, 0.000% chroma, 435 cores, margem 4px livre, revisão visual aprovada) | guide_boss.magenta, style_goblin_captain | Draconiano de Jade (elite dos andares 21-25): guerreiro draconiano bípede de escamas de jade esmeralda com cristas ponti |
+

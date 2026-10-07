@@ -126,6 +126,7 @@ function themeForFloor(index: number): string {
   if (index === 10) return "f10_passos";
   if (index >= 11 && index <= 15) return "p01_arcano";
   if (index >= 16 && index <= 20) return "p02_carmesim";
+  if (index >= 21 && index <= 25) return "p03_jade";
   if (index <= 30) return "pináculo carmesim";
   return "pináculo de jade";
 }
@@ -216,15 +217,21 @@ export const DEFAULT_POOL_PLAN: ReadonlyArray<{
   { enemyId: "flesh_hound", fromFloor: 16, toFloor: 20, weight: 3 },
   { enemyId: "blood_cultist", fromFloor: 16, toFloor: 20, weight: 2 },
   { enemyId: "sanguine_abomination", fromFloor: 16, toFloor: 20, weight: 1 },
-  // Andares 21+ — ainda com os inimigos de antes; trocam por bioma nos lotes futuros (docs/STYLIZATION_ROADMAP.md §3.3).
-  { enemyId: "toxicbat", fromFloor: 21, weight: 2 },
-  { enemyId: "bat", fromFloor: 21, weight: 3 },
-  { enemyId: "slime", fromFloor: 21, weight: 2 },
-  { enemyId: "goblin", fromFloor: 21, weight: 2 },
-  { enemyId: "skeleton", fromFloor: 21, weight: 3 },
-  { enemyId: "orc", fromFloor: 21, weight: 3 },
-  { enemyId: "shadowgoblin", fromFloor: 21, weight: 1 },
-  { enemyId: "elitearcher", fromFloor: 21, weight: 1 },
+  // Andares 21–25 — Pináculo de Jade (Lote 14, Bioma 3 da Onda 2): Colosso de Jade T · Espadachim de Jade D · Serpente de Jade V · Geomante de Jade M · Draconiano de Jade E (raro).
+  { enemyId: "jade_colossus", fromFloor: 21, toFloor: 25, weight: 4 },
+  { enemyId: "jade_bladesman", fromFloor: 21, toFloor: 25, weight: 4 },
+  { enemyId: "jade_serpent", fromFloor: 21, toFloor: 25, weight: 3 },
+  { enemyId: "jade_geomancer", fromFloor: 21, toFloor: 25, weight: 2 },
+  { enemyId: "jade_dragonkin", fromFloor: 21, toFloor: 25, weight: 1 },
+  // Andares 26+ — ainda com os inimigos de antes; trocam por bioma nos lotes futuros (docs/STYLIZATION_ROADMAP.md §3.3).
+  { enemyId: "toxicbat", fromFloor: 26, weight: 2 },
+  { enemyId: "bat", fromFloor: 26, weight: 3 },
+  { enemyId: "slime", fromFloor: 26, weight: 2 },
+  { enemyId: "goblin", fromFloor: 26, weight: 2 },
+  { enemyId: "skeleton", fromFloor: 26, weight: 3 },
+  { enemyId: "orc", fromFloor: 26, weight: 3 },
+  { enemyId: "shadowgoblin", fromFloor: 26, weight: 1 },
+  { enemyId: "elitearcher", fromFloor: 26, weight: 1 },
 ];
 
 function poolForFloor(index: number): FloorPoolEntry[] {

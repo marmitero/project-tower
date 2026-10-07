@@ -54,6 +54,7 @@ export function defaultArenaKits(): ArenaKitDef[] {
   const f10 = (n: string) => `arenas/f10_passos/${n}`;
   const p01 = (n: string) => `arenas/p01_arcano/${n}`;
   const p02 = (n: string) => `arenas/p02_carmesim/${n}`;
+  const p03 = (n: string) => `arenas/p03_jade/${n}`;
   return [
     {
       // Lote 1 (ADR-033): primeiro kit GERADO — a Entrada da Torre (andar 1). Pedra azul-acinzentada,
@@ -294,6 +295,27 @@ export function defaultArenaKits(): ArenaKitDef[] {
         { assetId: p02("prop_1"), weight: 3 },
         { assetId: p02("prop_2"), weight: 2 },
         { assetId: p02("prop_3"), weight: 2 },
+      ],
+      tint: 0xffffff,
+    },
+    {
+      // Lote 14 (ADR-051): Pináculo de Jade (andares 21–25, Bioma 3 da Onda 2). Alvenaria de pedra antiga
+      // com musgo, relevos de jade verde, lanterna de jade pale-green, estandarte de seda esmeralda,
+      // portão em arco trabalhado em pedra de jade e piso de lajes polidas com veios verdes.
+      id: "p03_jade",
+      name: "Pináculo de Jade",
+      wall: [
+        p03("wall_0"), p03("wall_1"), p03("wall_2"), p03("wall_0"), p03("wall_4"), p03("wall_1"),
+        p03("banner"), p03("wall_2"), p03("wall_3"), p03("wall_0"), p03("wall_4"), p03("gate"),
+      ],
+      torch: p03("torch"),
+      torchEvery: 4,
+      floor: [p03("floor_0"), p03("floor_1"), p03("floor_2"), p03("floor_3"), p03("floor_0")],
+      props: [
+        { assetId: p03("prop_0"), weight: 3 },
+        { assetId: p03("prop_1"), weight: 3 },
+        { assetId: p03("prop_2"), weight: 2 },
+        { assetId: p03("prop_3"), weight: 2 },
       ],
       tint: 0xffffff,
     },
