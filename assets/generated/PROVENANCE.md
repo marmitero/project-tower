@@ -222,3 +222,14 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 9 | `nebula_weaver` | enemy | — | — | Sprite sheet in 16-bit dark fantasy pixel art of Nebula Weaver (cosmic void sorcerer, hooded robes, cyan crystal staff,  |
 | 10 | `void_monarch` | enemy | — | — | Sprite sheet in 16-bit dark fantasy pixel art of Void Monarch (spiked cosmic sovereign, dark greatsword, cyan blade edge |
 
+## Lote L_BOSS_1 — 6/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `enemies/boss_rei_gosma` | low | — | — | Pixel art sprite sheet of a royal giant slime boss (King Slime) |
+| 2 | `enemies/boss_sentinela` | elite | — | — | Pixel art sprite sheet of a massive stone sentinel golem boss (Sentinela da Torre) |
+| 3 | `enemies/boss_matriarca_gelida` | elite | — | — | Pixel art sprite sheet of a frost spider matriarch boss (Matriarca Gélida) |
+| 4 | `enemies/boss_carrasco_abissal` | humanoid | — | — | Pixel art sprite sheet of an abyssal executioner boss (Carrasco Abissal) |
+| 5 | `enemies/boss_senhor_forja` | elite | — | — | Pixel art sprite sheet of a forge master titan boss (Senhor da Forja) |
+| 6 | `enemies/boss_rainha_morcegos` | humanoid | — | — | Pixel art sprite sheet of a vampire bat queen boss (Rainha dos Morcegos) |
+

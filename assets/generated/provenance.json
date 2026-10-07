@@ -1486,6 +1486,54 @@
       "kind": "enemy",
       "prompt": "Sprite sheet in 16-bit dark fantasy pixel art of Void Monarch (spiked cosmic sovereign, dark greatsword, cyan blade edge, 4x5 portrait)",
       "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_1",
+      "asset": "enemies/boss_rei_gosma",
+      "kind": "low",
+      "prompt": "Pixel art sprite sheet of a royal giant slime boss (King Slime)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_1",
+      "asset": "enemies/boss_sentinela",
+      "kind": "elite",
+      "prompt": "Pixel art sprite sheet of a massive stone sentinel golem boss (Sentinela da Torre)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_1",
+      "asset": "enemies/boss_matriarca_gelida",
+      "kind": "elite",
+      "prompt": "Pixel art sprite sheet of a frost spider matriarch boss (Matriarca Gélida)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_1",
+      "asset": "enemies/boss_carrasco_abissal",
+      "kind": "humanoid",
+      "prompt": "Pixel art sprite sheet of an abyssal executioner boss (Carrasco Abissal)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_1",
+      "asset": "enemies/boss_senhor_forja",
+      "kind": "elite",
+      "prompt": "Pixel art sprite sheet of a forge master titan boss (Senhor da Forja)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_1",
+      "asset": "enemies/boss_rainha_morcegos",
+      "kind": "humanoid",
+      "prompt": "Pixel art sprite sheet of a vampire bat queen boss (Rainha dos Morcegos)",
+      "refs": []
     }
   ]
 }

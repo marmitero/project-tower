@@ -1296,6 +1296,26 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 
 **Consequências:** Interface de chefes limpa e moderna; testes 100% aprovados (783 testes + 28 arquitetura); documentação arquitetural pronta para as próximas fases.
 
+---
+
+## ADR-056 — Lote Boss 1: Primeiros 6 Atlas e Retratos de Chefes (2026-10-07)
+
+**Data:** 2026-10-07 · **Status:** ✅ Aceita (aguarda "lote boss 1 aprovado") · **Tipo:** B (arte + dados) · **Gatilho:** Início da produção de arte dos Bosses (Etapa 13.1).
+
+**Gerações: 6/10 (4 reservas restantes, orçamento respeitado).**
+6 novos atlas completos `ita-atlas-v1` (1024×1280, 20 quadros) e 6 retratos correspondentes em `assets/generated/portraits/bosses/`:
+1. **Rei Gosma (`boss_rei_gosma`)** — Soberano do Porão Úmido (Nv 50, Físico · guia `slime`, escala 115 px, âncora 0 px, 0.000% chroma, coroa de ouro e olhos luminescentes).
+2. **Sentinela da Torre (`boss_sentinela`)** — Vigia das Catacumbas (Nv 100, Físico · guia `orc`, escala 199 px, âncora 0 px, 0.001% chroma, autômato de pedra com runas ciano).
+3. **Matriarca Gélida (`boss_matriarca_gelida`)** — Mãe do Jardim Gélido (Nv 150, Mágico · guia `orc`, escala 199 px, âncora 0 px, 0.001% chroma, quimera de gelo azul-cobalto e espinhos pontiagudos).
+4. **Carrasco Abissal (`boss_carrasco_abissal`)** — Carrasco das Profundezas (Nv 200, Físico · guia `hero`, escala 184 px, âncora 0 px, 0.000% chroma, elmo com fenda vermelha e machado negro de duas mãos).
+5. **Senhor da Forja (`boss_senhor_forja`)** — Mestre da Fornalha Esquecida (Nv 250, Físico · guia `orc`, escala 199 px, âncora 0 px, 0.000% chroma, titã barbudo com cota de ferro e martelo em brasa).
+6. **Rainha dos Morcegos (`boss_rainha_morcegos`)** — Senhora do Ninho das Sombras (Nv 500, Mágico · guia `mage`, escala 184 px, âncora 1 px, 0.002% chroma, monarca vampírica com asas e tiara de obsidiana).
+
+Contact sheets arquivados em `docs/art-review/lote-boss-1/*.contact.png`.
+Proveniência registrada em `assets/generated/provenance.json` e `PROVENANCE.md`.
+Configurações atualizadas em `packages/config/src/boss.ts` associando atlas e retratos dedicados.
+`npm run check` verde: 783 testes + 28 arquitetura, 972 requisições HTTP 200.
+
 
 
 
