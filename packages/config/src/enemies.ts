@@ -181,6 +181,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "bloodskeleton", name: "Esqueleto Sangrento", role: "dps", damageType: "physical", statMultiplier: 1.15,
       attributes: attrs(30, 22, 16, 6, 8),
       assets: { sheets: charSheets("bloodskeleton") } },
+    // Lote 11: dano do andar 10 (Câmara dos Mil Passos) — atlas próprio.
+    { id: "eternal_warrior", name: "Guerreiro Eterno", role: "dps", damageType: "physical", statMultiplier: 1.05,
+      attributes: attrs(30, 20, 20, 6, 10),
+      assets: { sheets: charSheets("hero"), atlas: "enemies/eternal_warrior" } },
     // --- swift --------------------------------------------------------
     { id: "bat", name: "Morcego", role: "swift", damageType: "physical", statMultiplier: 1.12,
       attributes: attrs(14, 34, 10, 6, 8),
@@ -215,6 +219,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "winged_leech", name: "Sanguessuga Alada", role: "swift", damageType: "physical", statMultiplier: 1.05,
       attributes: attrs(14, 34, 12, 10, 8),
       assets: { sheets: charSheets("bat"), atlas: "enemies/winged_leech" } },
+    // Lote 11: veloz do andar 10 (Câmara dos Mil Passos) — atlas próprio.
+    { id: "living_clock", name: "Relógio Vivo", role: "swift", damageType: "physical", statMultiplier: 1.05,
+      attributes: attrs(16, 36, 12, 6, 8),
+      assets: { sheets: charSheets("hero"), atlas: "enemies/living_clock" } },
     // --- caster -------------------------------------------------------
     { id: "toxicbat", name: "Morcego Tóxico", role: "caster", damageType: "magic", statMultiplier: 1.1,
       attributes: attrs(6, 24, 12, 28, 14),
@@ -248,6 +256,10 @@ export function defaultEnemySeeds(): EnemySeed[] {
     { id: "blood_witch", name: "Bruxa de Sangue", role: "caster", damageType: "magic", statMultiplier: 0.9,
       attributes: attrs(6, 16, 14, 32, 18),
       assets: { sheets: charSheets("mage"), atlas: "enemies/blood_witch" } },
+    // Lote 11: mago do andar 10 (Câmara dos Mil Passos) — atlas próprio.
+    { id: "steps_oracle", name: "Oráculo dos Passos", role: "caster", damageType: "magic", statMultiplier: 0.9,
+      attributes: attrs(6, 16, 14, 32, 18),
+      assets: { sheets: charSheets("mage"), atlas: "enemies/steps_oracle" } },
     { id: "fireorc", name: "Orc Flamejante", role: "caster", damageType: "magic", statMultiplier: 0.88,
       attributes: attrs(10, 8, 22, 32, 12),
       assets: { sheets: charSheets("fireorc") } },

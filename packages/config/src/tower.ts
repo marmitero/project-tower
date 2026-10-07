@@ -106,7 +106,7 @@ const FIRST_FLOOR_NAMES: readonly string[] = [
 
 /** Tintura por grupo de andares (decorativa; editável por andar). */
 function tintForFloor(index: number): number | null {
-  if (index <= 8) return null;
+  if (index <= 10) return null;
   if (index <= 12) return 0xffc9a8;
   if (index <= 20) return 0xd2b4ff;
   if (index <= 30) return 0xffa8a8;
@@ -114,7 +114,7 @@ function tintForFloor(index: number): number | null {
 }
 
 function themeForFloor(index: number): string {
-  // Kits próprios gerados por andar (Lotes 1–2, 7, 8, 9, ADR-033/036/043/044/045); os demais seguem nos grupos antigos.
+  // Kits próprios gerados por andar (Lotes 1–2, 7, 8, 9, 10, 11, ADR-033/036/043/044/045/047/048); os demais seguem nos grupos antigos.
   if (index === 1) return "f01_entrada";
   if (index === 2) return "f02_porao";
   if (index === 3) return "f03_ossadas";
@@ -124,6 +124,7 @@ function themeForFloor(index: number): string {
   if (index === 7) return "f07_jardim";
   if (index === 8) return "f08_sombras";
   if (index === 9) return "f09_sangrento";
+  if (index === 10) return "f10_passos";
   if (index <= 12) return "sangue e brasa";
   if (index <= 20) return "pináculo arcano";
   if (index <= 30) return "pináculo carmesim";
@@ -198,16 +199,20 @@ export const DEFAULT_POOL_PLAN: ReadonlyArray<{
   { enemyId: "winged_leech", fromFloor: 9, toFloor: 9, weight: 3 },
   { enemyId: "blood_witch", fromFloor: 9, toFloor: 9, weight: 2 },
   { enemyId: "crimson_count", fromFloor: 9, toFloor: 9, weight: 1 },
-  // Andar 10 — Câmara dos Mil Passos (Lote 10+): Colosso de Obsidiana T entra aqui.
+  // Andar 10 — Câmara dos Mil Passos (Lote 11, fecha Onda 1): Colosso de Obsidiana T · Guerreiro Eterno D · Relógio Vivo V · Oráculo dos Passos M · Arqueiro de Elite E (raro).
   { enemyId: "obsidian_colossus", fromFloor: 10, toFloor: 10, weight: 4 },
-  // Andares 10+ — ainda com os inimigos de antes; trocam por andar a cada lote (docs/STYLIZATION_ROADMAP.md §3.1).
-  { enemyId: "toxicbat", fromFloor: 10, weight: 2 },
-  { enemyId: "bat", fromFloor: 10, weight: 3 },
-  { enemyId: "slime", fromFloor: 10, weight: 2 },
-  { enemyId: "goblin", fromFloor: 10, weight: 2 },
-  { enemyId: "skeleton", fromFloor: 10, weight: 3 },
-  { enemyId: "orc", fromFloor: 10, weight: 3 },
-  { enemyId: "shadowgoblin", fromFloor: 10, weight: 1 },
+  { enemyId: "eternal_warrior", fromFloor: 10, toFloor: 10, weight: 4 },
+  { enemyId: "living_clock", fromFloor: 10, toFloor: 10, weight: 3 },
+  { enemyId: "steps_oracle", fromFloor: 10, toFloor: 10, weight: 2 },
+  { enemyId: "elitearcher", fromFloor: 10, toFloor: 10, weight: 1 },
+  // Andares 11+ — ainda com os inimigos de antes; trocam por andar nos lotes futuros (docs/STYLIZATION_ROADMAP.md §3.1).
+  { enemyId: "toxicbat", fromFloor: 11, weight: 2 },
+  { enemyId: "bat", fromFloor: 11, weight: 3 },
+  { enemyId: "slime", fromFloor: 11, weight: 2 },
+  { enemyId: "goblin", fromFloor: 11, weight: 2 },
+  { enemyId: "skeleton", fromFloor: 11, weight: 3 },
+  { enemyId: "orc", fromFloor: 11, weight: 3 },
+  { enemyId: "shadowgoblin", fromFloor: 11, weight: 1 },
   { enemyId: "elitearcher", fromFloor: 11, weight: 1 },
 ];
 

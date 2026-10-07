@@ -1132,7 +1132,7 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 
 ## ADR-047 — Lote 10 da arte: fechamento do Andar 8 (Ninho das Sombras), kit do Corredor Sangrento (andar 9), 4 inimigos do andar 9 e abertura do andar 10 (2026-10-07)
 
-**Data:** 2026-10-07 · **Status:** ✅ Aceita (aguarda o "lote 10 aprovado") · **Tipo:** B (arte + dados) · **Pedido do usuário:** *"ok, inicie o lote 10"*
+**Data:** 2026-10-07 · **Status:** ✅ Aceita e verificada · **Tipo:** B (arte + dados) · **Pedido do usuário:** *"ok, inicie o lote 10"*
 
 **Gerações: 7/10 (3 reservas restantes).** 6 atlas de inimigos (Tecelã de Pesadelos, Carrasco Encouraçado, Sanguessuga Alada, Bruxa de Sangue, Conde Carmesim, Colosso de Obsidiana) e 1 kit de arena 4×4 (`f09_sangrento`). Nenhuma refação necessária: 100% de aproveitamento das 7 gerações planejadas no primeiro disparo com zero magenta nos assets finais. Procedência registrada em `assets/generated/provenance.json` e `PROVENANCE.md`.
 
@@ -1141,10 +1141,28 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 | Fechamento do Andar 8 (Ninho das Sombras) | **Tecelã de Pesadelos** (mago, mágico, mult 0,90; guia `mage`, estilo `spark_imp`, 184 px, âncora 0 px, paleta 446 cores). O Andar 8 atinge 5/5 inimigos com elenco 100% temático próprio (`giant_cocoon`, `blackfang_spider`, `shadow_crawler`, `nightmare_weaver`, `shadowgoblin`) |
 | Arena do Andar 9 | `f09_sangrento` (Corredor Sangrento): paredes de fortaleza em pedra cinza-escura com tapeçarias rubras e correntes, tocha carmesim, estandarte de cálice dourado, portão de grades de ferro forjado e piso com veios rubros. 16 ladrilhos fatiados, 0 magenta, luminância 0,21–0,22 |
 | Inimigos do Andar 9 (4 novos) | **Carrasco Encouraçado** (tanque, físico, mult 1,02; guia `orc`, estilo `mud_toad`, 199 px, âncora 0 px, 100% verde) · **Sanguessuga Alada** (veloz/voador, físico, mult 1,05; guia `bat`, estilo `spark_imp`, 133 px, âncora 0 px, 362 cores) · **Bruxa de Sangue** (mago, mágico, mult 0,90; guia `mage`, estilo `spark_imp`, 184 px, âncora 0 px, 100% verde) · **Conde Carmesim** (elite raro, mágico, mult 1,08; guia `orc`, estilo `royal_mummy`, 199 px, âncora 0 px, 100% verde). Com o Esqueleto Sangrento (`bloodskeleton`, dps já existente), o Andar 9 completa 5/5 inimigos |
-| Abertura do Andar 10 (Câmara dos Mil Passos) | **Colosso de Obsidiana** (tanque, físico, mult 1,0; guia `orc`, estilo `candle_skull`, 199 px, âncora 0 px, 419 cores). Primeiro defensor da Câmara dos Mil Passos |
+| Abertura do Andar 10 (Câmara dos Mil Passos) | **Colosso de Obsidiana** (tanque, físico, mult 1,0; guia `orc`, estilo `candle_skull`, 199 px, 199 px, âncora 0 px, 419 cores). Primeiro defensor da Câmara dos Mil Passos |
 | Balanceamento | `npm run report:balance` confirma perda de HP por combate perfeitamente calibrada: Carrasco Encouraçado 39% / 31 s (alvo tanque ≈ 38%), Colosso de Obsidiana 42% / 32 s (alvo tanque ≈ 38–42%), Sanguessuga Alada 21% / 11 s (alvo veloz ≈ 20–24%), Tecelã de Pesadelos 28% / 11 s (alvo mago ≈ 20–28%), Bruxa de Sangue 29% / 11 s (alvo mago ≈ 20–28%), Conde Carmesim 64% / 27 s (alvo elite ≈ 58–64%). Ritmo das 4 horas rigorosamente intacto |
 | Pools dos Andares 8 e 9 | Andar 8: Casulo Gigante (4), Aranha Presas-Negras (4), Sombra Rastejante (3), Tecelã de Pesadelos (2), Goblin Sombrio (1, elite raro). Andar 9: Carrasco Encouraçado (4), Esqueleto Sangrento (4), Sanguessuga Alada (3), Bruxa de Sangue (2), Conde Carmesim (1, elite raro). Andar 10: Colosso de Obsidiana (4)... |
 | Verificação | `npm run check` verde (783 testes unitários/integração + 28 arquitetura), 815 requisições HTTP 200 no bundle do preview, contact sheets e fatias de arena organizados em `docs/art-review/lote-10/` |
+
+---
+
+## ADR-048 — Lote 11 da arte: kit da Câmara dos Mil Passos (andar 10), 3 inimigos do andar 10 e conclusão da Onda 1 (2026-10-07)
+
+**Data:** 2026-10-07 · **Status:** ✅ Aceita (aguarda o "lote 11 aprovado") · **Tipo:** B (arte + dados) · **Gatilho:** Conclusão do Lote 11 e meta da Onda 1 de arte.
+
+**Gerações: 4/10 (6 reservas restantes).** 1 kit de arena 4×4 (`f10_passos`) e 3 atlas de inimigos (`eternal_warrior`, `living_clock`, `steps_oracle`). Eficiência máxima de 100% de acerto no primeiro disparo em 4 chamadas, com zero refações necessárias. Procedência registrada em `assets/generated/provenance.json` e `PROVENANCE.md`.
+
+| Item | Decisão |
+|---|---|
+| Arena do Andar 10 | `f10_passos` (Câmara dos Mil Passos): arena cerimonial de mármore obsidiana e bronze celestial, relógios de sol dourados entalhados nas paredes, tocha com chama âmbar estelar, estandarte dourado com constelações, portão de bronze com engrenagens e ponteiros, piso de mosaico circular com algarismos rúnicos e constelações douradas. 16 ladrilhos fatiados, 0 magenta, emenda parede 0.8/1.0 ok, emenda piso 0.6/0.8 ok, luminância do piso 0.11–0.13 ok |
+| Inimigos do Andar 10 (3 novos) | **Guerreiro Eterno** (dps, físico, mult 1,05; guia `hero`, estilo `obsidian_colossus`, 184 px, âncora 0 px, 0.000% chroma, 51 cores, 100% verde cinemática e IoU) · **Relógio Vivo** (veloz, físico, mult 1,05; guia `hero`, estilo `obsidian_colossus`, 184 px, âncora 0 px, 0.000% chroma, 52 cores, revisão visual silhueta engrenagens/pêndulos aprovada) · **Oráculo dos Passos** (mago, mágico, mult 0,90; guia `hero`/`mage`, estilo `obsidian_colossus`, 184 px, âncora 0 px, 0.000% chroma, 51 cores, revisão visual silhueta manto/ampulheta aprovada). Junto a `obsidian_colossus` (tanque, Lote 10) e `elitearcher` (elite raro), o Andar 10 atinge 5/5 inimigos temáticos |
+| Fechamento da Onda 1 | Todos os 10 primeiros andares da Torre agora possuem **kits de arena gerados dedicados** (`f01` a `f10`, 16 ladrilhos cada = 160 ladrilhos de ambiente) e **5/5 inimigos próprios** por andar, totalizando exatamente **50 inimigos no roster** (todos os 5 papéis: tanque, dano, veloz, mago, elite por andar). Zero placeholders no jogo. |
+| Balanceamento | `npm run report:balance` atesta combate ideal no Andar 10: guardian × Colosso de Obsidiana (42% de vida, 40,1 s, 29% peso), guardian × Guerreiro Eterno (33% de vida, 20,1 s, 29% peso), guardian × Relógio Vivo (19% de vida, 12,8 s, 21% peso), guardian × Oráculo dos Passos (27% de vida, 11,4 s, 14% peso), guardian × Arqueiro de Elite (52% de vida, 23,4 s, 7% peso). Progressão de 4 horas perfeitamente preservada |
+| Verificação | `npm run check` verde (783 testes unitários/integração + 28 testes arquiteturais), 834 requisições HTTP 200 no bundle de preview (13,26 MB em arte gerada, dentro do orçamento de 25 MB), contact sheets e fatias em `docs/art-review/lote-11/` |
+
+**Consequências:** Meta da Onda 1 de arte atingida com êxito! 10 andares completos, 10 arenas completas, 50 inimigos com sprites/atlas reais. Próxima etapa após aprovação do usuário: Planejamento e execução da Onda 2 (Chefes da Arena, Heróis jogáveis com 5 classes e kits visuais de evolução).
 
 **Consequências:** Roster de inimigos sobe de 41 para 47 inimigos (todos os papéis cobertos); andares 1 a 9 agora possuem 100% dos seus elencos com arte original própria e kits de arena dedicados (9 kits de arena ativos); Andar 10 iniciado com seu tanque. Próximo passo: **Lote 11 (último lote da Onda 1)**: kit de arena do Andar 10 (Câmara dos Mil Passos) + 3 inimigos restantes do andar 10 (Guerreiro Eterno, Relógio Vivo, Oráculo dos Passos) + fechamento completo da Onda 1 de arte.
 

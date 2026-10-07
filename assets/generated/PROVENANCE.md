@@ -141,3 +141,12 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 6 | `enemies/crimson_count` | atlas | aprovado (100% verde cinemática e IoU, 573 cores, âncora 0px, idle 199px) | guide_orc.magenta,  style_royal_mummy | Conde Carmesim (elite do andar 9): nobre vampiro em casaca carmesim de gola alta, capa negra com forro rubro, empunhando |
 | 7 | `enemies/obsidian_colossus` | atlas | aprovado (revisão visual silhueta monolito, 419 cores, âncora 0px, idle 199px) | guide_orc.magenta,  style_candle_skull | Colosso de Obsidiana (tanque do andar 10): monólito ancestral de pedra vulcânica negra polida com runas douradas cravada |
 
+## Lote L11 — 4/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `arenas/f10_passos` | arena-kit | aprovado (16 ladrilhos fatiados, emenda parede 0.8/1.0, piso 0.6/0.8, luminância 0.11-0.13, 108 KB) | ref_style_obsidian_colossus, ref_arena_f09_sangrento | Câmara dos Mil Passos (arena kit do andar 10): arena cerimonial de mármore obsidiana e bronze celestial, relógios de sol |
+| 2 | `enemies/eternal_warrior` | atlas | aprovado (100% verde cinemática e IoU, 0.000% chroma, âncora 0px, idle 184px, 51 cores) | guide_hero.magenta, style_obsidian_colossus | Guerreiro Eterno (dps do andar 10): guardião com armadura de placas de bronze cósmico e manto dourado esfarrapado, empun |
+| 3 | `enemies/living_clock` | atlas | aprovado (revisão visual silhueta pêndulos/engrenagens, 0.000% chroma, âncora 0px, idle 184px, 52 cores) | guide_hero.magenta, style_obsidian_colossus | Relógio Vivo (swift do andar 10): autômato esguio feito de pêndulos dourados e engrenagens giratórias de bronze polido,  |
+| 4 | `enemies/steps_oracle` | atlas | aprovado (revisão visual silhueta ampulheta/manto, 0.000% chroma, âncora 0px, idle 184px, 51 cores) | guide_hero.magenta, style_obsidian_colossus | Oráculo dos Passos (caster do andar 10): sábio ancestral envolto em túnica de seda branca com bordados dourados de ampul |
+

@@ -36,13 +36,14 @@
 | L7 | **16 retratos (26/26 heróis com retrato próprio)** + arena f05_ecos + 3 inimigos andar 5 (Sentinela, Duelista, Espectro) | 8 | 043 | ✅ aprovado |
 | L8 | **Andares 5 e 6 completos (6 inimigos novos)** + arenas `f06_fornalha` e `f07_jardim` | 10 | 044 | ✅ aprovado |
 | L9 | **Andar 7 completo (4 novos) + arena `f08_sombras` + 3 novos andar 8** | 9 | 045 | ✅ aprovado |
-| L10 | **Andares 8 e 9 completos (5 novos) + arena `f09_sangrento` + 1 novo andar 10** | 7 | 047 | ⏳ **aguarda "lote 10 aprovado"** |
+| L10 | **Andares 8 e 9 completos (5 novos) + arena `f09_sangrento` + 1 novo andar 10** | 7 | 047 | ✅ aprovado |
+| L11 | **Andar 10 completo (3 novos) + arena `f10_passos` (Câmara dos Mil Passos) — ONDA 1 CONCLUÍDA** | 4 | 048 | ⏳ **aguarda "lote 11 aprovado"** |
 
-**Próximo: Lote 11** — só depois do "lote 10 aprovado". Plano detalhado em §9.
+**Próximo: Onda 2 (Chefes da Arena e Heróis jogáveis)** — só depois do "lote 11 aprovado".
 
-> **Atualização Lote 10 (2026-10-07):** Lote 9 aprovado; Lote 10 entregue com 7/10 gerações (3 reservas restantes). 6 novos atlas de inimigos + 1 kit de arena 4×4 (`f09_sangrento`). Andares 1 a 9 agora possuem 100% dos seus elencos com arte original própria e kits de arena dedicados; arena do Andar 9 operando e Andar 10 iniciado com seu defensor tanque. Roster de inimigos expandido para 47. `npm run check` verde — **783 testes + 28 de arquitetura**, preview atualizado com bundle de 815 requisições HTTP 200.
+> **Atualização Lote 11 (2026-10-07):** Lote 10 aprovado; Lote 11 entregue com 4/10 gerações (6 reservas restantes). 3 novos atlas de inimigos (`eternal_warrior`, `living_clock`, `steps_oracle`) + 1 kit de arena 4×4 (`f10_passos`, Câmara dos Mil Passos). Todos os 10 primeiros andares agora possuem 100% de arenas geradas dedicadas e 5/5 inimigos temáticos próprios (50 inimigos no total no roster vivo). Meta da Onda 1 de arte 100% batida! `npm run check` verde — **783 testes + 28 de arquitetura**, preview atualizado com bundle de 834 requisições HTTP 200.
 
-Metas numéricas (Onda 1): 25 heróis (**26 — meta batida no L6, 100% com retrato no L7**) · 12 retratos do Rei (**feito**) · 10 arenas (hoje **9**: f01 a f09) · 50 inimigos nos andares 1–10 (hoje **47 no roster**, andares 1–9 com 5/5 completos) · UI GBA + login (**feito**).
+Metas numéricas (Onda 1): 25 heróis (**26 — meta batida no L6, 100% com retrato no L7**) · 12 retratos do Rei (**feito**) · 10 arenas (**10/10 completas: f01 a f10**) · 50 inimigos nos andares 1–10 (**50/50 completos no roster**) · UI GBA + login (**feito**). ONDA 1 100% CONCLUÍDA.
 
 Pendências de retrato: **0** — todos os 26 heróis agora possuem retrato próprio dedicado no jogo.
 
@@ -213,9 +214,8 @@ Depois de qualquer asset: `node scripts/build-assets.mjs` (regenera `apps/game-w
 
 ## 9. Próximo lote e o restante da fila (ajuste pelo roadmap §9, que é a fonte do plano)
 
-**Lote 10 (entregue, aguarda "lote 10 aprovado"):** 1 inimigo restante do andar 8 (Tecelã de Pesadelos) + arena 9 (`f09_sangrento`) + 4 inimigos do andar 9 (Carrasco Encouraçado, Sanguessuga Alada, Bruxa de Sangue, Conde Carmesim) + 1 do andar 10 (Colosso de Obsidiana) = **7 gerações usadas, 3 reservas restantes**.
-**Lote 11 (próximo e ÚLTIMO lote da Onda 1, após "lote 10 aprovado"):** arena 10 (Câmara dos Mil Passos) + 3 inimigos restantes do andar 10 (Guerreiro Eterno, Relógio Vivo, Oráculo dos Passos) + 6 reservas para refações/fechamento = **4 gerações planejadas + 6 reservas** ⇒ **Onda 1 100% COMPLETA**.
-**Ferramenta pendente (aprovada pelo usuário, momento a critério do agente):** validação de movimento **por plano corporal** (quadrúpede, inseto, rastejante) — perfil `--body` em `art.mjs ingest/validate` que relaxa limiares de movimento/IoU para corpos que não casam com o guia bípede/blob (hoje Cão de Ossos e Escaravelho foram aprovados à mão). Implemente **antes do primeiro lote com quadrúpedes/insetos** (andares 7–8, conforme a tabela do roadmap §3.1), com teste e ADR.
+**Lote 11 (entregue, aguarda "lote 11 aprovado"):** arena 10 (`f10_passos`, Câmara dos Mil Passos) + 3 inimigos do andar 10 (`eternal_warrior`, `living_clock`, `steps_oracle`) = **4 gerações usadas, 6 reservas restantes** ⇒ **Onda 1 100% COMPLETA**.
+**Próximo lote (Onda 2, após "lote 11 aprovado"):** Chefes da Arena (8 chefes com sprites próprios gigantes/imponentes) e Heróis jogáveis com evolução visual (5 classes).
 **Depois da arte:** Fase 14 — Painel Admin (`docs/ADMIN_PANEL.md`) e Fase Online (Google Auth, Supabase, Mercado da comunidade).
 **Estimativa atual:** ~4 lotes de arte (L8–L11) + Fase 14 ⇒ ~5 etapas até a Onda 1 completa (o MVP *local* já é jogável desde a Fase 13).
 

@@ -51,6 +51,7 @@ export function defaultArenaKits(): ArenaKitDef[] {
   const f07 = (n: string) => `arenas/f07_jardim/${n}`;
   const f08 = (n: string) => `arenas/f08_sombras/${n}`;
   const f09 = (n: string) => `arenas/f09_sangrento/${n}`;
+  const f10 = (n: string) => `arenas/f10_passos/${n}`;
   return [
     {
       // Lote 1 (ADR-033): primeiro kit GERADO — a Entrada da Torre (andar 1). Pedra azul-acinzentada,
@@ -228,6 +229,27 @@ export function defaultArenaKits(): ArenaKitDef[] {
         { assetId: f09("prop_1"), weight: 3 },
         { assetId: f09("prop_2"), weight: 2 },
         { assetId: f09("prop_3"), weight: 2 },
+      ],
+      tint: 0xffffff,
+    },
+    {
+      // Lote 11: Câmara dos Mil Passos (andar 10). Mármore obsidiana e bronze celestial,
+      // relógios de sol dourados entalhados, tocha com chama âmbar estelar, estandarte dourado
+      // com constelações, portão de bronze com engrenagens e ponteiros, piso com algarismos rúnicos circulares.
+      id: "f10_passos",
+      name: "Câmara dos Mil Passos",
+      wall: [
+        f10("wall_0"), f10("wall_1"), f10("wall_2"), f10("wall_0"), f10("wall_4"), f10("wall_1"),
+        f10("banner"), f10("wall_2"), f10("wall_3"), f10("wall_0"), f10("wall_4"), f10("gate"),
+      ],
+      torch: f10("torch"),
+      torchEvery: 4,
+      floor: [f10("floor_0"), f10("floor_1"), f10("floor_2"), f10("floor_3"), f10("floor_0")],
+      props: [
+        { assetId: f10("prop_0"), weight: 3 },
+        { assetId: f10("prop_1"), weight: 3 },
+        { assetId: f10("prop_2"), weight: 2 },
+        { assetId: f10("prop_3"), weight: 2 },
       ],
       tint: 0xffffff,
     },

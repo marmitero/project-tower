@@ -998,6 +998,54 @@
         " style_candle_skull"
       ],
       "verdict": "aprovado (revisão visual silhueta monolito, 419 cores, âncora 0px, idle 199px)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L11",
+      "asset": "arenas/f10_passos",
+      "kind": "arena-kit",
+      "prompt": "Câmara dos Mil Passos (arena kit do andar 10): arena cerimonial de mármore obsidiana e bronze celestial, relógios de sol dourados entalhados nas paredes, tocha com chama âmbar estelar, estandarte dourado com constelações, portão de bronze com engrenagens e ponteiros, piso de mosaico circular com algarismos rúnicos e constelações douradas",
+      "refs": [
+        "ref_style_obsidian_colossus",
+        "ref_arena_f09_sangrento"
+      ],
+      "verdict": "aprovado (16 ladrilhos fatiados, emenda parede 0.8/1.0, piso 0.6/0.8, luminância 0.11-0.13, 108 KB)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L11",
+      "asset": "enemies/eternal_warrior",
+      "kind": "atlas",
+      "prompt": "Guerreiro Eterno (dps do andar 10): guardião com armadura de placas de bronze cósmico e manto dourado esfarrapado, empunhando duas lâminas rúnicas curvas com relógios cravados nos punhos, elmo com visor em fenda emanando brilho dourado",
+      "refs": [
+        "guide_hero.magenta",
+        "style_obsidian_colossus"
+      ],
+      "verdict": "aprovado (100% verde cinemática e IoU, 0.000% chroma, âncora 0px, idle 184px, 51 cores)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L11",
+      "asset": "enemies/living_clock",
+      "kind": "atlas",
+      "prompt": "Relógio Vivo (swift do andar 10): autômato esguio feito de pêndulos dourados e engrenagens giratórias de bronze polido, pernas ágeis mecânicas de ponteiros afiados, peito aberto revelando mecanismo de relógio com luz dourada pulsar",
+      "refs": [
+        "guide_hero.magenta",
+        "style_obsidian_colossus"
+      ],
+      "verdict": "aprovado (revisão visual silhueta pêndulos/engrenagens, 0.000% chroma, âncora 0px, idle 184px, 52 cores)"
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L11",
+      "asset": "enemies/steps_oracle",
+      "kind": "atlas",
+      "prompt": "Oráculo dos Passos (caster do andar 10): sábio ancestral envolto em túnica de seda branca com bordados dourados de ampulhetas e constelações, levitando ampulheta de bronze com areia estelar dourada cintilante",
+      "refs": [
+        "guide_hero.magenta",
+        "style_obsidian_colossus"
+      ],
+      "verdict": "aprovado (revisão visual silhueta ampulheta/manto, 0.000% chroma, âncora 0px, idle 184px, 51 cores)"
     }
   ]
 }
