@@ -41,7 +41,7 @@
       "loop": false
     }
   },
-  "kind": "humanoid",
-  "guide": "hero",
-  "scale": 1.0455
+  "kind": "low",
+  "guide": "slime",
+  "scale": 0.7877
 }

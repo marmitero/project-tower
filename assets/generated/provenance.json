@@ -1052,96 +1052,72 @@
       "batch": "L12",
       "asset": "arenas/p01_arcano",
       "kind": "arena-kit",
-      "prompt": "Pináculo Arcano (arena kit dos andares 11-15): alvenaria de pedra índigo com cristais arcanos e runas ciano reluzentes, tocha com chama ciano mística, estandarte com constelações astrais, portão em arco de cristal arcano e piso de lajes escuras com veios de energia mágica",
+      "prompt": "Pináculo Arcano (arena kit dos andares 11-15, revisado para perfeita emenda contínua): alvenaria de pedra índigo com cristais e runas ciano reluzentes, tocha ciano, estandarte estrelar, portão de cristal arcano e lajes escuras com alinhamento contínuo",
       "refs": [
         "ref_arena_f01_entrada",
         "ref_arena_f10_passos"
       ],
-      "verdict": "aprovado (16 ladrilhos fatiados, 0 magenta, luminância 0.11-0.22, 83 KB)"
-    },
-    {
-      "date": "2026-10-07",
-      "batch": "L12",
-      "asset": "enemies/crystal_golem_raw1",
-      "kind": "atlas",
-      "prompt": "Golem de Cristal Arcano (tanque dos andares 11-15): tentativa 1 descartada por proporção 16:9",
-      "refs": [
-        "guide_orc.magenta",
-        "style_mud_toad"
-      ],
-      "verdict": "rejeitado (formato 16:9 em vez de 4:5)"
+      "verdict": "aprovado (16 ladrilhos fatiados, 0 magenta, emenda parede 0.9/1.1 ok, emenda piso 0.8/1.0 ok, luminância 0.11-0.19, 72 KB)"
     },
     {
       "date": "2026-10-07",
       "batch": "L12",
       "asset": "enemies/crystal_golem",
       "kind": "atlas",
-      "prompt": "Golem de Cristal Arcano (tanque dos andares 11-15): construto colossal de blocos angulares de pedra índigo e cristais de ametista ciano reluzentes, punhos de pedra pesados e ombros cristalinos",
+      "prompt": "Golem de Cristal Arcano (tanque dos andares 11-15, revisado sem efeitos de ataque): construto de pedra índigo e cristais ciano reluzentes, punhos pesados, sem partículas ou rastros de corte",
       "refs": [
         "guide_orc.magenta",
         "style_mud_toad"
       ],
-      "verdict": "revisão visual (199px, âncora 0px, 0.000% chroma, 709 cores, aprovado)"
+      "verdict": "aprovado (199px, âncora 0px, 0.000% chroma, 516 cores, margem 4px livre, revisão visual aprovada)"
     },
     {
       "date": "2026-10-07",
       "batch": "L12",
       "asset": "enemies/rune_blade",
       "kind": "atlas",
-      "prompt": "Espadachim Rúnico (dano dos andares 11-15): guerreiro em armadura de aço meia-noite com espada larga de duas mãos entalhada de runas ciano elétricas cintilantes",
+      "prompt": "Espadachim Rúnico (dano dos andares 11-15, revisado sem arcos de corte ou partes duplicadas): guerreiro em armadura de aço e espada de duas mãos rúnica, apenas o corpo e arma se movendo",
       "refs": [
         "guide_hero.magenta",
         "style_guardian_borin"
       ],
-      "verdict": "aprovado (184px, âncora 0px, 0.004% chroma, 489 cores, IoU walk 0.57, hurt 0.48)"
+      "verdict": "aprovado (184px, âncora 0px, 0.001% chroma, 604 cores, margem 4px livre, IoU idle 0.61, walk 0.59, death 0.56)"
     },
     {
       "date": "2026-10-07",
       "batch": "L12",
       "asset": "enemies/arcane_wisp",
       "kind": "atlas",
-      "prompt": "Fogo-Fátuo Arcano (veloz dos andares 11-15): criatura mágica flutuante, esfera de mana índigo multifacetada com olho de gato ciano brilhante e asas de tentáculos de energia pura",
+      "prompt": "Fogo-Fátuo Arcano (veloz dos andares 11-15, revisado como monstro puro): esfera de mana índigo com olho ciano e tentáculos, sem partículas dispersas ou membros duplicados",
       "refs": [
-        "guide_bat.magenta",
+        "guide_slime.magenta",
         "style_spark_imp"
       ],
-      "verdict": "aprovado (115px, âncora 0px, 0.001% chroma, 630 cores, IoU walk 0.51, hurt 0.45)"
+      "verdict": "aprovado (115px, âncora 0px, 0.000% chroma, 550 cores, margem 4px livre, IoU idle 0.55, walk 0.57, attack 0.54)"
     },
     {
       "date": "2026-10-07",
       "batch": "L12",
       "asset": "enemies/astral_sorcerer",
       "kind": "atlas",
-      "prompt": "Feiticeiro Astral (mago dos andares 11-15): conjurador arcano em mantos índigo sobrepostos e capuz pontiagudo com cajado de madeira coroado por orbe estelar ciano reluzente",
+      "prompt": "Feiticeiro Astral (mago dos andares 11-15, revisado sem raios mágicos ou cortes de cajado): mago em mantos índigo com cajado encimado por orbe ciano, margens amplas sem cortes",
       "refs": [
         "guide_mage.magenta",
         "style_spark_imp"
       ],
-      "verdict": "aprovado (184px, âncora 0px, 0.001% chroma, IoU idle 0.61, walk 0.59, attack 0.46, hurt 0.58)"
-    },
-    {
-      "date": "2026-10-07",
-      "batch": "L12",
-      "asset": "enemies/rift_stalker_raw1",
-      "kind": "atlas",
-      "prompt": "Rastreador da Fenda (elite dos andares 11-15): tentativa 1 descartada por proporção 16:9",
-      "refs": [
-        "guide_orc.magenta",
-        "style_royal_mummy"
-      ],
-      "verdict": "rejeitado (formato 16:9 em vez de 4:5)"
+      "verdict": "aprovado (184px, âncora 0px, 0.000% chroma, margem 4px livre, IoU idle 0.63, walk 0.62, attack 0.48)"
     },
     {
       "date": "2026-10-07",
       "batch": "L12",
       "asset": "enemies/rift_stalker",
       "kind": "atlas",
-      "prompt": "Rastreador da Fenda (elite dos andares 11-15): predador arcano feroz de quitina obsidiana-índigo com espinhos de cristal ciano ao longo da espinha e máscara de osso entalhada",
+      "prompt": "Rastreador da Fenda (elite dos andares 11-15, revisado quadrúpede compacto sem cortes): fera arcana de quitina índigo com espinhos de cristal ciano, 4 patas sem membros extras ou rastros de corte",
       "refs": [
-        "guide_orc.magenta",
+        "guide_slime.magenta",
         "style_royal_mummy"
       ],
-      "verdict": "revisão visual (184px, âncora 0px, 0.016% chroma, 714 cores, aprovado)"
+      "verdict": "aprovado (115px, âncora 0px, 0.000% chroma, 513 cores, margem 4px livre, IoU idle 0.61, walk 0.57, attack 0.53, death 0.54)"
     }
   ]
 }
