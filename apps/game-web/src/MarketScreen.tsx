@@ -57,6 +57,13 @@ export function MarketScreen({ state, notify }: { state: GameState; notify: (tex
   return (
     <>
       <Panel title="Market">
+        <div className="tia-market-canopy-header">
+          <img src="/assets/ui/market_canopy.png" alt="" className="tia-market-canopy-img" />
+          <div className="tia-market-scales">
+            <img src="/assets/ui/scales_mercantile.png" alt="" className="tia-market-scales-img" />
+            <span>Bazar Mercante · Guilda dos Andarilhos</span>
+          </div>
+        </div>
         <p className="tia-note">
           Compre com Coin. Poções e revives são usados pelo Bot (veja a tela da Torre) — online e offline. As caixas são
           caras e exigem um Rei forte: são um SEGUNDO caminho para novos heróis, não o principal.

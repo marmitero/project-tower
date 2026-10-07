@@ -1492,3 +1492,26 @@ Após a aprovação do plano de transformação visual, iniciamos a Fase 1 e Fas
 **Impacto:**
 - O jogo ganha profundidade física diegética e materiais táteis em todas as áreas principais.
 - 100% dos testes e checagens continuam verdes: 783 testes unitários/integração/UI, 28 testes de arquitetura e 1024 requisições HTTP 200 no preview.
+
+
+---
+
+## ADR-064 — Produção do Lote UI 3 e Imersão Mercante/Arcada (2026-10-07)
+
+**Data:** 2026-10-07 · **Status:** ✅ Aceita · **Tipo:** B (código + assets + CSS) · **Gatilho:** Aprovação e validação do Lote UI 2 pelo usuário ("Tudo validado e aprovado, prossiga com o próximo lote").
+
+**Contexto:**
+Para dar continuidade ao plano de transformação da interface de dashboard para RPG Dark Fantasy, foi produzido o Lote UI 3 para enriquecer a tela de Mercado, os portais da Arena/Torre e completar os 4 arquétipos clássicos de classe.
+
+**Decisões:**
+1. Gerar e ingerir os 8 assets do Lote UI 3 (`class_crest_rogue`, `paperdoll_frame`, `market_canopy`, `scales_mercantile`, `wax_seal_gold`, `wax_seal_ruby`, `chest_vault_open`, `torch_sconce`) via `scripts/ingest-lote-ui-3.mjs`.
+2. Expandir `DARK_FANTASY_UI_ASSETS` em `@tia/config` e atualizar o manifesto com 1025 arquivos copiados (`node scripts/build-assets.mjs`).
+3. Em `MarketScreen.tsx`: adicionar cabeçalho temático com o toldo listrado do bazar (`--ui-market-canopy`) e balança de bronze (`--ui-scales-mercantile`).
+4. Em `styles.css`:
+   - Adicionar tochas acesas nas colunas laterais da moldura da Arena/BattleCanvas (`--ui-torch-sconce`).
+   - Estilização do cabeçalho mercante com tipografia em ouro lapidado.
+5. Registrar a proveniência dos 8 assets em `provenance.json`.
+
+**Impacto:**
+- O jogo consolida a estética de console RPG sem elementos vazios ou com aparência de site comercial.
+- 100% dos testes e verificações mantidos verdes: 783 testes unitários/integração/UI, 28 testes de arquitetura e 1032 requisições HTTP 200 no preview.

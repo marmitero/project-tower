@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generatedFrom": "assets/sprites",
-  "count": 1017,
+  "count": 1025,
   "entries": {
     "characters/archer/archer_attack_sheet": "characters/archer/archer_attack_sheet.png",
     "characters/archer/archer_death_sheet": "characters/archer/archer_death_sheet.png",
@@ -951,8 +951,10 @@
     "ui/bar_track": "ui/bar_track.png",
     "ui/chat_header_scroll": "ui/chat_header_scroll.png",
     "ui/chest": "ui/chest.png",
+    "ui/chest_vault_open": "ui/chest_vault_open.png",
     "ui/class_crest_cleric": "ui/class_crest_cleric.png",
     "ui/class_crest_mage": "ui/class_crest_mage.png",
+    "ui/class_crest_rogue": "ui/class_crest_rogue.png",
     "ui/class_crest_warrior": "ui/class_crest_warrior.png",
     "ui/crest_blue": "ui/crest_blue.png",
     "ui/crest_gold": "ui/crest_gold.png",
@@ -1009,16 +1011,22 @@
     "ui/gba/toggle_off": "ui/gba/toggle_off.png",
     "ui/gba/toggle_on": "ui/gba/toggle_on.png",
     "ui/mannequin_silhouette": "ui/mannequin_silhouette.png",
+    "ui/market_canopy": "ui/market_canopy.png",
     "ui/panel_ornate": "ui/panel_ornate.png",
+    "ui/paperdoll_frame": "ui/paperdoll_frame.png",
     "ui/parchment_scroll": "ui/parchment_scroll.png",
     "ui/pedestal_stone": "ui/pedestal_stone.png",
     "ui/plaque_narrow": "ui/plaque_narrow.png",
     "ui/plaque_wide": "ui/plaque_wide.png",
     "ui/portcullis_lock": "ui/portcullis_lock.png",
+    "ui/scales_mercantile": "ui/scales_mercantile.png",
     "ui/slot_frame_bag": "ui/slot_frame_bag.png",
     "ui/slot_frame_gear": "ui/slot_frame_gear.png",
     "ui/slot_frame_potion": "ui/slot_frame_potion.png",
     "ui/slot_frame_shield": "ui/slot_frame_shield.png",
-    "ui/slot_frame_sword": "ui/slot_frame_sword.png"
+    "ui/slot_frame_sword": "ui/slot_frame_sword.png",
+    "ui/torch_sconce": "ui/torch_sconce.png",
+    "ui/wax_seal_gold": "ui/wax_seal_gold.png",
+    "ui/wax_seal_ruby": "ui/wax_seal_ruby.png"
   }
 }

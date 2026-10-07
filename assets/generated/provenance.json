@@ -1822,6 +1822,70 @@
       "kind": "ui",
       "prompt": "Dark fantasy pixel art UI heraldic class crest medallion for Mage champion",
       "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_UI_3",
+      "asset": "ui/class_crest_rogue",
+      "kind": "ui",
+      "prompt": "Dark fantasy pixel art UI heraldic class crest medallion for Rogue assassin champion",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_UI_3",
+      "asset": "ui/paperdoll_frame",
+      "kind": "ui",
+      "prompt": "Dark fantasy pixel art UI ornate vertical gothic carved stone alcove niche frame",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_UI_3",
+      "asset": "ui/market_canopy",
+      "kind": "ui",
+      "prompt": "Dark fantasy pixel art UI medieval merchant stall canvas awning canopy banner",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_UI_3",
+      "asset": "ui/scales_mercantile",
+      "kind": "ui",
+      "prompt": "Dark fantasy pixel art UI antique brass merchant balance weighing scale icon",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_UI_3",
+      "asset": "ui/wax_seal_gold",
+      "kind": "ui",
+      "prompt": "Dark fantasy pixel art UI royal golden wax seal medallion stamp",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_UI_3",
+      "asset": "ui/wax_seal_ruby",
+      "kind": "ui",
+      "prompt": "Dark fantasy pixel art UI dark red crimson wax seal medallion stamp",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_UI_3",
+      "asset": "ui/chest_vault_open",
+      "kind": "ui",
+      "prompt": "Dark fantasy pixel art UI open heavy medieval dungeon treasure chest with glowing coins",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_UI_3",
+      "asset": "ui/torch_sconce",
+      "kind": "ui",
+      "prompt": "Dark fantasy pixel art UI medieval dungeon wall-mounted iron torch sconce with burning flame",
+      "refs": []
     }
   ]
 }

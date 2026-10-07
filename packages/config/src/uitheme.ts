@@ -50,6 +50,14 @@ export const DARK_FANTASY_UI_ASSETS = [
   "ui/class_crest_warrior",
   "ui/class_crest_cleric",
   "ui/class_crest_mage",
+  "ui/class_crest_rogue",
+  "ui/paperdoll_frame",
+  "ui/market_canopy",
+  "ui/scales_mercantile",
+  "ui/wax_seal_gold",
+  "ui/wax_seal_ruby",
+  "ui/chest_vault_open",
+  "ui/torch_sconce",
 ] as const;
 
 /** Todos os ids de asset do tema (para o manifesto e para os testes). */
