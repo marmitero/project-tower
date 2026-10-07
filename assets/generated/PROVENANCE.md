@@ -258,3 +258,15 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 6 | `enemies/boss_arauto_pesadelo` | humanoid | — | — | Full vertical 1024x1280 pixel art sprite sheet of a nightmare harbinger aberration boss |
 | 7 | `enemies/boss_tecedor_tempo` | humanoid | — | — | Full vertical 1024x1280 pixel art sprite sheet of a temporal chronomancer boss |
 
+## Lote L_BOSS_4 — 7/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `enemies/boss_soberano_abissal` | elite | — | — | Full vertical 1024x1280 pixel art sprite sheet of an abyssal sovereign monstrosity boss |
+| 2 | `enemies/boss_soberano_abissal` | elite | — | — | Full vertical 1024x1280 pixel art sprite sheet of an abyssal sovereign monstrosity boss |
+| 3 | `enemies/boss_julgamento_celeste` | humanoid | — | — | Full vertical 1024x1280 pixel art sprite sheet of a celestial judgment seraph boss |
+| 4 | `enemies/boss_hidra_plasma` | elite | — | — | Full vertical 1024x1280 pixel art sprite sheet of a multi-headed plasma hydra boss |
+| 5 | `enemies/boss_nucleo_singularidade` | elite | — | — | Full vertical 1024x1280 pixel art sprite sheet of a singularity core titan boss |
+| 6 | `enemies/boss_cavaleiro_esquecimento` | humanoid | — | — | Full vertical 1024x1280 pixel art sprite sheet of an oblivion dark knight paladin boss |
+| 7 | `enemies/boss_serpente_cosmica` | elite | — | — | Full vertical 1024x1280 pixel art sprite sheet of a cosmic constellation serpent dragon boss |
+

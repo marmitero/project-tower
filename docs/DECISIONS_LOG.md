@@ -1364,6 +1364,29 @@ Proveniência auditada e registrada em `assets/generated/provenance.json` e `PRO
 Catálogo estendido `BOSS_EXPANDED_CATALOG` em `packages/config/src/boss.ts` expandido para 10 chefes adicionais.
 `npm run check` verde: 783 testes + 28 arquitetura, 996 requisições HTTP 200.
 
+---
+
+## ADR-059 — Lote Boss 4: Chefes 19 a 24 (Atlas e Retratos Dedicados) (2026-10-07)
+
+**Data:** 2026-10-07 · **Status:** ✅ Aceita (aguarda "lote boss 4 aprovado") · **Tipo:** B (arte + dados) · **Gatilho:** Continuação da produção de arte da Etapa 13.1 (Lote Boss 4).
+
+**Gerações: 7/10 (3 reservas restantes, orçamento respeitado).**
+6 novos atlas completos `ita-atlas-v1` (1024×1280, 20 quadros) e 6 retratos 128×128 correspondentes em `assets/generated/portraits/bosses/`:
+1. **Soberano Abissal (`boss_soberano_abissal`)** — Pesadelo das Fendas Subterrâneas (Nv 11.000, Físico · guia `boss`, escala 199 px, âncora 0 px, 0.000% chroma, colosso das fossas com carapaça de obsidiana e pinças trituradoras).
+2. **Julgamento Celeste (`boss_julgamento_celeste`)** — Serafim Bélico de Seis Asas de Luz (Nv 12.000, Mágico · guia `hero`, escala 184 px, âncora 0 px, 0.002% chroma, arcanjo de armadura platina/ouro e espada solar sagrada).
+3. **Hidra de Plasma (`boss_hidra_plasma`)** — Réptil Estelar Multicéfalo (Nv 13.000, Mágico · guia `slime`, escala 199 px, âncora 0 px, 0.001% chroma, hidra dracônica de três cabeças de plasma turquesa e corpo escamado).
+4. **Núcleo da Singularidade (`boss_nucleo_singularidade`)** — Buraco Negro Blindado (Nv 14.000, Físico · guia `orc`, escala 199 px, âncora 0 px, 0.012% chroma, autômato blindado de placas de basalto orbitais e núcleo gravitacional).
+5. **Cavaleiro do Esquecimento (`boss_cavaleiro_esquecimento`)** — Paladino Renegado da Anti-Matéria (Nv 15.000, Físico · guia `hero`, escala 184 px, âncora 0 px, 0.000% chroma, cavaleiro gótico em aço negro fosco com montante aniquilador).
+6. **Serpente Cósmica (`boss_serpente_cosmica`)** — Devoradora de Constelações (Nv 16.000, Mágico · guia `slime`, escala 199 px, âncora 0 px, 0.084% chroma, serpente astral com escamas de galáxias e cornos de luz estelar).
+
+**Controle de Qualidade e Reprovações no Orçamento:**
+- Tentativa 1 de `boss_soberano_abissal`: reprovada por pinças e espinhas laterais ultrapassando a margem celular de 4 px; regenerada com postura compacta centralizada, obtendo aprovação (escala 199 px, âncora 0 px, 0.000% chroma).
+
+Contact sheets gerados em `docs/art-review/lote-boss-4/*.contact.png`.
+Proveniência auditada e registrada em `assets/generated/provenance.json` e `PROVENANCE.md`.
+Catálogo estendido `BOSS_EXPANDED_CATALOG` em `packages/config/src/boss.ts` expandido para 16 chefes adicionais (totalizando 24 chefes ativos com assets).
+`npm run check` verde: 783 testes + 28 arquitetura, 1008 requisições HTTP 200.
+
 
 
 

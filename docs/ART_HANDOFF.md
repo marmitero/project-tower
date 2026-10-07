@@ -227,9 +227,10 @@ Depois de qualquer asset: `node scripts/build-assets.mjs` (regenera `apps/game-w
 **Lote 17 (entregue, aguarda "lote 17 aprovado"):** arena do Pináculo do Vazio (`p06_vazio`, andares 36–40) + 5 inimigos da família do Vazio (`void_colossus`, `rift_slayer`, `astral_crawler`, `nebula_weaver`, `void_monarch`) = **10 gerações usadas, 0 reservas restantes** ⇒ **Bioma 6 da Onda 2 COMPLETO — ONDA 2 100% CONCLUÍDA!**.
 **Lote Boss 1 (aprovado):** 6 chefes de fábrica (`boss_rei_gosma`, `boss_sentinela`, `boss_matriarca_gelida`, `boss_carrasco_abissal`, `boss_senhor_forja`, `boss_rainha_morcegos`) = **6 gerações usadas, 4 reservas restantes** ⇒ **6 chefes com arte dedicada e retratos**.
 **Lote Boss 2 (aprovado):** 6 chefes intermediários (`boss_ancestry_ent`, `boss_carrasco_rubro`, `boss_lorde_sombras`, `boss_colosso_torre`, `boss_leviathan_rift`, `boss_solar_emperor`) = **8 gerações usadas, 2 reservas restantes** ⇒ **6 chefes com arte dedicada e retratos**.
-**Lote Boss 3 (entregue, aguarda "lote boss 3 aprovado"):** 6 chefes avançados (`boss_ceifador_vazio`, `boss_monolito_cristal`, `boss_behemoth_infernal`, `boss_couraceiro_astral`, `boss_arauto_pesadelo`, `boss_tecedor_tempo`) = **7 gerações usadas, 3 reservas restantes** ⇒ **6 chefes com arte dedicada e retratos**.
-**Próximo lote Boss:** Lote Boss 4 (Chefes 19 a 24: `boss_soberano_abissal`, `boss_julgamento_celeste`, `boss_hidra_plasma`, `boss_nucleo_singularidade`, `boss_cavaleiro_esquecimento`, `boss_serpente_cosmica`).
-**Estimativa atual:** ~4 lotes de arte (L8–L11) + 2 lotes de Boss (Boss 4 e 5) + Fase 14 ⇒ ~7 etapas.
+**Lote Boss 3 (aprovado):** 6 chefes avançados (`boss_ceifador_vazio`, `boss_monolito_cristal`, `boss_behemoth_infernal`, `boss_couraceiro_astral`, `boss_arauto_pesadelo`, `boss_tecedor_tempo`) = **7 gerações usadas, 3 reservas restantes** ⇒ **6 chefes com arte dedicada e retratos**.
+**Lote Boss 4 (entregue, aguarda "lote boss 4 aprovado"):** 6 chefes endgame (`boss_soberano_abissal`, `boss_julgamento_celeste`, `boss_hidra_plasma`, `boss_nucleo_singularidade`, `boss_cavaleiro_esquecimento`, `boss_serpente_cosmica`) = **7 gerações usadas, 3 reservas restantes** ⇒ **6 chefes com arte dedicada e retratos**.
+**Próximo lote Boss:** Lote Boss 5 (Chefes 25 a 28: `boss_arconte_infinidade`, `boss_caos_primordial`, `boss_demiurgo_vazio`, `boss_apoteose_torre`).
+**Estimativa atual:** ~4 lotes de arte (L8–L11) + 1 lote de Boss (Boss 5) + Fase 14 ⇒ ~6 etapas.
 
 ## 10. Armadilhas (cada uma já custou tempo)
 

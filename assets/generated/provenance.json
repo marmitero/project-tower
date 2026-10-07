@@ -1654,6 +1654,62 @@
       "kind": "humanoid",
       "prompt": "Full vertical 1024x1280 pixel art sprite sheet of a temporal chronomancer boss",
       "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_4",
+      "asset": "enemies/boss_soberano_abissal",
+      "kind": "elite",
+      "prompt": "Full vertical 1024x1280 pixel art sprite sheet of an abyssal sovereign monstrosity boss",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_4",
+      "asset": "enemies/boss_soberano_abissal",
+      "kind": "elite",
+      "prompt": "Full vertical 1024x1280 pixel art sprite sheet of an abyssal sovereign monstrosity boss",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_4",
+      "asset": "enemies/boss_julgamento_celeste",
+      "kind": "humanoid",
+      "prompt": "Full vertical 1024x1280 pixel art sprite sheet of a celestial judgment seraph boss",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_4",
+      "asset": "enemies/boss_hidra_plasma",
+      "kind": "elite",
+      "prompt": "Full vertical 1024x1280 pixel art sprite sheet of a multi-headed plasma hydra boss",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_4",
+      "asset": "enemies/boss_nucleo_singularidade",
+      "kind": "elite",
+      "prompt": "Full vertical 1024x1280 pixel art sprite sheet of a singularity core titan boss",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_4",
+      "asset": "enemies/boss_cavaleiro_esquecimento",
+      "kind": "humanoid",
+      "prompt": "Full vertical 1024x1280 pixel art sprite sheet of an oblivion dark knight paladin boss",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_4",
+      "asset": "enemies/boss_serpente_cosmica",
+      "kind": "elite",
+      "prompt": "Full vertical 1024x1280 pixel art sprite sheet of a cosmic constellation serpent dragon boss",
+      "refs": []
     }
   ]
 }
