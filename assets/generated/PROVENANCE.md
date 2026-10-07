@@ -233,3 +233,16 @@ Regra: no máximo **10 gerações de imagem por lote** (1 lote = 1 sessão).
 | 5 | `enemies/boss_senhor_forja` | elite | — | — | Pixel art sprite sheet of a forge master titan boss (Senhor da Forja) |
 | 6 | `enemies/boss_rainha_morcegos` | humanoid | — | — | Pixel art sprite sheet of a vampire bat queen boss (Rainha dos Morcegos) |
 
+## Lote L_BOSS_2 — 8/10 gerações
+
+| # | Asset | Tipo | Veredito | Referências | Prompt |
+|---|---|---|---|---|---|
+| 1 | `enemies/boss_ancestry_ent` | elite | — | — | Pixel art sprite sheet of an ancient treant golem boss (Guardião Ancestral) |
+| 2 | `enemies/boss_carrasco_rubro` | elite | — | — | Pixel art sprite sheet of a blood executioner warlord boss (Carrasco Sangrento) |
+| 3 | `enemies/boss_lorde_sombras` | humanoid | — | — | Pixel art sprite sheet of a shadow lord wraith sorcerer boss (Lorde das Sombras) |
+| 4 | `enemies/boss_colosso_torre` | elite | — | — | Pixel art sprite sheet of the Apex Tower Colossus titan boss (Colosso da Torre) |
+| 5 | `enemies/boss_leviathan_rift` | elite | — | — | Pixel art sprite sheet of a cosmic rift leviathan dragon boss (Leviatã da Fenda) |
+| 6 | `enemies/boss_leviathan_rift` | elite | — | — | Pixel art sprite sheet of a compact cosmic serpent dragon boss (Leviatã da Fenda) |
+| 7 | `enemies/boss_solar_emperor` | humanoid | — | — | Pixel art sprite sheet of a solar emperor celestial boss (Imperador Solar) |
+| 8 | `enemies/boss_solar_emperor` | humanoid | — | — | Pixel art sprite sheet of a solar emperor celestial boss (Imperador Solar) |
+

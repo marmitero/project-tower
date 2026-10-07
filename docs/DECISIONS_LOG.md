@@ -1316,6 +1316,30 @@ Proveniência registrada em `assets/generated/provenance.json` e `PROVENANCE.md`
 Configurações atualizadas em `packages/config/src/boss.ts` associando atlas e retratos dedicados.
 `npm run check` verde: 783 testes + 28 arquitetura, 972 requisições HTTP 200.
 
+---
+
+## ADR-057 — Lote Boss 2: Chefes 7 a 12 (Atlas e Retratos Dedicados) (2026-10-07)
+
+**Data:** 2026-10-07 · **Status:** ✅ Aceita (aguarda "lote boss 2 aprovado") · **Tipo:** B (arte + dados) · **Gatilho:** Continuação da produção de arte da Etapa 13.1 (Lote Boss 2).
+
+**Gerações: 8/10 (2 reservas restantes, orçamento respeitado).**
+6 novos atlas completos `ita-atlas-v1` (1024×1280, 20 quadros) e 6 retratos 128×128 correspondentes em `assets/generated/portraits/bosses/`:
+1. **Guardião Ancestral (`boss_ancestry_ent`)** — Raiz Primordial da Torre (Nv 750, Físico · guia `orc`, escala 199 px, âncora 0 px, 0.000% chroma, ent colossal de madeira petrificada com folhagem esmeralda e runas da terra).
+2. **Carrasco Rubro (`boss_carrasco_rubro`)** — Algoz da Lâmina Escarlate (Nv 1000, Físico · guia `hero`, escala 199 px, âncora 0 px, 0.000% chroma, carrasco encouraçado com elmo fechado e montante sangrento).
+3. **Lorde das Sombras (`boss_lorde_sombras`)** — Regente do Pináculo (Nv 1500, Mágico · guia `hero`, escala 184 px, âncora 1 px, 0.000% chroma, feiticeiro espectral encapuzado com vestes etéreas índigo e foice mágica).
+4. **Colosso da Torre (`boss_colosso_torre`)** — Guardião do Topo (Nv 2000 / 12300, Físico · guia `boss`, escala 199 px, âncora 0 px, 0.000% chroma, titã megalítico de granito e runas douradas).
+5. **Leviatã da Fenda (`boss_leviathan_rift`)** — Dragão Abissal do Éter (Nv 3000, Mágico · guia `slime`, escala 199 px, âncora 0 px, 0.000% chroma, serpentino cósmico de carapaça abissal e olhos fluorescentes).
+6. **Imperador Solar (`boss_solar_emperor`)** — Soberano da Radiação Celeste (Nv 4000, Mágico · guia `hero`, escala 184 px, âncora 0 px, 0.000% chroma, monarca sagrado com armadura dourada pura e coroa de radiação solar).
+
+**Controle de Qualidade e Reprovações no Orçamento:**
+- Tentativa 1 de `boss_leviathan_rift`: reprovada por sangramento de asas além da margem de segurança de 4 px; regenerada com proporção serpentina compacta via guia rastejante (`--guide slime`), obtendo aprovação perfeita.
+- Tentativa 1 de `boss_solar_emperor`: reprovada por resíduo de reflexos rosados na armadura dourada (chroma 0.631%); regenerada com paleta estrita de ouro imperial, aço e carvão escuro, zerando o chroma (0.000%).
+
+Contact sheets gerados em `docs/art-review/lote-boss-2/*.contact.png`.
+Proveniência auditada e registrada em `assets/generated/provenance.json` e `PROVENANCE.md`.
+Catálogo estendido `BOSS_EXPANDED_CATALOG` exportado em `packages/config/src/boss.ts` e atlas do Lorde das Sombras e Colosso integrados.
+`npm run check` verde: 783 testes + 28 arquitetura, 984 requisições HTTP 200.
+
 
 
 

@@ -1534,6 +1534,70 @@
       "kind": "humanoid",
       "prompt": "Pixel art sprite sheet of a vampire bat queen boss (Rainha dos Morcegos)",
       "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_2",
+      "asset": "enemies/boss_ancestry_ent",
+      "kind": "elite",
+      "prompt": "Pixel art sprite sheet of an ancient treant golem boss (Guardião Ancestral)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_2",
+      "asset": "enemies/boss_carrasco_rubro",
+      "kind": "elite",
+      "prompt": "Pixel art sprite sheet of a blood executioner warlord boss (Carrasco Sangrento)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_2",
+      "asset": "enemies/boss_lorde_sombras",
+      "kind": "humanoid",
+      "prompt": "Pixel art sprite sheet of a shadow lord wraith sorcerer boss (Lorde das Sombras)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_2",
+      "asset": "enemies/boss_colosso_torre",
+      "kind": "elite",
+      "prompt": "Pixel art sprite sheet of the Apex Tower Colossus titan boss (Colosso da Torre)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_2",
+      "asset": "enemies/boss_leviathan_rift",
+      "kind": "elite",
+      "prompt": "Pixel art sprite sheet of a cosmic rift leviathan dragon boss (Leviatã da Fenda)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_2",
+      "asset": "enemies/boss_leviathan_rift",
+      "kind": "elite",
+      "prompt": "Pixel art sprite sheet of a compact cosmic serpent dragon boss (Leviatã da Fenda)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_2",
+      "asset": "enemies/boss_solar_emperor",
+      "kind": "humanoid",
+      "prompt": "Pixel art sprite sheet of a solar emperor celestial boss (Imperador Solar)",
+      "refs": []
+    },
+    {
+      "date": "2026-10-07",
+      "batch": "L_BOSS_2",
+      "asset": "enemies/boss_solar_emperor",
+      "kind": "humanoid",
+      "prompt": "Pixel art sprite sheet of a solar emperor celestial boss (Imperador Solar)",
+      "refs": []
     }
   ]
 }
