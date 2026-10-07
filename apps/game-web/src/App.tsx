@@ -54,7 +54,7 @@ const SCREENS: { id: Screen; label: string; icon: ButtonIcon }[] = [
   { id: "inventory", label: "Inventário", icon: "backpack" },
   { id: "market", label: "Market", icon: "market" },
   { id: "tower", label: "Torre", icon: "tower" },
-  { id: "boss", label: "Arena", icon: "swords" },
+  { id: "boss", label: "Boss", icon: "swords" },
   { id: "options", label: "Opções", icon: "gear" },
 ];
 

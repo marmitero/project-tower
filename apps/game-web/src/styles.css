@@ -857,7 +857,238 @@ body {
 .tia-modal__card h2 { margin: 0; font-size: 20px; }
 .tia-modal__list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
 
-/* --- Arena dos Chefes (ADR-027) -------------------------------------------- */
+/* --- Tela de Boss (Etapa 13.1, ADR-027) ----------------------------------- */
+.tia-boss-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.tia-boss-header__summary {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.tia-boss-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (max-width: 900px) {
+  .tia-boss-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .tia-boss-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tia-boss-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-2);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+  position: relative;
+  user-select: none;
+}
+
+.tia-boss-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.tia-boss-card:active {
+  transform: translateY(0);
+}
+
+.tia-boss-card--locked {
+  opacity: 0.65;
+  filter: grayscale(0.25);
+}
+
+.tia-boss-card__portrait {
+  width: 100%;
+  aspect-ratio: 1;
+  background: #0e0c16;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tia-boss-card__portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+
+.tia-boss-card__portrait span:not(.tia-boss-card__badge) {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.tia-boss-card__badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.tia-boss-card__badge--good { background: #234e32; color: #9ece6a; border: 1px solid #9ece6a; }
+.tia-boss-card__badge--warn { background: #4e3a1f; color: #e0af68; border: 1px solid #e0af68; }
+.tia-boss-card__badge--bad { background: #4e1f2a; color: #f7768e; border: 1px solid #f7768e; }
+.tia-boss-card__badge--neutral { background: #262335; color: var(--muted); border: 1px solid var(--border); }
+
+.tia-boss-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tia-boss-card__name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tia-boss-card__meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.tia-boss-card__level {
+  font-weight: 700;
+  color: #ffd873;
+}
+
+.tia-boss-card__dmg {
+  font-size: 11px;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.tia-boss-card__dmg--physical {
+  background: rgba(247, 118, 142, 0.15);
+  color: #f7768e;
+}
+.tia-boss-card__dmg--magic {
+  background: rgba(122, 162, 247, 0.15);
+  color: #7aa2f7;
+}
+
+.tia-boss-card__hp {
+  font-size: 12px;
+  color: #9ece6a;
+  font-weight: 600;
+}
+
+.tia-boss-card__req {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* Modal Detalhado do Chefe */
+.tia-boss-detail-modal {
+  max-width: 580px;
+  width: 100%;
+}
+.tia-boss-detail-modal__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+.tia-boss-detail-modal__portrait {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex: none;
+  background: #0e0c16;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tia-boss-detail-modal__portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+.tia-boss-detail-modal__title {
+  flex: 1;
+  min-width: 0;
+}
+.tia-boss-detail-modal__title h3 {
+  margin: 0;
+  font-size: 18px;
+}
+.tia-boss-detail-modal__title span {
+  font-size: 13px;
+  color: var(--muted);
+}
+.tia-boss-detail-modal__close {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.tia-boss-detail-modal__close:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.1);
+}
+.tia-boss-detail-modal__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tia-boss-detail-modal__section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tia-boss-detail-modal__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
 .tia-boss__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
 .tia-boss { display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 2px solid var(--border); border-radius: 10px; background: rgba(27, 20, 40, 0.6); }
 .tia-boss--locked { opacity: 0.6; }

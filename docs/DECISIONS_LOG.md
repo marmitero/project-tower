@@ -1274,6 +1274,28 @@ Calibrada com `simulate`/`towerPacing(25)` (ciclo luta+procura ≈ 25 s) por aju
 
 **Consequências:** Sexto e último bioma da Onda 2 (Pináculo do Vazio, andares 36–40) entregue. **ONDA 2 DE ARTE CONCLUÍDA COM ÊXITO TOTAL!** A Torre inteira (andares 1 a 40) possui identidade visual própria, arenas sem emendas e pools balanceados em 5 papéis. Próximas etapas após validação do usuário: **FASE 14 — Painel Admin** (`docs/ADMIN_PANEL.md`) e Fase Online.
 
+---
+
+## ADR-055 — Repaginação da Tela de Boss (13.1), Plano de Expansão de Chefes (50 a 20.000) e Plano UI/UX Game-First (13.2) (2026-10-07)
+
+**Data:** 2026-10-07 · **Status:** ✅ Aceita · **Tipo:** B (técnica) + C (interface de usuário e produto) · **Gatilho:** Aprovação do Lote 17 pelo usuário e orientações para finalização da Etapa 13.
+
+**Decisões:**
+1. **Navegação:** Botão e aba principal renomeados de "Arena" para "Boss" em `App.tsx`, guias e suíte de testes.
+2. **Repaginação da Tela de Boss:**
+   - Remoção completa do cabeçalho "Arena dos chefes" e do bloco textual explicativo.
+   - Apresentação em grade dinâmica de 4 em 4 colunas (`tia-boss-grid`).
+   - Cards minimalistas contendo estritamente: Foto do boss, Nome, Nível, Tipo de Dano (Físico/Mágico), HP total e Nível mínimo do Rei exigido.
+   - Demais informações complexas (imunidades a stun/poison, skills, fases de enrage, recompensas detalhadas, fragmentos e botão de desafio) exibidas na sobre-tela modal (`BossDetailModal`), que abre ao selecionar qualquer boss da grade.
+3. **Plano de Expansão de Chefes (`docs/BOSS_EXPANSION_PLAN.md`):**
+   - Roster expandido para **28 chefes únicos** escalonados nos níveis: 50, 100, 150, 200, 250, 500, 750, 1000, 1500, 2000 e a cada 1000 níveis até 20.000.
+   - Todos com arquétipos, temas, atributos OpenRpg, skills AoE/Single e fases mapeadas.
+   - Estratégia de arte dividida em 5 lotes de chefes respeitando o teto estrito de 10 chamadas por lote.
+4. **Plano de Transformação UI/UX Game-First (`docs/GAME_UI_UX_PLAN.md`):**
+   - Transição do design de "site" para um RPG autêntico com molduras 9-slice em pedra/ferro forjado, botões chanfrados com resposta tátil de clique, barras de HP/XP com gárgulas e gemas, e HUD em formato de console medieval.
+
+**Consequências:** Interface de chefes limpa e moderna; testes 100% aprovados (783 testes + 28 arquitetura); documentação arquitetural pronta para as próximas fases.
+
 
 
 

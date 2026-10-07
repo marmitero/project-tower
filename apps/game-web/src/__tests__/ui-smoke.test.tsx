@@ -93,7 +93,7 @@ describe("UI — do zero ao jogo", () => {
     expect(text()).toContain("Dom_Teste");
     expect(text()).toMatch(/Coin/);
     // navegação principal
-    const labels = ["Rei", "Heróis", "Equipe", "Inventário", "Market", "Torre", "Arena", "Opções"];
+    const labels = ["Rei", "Heróis", "Equipe", "Inventário", "Market", "Torre", "Boss", "Opções"];
     for (const l of labels) expect(byLabel(l), `aba ${l}`).toBeTruthy();
     expect(errors).toEqual([]);
   });
@@ -105,7 +105,7 @@ describe("UI — do zero ao jogo", () => {
     await click(/^Convocar/);
     await tick(30);
 
-    for (const l of ["Rei", "Heróis", "Equipe", "Inventário", "Market", "Torre", "Arena", "Opções"]) {
+    for (const l of ["Rei", "Heróis", "Equipe", "Inventário", "Market", "Torre", "Boss", "Opções"]) {
       await click(l);
       await tick(10);
       const t = text();
@@ -118,13 +118,13 @@ describe("UI — do zero ao jogo", () => {
     expect(errors).toEqual([]);
   });
 
-  it("a Arena mostra os 8 chefes e o botão Desafiar está bloqueado para um Rei nível 1", async () => {
+  it("a tela de Boss mostra os chefes em grade e o botão Desafiar está bloqueado para um Rei nível 1", async () => {
     await mountApp();
     await typeInto(container.querySelector("input") as HTMLInputElement, "Dom_Teste");
     await click("Escolher campeão");
     await click(/^Convocar/);
     await tick(30);
-    await click("Arena");
+    await click("Boss");
     for (const name of ["Rei Gosma", "Sentinela da Torre", "Colosso da Torre"]) expect(text()).toContain(name);
     expect(text()).toMatch(/Requer|Nível do Rei|nível/i);
   });

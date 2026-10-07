@@ -1,11 +1,12 @@
 /**
- * Arena dos Chefes (FASE 12, ADR-027): lista de chefes, requisitos, recompensas, recarga e a luta
- * em curso; mais o modal de resultado (fragmentos em destaque) que devolve o jogador ao Reino.
+ * Tela de Boss (Etapa 13.1): grade 4×4 dinâmica e funcional de chefes,
+ * com cards minimalistas e sobre-tela (pop-up modal) detalhada ao selecionar.
  *
- * Só apresentação: nível mínimo, recarga/tentativas, recompensa e sorteio moram em `@tia/game-core`
- * e nos dados de `config.boss` — esta tela lê, formata e despacha a intenção "desafiar".
+ * Só apresentação: regras de combate, recarga e recompensas residem em
+ * `@tia/game-core` e `config.boss`.
  */
 
+import { useState } from "react";
 import { ActionButton, Panel, ProgressBar, StatPill } from "@tia/ui";
 import { BOSS_STATUS_LABELS, classes, config, type BossDef, type BossFragmentDrop, type Rarity } from "@tia/config";
 import { GameState, bossBaseRewards, bossStats, fragmentSummary, type BossResult } from "@tia/game-core";
@@ -48,7 +49,85 @@ function FragmentChip({ f }: { f: Pick<BossFragmentDrop, "classId" | "rarity" | 
   );
 }
 
-function BossCard({ state, def, canChallenge, why }: { state: GameState; def: BossDef; canChallenge: boolean; why: string | null }) {
+/** Card minimalista para a grade 4×4: exibe apenas os 6 dados essenciais. */
+function BossGridCard({
+  state,
+  def,
+  onSelect,
+}: {
+  state: GameState;
+  def: BossDef;
+  onSelect: (def: BossDef) => void;
+}) {
+  const nowMs = state.nowMs;
+  const avail = state.bossAvailability(def.id);
+  const stats = bossStats(def);
+  const portrait = def.assets.portrait ? assetUrl(def.assets.portrait) : null;
+
+  let badge: { text: string; tone: "good" | "bad" | "warn" | "neutral" } = { text: "Pronto", tone: "good" };
+  if (avail.state === "disabled") badge = { text: "Indisponível", tone: "bad" };
+  else if (avail.state === "locked") badge = { text: `Requer Rei Nv ${formatInt(def.requiredKingLevel)}`, tone: "bad" };
+  else if (avail.state === "cooldown") badge = { text: `Recarga ${formatClock((avail.availableAt ?? nowMs) - nowMs)}`, tone: "warn" };
+  else if (avail.state === "no_attempts") badge = { text: `Sem tentativas`, tone: "warn" };
+  else if (avail.attemptsLeft !== null) badge = { text: `${avail.attemptsLeft} tentativa(s)`, tone: "good" };
+
+  const isLocked = avail.state === "locked";
+
+  return (
+    <li
+      className={`tia-boss-card${isLocked ? " tia-boss-card--locked" : ""}`}
+      onClick={() => onSelect(def)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect(def);
+        }
+      }}
+      aria-label={`Chefe ${def.name}, Nível ${def.level}`}
+    >
+      <div
+        className="tia-boss-card__portrait"
+        style={def.tint !== null ? { borderColor: `#${def.tint.toString(16).padStart(6, "0")}` } : undefined}
+      >
+        {portrait ? <img src={portrait} alt="" /> : <span>{def.name.slice(0, 1)}</span>}
+        <span className={`tia-boss-card__badge tia-boss-card__badge--${badge.tone}`}>{badge.text}</span>
+      </div>
+
+      <div className="tia-boss-card__info">
+        <strong className="tia-boss-card__name">{def.name}</strong>
+        <div className="tia-boss-card__meta-row">
+          <span className="tia-boss-card__level">Nv {formatInt(def.level)}</span>
+          <span className={`tia-boss-card__dmg tia-boss-card__dmg--${def.damageType}`}>
+            {def.damageType === "magic" ? "Dano Mágico" : "Dano Físico"}
+          </span>
+        </div>
+        <div className="tia-boss-card__meta-row">
+          <span className="tia-boss-card__hp">HP {formatCompact(stats.hp)}</span>
+          <span className="tia-boss-card__req">Requer Rei Nv {formatInt(def.requiredKingLevel)}</span>
+        </div>
+      </div>
+    </li>
+  );
+}
+
+/** Sobre-tela (pop-up modal) com as informações detalhadas ao selecionar o chefe. */
+function BossDetailModal({
+  state,
+  def,
+  canChallenge,
+  why,
+  onClose,
+  onChallenge,
+}: {
+  state: GameState;
+  def: BossDef;
+  canChallenge: boolean;
+  why: string | null;
+  onClose: () => void;
+  onChallenge: () => void;
+}) {
   const nowMs = state.nowMs;
   const avail = state.bossAvailability(def.id);
   const rec = state.bossRecord(def.id);
@@ -58,91 +137,102 @@ function BossCard({ state, def, canChallenge, why }: { state: GameState; def: Bo
   const first = rec.firstClearAt === null;
   const resist = Object.entries(def.statusResist).filter(([, v]) => (v ?? 0) > 0) as [keyof typeof BOSS_STATUS_LABELS, number][];
 
-  let badge: { text: string; tone: "good" | "bad" | "warn" | "neutral" } = { text: "Pronto", tone: "good" };
-  if (avail.state === "disabled") badge = { text: "Indisponível", tone: "bad" };
-  else if (avail.state === "locked") badge = { text: `Requer Rei Nv ${formatInt(def.requiredKingLevel)}`, tone: "bad" };
-  else if (avail.state === "cooldown") badge = { text: `Recarga ${formatClock((avail.availableAt ?? nowMs) - nowMs)}`, tone: "warn" };
-  else if (avail.state === "no_attempts") badge = { text: `Sem tentativas · volta em ${formatClock((avail.availableAt ?? nowMs) - nowMs)}`, tone: "warn" };
-  else if (avail.attemptsLeft !== null) badge = { text: `Pronto · ${avail.attemptsLeft} tentativa(s)`, tone: "good" };
-
   return (
-    <li className={`tia-boss${avail.state === "locked" ? " tia-boss--locked" : ""}`}>
-      <div className="tia-boss__head">
-        <span className="tia-boss__portrait" style={def.tint !== null ? { borderColor: `#${def.tint.toString(16).padStart(6, "0")}` } : undefined}>
-          {portrait ? <img src={portrait} alt="" /> : <span aria-hidden="true">{def.name.slice(0, 1)}</span>}
-        </span>
-        <div className="tia-boss__title">
-          <strong>{def.name}</strong>
-          <span className="tia-muted">{def.title}</span>
-          <span className="tia-note">
-            Nível {formatInt(def.level)} · {def.damageType === "magic" ? "dano mágico" : "dano físico"} · HP {formatCompact(stats.hp)}
-          </span>
-        </div>
-        <StatPill label="Estado" value={badge.text} tone={badge.tone} />
-      </div>
-
-      <p className="tia-note">{def.description}</p>
-
-      <ul className="tia-boss__tags" aria-label="Habilidades do chefe">
-        {resist.map(([id, v]) => (
-          <li key={id} className="tia-boss__tag tia-boss__tag--resist">
-            {v >= 1 ? `Imune a ${BOSS_STATUS_LABELS[id]}` : `Resiste a ${BOSS_STATUS_LABELS[id]} (${Math.round(v * 100)}%)`}
-          </li>
-        ))}
-        {def.skills.filter((s) => s.enabled).map((s) => (
-          <li key={s.id} className="tia-boss__tag">
-            {s.name} · {s.targeting === "all_enemies" ? "atinge a equipe toda" : "um alvo"}
-          </li>
-        ))}
-        {def.phases.map((p) => (
-          <li key={p.id} className="tia-boss__tag tia-boss__tag--phase">
-            {p.label}
-            {p.hpBelowPct !== undefined ? ` · abaixo de ${p.hpBelowPct}% de vida` : ""}
-            {p.afterMs !== undefined ? ` · após ${formatClock(p.afterMs)}` : ""}
-          </li>
-        ))}
-      </ul>
-
-      <div className="tia-boss__rewards">
-        <strong>Recompensas por vitória</strong>
-        <span className="tia-note">
-          +{formatCompact(base.coins)} Coin · +{formatCompact(base.kingXp)} XP do Rei · +{formatCompact(base.heroXp)} XP de herói (dividido) ·{" "}
-          {def.rewards.equipment.rolls > 0 ? `${def.rewards.equipment.rolls} ${def.rewards.equipment.rolls === 1 ? "equipamento garantido" : "equipamentos garantidos"} (${rarityLabel(def.rewards.equipment.minRarity)} ou melhor)` : "sem equipamento"}
-        </span>
-        <ul className="tia-boss__frags">
-          {def.rewards.fragments.map((f, i) => (
-            <FragmentChip key={i} f={f} />
-          ))}
-        </ul>
-        {first && (
-          <div className="tia-boss__first">
-            <strong>Primeira vitória: Coin e XP ×{def.rewards.firstClearMultiplier} + fragmentos extras</strong>
-            <ul className="tia-boss__frags">
-              {def.rewards.firstClearFragments.map((f, i) => (
-                <FragmentChip key={i} f={f} />
-              ))}
-            </ul>
+    <div className="tia-modal" role="dialog" aria-modal="true" aria-labelledby="tia-boss-modal-title" onClick={onClose}>
+      <div className="tia-modal__card tia-boss-detail-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="tia-boss-detail-modal__header">
+          <div
+            className="tia-boss-detail-modal__portrait"
+            style={def.tint !== null ? { borderColor: `#${def.tint.toString(16).padStart(6, "0")}` } : undefined}
+          >
+            {portrait ? <img src={portrait} alt="" /> : <span>{def.name.slice(0, 1)}</span>}
           </div>
-        )}
+          <div className="tia-boss-detail-modal__title">
+            <h3 id="tia-boss-modal-title">{def.name}</h3>
+            <span>{def.title}</span>
+          </div>
+          <button type="button" className="tia-boss-detail-modal__close" onClick={onClose} aria-label="Fechar">
+            ✕
+          </button>
+        </div>
+
+        <div className="tia-boss-detail-modal__pills">
+          <StatPill label="Nível" value={formatInt(def.level)} />
+          <StatPill label="Dano" value={def.damageType === "magic" ? "Mágico" : "Físico"} />
+          <StatPill label="HP" value={formatCompact(stats.hp)} tone="good" />
+          <StatPill label="Requer" value={`Rei Nv ${formatInt(def.requiredKingLevel)}`} />
+          <StatPill
+            label="Tentativas"
+            value={avail.attemptsLeft !== null ? `${avail.attemptsLeft}` : "0"}
+            tone={avail.state === "ready" ? "good" : "warn"}
+          />
+        </div>
+
+        <p className="tia-note">{def.description}</p>
+
+        <div className="tia-boss-detail-modal__section">
+          <strong>Características de Combate</strong>
+          <ul className="tia-boss__tags" aria-label="Habilidades do chefe">
+            {resist.map(([id, v]) => (
+              <li key={id} className="tia-boss__tag tia-boss__tag--resist">
+                {v >= 1 ? `Imune a ${BOSS_STATUS_LABELS[id]}` : `Resiste a ${BOSS_STATUS_LABELS[id]} (${Math.round(v * 100)}%)`}
+              </li>
+            ))}
+            {def.skills.filter((s) => s.enabled).map((s) => (
+              <li key={s.id} className="tia-boss__tag">
+                {s.name} · {s.targeting === "all_enemies" ? "atinge a equipe toda" : "alvo único"}
+              </li>
+            ))}
+            {def.phases.map((p) => (
+              <li key={p.id} className="tia-boss__tag tia-boss__tag--phase">
+                {p.label}
+                {p.hpBelowPct !== undefined ? ` · abaixo de ${p.hpBelowPct}% vida` : ""}
+                {p.afterMs !== undefined ? ` · após ${formatClock(p.afterMs)}` : ""}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="tia-boss__rewards">
+          <strong>Recompensas por Vitória</strong>
+          <span className="tia-note">
+            +{formatCompact(base.coins)} Coin · +{formatCompact(base.kingXp)} XP do Rei · +{formatCompact(base.heroXp)} XP de herói (dividido) ·{" "}
+            {def.rewards.equipment.rolls > 0
+              ? `${def.rewards.equipment.rolls} ${def.rewards.equipment.rolls === 1 ? "equipamento garantido" : "equipamentos garantidos"} (${rarityLabel(def.rewards.equipment.minRarity)} ou melhor)`
+              : "sem equipamento"}
+          </span>
+          <ul className="tia-boss__frags">
+            {def.rewards.fragments.map((f, i) => (
+              <FragmentChip key={i} f={f} />
+            ))}
+          </ul>
+          {first && (
+            <div className="tia-boss__first">
+              <strong>Primeira vitória: Coin e XP ×{def.rewards.firstClearMultiplier} + fragmentos extras</strong>
+              <ul className="tia-boss__frags">
+                {def.rewards.firstClearFragments.map((f, i) => (
+                  <FragmentChip key={i} f={f} />
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+        <p className="tia-note">
+          {attemptsText(def)} · tempo máximo {formatClock(def.timeLimitMs)} · vitórias {formatInt(rec.wins)}
+          {rec.bestTimeMs !== null && <> · recorde {formatClock(rec.bestTimeMs)}</>}
+        </p>
+
+        <div className="tia-boss-detail-modal__actions">
+          <ActionButton
+            label={canChallenge ? "Desafiar com a equipe" : (why ?? "Indisponível")}
+            disabled={!canChallenge}
+            onClick={onChallenge}
+          />
+          <ActionButton label="Fechar" variant="secondary" onClick={onClose} />
+        </div>
       </div>
-
-      <p className="tia-note">
-        {attemptsText(def)} · tempo máximo {formatClock(def.timeLimitMs)} · vitórias {formatInt(rec.wins)}
-        {rec.bestTimeMs !== null && <> · recorde {formatClock(rec.bestTimeMs)}</>}
-      </p>
-
-      <ActionButton
-        label={canChallenge ? "Desafiar com a equipe" : (why ?? "Indisponível")}
-        disabled={!canChallenge}
-        onClick={() => {
-          try {
-            state.startBoss(def.id);
-          } catch (error) {
-            console.warn("[ui]", error);
-          }
-        }}
-      />
-    </li>
+    </div>
   );
 }
 
@@ -190,6 +280,7 @@ export function BossScreen({ state }: { state: GameState }) {
   const fighting = state.activeBossId !== null;
   const kingLevel = state.data.king.level;
   const frags = fragmentSummary(state.data.inventory);
+  const [selectedBoss, setSelectedBoss] = useState<BossDef | null>(null);
 
   const gate = (def: BossDef): { ok: boolean; why: string | null } => {
     if (fighting) return { ok: false, why: "Luta em andamento" };
@@ -206,30 +297,56 @@ export function BossScreen({ state }: { state: GameState }) {
   return (
     <>
       <LiveFight state={state} />
-      <Panel title="Arena dos Chefes">
-        <p className="tia-note">
-          Chefes são desafios à parte da Torre: a equipe INTEIRA (até 3 heróis) enfrenta um único chefe, e todos atacam ao mesmo tempo. É a
-          fonte de fragmentos de herói, equipamento garantido e Coin. Ao terminar, a caçada da Torre {config.boss.resumeTowerAfter ? "retoma sozinha" : "fica em pausa"} — o HP da Torre{" "}
-          {config.boss.persistHpAfter ? "acompanha o da luta" : "não é afetado pela Arena"}.
-        </p>
-        <StatPill label="Rei" value={`Nv ${formatInt(kingLevel)}`} />
-        <StatPill label="Equipe" value={team.length > 0 ? team.map((h) => `${h.name} (Nv ${formatInt(h.level)})`).join(" · ") : "vazia"} tone={team.length > 0 ? "good" : "bad"} />
-        {team.length === 1 && <p className="tia-note tia-note--bad">Só 1 herói na equipe: os chefes são calibrados para equipes maiores. Desbloqueie slots e junte fragmentos.</p>}
-        {frags.length > 0 && (
-          <p className="tia-note">
-            Seus fragmentos:{" "}
-            {frags.map((f) => `${className(f.classId)} ${rarityLabel(f.rarity)} ${f.count}/${f.required}`).join(" · ")}
-          </p>
-        )}
-      </Panel>
-      <Panel title="Chefes">
-        <ul className="tia-boss__list">
-          {config.boss.bosses.map((def) => {
-            const g = gate(def);
-            return <BossCard key={def.id} state={state} def={def} canChallenge={g.ok} why={g.why} />;
-          })}
-        </ul>
-      </Panel>
+
+      {/* Barra de status enxuta (sem paredes de texto ou títulos redundantes) */}
+      <div className="tia-boss-header">
+        <div className="tia-boss-header__summary">
+          <StatPill label="Rei" value={`Nv ${formatInt(kingLevel)}`} />
+          <StatPill
+            label="Equipe"
+            value={team.length > 0 ? team.map((h) => `${h.name} (Nv ${formatInt(h.level)})`).join(" · ") : "vazia"}
+            tone={team.length > 0 ? "good" : "bad"}
+          />
+          {frags.length > 0 && (
+            <StatPill
+              label="Fragmentos"
+              value={frags.map((f) => `${className(f.classId)} ${f.count}/${f.required}`).join(" · ")}
+              tone="neutral"
+            />
+          )}
+        </div>
+      </div>
+
+      {/* Grade de 4 em 4 de Bosses */}
+      <ul className="tia-boss-grid" aria-label="Chefes">
+        {config.boss.bosses.map((def) => (
+          <BossGridCard
+            key={def.id}
+            state={state}
+            def={def}
+            onSelect={(b) => setSelectedBoss(b)}
+          />
+        ))}
+      </ul>
+
+      {/* Sobre-tela detalhada do Boss selecionado */}
+      {selectedBoss && (
+        <BossDetailModal
+          state={state}
+          def={selectedBoss}
+          canChallenge={gate(selectedBoss).ok}
+          why={gate(selectedBoss).why}
+          onClose={() => setSelectedBoss(null)}
+          onChallenge={() => {
+            try {
+              state.startBoss(selectedBoss.id);
+              setSelectedBoss(null);
+            } catch (error) {
+              console.warn("[ui]", error);
+            }
+          }}
+        />
+      )}
     </>
   );
 }

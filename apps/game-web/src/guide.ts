@@ -69,9 +69,9 @@ const STEPS: Rule[] = [
   {
     id: "boss",
     when: (s) => s.data.king.level >= 10 && bossWins(s) === 0,
-    text: () => "Rei nível 10: desafie o primeiro chefe na Arena — ele solta fragmentos de herói.",
+    text: () => "Rei nível 10: desafie o primeiro chefe no menu Boss — ele solta fragmentos de herói.",
     screen: "boss",
-    go: "Arena",
+    go: "Boss",
   },
 ];
 
