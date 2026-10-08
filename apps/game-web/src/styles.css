@@ -14,29 +14,74 @@
  */
 
 :root {
-  --bg: #0b0a12;
-  --bg-2: #15131f;
-  --panel: #1c1a2a;
-  --border: #2e2b42;
-  --text: #e6e3f0;
-  --muted: #9a94b0;
-  --accent: #7aa2f7;
-  --good: #9ece6a;
-  --warn: #e0af68;
-  --bad: #f7768e;
+  /* Paleta Base Quente — RPG / Idle MMORPG (referencia_visual.md) */
+  --bg: #1c1214;                /* Fundo marrom-vinho extremamente escuro */
+  --bg-deep: #130a0c;           /* Fundo mais escuro para calhas e sombras */
+  --bg-2: #28171a;              /* Fundo de containers secundários */
+  --panel: #331b1f;             /* Painel marrom-vinho */
+  --panel-head: #412226;        /* Cabeçalho de painel */
+  --border: #5a2e33;            /* Borda sutil de painel */
+  --border-gold: #c89254;       /* Borda de cobre/ouro lapidado */
+  --border-gold-bright: #e6c58a;/* Highlight dourado claro */
+  --border-gold-shadow: #7a4628;/* Sombra dourada em relevo */
+  --text: #f0dcc0;              /* Creme / bege claro quente */
+  --text-bright: #fff6e8;       /* Branco quente / ouro */
+  --muted: #a88e7d;             /* Bege suave apagado */
+
+  /* Acentos e Destaques */
+  --accent: #d79a5a;            /* Cobre/dourado primário */
+  --accent-purple: #7d3f91;     /* Roxo real da referência */
+  --accent-magenta: #a74fba;    /* Magenta vibrante */
+  --accent-glow: rgba(167, 79, 186, 0.35);
+
+  /* Botões e Ações */
+  --btn-primary: #b84e32;       /* Terracota / laranja queimado */
+  --btn-primary-hover: #cb5939;
+  --btn-primary-active: #9c3f26;
+  --btn-primary-border: #e6c58a;
+  --btn-secondary: #48272a;     /* Marrom-vinho acolhedor */
+  --btn-secondary-hover: #5d3337;
+  --btn-purple: #7d3f91;        /* Roxo real */
+  --btn-purple-hover: #9448ad;
+
+  /* Estados Funcionais */
+  --good: #3db85c;              /* Verde vívido para HP e sucesso */
+  --good-glow: rgba(61, 184, 92, 0.4);
+  --warn: #d79a5a;              /* Dourado / Coin / Alerta */
+  --bad: #d93845;               /* Carmesim de dano / perigo / fechar */
+  --bad-hover: #ea4855;
   --touch: 44px;
 }
 
 * { box-sizing: border-box; }
 
-html, body, #root { height: 100%; margin: 0; }
+/* Scrollbar estilizada de jogo RPG — fina, cobre e ouro */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb {
+  background: #7a4628;
+  border-radius: 3px;
+  border: 1px solid var(--border-gold);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
 
-body {
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Regra absoluta §8 e §9: NUNCA scrollbar global que movimente o jogo */
   background: var(--bg);
   color: var(--text);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  /* Evita zoom por duplo toque em mobile sem bloquear o zoom por pinça,
-     que é um recurso de acessibilidade — §67 mobile-ready. */
   touch-action: manipulation;
   -webkit-text-size-adjust: 100%;
 }
@@ -44,9 +89,11 @@ body {
 .tia-app {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
-  max-width: 1100px;
+  height: 100%;
+  width: 100%;
+  max-width: 1600px;
   margin: 0 auto;
+  overflow: hidden;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
@@ -59,16 +106,16 @@ body {
 /* --------------------------------------------------------------- HUD */
 
 .tia-hud {
-  position: sticky;
-  top: 0;
+  position: static;
   z-index: 10;
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
   align-items: center;
-  padding: 10px 12px;
-  background: var(--bg-2);
-  border-bottom: 1px solid var(--border);
+  padding: 8px 12px;
+  background: var(--panel);
+  border-bottom: 2px solid var(--border-gold);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
 }
 
 .tia-hud__identity { display: flex; flex-direction: column; min-width: 120px; }
@@ -82,55 +129,73 @@ body {
 
 .tia-panel {
   background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  border: 1px solid var(--border-gold);
+  border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 .tia-panel__head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 14px;
+  padding: 10px 14px;
+  background: var(--panel-head);
   border-bottom: 1px solid var(--border);
 }
 
-.tia-panel__title { margin: 0; font-size: 16px; }
+.tia-panel__title { margin: 0; font-size: 16px; color: var(--text-bright); }
 .tia-panel__body { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
 
 .tia-note { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
 .tia-muted { color: var(--muted); font-size: 13px; }
 
-/* ------------------------------------------------------------- Barras */
+/* ------------------------------------------------------------- Barras (com Gloss Effect) */
 
 .tia-bar {
   position: relative;
-  height: 22px;
-  background: #0a0912;
-  border: 1px solid var(--border);
+  height: 20px;
+  background: var(--bg-deep);
+  border: 1px solid #734228;
   border-radius: 4px;
   overflow: hidden;
   min-width: 140px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .tia-bar__fill {
   position: absolute;
   inset: 0 auto 0 0;
   transition: width 180ms linear;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Reflexo translúcido de vidro no topo da barra */
+.tia-bar__fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.05) 100%);
+  pointer-events: none;
 }
 
 .tia-bar__label,
 .tia-bar__readout {
   position: absolute;
   top: 0;
-  line-height: 22px;
+  line-height: 20px;
   padding: 0 8px;
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 700;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  z-index: 2;
 }
 
 .tia-bar__label { left: 0; }
-.tia-bar__readout { right: 0; color: var(--text); }
+.tia-bar__readout { right: 0; color: #ffffff; }
 
 /* --------------------------------------------------------------- Pills */
 
@@ -139,60 +204,87 @@ body {
   align-items: baseline;
   gap: 6px;
   padding: 4px 10px;
-  background: #0f0e18;
-  border: 1px solid var(--border);
+  background: var(--bg-2);
+  border: 1px solid var(--border-gold);
   border-radius: 999px;
   font-size: 13px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
-.tia-pill__label { color: var(--muted); font-size: 11px; text-transform: uppercase; }
-.tia-pill--good { border-color: var(--good); }
-.tia-pill--warn { border-color: var(--warn); }
-.tia-pill--bad { border-color: var(--bad); }
+.tia-pill__label { color: var(--muted); font-size: 11px; text-transform: uppercase; font-weight: 700; }
+.tia-pill--good { border-color: var(--good); color: var(--good); }
+.tia-pill--warn { border-color: var(--warn); color: var(--warn); }
+.tia-pill--bad { border-color: var(--bad); color: var(--bad); }
 
 /* ------------------------------------------------------------- Canvas */
 
 .tia-canvas {
-  /* sem `width: 100%`: com margem lateral isso estourava a viewport à direita (ADR-029) */
-  width: auto;
-  /* §67 — altura relativa à largura, com piso e teto. Um canvas de altura
-     fixa estoura a viewport em telas baixas; um de altura porcentual
-     depende de o pai ter altura, e o pai não tem. */
-  height: clamp(180px, 42vw, 380px);
-  margin: 12px 12px 0;
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
   overflow: hidden;
-  background: #07060d;
+  background: var(--bg-deep);
 }
 
 .tia-canvas canvas { display: block; width: 100% !important; height: 100% !important; }
 
-/* ------------------------------------------------------------- Botões */
+/* ------------------------------------------------------------- Botões RPG */
 
 .tia-btn {
   min-height: var(--touch);
   min-width: var(--touch);
-  padding: 8px 16px;
-  font: inherit;
-  font-size: 14px;
-  color: var(--text);
-  background: #232136;
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  padding: 6px 14px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: var(--text-bright);
+  background: linear-gradient(180deg, #4f2d30 0%, #3a1e21 100%);
+  border: 1px solid var(--border-gold);
+  border-radius: 6px;
   cursor: pointer;
-  /* Toque: sem delay de 300ms que browsers mobile aplicam em click. */
   touch-action: manipulation;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 2px 4px rgba(0, 0, 0, 0.5);
+  transition: all 0.12s ease-out;
 }
 
-.tia-btn:active { transform: translateY(1px); }
-.tia-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-.tia-btn--primary { background: var(--accent); border-color: var(--accent); color: #10101a; font-weight: 600; }
-.tia-btn--danger { border-color: var(--bad); }
+.tia-btn:hover:not(:disabled) {
+  background: linear-gradient(180deg, #62393d 0%, #48272a 100%);
+  border-color: var(--border-gold-bright);
+}
 
-/* O foco é SEMPRE visível: teclado não é obrigatório, mas quem usa
-   teclado não pode perder o cursor. */
-.tia-btn:focus-visible { outline: 2px solid var(--warn); outline-offset: 2px; }
+.tia-btn:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.tia-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.tia-btn--primary {
+  background: linear-gradient(180deg, #c55f3e 0%, #9c3f26 100%);
+  border-color: var(--border-gold-bright);
+  color: #fff6e8;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+.tia-btn--primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, #d66d4b 0%, #ab472c 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 10px rgba(214, 109, 75, 0.4);
+}
+
+.tia-btn--danger {
+  background: linear-gradient(180deg, #b83742 0%, #872029 100%);
+  border-color: #e69d9d;
+  color: #ffffff;
+}
+
+.tia-btn:focus-visible { outline: 2px solid var(--border-gold-bright); outline-offset: 2px; }
 
 /* -------------------------------------------------------------- Heróis */
 
@@ -201,7 +293,7 @@ body {
   flex-direction: column;
   gap: 8px;
   padding: 12px;
-  background: #0f0e18;
+  background: var(--bg-2);
   border: 1px solid var(--border);
   border-radius: 8px;
 }
@@ -227,7 +319,7 @@ body {
   flex-direction: column;
   gap: 8px;
   padding: 12px;
-  background: #0f0e18;
+  background: var(--bg-2);
   border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 13px;
@@ -245,7 +337,7 @@ body {
   align-items: center;
   flex-wrap: wrap;
   padding: 8px 10px;
-  background: #0f0e18;
+  background: var(--bg-2);
   border: 1px solid var(--border);
   border-radius: 6px;
   font-size: 13px;
@@ -770,8 +862,8 @@ body {
   justify-content: center;
   width: 48px;
   height: 48px;
-  background: #0b0a12;
-  border: 2px solid var(--border);
+  background: var(--bg-deep);
+  border: 2px solid var(--border-gold);
   border-radius: 6px;
 }
 .tia-itemicon img { width: 40px; height: 40px; image-rendering: pixelated; object-fit: contain; }
@@ -800,8 +892,8 @@ body {
   flex-direction: column;
   gap: 6px;
   padding: 8px 10px;
-  background: #0f0e18;
-  border: 1px solid var(--border);
+  background: var(--bg-2);
+  border: 1px solid var(--border-gold);
   border-radius: 6px;
 }
 .tia-eqslot--empty { opacity: 0.7; border-style: dashed; }
@@ -809,7 +901,7 @@ body {
 
 .tia-filters { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; font-size: 13px; }
 .tia-filters select, .tia-filters input {
-  background: #0f0e18; color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 6px 8px; min-height: 36px;
+  background: var(--bg-2); color: var(--text); border: 1px solid var(--border-gold); border-radius: 4px; padding: 6px 8px; min-height: 36px;
 }
 .tia-filters input { width: 72px; }
 
@@ -1143,181 +1235,385 @@ body {
 .tia-start-options .tia-main { padding: 8px 0; }
 
 /* ======================================================================
-   Layout do HUB (ADR-031): nav no topo · equipe | jogo | chat · dados sob o jogo.
-   Tudo cabe numa tela (sem rolar a página); só o conteúdo das telas rola, por dentro.
+   Layout do HUB (ADR-031 e ADR-066): Viewport Fixo & Cenário Ancorado
+   Top Nav · HUD · Estágio em 3 Colunas (Equipe | Jogo Central | Chat/Dados)
+   Tudo cabe exatamente na tela (100vh) SEM NENHUM SCROLL GLOBAL NA PÁGINA.
    ====================================================================== */
 
 .tia-app--game {
+  width: 100vw;
   max-width: 1600px;
-  height: 100dvh;
+  height: 100vh;
   min-height: 560px;
   gap: 0;
+  overflow: hidden;
 }
 
 .tia-app--game .tia-nav {
   position: static;
   order: 0;
   padding: 6px 10px;
+  background: var(--bg-2);
   border-top: 0;
+  border-bottom: 2px solid var(--border-gold);
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+.tia-app--game .tia-nav .tia-btn {
+  flex: 1 1 auto;
+  min-height: 36px;
+  background: linear-gradient(180deg, #3d2125 0%, #291518 100%);
+  border: 1px solid var(--border-gold);
+  color: var(--text);
+  font-size: 13px;
+}
+.tia-app--game .tia-nav .tia-btn:hover:not(:disabled) {
+  background: linear-gradient(180deg, #512b30 0%, #3a1e22 100%);
+  border-color: var(--border-gold-bright);
+}
+.tia-app--game .tia-nav .tia-btn--primary {
+  background: linear-gradient(180deg, #7d3f91 0%, #582468 100%);
+  border-color: var(--border-gold-bright);
+  color: #fff6e8;
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.tia-app--game .tia-hud {
+  position: static;
+  padding: 6px 12px;
+  background: var(--panel);
   border-bottom: 1px solid var(--border);
 }
-.tia-app--game .tia-nav .tia-btn { flex: 1 1 auto; min-height: 38px; }
 
-.tia-app--game .tia-hud { position: static; padding: 6px 12px; }
+.tia-app--game .tia-guide {
+  margin: 4px 8px 0;
+  padding: 4px 10px;
+  font-size: 12px;
+  background: #2b172a;
+  border: 1px solid var(--accent-magenta);
+}
+.tia-app--game .tia-guide .tia-btn { min-height: 28px; padding: 2px 8px; font-size: 12px; }
 
-.tia-app--game .tia-guide { margin: 6px 10px 0; padding: 4px 10px; font-size: 13px; }
-.tia-app--game .tia-guide .tia-btn { min-height: 32px; }
-
+/* Palco Central: Estágio em 3 Colunas com Viewport Central Ancorado */
 .tia-stage {
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(200px, 260px) minmax(0, 1fr) minmax(220px, 300px);
-  gap: 10px;
-  padding: 10px;
+  grid-template-columns: minmax(220px, 260px) minmax(0, 1fr) minmax(240px, 300px);
+  gap: 8px;
+  padding: 8px;
+  overflow: hidden; /* Strict: sem scroll na janela principal */
 }
-.tia-stage--nochat { grid-template-columns: minmax(200px, 260px) minmax(0, 1fr) auto; }
+.tia-stage--nochat { grid-template-columns: minmax(220px, 260px) minmax(0, 1fr) auto; }
 
-.tia-center { min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+.tia-center {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: hidden;
+}
 
-/* O jogo: ocupa o espaço que sobra; o canvas (Phaser RESIZE) preenche a caixa. */
+/* O jogo: ocupa o espaço central que sobra; o canvas (Phaser RESIZE) preenche a caixa */
 .tia-gamebox {
   position: relative;
   flex: 1 1 auto;
-  min-height: 240px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  min-height: 0;
+  border: 2px solid var(--border-gold);
+  border-radius: 8px;
   overflow: hidden;
-  background: #07060d;
+  background: var(--bg-deep);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9), 0 4px 14px rgba(0, 0, 0, 0.6);
 }
-.tia-gamebox .tia-canvas { position: absolute; inset: 0; width: auto; height: auto; margin: 0; border: 0; border-radius: 0; }
+.tia-gamebox .tia-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
 
 .tia-gamebox__toggle {
   position: absolute;
   right: 8px;
   bottom: 8px;
   z-index: 4;
-  min-height: 30px;
+  min-height: 28px;
   padding: 4px 10px;
-  font-size: 12px;
-  color: var(--text);
-  background: rgba(21, 19, 31, 0.88);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-bright);
+  background: rgba(46, 27, 30, 0.9);
+  border: 1px solid var(--border-gold);
+  border-radius: 6px;
   cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
 }
-.tia-gamebox__toggle:hover { border-color: var(--accent); }
+.tia-gamebox__toggle:hover {
+  border-color: var(--border-gold-bright);
+  background: rgba(62, 34, 38, 0.95);
+}
 
-/* Telas (Rei, Heróis…) abrem SOBRE o jogo, com rolagem interna. */
+/* Janelas de Jogo Flutuantes (Modais e Telas) sobre a Arena Central */
 .tia-overlay {
   position: absolute;
   inset: 0;
-  z-index: 5;
+  z-index: 15;
   display: flex;
   flex-direction: column;
-  background: rgba(11, 10, 18, 0.97);
+  background: rgba(28, 16, 18, 0.96);
+  border: 2px solid var(--border-gold);
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px #5a2e33, 0 12px 36px rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(2px);
+  overflow: hidden;
 }
 .tia-overlay__head {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
-  border-bottom: 1px solid var(--border);
+  padding: 8px 14px;
+  background: linear-gradient(180deg, #442226 0%, #30171a 100%);
+  border-bottom: 2px solid var(--border-gold);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
-.tia-overlay__head h2 { margin: 0; font-size: 16px; }
-.tia-overlay__head .tia-btn { min-height: 34px; }
-.tia-overlay .tia-main { flex: 1; min-height: 0; overflow: auto; padding: 12px; }
+.tia-overlay__head h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-bright);
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+.tia-overlay__head .tia-btn {
+  min-height: 30px;
+  padding: 3px 12px;
+  font-size: 12px;
+  background: linear-gradient(180deg, #a8353d 0%, #7d1c24 100%);
+  border-color: #e69d9d;
+  color: #ffffff;
+}
 
-/* Painel de dados da caçada: compacto, colado sob o jogo. */
+/* Regra Absoluta §9: Somente o conteúdo interno do modal rola */
+.tia-overlay .tia-main {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 12px;
+}
+
+/* Painel de dados da caçada: compacto, colado sob o jogo */
 .tia-hunt {
   flex: 0 0 auto;
-  max-height: 38%;
-  overflow: auto;
-  padding: 8px 10px;
+  max-height: 34%;
+  overflow-y: auto;
+  padding: 6px 8px;
   display: flex;
   flex-direction: column;
   gap: 6px;
   background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  border: 1px solid var(--border-gold);
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
-.tia-hunt--boss { padding: 0; max-height: 46%; }
-.tia-hunt__top { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-.tia-hunt__hp { flex: 1 1 220px; min-width: 180px; }
+.tia-hunt--boss { padding: 0; max-height: 44%; }
+.tia-hunt__top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.tia-hunt__hp { flex: 1 1 200px; min-width: 160px; }
 .tia-controls { display: flex; gap: 6px; flex-wrap: wrap; }
-.tia-hunt .tia-controls .tia-btn, .tia-hunt__foot .tia-btn { min-height: 32px; padding: 4px 10px; font-size: 12px; }
-.tia-hunt__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 4px 8px; }
-.tia-hunt__cell { display: flex; flex-direction: column; min-width: 0; padding: 3px 6px; background: var(--bg-2); border-radius: 6px; border-left: 3px solid var(--border); }
+.tia-hunt .tia-controls .tia-btn, .tia-hunt__foot .tia-btn { min-height: 30px; padding: 3px 10px; font-size: 12px; }
+.tia-hunt__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 4px 6px; }
+.tia-hunt__cell { display: flex; flex-direction: column; min-width: 0; padding: 3px 6px; background: var(--bg-2); border-radius: 4px; border-left: 3px solid var(--border-gold); }
 .tia-hunt__cell--good { border-left-color: var(--good); }
 .tia-hunt__cell--bad { border-left-color: var(--bad); }
 .tia-hunt__cell--warn { border-left-color: var(--warn); }
-.tia-hunt__label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
-.tia-hunt__value { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tia-hunt__label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; }
+.tia-hunt__value { font-size: 12px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tia-hunt__foot { display: flex; gap: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap; font-size: 11px; }
 .tia-hunt .tia-note { margin: 0; font-size: 12px; }
 
-/* Colunas laterais */
+/* Colunas Laterais */
 .tia-side {
   min-height: 0;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   padding: 8px;
   background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  border: 1px solid var(--border-gold);
+  border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
-.tia-side__head { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
-.tia-side__head h2 { margin: 0; font-size: 14px; }
-.tia-side__head .tia-btn { min-height: 30px; padding: 2px 10px; font-size: 12px; }
+.tia-side__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+.tia-side__head h2 { margin: 0; font-size: 14px; font-weight: 800; color: var(--text-bright); }
+.tia-side__head .tia-btn { min-height: 28px; padding: 2px 8px; font-size: 11px; }
 
-.tia-teampanel__slots { display: flex; flex-direction: column; gap: 8px; overflow: auto; min-height: 0; }
-.tia-slotcard { display: flex; flex-direction: column; gap: 6px; padding: 8px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; }
-.tia-slotcard--active { border-color: var(--good); }
+/* Coluna Esquerda: Equipe & Herói em Campo */
+.tia-teampanel__slots {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  flex: 1;
+}
+.tia-slotcard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
+}
+.tia-slotcard--active {
+  border: 2px solid var(--border-gold);
+  background: #361b20;
+  box-shadow: 0 0 10px rgba(200, 146, 84, 0.3);
+}
+
+/* Card Especial do Herói "EM CAMPO" */
+.tia-slotcard--em-campo {
+  border-color: var(--border-gold);
+  background: linear-gradient(180deg, #381a1f 0%, #261114 100%);
+  padding: 10px;
+}
+.tia-slotcard__em-campo-banner {
+  background: linear-gradient(90deg, #7d3f91 0%, #a74fba 100%);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 6px;
+  border-radius: 3px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
 .tia-slotcard--locked, .tia-slotcard--empty { opacity: 0.75; border-style: dashed; font-size: 12px; }
 .tia-slotcard__head { display: flex; align-items: center; gap: 8px; }
-.tia-slotcard__portrait { width: 40px; height: 40px; object-fit: cover; image-rendering: pixelated; border-radius: 6px; background: #07060d; }
+.tia-slotcard__portrait {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  image-rendering: pixelated;
+  border-radius: 4px;
+  border: 1px solid var(--border-gold);
+  background: var(--bg-deep);
+}
+.tia-slotcard--em-campo .tia-slotcard__portrait {
+  width: 52px;
+  height: 52px;
+  border: 2px solid var(--border-gold-bright);
+}
 .tia-slotcard__id { display: flex; flex-direction: column; flex: 1; min-width: 0; font-size: 12px; }
-.tia-slotcard__id strong { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tia-slotcard__id strong { font-size: 13px; color: var(--text-bright); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tia-slotcard__tag { font-size: 10px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.05em; }
-.tia-slotcard--active .tia-slotcard__tag { color: var(--good); font-weight: 700; }
-.tia-slotcard .tia-btn { min-height: 30px; font-size: 12px; }
+.tia-slotcard--active .tia-slotcard__tag { color: var(--accent); font-weight: 700; }
+.tia-slotcard .tia-btn { min-height: 28px; font-size: 11px; }
 
-/* Chat */
+/* Coluna Direita: Chat Global / Crônicas */
+.tia-chat {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
 .tia-chat__sim { color: var(--muted); font-weight: 400; font-size: 10px; }
 .tia-chat__tools { display: flex; gap: 4px; }
-.tia-chat__btn { min-height: 28px; padding: 2px 8px; font-size: 11px; color: var(--text); background: var(--bg-2); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; }
+.tia-chat__btn {
+  min-height: 26px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--bg-2);
+  border: 1px solid var(--border-gold);
+  border-radius: 4px;
+  cursor: pointer;
+}
 .tia-chat__btn[aria-pressed="true"] { border-color: var(--warn); color: var(--warn); }
 .tia-chat__btn:disabled { opacity: 0.5; cursor: default; }
-.tia-chat__list { flex: 1; min-height: 0; margin: 0; padding: 0; list-style: none; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
-.tia-chat__msg { overflow-wrap: anywhere; line-height: 1.35; }
+
+.tia-chat__list {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+}
+.tia-chat__msg {
+  overflow-wrap: anywhere;
+  line-height: 1.35;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+.tia-chat__msg:nth-child(even) { background: rgba(0, 0, 0, 0.15); }
 .tia-chat__time { color: var(--muted); font-size: 10px; }
-.tia-chat__author { color: var(--accent); }
+.tia-chat__author { color: var(--accent); font-weight: 700; }
 .tia-chat__msg--self .tia-chat__author { color: var(--good); }
 .tia-chat__msg--system { color: var(--warn); font-style: italic; }
 .tia-chat__msg--system .tia-chat__author { color: var(--warn); }
-.tia-chat__form { display: grid; grid-template-columns: 1fr auto; gap: 4px; align-items: center; }
-.tia-chat__input { min-width: 0; min-height: 32px; padding: 4px 8px; font-size: 12px; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 6px; }
+.tia-chat__form { display: grid; grid-template-columns: 1fr auto; gap: 4px; align-items: center; padding-top: 4px; }
+.tia-chat__input {
+  min-width: 0;
+  min-height: 32px;
+  padding: 4px 8px;
+  font-size: 12px;
+  color: var(--text-bright);
+  background: var(--bg-deep);
+  border: 1px solid var(--border-gold);
+  border-radius: 4px;
+}
+.tia-chat__btn--send {
+  background: linear-gradient(180deg, #b84e32 0%, #9c3f26 100%);
+  border-color: var(--border-gold-bright);
+  color: #fff6e8;
+  min-height: 32px;
+}
 .tia-chat__count { grid-column: 1; font-size: 10px; color: var(--muted); text-align: right; }
 .tia-chat__error { grid-column: 1 / -1; font-size: 11px; color: var(--bad); }
 .tia-chat--closed { width: auto; align-self: start; }
 
-/* Telas estreitas / baixas: coluna única; as telas abrem em tela cheia; o chat vira faixa inferior. */
+/* Telas Compactas / Tablets: Mantém o Viewport Central Ancorado sem Scroll Global */
 @media (max-width: 959px) {
-  .tia-app--game { height: auto; min-height: 100dvh; }
-  .tia-stage, .tia-stage--nochat { display: flex; flex-direction: column; padding: 8px; }
+  .tia-app--game { height: 100vh; overflow: hidden; }
+  .tia-stage, .tia-stage--nochat {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    padding: 6px;
+    gap: 6px;
+  }
   .tia-center { order: 1; }
-  .tia-teampanel { order: 2; }
-  .tia-chat { order: 3; position: sticky; bottom: 0; z-index: 8; max-height: 44vh; }
-  .tia-chat--closed { width: 100%; align-self: stretch; }
-  .tia-gamebox { flex: 0 0 auto; height: clamp(220px, 56vw, 380px); }
-  .tia-hunt { max-height: none; }
-  .tia-overlay { position: fixed; z-index: 30; }
-  .tia-teampanel__slots { flex-direction: row; flex-wrap: wrap; }
-  .tia-slotcard { flex: 1 1 200px; }
+  .tia-teampanel { order: 2; max-height: 140px; }
+  .tia-chat { order: 3; max-height: 130px; }
+  .tia-teampanel__slots { flex-direction: row; flex-wrap: nowrap; overflow-x: auto; }
+  .tia-slotcard { flex: 0 0 180px; }
 }
 
 /* Painel de dados mais enxuto (ADR-031): a procura vira uma linha, a grade fica densa. */
@@ -1527,32 +1823,29 @@ body {
    calhas de ferro e brasões heráldicos).
    ========================================================================== */
 
-/* --- Painéis Táteis em Pedra e Ferro Forjado (9-Slice) --- */
+/* --- Painéis Quentes de RPG / Idle MMORPG (referencia_visual.md) --- */
 .tia-gba .tia-panel {
   position: relative;
-  background: #14121e;
-  border-style: solid;
-  border-width: 18px;
-  border-image: var(--ui-frame-9slice-stone) 24 fill / 18px / 0 stretch;
-  border-radius: 0;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.75), inset 0 0 35px rgba(0, 0, 0, 0.65);
-  image-rendering: pixelated;
-  overflow: visible;
+  background: var(--panel);
+  border: 2px solid var(--border-gold);
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px #5a2e33, 0 4px 16px rgba(0, 0, 0, 0.65);
+  overflow: hidden;
 }
 
 .tia-gba .tia-panel__head {
   padding: 8px 12px;
-  background: rgba(10, 8, 16, 0.7);
-  border-bottom: 2px solid #332d45;
+  background: linear-gradient(180deg, #442226 0%, #30171a 100%);
+  border-bottom: 1px solid var(--border-gold);
   box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .tia-gba .tia-panel__title {
-  color: #f7edd7;
+  color: var(--text-bright);
   font-size: 15px;
   font-weight: 800;
   letter-spacing: 0.5px;
-  text-shadow: 1px 1px 0 #000, 2px 2px 0 #150f24;
+  text-shadow: 1px 1px 0 #000;
 }
 
 .tia-gba .tia-panel__body {
@@ -1560,148 +1853,139 @@ body {
   gap: 10px;
 }
 
-/* --- Modais e Sobre-telas como Tomos Arcanos Antigos --- */
+/* --- Modais e Janelas Flutuantes de Jogo (Game Windows) --- */
 .tia-gba .tia-modal__card,
 .tia-gba .tia-boss-detail-modal,
 .tia-gba .tia-overlay {
-  background: #12101c;
-  border-style: solid;
-  border-width: 24px;
-  border-image: var(--ui-panel-ornate) 40 fill / 24px / 0 stretch;
-  border-radius: 0;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.9), inset 0 0 45px rgba(0, 0, 0, 0.75);
-  image-rendering: pixelated;
+  background: rgba(28, 16, 18, 0.96);
+  border: 2px solid var(--border-gold);
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px #7a4628, 0 16px 40px rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(3px);
 }
 
 .tia-gba .tia-overlay__head {
-  padding: 10px 14px;
-  background: rgba(14, 12, 22, 0.85);
-  border-bottom: 2px solid #3e3654;
+  padding: 8px 14px;
+  background: linear-gradient(180deg, #442226 0%, #30171a 100%);
+  border-bottom: 2px solid var(--border-gold);
 }
 
 .tia-gba .tia-overlay__head h2 {
-  color: #ffdf94;
-  font-size: 18px;
+  color: var(--text-bright);
+  font-size: 17px;
   font-weight: 800;
   letter-spacing: 0.6px;
-  text-shadow: 1px 1px 0 #000, 2px 2px 2px #211202;
+  text-shadow: 1px 1px 0 #000;
 }
 
-/* --- Barras de Vida, Mana e Recursos com Calha Esculpida --- */
+/* --- Barras de Vida, Mana e Recursos com Calha Esculpida e Brilho (Gloss) --- */
 .tia-gba .tia-bar {
-  height: 26px;
-  background: #08070d;
-  border-style: solid;
-  border-width: 8px;
-  border-image: var(--ui-bar-track) 12 fill / 8px / 0 stretch;
-  border-radius: 0;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9);
-  image-rendering: pixelated;
+  height: 22px;
+  background: var(--bg-deep);
+  border: 1px solid #7a4628;
+  border-radius: 4px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.85);
   overflow: hidden;
 }
 
 .tia-gba .tia-bar__fill {
   top: 0;
   bottom: 0;
-  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.45), inset 0 -2px 0 rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -1px 0 rgba(0, 0, 0, 0.4);
 }
 
 .tia-gba .tia-bar__label,
 .tia-gba .tia-bar__readout {
-  line-height: 24px;
+  line-height: 22px;
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.3px;
   color: #fff;
-  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 2px 4px #000;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
 }
 
 /* --- Pílulas de Atributos Táteis (StatPill) --- */
 .tia-gba .tia-pill {
-  background: #161422;
-  border: 1px solid #3b344f;
-  border-radius: 4px;
-  padding: 4px 8px;
+  background: var(--bg-2);
+  border: 1px solid var(--border-gold);
+  border-radius: 999px;
+  padding: 4px 10px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .tia-gba .tia-pill--good {
-  border-color: #588037;
-  background: #142116;
-  color: #c3e88d;
+  border-color: var(--good);
+  background: #18281a;
+  color: #7ef59b;
 }
 
 .tia-gba .tia-pill--warn {
-  border-color: #966f31;
-  background: #231b11;
-  color: #ffcb6b;
+  border-color: var(--warn);
+  background: #2b1c14;
+  color: #ffdf94;
 }
 
 .tia-gba .tia-pill--bad {
-  border-color: #9e394f;
-  background: #251218;
+  border-color: var(--bad);
+  background: #2b1417;
   color: #ff757f;
 }
 
 /* --- Placa e HUD de Identidade do Rei com Moldura de Brasão --- */
 .tia-gba .tia-hud {
-  background: #12101a;
-  border-bottom: 2px solid #362f48;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  background: var(--panel);
+  border-bottom: 2px solid var(--border-gold);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
   padding: 8px 12px;
 }
 
 .tia-gba .tia-hud__portrait {
-  border: 2px solid #d4af37;
+  border: 2px solid var(--border-gold);
   border-radius: 4px;
-  box-shadow: 0 0 10px rgba(212, 175, 55, 0.4), inset 0 0 4px #000;
+  box-shadow: 0 0 10px rgba(200, 146, 84, 0.4), inset 0 0 4px #000;
 }
 
 .tia-gba .tia-hud__identity-text strong {
-  color: #ffdf94;
+  color: var(--text-bright);
   font-size: 14px;
   font-weight: 800;
   text-shadow: 1px 1px 0 #000;
 }
 
 .tia-gba .tia-hud__identity-text span {
-  color: #a8a0c2;
+  color: var(--muted);
   font-size: 11px;
 }
 
-/* --- Console de Navegação de Abas Inferior Estilo Arcade / RPG --- */
+/* --- Console de Navegação de Abas Superior Estilo Arcade / RPG --- */
 .tia-gba .tia-nav {
-  background: #100e17;
-  border-top: 3px solid #38304c;
-  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.7);
-  padding: 8px 10px;
+  background: var(--bg-2);
+  border-bottom: 2px solid var(--border-gold);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+  padding: 6px 10px;
 }
 
 .tia-gba .tia-nav .tia-btn--primary {
-  --b-n: var(--gba-amber-normal);
-  --b-h: var(--gba-amber-hover);
-  --b-p: var(--gba-amber-pressed);
-  --b-d: var(--gba-amber-disabled);
-  --b-ink: #fff7e0;
-  --b-shadow: 1px 1px 0 #331f08;
-  box-shadow: 0 0 12px rgba(245, 185, 66, 0.45);
+  background: linear-gradient(180deg, #7d3f91 0%, #582468 100%);
+  border-color: var(--border-gold-bright);
+  color: #fff7e0;
+  text-shadow: 1px 1px 0 #331f08;
+  box-shadow: 0 0 12px var(--accent-glow);
 }
 
 /* --- Cards de Desafio de Chefe (BossScreen Grade 4x4) --- */
 .tia-gba .tia-boss-card {
-  background: #14121e;
-  border-style: solid;
-  border-width: 14px;
-  border-image: var(--ui-frame-9slice-stone) 24 fill / 14px / 0 stretch;
-  border-radius: 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+  background: var(--bg-2);
+  border: 2px solid var(--border-gold);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
   image-rendering: pixelated;
   transition: transform 120ms ease, box-shadow 120ms ease;
 }
 
 .tia-gba .tia-boss-card:hover {
   transform: translateY(-2px);
-  border-image: var(--ui-frame-9slice-brick) 24 fill / 14px / 0 stretch;
+  border-color: var(--border-gold-bright);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85), 0 0 14px rgba(212, 175, 55, 0.35);
 }
 
@@ -1710,7 +1994,7 @@ body {
 }
 
 .tia-gba .tia-boss-card__name {
-  color: #ffdf94;
+  color: var(--text-bright);
   font-size: 13px;
   font-weight: 800;
   text-shadow: 1px 1px 0 #000;
@@ -1719,30 +2003,27 @@ body {
 /* --- Slots e Cartões de Inventário / Equipamentos --- */
 .tia-gba .tia-slotcard,
 .tia-gba .tia-itemcard {
-  background: #110f18;
-  border-style: solid;
-  border-width: 10px;
-  border-image: var(--ui-frame-9slice-dark) 24 fill / 10px / 0 stretch;
-  image-rendering: pixelated;
+  background: var(--bg-2);
+  border: 1px solid var(--border-gold);
+  border-radius: 6px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 .tia-gba .tia-eqslot {
-  background: #110f1a;
-  border-style: solid;
-  border-width: 12px;
-  border-image: var(--ui-frame-9slice-stone) 24 fill / 12px / 0 stretch;
-  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.7);
+  background: var(--bg-2);
+  border: 1px solid var(--border-gold);
+  border-radius: 6px;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.7);
   padding: 8px 12px;
 }
 
 .tia-gba .tia-eqslot--empty {
-  border-image: var(--ui-frame-9slice-dark) 24 fill / 12px / 0 stretch;
+  border-style: dashed;
   opacity: 0.7;
 }
 
 .tia-gba .tia-eqslot:not(.tia-eqslot--empty) {
-  border-image: var(--ui-frame-9slice-brick) 24 fill / 12px / 0 stretch;
+  border: 2px solid var(--border-gold);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 8px rgba(212, 175, 55, 0.25);
 }
 
@@ -1931,94 +2212,79 @@ body {
 /* --- Sala de Guerra: Pedestais da Equipe (TeamPanel) --- */
 .tia-gba .tia-teampanel .tia-slotcard {
   position: relative;
-  background: #14121e;
-  border-style: solid;
-  border-width: 14px;
-  border-image: var(--ui-frame-9slice-stone) 24 fill / 14px / 0 stretch;
-  border-radius: 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
-  padding: 10px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
+  padding: 8px;
 }
 
 .tia-gba .tia-teampanel .tia-slotcard--active {
-  border-image: var(--ui-frame-9slice-brick) 24 fill / 14px / 0 stretch;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.8), 0 0 12px rgba(212, 175, 55, 0.35);
-}
-
-.tia-gba .tia-teampanel .tia-slotcard--active::after {
-  content: "";
-  position: absolute;
-  bottom: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120px;
-  height: 24px;
-  background: center / contain no-repeat var(--ui-pedestal-stone);
-  opacity: 0.85;
-  pointer-events: none;
+  border: 2px solid var(--border-gold);
+  background: linear-gradient(180deg, #381a1f 0%, #261114 100%);
+  box-shadow: 0 0 12px rgba(200, 146, 84, 0.35);
 }
 
 .tia-gba .tia-teampanel .tia-slotcard--locked {
-  background: #0f0d16 url("/assets/ui/portcullis_lock.png") center / 64px no-repeat;
+  background: #140b0d url("/assets/ui/portcullis_lock.png") center / 56px no-repeat;
   border-style: dashed;
-  border-color: #3b344d;
-  opacity: 0.8;
+  border-color: #5a2e33;
+  opacity: 0.75;
 }
 
 /* --- Crônicas da Taverna (ChatPanel) --- */
 .tia-gba .tia-chat {
-  background: #12101a;
-  border-style: solid;
-  border-width: 16px;
-  border-image: var(--ui-frame-9slice-stone) 24 fill / 16px / 0 stretch;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.75);
+  background: var(--panel);
+  border: 1px solid var(--border-gold);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .tia-gba .tia-chat .tia-side__head {
   padding-bottom: 6px;
-  border-bottom: 2px solid #332a48;
+  border-bottom: 1px solid var(--border-gold);
 }
 
 .tia-gba .tia-chat__list {
-  background: rgba(14, 12, 20, 0.6);
-  padding: 8px;
+  background: rgba(19, 10, 12, 0.85);
+  padding: 6px;
   border-radius: 4px;
-  border: 1px solid #282236;
+  border: 1px solid var(--border);
 }
 
 .tia-gba .tia-chat__msg--system {
-  background: rgba(212, 175, 55, 0.08);
-  border-left: 2px solid #d4af37;
-  padding: 3px 6px;
-  color: #ffdf94;
+  background: rgba(215, 154, 90, 0.1);
+  border-left: 2px solid var(--warn);
+  padding: 2px 6px;
+  color: var(--text-bright);
 }
 
 .tia-gba .tia-chat__author {
-  color: #ffdf94;
+  color: var(--accent);
   font-weight: 700;
   text-shadow: 1px 1px 0 #000;
 }
 
 .tia-gba .tia-chat__input {
-  background: #0a0812;
-  border: 2px solid #38304c;
-  color: #f7edd7;
+  background: var(--bg-deep);
+  border: 1px solid var(--border-gold);
+  color: var(--text-bright);
   border-radius: 4px;
 }
 
 .tia-gba .tia-chat__input:focus {
-  border-color: #d4af37;
+  border-color: var(--border-gold-bright);
   outline: none;
-  box-shadow: 0 0 6px rgba(212, 175, 55, 0.35);
+  box-shadow: 0 0 6px var(--accent-glow);
 }
 
 /* --- Arcada de Pedra da Arena / BattleCanvas com Tochas --- */
 .tia-gba .tia-gamebox {
   position: relative;
-  border-style: solid;
-  border-width: 14px;
-  border-image: var(--ui-frame-9slice-stone) 24 fill / 14px / 0 stretch;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.85), inset 0 0 30px rgba(0, 0, 0, 0.8);
+  border: 2px solid var(--border-gold);
+  border-radius: 8px;
+  background: var(--bg-deep);
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.9), 0 4px 16px rgba(0, 0, 0, 0.7);
 }
 
 .tia-gba .tia-gamebox::before,
@@ -2080,10 +2346,9 @@ body {
 
 /* --- Heróis com Brasão de Classe (HeroesScreen) --- */
 .tia-gba .tia-hero {
-  background: #13101c;
-  border-style: solid;
-  border-width: 12px;
-  border-image: var(--ui-frame-9slice-stone) 24 fill / 12px / 0 stretch;
+  background: var(--bg-2);
+  border: 1px solid var(--border-gold);
+  border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
   padding: 10px 12px;
 }
@@ -2092,12 +2357,12 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: rgba(18, 14, 26, 0.85);
-  border: 1px solid #3d3550;
+  background: rgba(28, 16, 18, 0.9);
+  border: 1px solid var(--border-gold);
   border-radius: 4px;
   padding: 2px 6px;
   font-size: 11px;
-  color: #ffdf94;
+  color: var(--text-bright);
 }
 
 .tia-gba .tia-hero__class-icon {
@@ -2110,11 +2375,10 @@ body {
 /* --- Slots de Equipe como Estrados de Pedra (TeamScreen) --- */
 .tia-gba .tia-slot--plinth {
   position: relative;
-  background: #14121e;
-  border-style: solid;
-  border-width: 14px;
-  border-image: var(--ui-frame-9slice-stone) 24 fill / 14px / 0 stretch;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+  background: var(--bg-2);
+  border: 2px solid var(--border-gold);
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65);
   padding: 12px;
 }
 
@@ -2141,12 +2405,12 @@ body {
   font-size: 10px;
   font-weight: 800;
   text-transform: uppercase;
-  color: #ffdf94;
-  background: #2a1f0a;
-  border: 1px solid #d4af37;
-  padding: 1px 6px;
+  color: #fff6e8;
+  background: linear-gradient(90deg, #7d3f91 0%, #a74fba 100%);
+  border: 1px solid var(--border-gold-bright);
+  padding: 2px 8px;
   border-radius: 3px;
-  box-shadow: 0 0 6px rgba(212, 175, 55, 0.4);
+  box-shadow: 0 0 8px var(--accent-glow);
 }
 
 .tia-gba .tia-slot__hero-summary {
@@ -2156,18 +2420,18 @@ body {
 }
 
 .tia-gba .tia-slot__portrait {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   object-fit: cover;
   image-rendering: pixelated;
-  border: 2px solid #d4af37;
+  border: 2px solid var(--border-gold);
   border-radius: 4px;
 }
 
 .tia-gba .tia-slot--locked {
-  background: #0d0b13 url("/assets/ui/portcullis_lock.png") center 20px / 56px no-repeat;
+  background: var(--bg-deep) url("/assets/ui/portcullis_lock.png") center 20px / 56px no-repeat;
   border-style: dashed;
-  border-color: #3b344d;
+  border-color: #5a2e33;
   min-height: 140px;
 }
 

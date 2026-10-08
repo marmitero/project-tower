@@ -47,7 +47,8 @@ export function TeamPanel({ state, onManage }: { state: GameState; onManage: () 
           const maxHp = heroCombatStats(hero, state.data.inventory).hp;
           const hp = Math.max(0, hero.currentHp);
           return (
-            <div className={`tia-slotcard${active ? " tia-slotcard--active" : ""}`} key={index}>
+            <div className={`tia-slotcard${active ? " tia-slotcard--active tia-slotcard--em-campo" : ""}`} key={index}>
+              {active && <div className="tia-slotcard__em-campo-banner">EM CAMPO</div>}
               <div className="tia-slotcard__head">
                 {portrait && <img className="tia-slotcard__portrait" src={portrait} alt="" />}
                 <div className="tia-slotcard__id">
@@ -58,12 +59,12 @@ export function TeamPanel({ state, onManage }: { state: GameState; onManage: () 
                 </div>
                 <span className="tia-slotcard__tag">{active ? "Ativo" : `Slot ${index + 1}`}</span>
               </div>
-              <ProgressBar label="XP" value={heroProgress(hero)} max={1} color="#9ece6a" readout={`${Math.round(heroProgress(hero) * 100)}%`} />
+              <ProgressBar label="XP" value={heroProgress(hero)} max={1} color="#e0af68" readout={`${Math.round(heroProgress(hero) * 100)}%`} />
               <ProgressBar
                 label="HP"
                 value={hp}
                 max={Math.max(1, maxHp)}
-                color={hp / Math.max(1, maxHp) <= 0.3 ? "#f7768e" : "#7dcfff"}
+                color={hp / Math.max(1, maxHp) <= 0.3 ? "#d93845" : "#3db85c"}
                 readout={`${formatCompact(hp)}/${formatCompact(maxHp)}`}
               />
               {!active && (

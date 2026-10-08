@@ -1540,3 +1540,39 @@ Com a disponibilidade dos assets anatômicos e heráldicos dos Lotes UI 2 e UI 3
 - O inventário e a gestão de heróis agora operam como uma autêntica armaria de RPG de console.
 - Zero regressões em testes: 783 testes aprovados, 28 testes de arquitetura e 1032 requisições HTTP 200 no preview.
 
+
+
+---
+
+## ADR-066 — Reformulação Estética e Estrutural Game-First Baseada no Referencial Idle MMORPG (2026-10-08)
+
+**Data:** 2026-10-08 · **Status:** ✅ Aceita · **Tipo:** B (código + CSS + UI/UX) · **Gatilho:** Diretiva do usuário para reformulação total da UI com base em `referencia visual/referencia_visual.md` e `referencia_visual.png`.
+
+**Contexto:**
+A estética anterior utilizava tons frios de azul-marinho, ardósia e molduras monolíticas cinzentas de pedra de 24px, gerando uma percepção de dashboard corporativo e sensação de "site com um iframe de jogo no meio", conforme documentado na comparação visual de `referencia_visual.png` (Esquerda: "Estética hoje" vs Direita: "Referência estética").
+O usuário forneceu um guia canônico detalhado de 1029 linhas (`referencia_visual.md`) definindo os princípios estéticos e arquiteturais de uma experiência de jogo autêntica (Game-First / UI-Second).
+
+**Decisões Centrais:**
+1. **Paleta de Cores e Linguagem Visual Quente:**
+   - Eliminar a predominância de azul marinho, cinza neutro e preto ardósia.
+   - Adotar a paleta do referencial: Fundo marrom-vinho bem escuro (`#1c1214`), painéis em terracota e vinho profundo (`#2e1b1e` / `#381e22`), bordas em cobre e ouro lapidado (`#c89254` / `#d79a5a` / `#e6c58a`), e acentos em roxo real e magenta vibrante (`#7d3f91` / `#a74fba`).
+   - Botões com chanfro duplo, gradientes ricos (terracota `#b84e32`, roxo `#7d3f91` e carmesim `#9e2d36`) com feedback ativo (recuo de 1px) e iluminação no hover.
+2. **Regra Absoluta — Viewport Fixo & Cenário Ancorado:**
+   - A área central de gameplay (`BattleCanvas`) é 100% fixa e imóvel. O cenário não sobe, não desce, não translada e não é empurrado por modais nem pelo scroll da página.
+   - Aplicação de `overflow: hidden; height: 100vh; width: 100vw;` no escopo global. Proibição absoluta de barra de rolagem global na janela.
+3. **Scrollbar Estritamente Interna:**
+   - Todo e qualquer painel com excesso de conteúdo (Market, Inventário, Bosses, Chat, Códice) rola exclusivamente dentro de seu respectivo contêiner interno (`overflow-y: auto`), com scrollbars estilizadas em cobre/ouro fino, mantendo o restante da interface perfeitamente ancorado.
+4. **Janelas Modais como Janelas Flutuantes do Jogo:**
+   - Overlays (`.tia-overlay`) operam como janelas sobrepostas ao cenário de batalha, com moldura chanfrada em vinho/cobre, cabeçalho estilizado, botão de fechar carmesim `[X]` e backdrop escuro semitransparente que preserva a visibilidade e vida do cenário de batalha ao fundo.
+5. **Composição da Coluna Esquerda (Herói em Campo + Equipe):**
+   - Destaque hierárquico imediato para o herói ativo em combate como card proeminente **"EM CAMPO"** (com retrato amplo, distintivo de classe, barras de HP viva com efeito de brilho e XP), acompanhado da lista compacta de slots da equipe logo abaixo.
+6. **Barras de Vida e Recursos com Efeito de Vidro (Gloss):**
+   - Calhas de baixo relevo em marrom-escuro profundo (`#140b0d`) com moldura chanfrada de 1px e preenchimentos gradientes vibrantes (verde `#3db85c` para vida cheia, vermelho `#d93845` para perigo) com reflexo translúcido no topo superior da barra.
+7. **Top HUD e Chat Integrados:**
+   - Barra superior com perfil compacto do Rei à esquerda, abas de navegação em pills lapidadas com ícones ao centro, e carteira de recursos (Coin, Diamantes, Status de Caçada) em badges emoldurados à direita.
+   - Chat global no quadrante inferior direito com abas temáticas, mensagens coloridas por autor e scroll exclusivo.
+
+**Impacto:**
+- O jogo assume a identidade visual autêntica e acolhedora de um clássico Idle MMORPG de browser/console RPG.
+- 100% de conformidade com o documento de diretrizes e a imagem de referência fornecidos.
+- Todos os 783 testes automatizados, 28 testes de arquitetura e bundle de preview mantidos estritamente verdes.

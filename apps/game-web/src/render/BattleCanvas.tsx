@@ -49,7 +49,7 @@ export function BattleCanvas({ source }: { source: BattleViewSource }) {
       game = new Phaser.Game({
         type: Phaser.AUTO,
         parent: hostRef.current,
-        backgroundColor: "#0b0a12",
+        backgroundColor: "#140b0d",
         // Pixel art (README do pack): filtro nearest, sem suavização.
         pixelArt: true,
         scale: {

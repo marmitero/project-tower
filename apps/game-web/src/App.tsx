@@ -357,7 +357,7 @@ function Hud({ state }: { state: GameState }) {
           label="Rei"
           value={kingProgress(king)}
           max={1}
-          color="#7aa2f7"
+          color="#d79a5a"
           readout={`Nv ${king.level}`}
         />
       </div>
