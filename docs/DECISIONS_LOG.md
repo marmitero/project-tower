@@ -1515,3 +1515,28 @@ Para dar continuidade ao plano de transformação da interface de dashboard para
 **Impacto:**
 - O jogo consolida a estética de console RPG sem elementos vazios ou com aparência de site comercial.
 - 100% dos testes e verificações mantidos verdes: 783 testes unitários/integração/UI, 28 testes de arquitetura e 1032 requisições HTTP 200 no preview.
+
+
+---
+
+## ADR-065 — Integração do Paper Doll Anatômico, Brasões de Classe e Estrados de Batalha no DOM (2026-10-08)
+
+**Data:** 2026-10-08 · **Status:** ✅ Aceita · **Tipo:** B (código + CSS + UI) · **Gatilho:** Aprovação e validação do Lote UI 3 pelo usuário ("Lote UI 3 aprovado, prossiga com o proximo passo").
+
+**Contexto:**
+Com a disponibilidade dos assets anatômicos e heráldicos dos Lotes UI 2 e UI 3, os componentes React de interface precisavam passar da estrutura genérica de listas/tabelas para montagens cenográficas no DOM.
+
+**Decisões:**
+1. Em `apps/game-web/src/InventoryScreen.tsx`:
+   - Implementar o componente de **Paper Doll Anatômico**: manequim central (`--ui-mannequin-silhouette`) com moldura ogival gótica (`--ui-paperdoll-frame`) e 6 receptáculos físicos corporais (Elmo, Peitoral, Arma, Calça, Bota, Colar) exibindo os ícones dos itens equipados ou marcas de slot vazio.
+2. Em `apps/game-web/src/App.tsx`:
+   - `HeroesScreen`: adicionar os 4 brasões heráldicos de classe (`class_crest_warrior`, `class_crest_cleric`, `class_crest_mage`, `class_crest_rogue`) aos cartões de heróis e códice.
+   - `TeamScreen`: transformar os slots em estrados de batalha com pedestais de pedra lavrada (`--ui-pedestal-stone`), insígnia de "Vanguarda" para o herói ativo e grade de portcullis trancada (`--ui-portcullis-lock`).
+3. Em `apps/game-web/src/styles.css`:
+   - Estilização completa do Paper Doll anatômico com posicionamento absoluto simétrico.
+   - Relevo sombreado duplo chiseled stone para etiquetas e distintivos de classe.
+
+**Impacto:**
+- O inventário e a gestão de heróis agora operam como uma autêntica armaria de RPG de console.
+- Zero regressões em testes: 783 testes aprovados, 28 testes de arquitetura e 1032 requisições HTTP 200 no preview.
+

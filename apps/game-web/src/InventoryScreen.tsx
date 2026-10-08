@@ -217,31 +217,56 @@ export function InventoryScreen({ state, notify }: { state: GameState; notify: (
                 );
               })}
             </div>
-            <div className="tia-slotgrid">
-              {config.equipment.slots.map((def) => {
-                const item = bySlot(def.id);
-                return (
-                  <div key={def.id} className={`tia-eqslot${item ? "" : " tia-eqslot--empty"}`}>
-                    <span className="tia-eqslot__name">{def.name}</span>
-                    {item ? (
-                      <>
-                        <ItemHeader item={item} />
-                        <ItemLines item={item} />
-                        <ItemEffectsText item={item} />
-                        <ActionButton
-                          label="Remover"
-                          variant="secondary"
-                          disabled={state.activeBattle?.allies.some((a) => a.heroId === hero.id) === true}
-                          hint="Troca de equipamento só entre as lutas"
-                          onClick={act(() => state.unequip(hero.id, def.id))}
-                        />
-                      </>
-                    ) : (
-                      <span className="tia-muted">vazio</span>
-                    )}
-                  </div>
-                );
-              })}
+            <div className="tia-paperdoll-wrapper">
+              <div className="tia-paperdoll" aria-label="Manequim de Equipamento">
+                <img src="/assets/ui/paperdoll_frame.png" alt="" className="tia-paperdoll__arch" />
+                <img src="/assets/ui/mannequin_silhouette.png" alt="" className="tia-paperdoll__silhouette" />
+
+                {(["head", "chest", "weapon", "legs", "boots", "amulet"] as EquipSlotId[]).map((slotId) => {
+                  const it = bySlot(slotId);
+                  const slotLabel = slotId === "head" ? "Elmo" : slotId === "chest" ? "Peitoral" : slotId === "weapon" ? "Arma" : slotId === "legs" ? "Calça" : slotId === "boots" ? "Bota" : "Colar";
+                  return (
+                    <div
+                      key={slotId}
+                      className={`tia-paperdoll__slot tia-paperdoll__slot--${slotId}${it ? " tia-paperdoll__slot--filled" : ""}`}
+                      title={it ? `${itemName(it)} (${slotLabel})` : `Slot de ${slotLabel} (vazio)`}
+                    >
+                      {it ? (
+                        <ItemIcon item={it} />
+                      ) : (
+                        <span className="tia-paperdoll__slot-empty-label">{slotLabel}</span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="tia-slotgrid">
+                {config.equipment.slots.map((def) => {
+                  const item = bySlot(def.id);
+                  return (
+                    <div key={def.id} className={`tia-eqslot${item ? "" : " tia-eqslot--empty"}`}>
+                      <span className="tia-eqslot__name">{def.name}</span>
+                      {item ? (
+                        <>
+                          <ItemHeader item={item} />
+                          <ItemLines item={item} />
+                          <ItemEffectsText item={item} />
+                          <ActionButton
+                            label="Remover"
+                            variant="secondary"
+                            disabled={state.activeBattle?.allies.some((a) => a.heroId === hero.id) === true}
+                            hint="Troca de equipamento só entre as lutas"
+                            onClick={act(() => state.unequip(hero.id, def.id))}
+                          />
+                        </>
+                      ) : (
+                        <span className="tia-muted">vazio</span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
             {state.activeBattle?.allies.some((a) => a.heroId === hero.id) && (
               <p className="tia-note">Este herói está lutando: o equipamento só pode ser trocado entre as lutas.</p>

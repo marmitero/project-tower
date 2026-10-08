@@ -455,13 +455,22 @@ function HeroesScreen({
         const assigned = state.data.team.members.indexOf(hero.id);
         const cls = classes.find((c) => c.id === hero.classId);
         const portrait = assetUrl(hero.portraitAssetId);
+        const classCrest =
+          hero.classId === "warrior"
+            ? "/assets/ui/class_crest_warrior.png"
+            : hero.classId === "cleric"
+              ? "/assets/ui/class_crest_cleric.png"
+              : hero.classId === "mage"
+                ? "/assets/ui/class_crest_mage.png"
+                : "/assets/ui/class_crest_rogue.png";
         return (
           <div className="tia-hero" key={hero.id}>
             <div className="tia-hero__head">
               {portrait && <img className="tia-hero__portrait" src={portrait} alt="" />}
               <strong>{hero.name}</strong>
               <span className={`tia-rarity tia-rarity--${hero.rarity}`}>{config.equipment.rarity[hero.rarity].label}</span>
-              <span>
+              <span className="tia-hero__class-badge">
+                <img src={classCrest} alt="" className="tia-hero__class-icon" />
                 {cls?.name ?? hero.classId}
                 {cls ? ` · ${cls.role}` : ""}
               </span>
@@ -541,12 +550,21 @@ function TeamScreen({
           const hero = state.data.heroes.find((h) => h.id === team.members[index]);
           const canAfford = coins >= BigInt(req.costCoin);
           const hasLevel = kingLevel >= req.kingLevel;
+          const portrait = hero ? assetUrl(hero.portraitAssetId) : null;
           return (
-            <div className={`tia-slot ${unlocked ? "" : "tia-slot--locked"}`} key={index}>
-              <strong>Slot {index + 1}</strong>
+            <div className={`tia-slot ${unlocked ? "tia-slot--plinth" : "tia-slot--locked"}`} key={index}>
+              <div className="tia-slot__pedestal-header">
+                <strong>Slot {index + 1}</strong>
+                {unlocked && hero && team.activeHeroId === hero.id && (
+                  <span className="tia-slot__vanguard-badge">Vanguarda</span>
+                )}
+              </div>
               {unlocked ? (
                 <>
-                  <span>{hero ? hero.name : "vazio"}</span>
+                  <div className="tia-slot__hero-summary">
+                    {portrait && <img src={portrait} alt="" className="tia-slot__portrait" />}
+                    <span className="tia-slot__hero-name">{hero ? hero.name : "Vazio — selecione um herói"}</span>
+                  </div>
                   {hero ? (
                     <>
                       <ProgressBar

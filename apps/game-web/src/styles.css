@@ -2078,5 +2078,99 @@ body {
   image-rendering: pixelated;
 }
 
+/* --- Heróis com Brasão de Classe (HeroesScreen) --- */
+.tia-gba .tia-hero {
+  background: #13101c;
+  border-style: solid;
+  border-width: 12px;
+  border-image: var(--ui-frame-9slice-stone) 24 fill / 12px / 0 stretch;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  padding: 10px 12px;
+}
+
+.tia-gba .tia-hero__class-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(18, 14, 26, 0.85);
+  border: 1px solid #3d3550;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 11px;
+  color: #ffdf94;
+}
+
+.tia-gba .tia-hero__class-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+/* --- Slots de Equipe como Estrados de Pedra (TeamScreen) --- */
+.tia-gba .tia-slot--plinth {
+  position: relative;
+  background: #14121e;
+  border-style: solid;
+  border-width: 14px;
+  border-image: var(--ui-frame-9slice-stone) 24 fill / 14px / 0 stretch;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+  padding: 12px;
+}
+
+.tia-gba .tia-slot--plinth::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 20px;
+  background: center / contain no-repeat var(--ui-pedestal-stone);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.tia-gba .tia-slot__pedestal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tia-gba .tia-slot__vanguard-badge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #ffdf94;
+  background: #2a1f0a;
+  border: 1px solid #d4af37;
+  padding: 1px 6px;
+  border-radius: 3px;
+  box-shadow: 0 0 6px rgba(212, 175, 55, 0.4);
+}
+
+.tia-gba .tia-slot__hero-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tia-gba .tia-slot__portrait {
+  width: 38px;
+  height: 38px;
+  object-fit: cover;
+  image-rendering: pixelated;
+  border: 2px solid #d4af37;
+  border-radius: 4px;
+}
+
+.tia-gba .tia-slot--locked {
+  background: #0d0b13 url("/assets/ui/portcullis_lock.png") center 20px / 56px no-repeat;
+  border-style: dashed;
+  border-color: #3b344d;
+  min-height: 140px;
+}
+
+
 
 
